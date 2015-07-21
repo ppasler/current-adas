@@ -1,0 +1,169 @@
+\input{config_acm}
+
+\graphicspath{{images/}{./}}
+
+\title{Aktuelle Anforderungen an Fahrerassistenzsysteme \titlenote{ \scriptsize \flushleft Betreuer Hochschule:  \  \ Prof. Dr. Martinez\\ \qquad \qquad \qquad \qquad \quad \ \  Hochschule Reutlingen\\ \qquad \quad \quad \quad \qquad \qquad \ \ Natividad.Martinez@Reutlingen-\\ \qquad \qquad \qquad \qquad \quad \ \ University.de\\  Informatics Inside 2015 II\\ Wissenschaftliche Vertiefungskonferenz \\ 18. November 2015, Hochschule Reutlingen\\  \copyright 2015 Paul Pasler}}
+
+
+\numberofauthors{3}
+\author{
+	\alignauthor
+	  \center
+		\aufnt{Paul Pasler}\\
+          \affaddr{Reutlingen University}\\
+        \textbf{\textsf{Paul.Pasler@Student.Reutlingen-University.DE}}
+}
+
+
+
+\begin{document}
+\maketitle
+\sloppypar{
+\begin{abstract}
+In diesem Text wird erläutert, wie ein Beitrag für die Konferenz der Informatics Inside 2015 eingereicht werden soll. Das Layout dieses Dokumentes entspricht diesen Vorgaben und ist damit zugleich ein Beispiel.\\ \\
+Der Abstract ist eine kurze Zusammenfassung des Beitrages in wenigen Sätzen, die dem Leser einen Überblick zum Inhalt bietet. Er sollte maximal 175 Wörter lang sein.
+\end{abstract}
+
+\keywords{
+Advanced Driver Assistance Systems (ADAS)
+}
+
+\category{A.0}{ACM}{
+sein eigenes offizielles Klassifizierungssystem. Die komplette Liste dieser Kategorien finden Sie unter dem folgenden Link:
+\href{URL}{http://www.acm.org/about/class/1998/}
+}
+
+\section{Einleitung}
+
+\label{chap:einleitung}
+ 
+Um ein ansprechendes und einheitliches Erscheinungsbild des Tagungsbandes zu erreichen, ist es notwendig dass alle Autoren ein einheitliches Dokumentenformat und Layout verwenden. Um an dem Call for Posters teilzunehmen, muss ein zweiseitiges Shortpaper eingereicht werden, dass sich an diese Formatierungsvorgaben hält. Wenn dieses Shortpaper zur Informatics Inside 2015 angenommen wird, muss der Autor ein Plakat in DIN A1 vorbereiten und zur Informatics Inside ausgedruckt mitbringen und Vorort an einem Posterstand präsentieren.
+\cite{serial}
+
+
+
+\section{Copyright Space}
+\label{chap:copyright}
+
+Auf der ersten Seite des Shortpapers ist links unten ein Copyright Space vorgesehen. Hier müssen Sie selbstständig an den entsprechenden Stellen die Namen der Betreuer ihrer Arbeit eintragen, sowie die Namen der Autoren. 
+Falls es keinen Betreuer an einer Hochschule und/oder in der Firma gegeben hat, müssen die entsprechenden Abschnitte gelöscht werden.
+
+\section{Formatierung des Inhalts}
+\label{chap:format}
+Die Vorschriften und Beschreibungen in diesem Dokument ermöglichen es ein zufriedenstellendes, akzeptables und einheitliches Shortpaper zur Abgabe zu erstellen. Zusätzlich zu dieser Beschreibung der Formatierungsvorgaben stellen wir auf unserer Webseite zur Informatics Inside Dokumentvorlagen zum Download bereit. Diese gibt es in LaTeX und DOCX. Es wird jedoch empfohlen die LaTeX-Vorlage zum Erstellen des Dokuments zu verwenden, da diese sich selbstständig um die korrekte Formatierung im wissenschaftlichen Stil kümmert.
+
+
+\subsection{Anforderungen an die Formatierung}
+\label{ch:format:sec:Anforderungen an die Formatierung}
+
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\setlength{\parsep}{0pt}
+      \item Seitengröße: DIN A5
+      \item Oberer Rand: 1,30 cm
+      \item Unterer Rand: 1,40 cm
+      \item Linker Rand: 1,70 cm
+      \item Rechter Rand: 1,20 cm
+      \item Spaltenanzahl: 2
+      \item Vertikaler Raum zwischen zwei Paragraphen: 0,50 cm
+      \item Einrückung von Paragraphen: keine
+      \item Titel und Autor(en): zentriert über dem Text platzieren
+   \end{itemize}
+   
+Es dürfen keine Seitenzahlen, Kopf- und Fußzeilen in den Beitrag eingefügt werden. Diese werden von der Redaktion einheitlich für den Druck beim Setzen des Tagungsbandes hinzugefügt.
+
+\section{Der Kopfteil}
+\label{chap:kopf}
+
+Der Titel sollte maximal zweizeilig sein und in Word die Formatvorlage "Beitragstitel" (Schrift Helvetica 18-Punkt fett) nutzen. 
+Darunter stehen nebeneinander die Namen der Autoren in der Word Formatvorlage “Autoren” (Helvetica, 12-Punkt). Als nächstes folgt (in der Word-Formatvorlage "Firma / Institution" – Helvetica 9-Punkt) die Firma/Institution und die Namen der Betreuer. Die Firma steht in einer eigenen Zeile. Darauf folgen die Betreuer jeweils in einer Zeile. Abschließend wird die E-Mail-Adresse des Autors angegeben. Bitte Word-Formatvorlage “E-Mail" benutzen (Helvetica 9-Punkt fett).
+Sind einzelne Teile nicht zutreffend, so werden diese weggelassen.
+Wenn es nur einen Autor gibt, sollte die mittlere der drei Spalten dafür genutzt werden. Gibt es zwei Autoren so benutzen Sie nur zwei Spalten („Page Layout > Columns > More Columns…“ und hier zwei Kolumnen auswählen). Gibt es mehr als drei Autoren, so müssen Sie improvisieren.
+Der Abstract nutzt die Formatvorlage "Abstract" und sollte nicht mehr als 175 Wörter umfassen.
+
+
+\subsection{Titel in LaTeX}
+
+Der Text des Titels wird innerhalb des Copyright Space Blocks platziert. Siehe auch Kapitel \ref{chap:copyright}
+
+\section{Der Textteil}
+\subsection{Normaler Text}
+Bitte verwenden Sie die Schriftart Times Roman in 9-Punkt oder eine andere Roman Schrift mit Serifen, welche so nah wie möglich an das Schriftbild zu Times Roman
+heranreicht. Ziel ist es, einen 9-Punkt-Text zu haben, wie Sie ihn hier sehen.
+Bitte benutzen Sie serifenlose oder nicht-proportionale Schriften nur für spezielle Zwecke, wie die Unterscheidung von Quellcode zu Text.
+Wenn Times Roman nicht verfügbar ist, versuchen Sie die Schriftart mit dem Namen "Computer Modern Roman". Auf einem Macintosh System verwenden Sie die Schriftart mit dem Namen Times.
+
+\subsection{Blocksatz}
+Verwenden Sie für Fließtexte ausschließlich Blocksatz und keinen Flattersatz. Flattersatz sollte lediglich bei den einzelnen Einträgen im Literaturverzeichnis und bei kurzen Aufzählungspunkten vorkommen.
+Für normalen Absatztext verwenden Sie bitte die Word-Formatvorlage "Textkörper".
+
+\subsection{Fußnoten}
+Fußnoten sollten mit Dezimalziffern durchnummeriert werden und am Fuß jeder Seite erscheinen. Für Fußnoten sollte die Formatvorlage "Fußnote" (Schrift Times New Roman 9-Punkt als Blocksatz) verwendet werden.
+
+\subsection{Weitere Seiten}
+Für andere Seiten als die erste Seite, setzt sich der Text am oberen Rand der Seite im Doppelspalten-Format fort. Die beiden Spalten auf der letzten Seite des Papers sollten möglichst die gleiche Länge haben.
+
+\begin{table}
+\centering
+\caption{Tabellenbeschriftungen sollten über der Tabelle platziert werden}
+\begin{tabular}{|@{}c@{}|c|c|c|} \hline
+Graphics&Top&Inbetween&Bottom\\ \hline
+Tables & End& Last& First\\ \hline
+Figures & Good& Similar& Very Well\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Literaturverweise}
+Für Literaturverweise wird das "ACM Referenz-Format" verwendet. Dabei handelt es sich um eine nummerierte Liste am Ende des Artikels, welche alphabetisch sortiert und entsprechend formatiert ist. Sie sehen Beispiele für einige typische Literaturverweise am Ende dieses Dokuments. Innerhalb dieser Vorlage, verwenden Sie bitte den Stil „Literaturverweis“ für den Text. Akzeptable Abkürzungen für Journalnamen finden Sie hier:\\
+\href{URL}{http://library.caltech.edu/reference/abbrevi\\ations/}\\
+Die Verweise sind ebenfalls in 9-Punkt, allerdings ist der Abschnitt ein Flattersatz. Die Referenzen sollten der Öffentlichkeit zugänglich sein. Interne technische Berichte können angeführt werden, wenn sie leicht zugänglich sind (z.B. können Sie die Adresse des Berichts, welchen Sie zitieren mit angeben). Proprietäre Informationen dürfen nicht zitiert werden. Private Kommunikation sollte erklärt werden, aber es darf nicht darauf verwiesen werden (z.B. "[Müller, persönliche Mitteilung]").
+
+\section{Tabellen und Abbildungen}
+\label{chap:tables}
+Legen Sie Tabellen und Abbildungen im Text so nah an die Verweisstelle wie möglich (siehe Abbildung \ref{test}). Tabellen, Abbildungen und Bilder dürfen über beide Spalten hinweg erweitert werden. Bei Beschreibungen von Tabellen und Abbildungen sollte Times New Roman 9-Punkt in Fettschrift verwendet werden und sie sollten nummeriert sein (z.B. “Tabelle 1” oder “Abbildung 2”). Die Beschriftungen von Abbildungen sollten unter dem Bild zentriert werden und Tabellenüberschriften oberhalb der Tabelle.
+Bitte berücksichtigen Sie bei der Verwendung von Bildern und Grafiken, dass nur in schwarz/weiß gedruckt wird. Der Einfachheit wegen sollten die Bilder bereits im Vorfeld in schwarz/weiß konvertiert sein, damit nicht
+durch eine vom Drucker angewandte schwarz/weiß Konvertierung, wichtige Bildinformationen verloren gehen.
+
+Fotos sollten eine Auflösung von 300 dpi haben, damit die Qualität für den Druck geeignet ist. Grafiken sollten 1200 dpi nutzen oder in einem vektorbasiertem Format wie bspw. EPS vorliegen. Ein Abbildungsverzeichnis ist nicht vorgesehen.
+
+\section{Kapitel}
+\label{chap:kapitel}
+Die Überschrift eines Abschnitts sollte in Times New Roman 12-Punkte sein und fett geschrieben. Verwenden Sie hierzu die Word-Formatvorlage "'Überschrift 1"'. Abschnitte und anschließende Teilbereiche sollten nummeriert und linksbündig sein.
+
+\subsection{Unterkapitel}
+Für die Überschriften verwenden Sie bitte die Word-Formatvorlagen "'Überschrift 1"', "'Überschrift 2"', "'Überschrift 3"' und "'Überschrift 4"'.
+
+\subsubsection{Unterunterkapitel}
+Kapitel auf Unterebenen sollten nur vorkommen, wenn es auch mehrere Kapitel auf dieser Ebene gibt, ansonsten gehört der Text zur übergeordneten Ebene. Formatvorlage für Überschriften 3. Ordnung ist "'Überschrift 3"';
+
+\paragraph{7.1.1.1 Unterunterunterkapitel}
+Die Überschrift für Unterunterunterkapitel sollte in Times New Roman 11-Punkt Kursivschrift sein. Dies übernimmt für Sie die Word-Formatvorlage "'Überschrift 4"'.
+
+\paragraph{7.1.1.1.1 Unterunterunterunterkapitel}
+Kapitel fünfter Ordnung (oder mehr) sollten vermieden werden.
+
+\section{Gesamtlänge des Beitrags}
+\label{chap:lange}
+Ein Beitrag sollte einen Umfang von ziemlich genau zwei Seiten haben. Der Platz für den Text auf den Seiten kann und soll möglichst ausgenutzt werden. Viel Leerraum, vor allem am Ende eines Beitrags sollte vermieden werden, um ein einheitliches Gesamtbild des Tagungsbandes zu gewährleisten.
+
+\section{Abgabe und Dateibenennung}
+\label{chap:abgabe}
+Das Shortpaper soll als PDF-Datei abgegeben werden. Hierbei müssen alle verwendeten Schriften in die PDF eingebettet werden. Eine Abweichung von der Formatvorgabe wie beispielsweise durch die Anpassung von Schriftart, Schriftgröße, Zeilenabstand, Abständen zwischen Absätzen, sowie Abweichungen vom vorgegebenen Rand sind ausdrücklich verboten.
+Die Datei soll mit dem Nachnamen des ersten Autors benannt sein.
+Die Abgabe des Shortpapers erfolgt über \textbf{EasyChair}, nähere Informationen hierzu gibt es auf unserer Webseite.
+
+\section{Vorgaben zu dem Poster}
+\label{chap:vorgaben}
+Eine Formatvorlage für das Poster gibt es nicht, die Gestaltung ist Ihnen frei überlassen. Das Poster muss auch nicht vor der Informatics Inside eingereicht werden. Bringen Sie es bitte zur Informatics Inside ausgedruckt im DIN A1 Format mit.
+
+\section{Kontaktinformationen}
+\label{chap:contact}
+Sollten Sie Fragen zu diesem Dokument, zur Aufbereitung des Inhaltes oder ähnlichem zum “Call for Posters” der Informatics Inside 2014 haben, können Sie uns jederzeit per E-Mail kontaktieren. Schreiben Sie hierzu einfach eine E-Mail an: 
+\href{URL}{infoinside@reutlingen-university.de}
+
+\balance
+\bibliographystyle{abbrv} % abbrv, alpha, plain, unsrt, apalike
+\bibliography{Quellen,Zotero}
+
+
+\end{document}

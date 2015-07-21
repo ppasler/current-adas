@@ -1,0 +1,119 @@
+\ifincludespickzettel
+
+\section{\LaTeX\ Spickzettel}
+\label{sec:spickzettel}
+\subsection{Mehr über \LaTeX\ erfahren}
+
+Nachfolgend ein paar Quellen, um Dinge nachzuschlagen, die im Spickzettel nicht enthalten sind.
+
+\begin{itemize}
+	\item \url{http://en.wikibooks.org/wiki/LaTeX}
+	\item \url{http://wiki.selfhtml.org/wiki/Kurse:LaTeX}	
+	\item \url{http://tobi.oetiker.ch/lshort/lshort.pdf}
+	\item \url{http://latex-project.org/guides/}
+	\item \url{https://www.google.de/search?q=latex+something}
+\end{itemize}
+
+\subsection{Grundlegende Formatierungen}
+
+\texttt{Schreibmaschine, Code}\\
+\textbf{fetter Text}
+
+In der Regel trennt Latex Wörter automatisch am Zeilenende, bei der Donau\-dampf\-schiff\-fahrtskapitäns\-mütze kann aber aber auch mal daneben gehen. Zur Optimierung kann man (sollte man sich aber für den Schluss aufheben) auch explizit trennen. Latex meckert überlange Zeilen an.
+
+Abkürzungen wie \ac{ITIL} oder \acs{SQL} können zentral abgelegt, werden automatisch richtig eingesetzt und landen im Glossar.
+
+Während dem Arbeiten kann es nützlich sein, sich \todo{noch genauer zu hinterfragende Aussagen} zu kennzeichnen. 
+\reconsider{Selbes gilt für Abschnitte deren reine Existenz fragwürdig ist.}
+Ein \textbackslash rem Kommentar-Block kann für Notizen genutzt werden.
+
+\subsection{Zitate und Verweise}
+So ist es. \cite{hug_algoverbessern}
+
+\begin{quote}
+Eine Menge ist die Zusammenfassung bestimmter, wohlunterschiedener
+Objekte unserer Anschauung oder unseres Denkens, wobei von jedem
+dieser Objekte eindeutig feststeht, ob es zur Menge gehört oder nicht. Die
+Objekte der Menge heißen Elemente der Menge.
+(\cite[Seite 36]{meinel_mathematische_2009})
+\end{quote}
+
+Es wird immer nur auf "`label"' verwiesen. Da \LaTeX Bilder, Tabellen und Listings\footnote{Listings sind bspw. Pseudocode} so platziert, dass die Seite möglichst voll ist, sollte man immer eine Referenz zum Element benennen (Siehe..., Klammern, wie in...).
+
+Auf Bild verweisen: \autoref{img:logo}
+
+Auf eine Tabelle verweisen (\autoref{tbl:tabelle})
+
+Auf Code verweisen: \autoref{lst:registermaschine3}
+
+Auf Kapitel verweisen. Siehe \autoref{sec:spickzettel}
+
+\subsection{Formeln}
+
+$a=\sqrt{9}$ (Formeln)
+
+\begin{equation}
+  1=4-3
+\end{equation}
+
+und Reihen
+
+\begin{eqnarray}
+  2=7-5\\
+  3=2-1
+\end{eqnarray}
+
+\subsection{Bilder}
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=2cm]{gilogo}
+    \caption[Das Logo der GI]{\label{img:logo}Das Logo der GI \cite[Seite 36]{meinel_mathematische_2009}}
+  \end{center}
+\end{figure}
+
+\subsection{Listen}
+
+\begin{itemize}
+	\item Liste 1
+	\item Liste 2
+\end{itemize}
+
+\subsection{Tabellen}
+
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{ | r | l }
+      Heading 0.0  & Heading 0.1\\\hline
+      Zelle 1.0  & Zelle 1.1\\
+      Zelle 1.0  & Zelle 1.1\\
+      Zelle 1.0  & Zelle 1.1\\
+      \hline
+	\end{tabular}
+    \caption[Tabellenbeispiel]{\label{tbl:tabelle}Tabellenbeispiel \cite[Seite 36]{meinel_mathematische_2009}}
+  \end{center}
+\end{table}
+
+\begin{lstlisting}[
+	caption={[Das Potenzierungsprogramm]Das Potenzierungsprogramm \protect{\cite[Seite 39]{meinel_mathematische_2009}}},
+	label=lst:registermaschine3,language=Python
+]{}
+def potenzierung(n, m):
+   	z = 1
+    while m != 0:
+   	    z *= n
+        	m -= 1
+    return z
+potenzierung(3, 2)
+\end{lstlisting}
+
+\subsection{Einen Bereich auskommentieren}
+Perfekt für Randnotizen und Todos.
+
+\rem{
+Das kann man nicht sehen. 
+}
+
+Das wiederum kann man sehen.
+
+
+\fi
