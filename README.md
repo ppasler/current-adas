@@ -13,6 +13,9 @@ http://www.ftm.mw.tum.de/uploads/media/08_plaettner.pdf
 http://www.5-sterne-redner.de/fileadmin/download/pdf/Wild_Presse_Artikel_Fahrassistenzsysteme_ZfAW.pdf
 http://www.jobs4automotive.de/fahrerassistenzsysteme/fahrerassistenzsysteme-zukunft-der-fahrassistenz/
 
+#ddd
+http://www.kfztech.de/kfztechnik/fas/aufmerksamkeitsassisent.htm
+
 #simulation
 https://opends.de/
 http://vector.com/vi_canoe_de.html

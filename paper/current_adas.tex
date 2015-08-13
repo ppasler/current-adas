@@ -22,16 +22,17 @@
 \acro{FAS}{Fahrerassistenzsystem}
 \acro{FASs}{Fahrerassistenzsysteme}
 \acro{ME}{Müdigkeitserkennung}
+\acro{MESs}{Müdigkeitserkennungssysteme}
 \acro{ADAS}{Advanced Driver Assistance System}
 \acro{ADASs}{Advanced Driver Assistance Systems}
+\acro{bspw}{beispielsweise}
 \end{acronym}
 
 
 \maketitle
 \sloppypar{
 \begin{abstract}
-In dieser Ausarbeitung gibt es einen kleinen Überblick zu \acl{FAS}en. Weiterhin wird die Funktionsweise und verschiedene Umsetzungen von Systemen zur \acl{ME} vorgestellt.
-Der Ansatz mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der Reutlingen University evaluiert.
+Mit Fortschreiten der Technik, verbreiten sich \acl{FAS}en immer weiter. Auch die \acl{ME} ist ein solches System. In einem kurzen Überblick, wird  die Funktionsweise und verschiedene Umsetzungen von Systemen zur \acl{ME} vorgestellt. Der Ansatz Erkennung mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der Reutlingen University evaluiert.
 
 \end{abstract}
 
@@ -40,23 +41,39 @@ Der Ansatz mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld d
 }
 
 \category{A.0}{ACM}{
-sein eigenes offizielles Klassifizierungssystem. Die komplette Liste dieser Kategorien finden Sie unter dem folgenden Link:
-\href{URL}{http://www.acm.org/about/class/1998/}
+Experimentation
 }
 
 \section{Einleitung}
 \label{chap:intro}
+Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. So halten sie auch in Mittel- und Kleinwagen Einzug und helfen bei der Vermeidung schwerer Unfälle. Einen Überblick zur aktuellen Entwicklung bei \acl{FASs} gibt es in Abschnitt \ref{sec:fas}.
 
+Um ein neues System auszuprobieren, setzen Automobilhersteller, wie auch Wissenschaftler, auf Tests in einem Simulator (unter Laborbedingungen), bevor es in echte Fahrzeuge integriert werden. Eine solche Simulationsumgebung, wie sie an der Reutlingen University genutzt wird, wird in Abschnitt \ref{sec:sim} vorgestellt.
+
+In der vorgestellten Arbeit wird die \acl{ME} als Vertreter eines  \acl{FAS}s näher beleuchtet und verschieden Umsetzungsvorschläge gegenübergestellt (Kapitel \ref{chap:me}). In Kapitel \ref{chap:eval} wird ein solches System mit Körpersensoren (EEG, EKG) evaluiert und im Simulationsumfeld der Reutlingen University getestet. Eine Zusammenfassung und weitere Schritte werden in Kapitel \ref{chap:outro} beschrieben.
 
 \subsection{\acl{FASs}}
 \label{sec:fas}
- 
-Fristeten \acl{FASs} vor wenigen Jahren ein Nieschendasein in Oberklassewage, werden sie immer günstiger und beliebter. So halten sie auch in Mittel- und Kleinwagen Einzug.
 
-\begin{itemize}
-  \item Überblick und Klassifizierung   \cite{Bertoldi:2010:MAD:2002368.2002370} \cite{Feld:2010:MIA:1719970.1720063}
-  \item Aktuelle Entwicklungen / Stand der Technik
-\end{itemize}
+- Studie zu Unfällen -
+ \cite{Feld:2010:MIA:1719970.1720063}
+
+\acl{FASs} bieten dem Fahrer zum einen ein Komfortplus oder erhöhen die Sicherheit beim Fahren. So führen Einparkassistent,  Geschwindigkeitsregelanlage oder Navigation zu deutlich entspannterem Fahren. Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).\\
+
+\textbf{Überblick und Klassifizierung} \\
+\acl{FASs} bieten dem Fahrer zum einen ein Komfortplus oder erhöhen die Sicherheit beim Fahren. So führen Einparkassistent, Tempomat oder Navigation zu deutlich entspannterem Fahren. 
+Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).
+
+Kompaß \cite{fasFuture} unterteilt \acl{FASs}, gemessen an der Reaktionszeit, in Planung, Führung und Stabilisierung. Hierbei fällt \acl{bspw} Navigation in die Planungsebene, da die Berechnung der Route mit unter mehrere Minuten brauchen kann. Auf Führungsebene werden dem Fahrer Empfehlungen und Warnungen innerhalb weniger Sekunden mitgeteilt, auf die er dann reagieren kann. Greift das System selbständig in den Fahrprozess ein, muss dies meist innerhalb von Millisekunden geschehen und dient oftmals zur Stabilisierungen, wie \acl{bspw} bei einem Fahrdynamik-Regelsystem.\\
+
+\textbf{Rückmeldung} \\
+Ein \acl{FAS} kann auf verschiedenste Arten mit dem Fahrer kommunizieren. Es handelt sich um eine klassische HCI-Schnittstelle. Am gebräuchlichsten, auch für sonstige Warnungen, sind schon seit längerem Optische und Akustische Signale. Aber auch Vibrationen in Lenkrad und Sitz zeigen gute Ergebnisse, wenn zwischen Signal und Nachricht ein Zusammenhang besteht (Bspw. Vibriert das Lenkrad bei verlassen der Spur).
+\cite{Bertoldi:2010:MAD:2002368.2002370} beschreibt hierzu die verschiedenen Anwendungsgebiete und Unterschiede. \\
+
+\textbf{Systeme} \\
+Jeder Automobilhersteller entwickelt mittlerweile seine eigenen \acl{FASs}. Datenerhebung (Sensoren), Berechnung und Kommunikation werden vom Fahrzeug selbst durchgeführt. Durch die Abschottung des Fahrzeugs sind Fahrzeugdaten nicht öffentlich zugänglich und können nur schwer von Außenstehenden genutzt werden. 
+
+Für wissenschaftliche Arbeiten bleibt entweder eine Kooperation mit Automobilherstellern oder das Ausweichen auf andere Devices, wie ein Smartphone und die Nutzung von Daten aus dem Internet (\acl{bspw} Kartendienste). Chen \cite{Chen:2015:ISV:2742647.2742659} und You \cite{You:2013:CAA:2462456.2465428} verfolgten diesen Ansatz. Smartphone bieten durch ihren hohen Verbreitungsgrad eine günstige Alternative zu eingebauten Systemen, können jedoch nicht auf Daten des Fahrzeugs zugreifen und müssen einfache Daten, wie \acl{bspw} Geschwindigkeit, selbst berechnen.
 
 \subsection{Simulationsumgebung}
 \label{sec:sim}
@@ -69,8 +86,17 @@ Fristeten \acl{FASs} vor wenigen Jahren ein Nieschendasein in Oberklassewage, we
 
 \section{Systeme zur \acl{ME}}
 \label{chap:me}
+Müdigkeit senkt die Konzentrationsfähigkeit des Fahrers und kann zu einer erhöhten Reaktionszeit und Fehleinschätzungen führen, wie es der Deutscher Verkehrssicherheitsrat in einem Beschluss von 2009 \cite{DVR:Online} feststellt.
+Die \acl{ME} versucht an Hand verschiedener Daten und Sensoren, frühzeitig zu erkennen, ob der Fahrer gerade Anzeichen einer bevorstehenden Müdigkeit zeigt und empfiehlt eine Pause.
+Dabei soll nicht nur während Micro- oder Sekundenschlaf, sondern schon früher gewarnt werden. \\
 
-Die \acl{ME} merkt an Hand verschiedener Daten, ob der Fahrer gerade Müde wird und empfiehlt eine Pause.
+\textbf{Überblick und Klassifizierung} \\
+Die Erkennung von Müdigkeit kann auf ganz verschiedene Arten gelöst werden. Ein Ansatz versucht über Körpersignale herauszufinden, ob eine Müdigkeit bevorsteht. Wohingegen mit der Analyse des Fahrverhaltens das selbe mit Sensoren an und im Auto realisiert wird.
+Bei der Erkennung über Körpersignale, kann wiederum Körpersensoren oder auf Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden.
+
+Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-Algorithmen. Die gesammelten Daten geben nur Hinweise und sind kein Garant für eine Erkennung von Müdigkeit. \acl{MESs} wandeln hier auf einem schmalen Grad, da es zum einen um die Verhinderung schwerer Unfälle geht, zum anderen aber ein falsch auslösendes System die Akzeptanz vermindert und im schlimmsten Fall zu einer Deaktivierung führt.
+
+- TODO: Was wird in der Praxis verwendet? - 
 
 \begin{itemize}
   \item Funktion
@@ -96,7 +122,7 @@ Die \acl{ME} merkt an Hand verschiedener Daten, ob der Fahrer gerade Müde wird 
   \item Ergebnis / Evtl. Prototyp
 \end{itemize}
 
-\subsection{Fazit}
+\section{Fazit}
 \label{chap:outro}
 \begin{itemize}
   \item Weitere Schritte
