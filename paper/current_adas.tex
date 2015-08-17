@@ -91,27 +91,27 @@ Die \acl{ME} versucht an Hand verschiedener Daten und Sensoren, frühzeitig zu e
 Dabei soll nicht nur während Micro- oder Sekundenschlaf, sondern schon früher gewarnt werden. \\
 
 \textbf{Überblick und Klassifizierung} \\
-Die Erkennung von Müdigkeit kann auf ganz verschiedene Arten gelöst werden. Ein Ansatz versucht über Körpersignale herauszufinden, ob eine Müdigkeit bevorsteht. Wohingegen mit der Analyse des Fahrverhaltens das selbe mit Sensoren an und im Auto realisiert wird.
-Bei der Erkennung über Körpersignale, kann wiederum Körpersensoren oder auf Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden.
+Die Erkennung von Müdigkeit kann auf ganz verschiedene Arten gelöst werden. Ein Ansatz versucht über Körpersignale herauszufinden, ob eine Müdigkeit bevorsteht. Wohingegen mit der Analyse des Fahrverhaltens das Selbe mit Sensoren an und im Auto realisiert wird.
+Bei der Erkennung über Körpersignale, können wiederum Körpersensoren oder  Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.
 
-Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-Algorithmen. Die gesammelten Daten geben nur Hinweise und sind kein Garant für eine Erkennung von Müdigkeit. \acl{MESs} wandeln hier auf einem schmalen Grad, da es zum einen um die Verhinderung schwerer Unfälle geht, zum anderen aber ein falsch auslösendes System die Akzeptanz vermindert und im schlimmsten Fall zu einer Deaktivierung führt.
+Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-Algorithmen. Die gesammelten Daten geben nur Hinweise und sind kein Garant für eine Erkennung von Müdigkeit. \acl{MESs} wandeln hier auf einem schmalen Grad, da es zum einen um die Verhinderung schwerer Unfälle geht, zum anderen aber ein falsch auslösendes System die Akzeptanz vermindert und im schlimmsten Fall zu einer Deaktivierung führt. Um falsche Erkennungen weiter zu minimieren, werden oftmals mehrere Ansätze kombiniert.
 
-In der Praxis setzen Automobilhersteller wie Daimler \cite{Daimler} und Volkswagen, sowie Automobilzulieferer wie Bosch \cite{Bosch} auf die Analyse des Fahrverhaltens. Insbesondere Spurhalten und ruckartiges Gegenlenken  scheinen ein signifikantes Indiz für beginnende Übermüdung zu sein. Weiterhin sind externe Geräte im Handel und einige Apps für Smartphones in gängigen Stores erhältlich.
+In der Praxis setzen Automobilhersteller wie Daimler \cite{Daimler} und Volkswagen, sowie Automobilzulieferer wie Bosch \cite{Bosch} auf die Analyse des Fahrverhaltens. Insbesondere Spurhalten und ruckartiges Gegenlenken scheinen ein signifikantes Indiz für beginnende Übermüdung zu sein. Weiterhin sind externe Geräte und einige Apps für Smartphones erhältlich. \\
 
-\begin{itemize}
-  \item Funktion
-  \item Vergleich verschiedener Vorgehen 
-  \begin{itemize}
-    \item ...using skin conductance and oximetry pulse \cite{Bundele:2009:DFV:1806338.1806478}
-    \item ... Pulse Wave by Photoplethysmography Signal Processing \cite{Park:2009:DDD:1667780.1667798}
-    \item using automatic visual analysis \cite{Haloi:2014:CDB:2662117.2662126}
-    \item Use of EEG for Validation of Flicker-Fusion Test \cite{Ronzhina:2011:UEV:2093698.2093733}
-    \item Synchronising Physiological and Behavioural Sensors in a Driving Simulator \cite{Taib:2014:SPB:2663204.2663262}
-    \item Driver's drowsiness inference based on hidden Markov model using head pose and eye-blink tracking (leider nur auf koreanisch) \cite{Choi:2014:DDI:2729485.2729524}
-    
-    
-\end{itemize} (Computervision, Body Sensorik, Mustererkennung...)
-\end{itemize}
+\textbf{Stand der Technik} \\
+Wie bereits erwähnt, existieren verschiedene Vorgehen, für die \acl{ME} im Fahrzeug. Ansätze mit Körpersensoren liefern gute Ergebnisse, müssen jedoch am Körper angebracht werden, was zu einer Beeinträchtigung führen kann.\\
+
+Bundele and Banerjee \citep{Bundele:2009:DFV:1806338.1806478} zeigten, dass Müdigkeit über die elektrodermale Hautreaktion und Pulsoxymetrie erkannt werden kann. Die elektrodermale Hautreaktion (galvanische Hautreaktion, GSR) misst hierbei die Hautleitfähigkeit und hängt mit der Schweißproduktion zusammen. Bei der Pulsoxymetrie kann, durch ein optische Verfahren, die Sauerstoffsättigung des Blutes gemessen werden. In diesem Fall bedeutet eine geringere Sättigung ein erhöhtes Müdigkeitsgefühl. Diese Werte werden durch Körpersensoren ermittelt und werden mit einem Multi Layer Perceptron (MLP) klassifiziert. Interessant ist zudem der Einsatz von sogenannten Smart-Clothes (E-textiles), welche die Sensoren in der Kleidung eingearbeitet haben und somit zu ein Non-Inversiven Ansatz führen.\\
+
+TODO\\
+Johnson et. al \cite{Johnson11} nutzen EEG.
+Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker-Fusion Test \\
+
+Park et al. \cite{Park:2009:DDD:1667780.1667798} beschränken sich in ihrer Arbeit auf die Analyse der Pulswelle durch Photoplethysmography (PPG), mit einem eingebauten Sensor am Lenkrad. Dies stellt schon ein größeren Eingriff in die Umgebung des Fahrzeugs dar, als es im Abschnitt zuvor der Fall war. Die Daten der PPG werden mit einer Support Vector Maschine eingeordnet. Es zeigte sich, dass die Ausschlagshöhe des Puls in gute Mittel für die Erkennung von Müdigkeit darstellt. Um die Ergebnisse zu verbessern, wurde die entwickelte Software mit einem zuvor entwickelten visuellen System zur Kopfbewegung gekoppelt. \\
+
+Neben den Ansätzen mit Körpersensoren, existieren weitere Ansätze die mit Hilfe von Kameras den Fahrer und die Straße beobachten. Zhang et al. \cite{Zhang:2015:RSD:2753829.2629482} stellen hierzu eine Applikation mit der Verbindung eines Farb- und Tiefenbildes vor. Mit Hilfe einer Microsoft Kinect werden sowohl die Kopfpose, als auch die Augenstatus bestimmt. Um das System robuster zu gestalten, wird aus dem Farbbild,  zusätzlich zum Vorhandenen, das Tiefenbild berechnet.\\
+
+Mit der CarSafe App entwickleten You et al. \cite{You:2013:CAA:2462456.2465428} ein visuelles System zur Überwachung des Fahrers und der Straße. Hierfür genügt ein aktuelles Smartphone. Die App deckt hierbei neben der \acl{ME} auch andere Gefahrensituation (\acl{bspw} zu dicht Auffahren) ab. Es werden eine Analyse des Fahrers (Kopfpose und Augenstatus), sowie der Fahrweise kombiniert und der Fahrer gewarnt. Kamerabasierte Systeme sind angenehm für den Fahrer, da er keine weitere Hardware (Sensoren) installieren muss. Jedoch ist eine Kamera optischen Grenzen unterworfen, was den Einsatz bei Nacht oder schlechtem Wetter erschwert. Für eine \acl{ME} mit Smartphone, aber ohne Kameraeinsatz, könnte \acl{bspw} die App V-Sense \cite{Chen:2015:ISV:2742647.2742659} genutzt werden, da sie lediglich  eingebaute Sensoren nutzt.
 
 \section{Evaluation einer \acl{ME} im Simulationsumfeld}
 \label{chap:eval}
