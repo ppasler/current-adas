@@ -2,7 +2,7 @@
 
 \graphicspath{{images/}{./}}
 
-\title{Aktuelle Anforderungen an Fahrerassistenzsysteme \titlenote{ \scriptsize \flushleft Betreuer Hochschule:  \  \ Prof. Dr. Martinez\\ \qquad \qquad \qquad \qquad \quad \ \  Hochschule Reutlingen\\ \qquad \quad \quad \quad \qquad \qquad \ \ Natividad.Martinez@Reutlingen-\\ \qquad \qquad \qquad \qquad \quad \ \ University.de\\  Informatics Inside 2015 II\\ Wissenschaftliche Vertiefungskonferenz \\ 18. November 2015, Hochschule Reutlingen\\  \copyright 2015 Paul Pasler}}
+\title{Fahrerassistenzsysteme: Müdigkeitserkennung im Simulationsumfeld \titlenote{ \scriptsize \flushleft Betreuer Hochschule:  \  \ Prof. Dr. Martinez\\ \qquad \qquad \qquad \qquad \quad \ \  Hochschule Reutlingen\\ \qquad \quad \quad \quad \qquad \qquad \ \ Natividad.Martinez@Reutlingen-\\ \qquad \qquad \qquad \qquad \quad \ \ University.de\\  Informatics Inside 2015 II\\ Wissenschaftliche Vertiefungskonferenz \\ 18. November 2015, Hochschule Reutlingen\\  \copyright 2015 Paul Pasler}}
 
 
 \numberofauthors{3}
@@ -75,13 +75,15 @@ Jeder Automobilhersteller entwickelt mittlerweile seine eigenen \acl{FASs}. Date
 
 Für wissenschaftliche Arbeiten bleibt entweder eine Kooperation mit Automobilherstellern oder das Ausweichen auf andere Devices, wie ein Smartphone und die Nutzung von Daten aus dem Internet (\acl{bspw} Kartendienste). Chen \cite{Chen:2015:ISV:2742647.2742659} und You \cite{You:2013:CAA:2462456.2465428} verfolgten diesen Ansatz. Smartphone bieten durch ihren hohen Verbreitungsgrad eine günstige Alternative zu eingebauten Systemen, können jedoch nicht auf Daten des Fahrzeugs zugreifen und müssen einfache Daten, wie \acl{bspw} Geschwindigkeit, selbst berechnen.
 
-\subsection{Körpersensoren: EEG, EKG}
+\subsection{Körpersensoren}
 \label{sec:sens}
 Körpersensoren messen verschiedenste Werte eines lebenden Körpers, wie den Puls, Temperatur oder Hirnwellen. Meistens werden sie direkt am oder im Körper eingesetzt.\\
 
 Bei der Elektroenzephalografie (EEG) werden Elektroden auf der Kopfhaut angebracht und damit die Aktivität des Gehirns gemessen. Sie wird in der Medizin für die Diagnose von Epilepsie oder bei Komapatienten eingesetzt. Zudem findet sie in Schlaflabors Anwendung, um verschiedene Schlafphasen zu erfassen. Der Zusammenhang von Schlaf und Hirnaktivität kann auch bei der \acl{ME} in Fahrzeugen genutzt werden, um \acl{bspw} ein drohenden Sekundenschlaf zu erkennen \cite{Santamaria_eeg}.\\
 
-Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivität des Herzmuskels dar. So lassen sich vielfältige Aussagen über den Zustand des Herzens machen. Weiterhin können Herzrythmus und -frequenz Hinweise auf eine einfallende Müdigkeit des Fahrers geben. 
+Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivität des Herzmuskels dar. So lassen sich vielfältige Aussagen über den Zustand des Herzens machen. Weiterhin können Herzrythmus und -frequenz Hinweise auf eine einfallende Müdigkeit des Fahrers geben. \\
+
+Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulografie (EOG). Hierbei kann die Bewegung der Augen bzw. das Ruhepotential der Netzthaut gemessen werden. Dazu werden Elektroden entweder rechts und links oder oben und unter dem Auge angebracht.
 
 
 \subsection{Simulationsumgebung}
@@ -101,14 +103,14 @@ Dabei soll nicht nur während Micro- oder Sekundenschlaf, sondern schon früher 
 
 \textbf{Überblick und Klassifizierung} \\
 Die Erkennung von Müdigkeit kann auf ganz verschiedene Arten gelöst werden. Ein Ansatz versucht über Körpersignale herauszufinden, ob eine Müdigkeit bevorsteht. Wohingegen mit der Analyse des Fahrverhaltens das Selbe mit Sensoren an und im Auto realisiert wird.
-Bei der Erkennung über Körpersignale, können wiederum Körpersensoren oder  Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.
+Bei der Erkennung über Körpersignale, können wiederum Körpersensoren oder Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.
 
 Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-Algorithmen. Die gesammelten Daten geben nur Hinweise und sind kein Garant für eine Erkennung von Müdigkeit. \acl{MESs} wandeln hier auf einem schmalen Grad, da es zum einen um die Verhinderung schwerer Unfälle geht, zum anderen aber ein falsch auslösendes System die Akzeptanz vermindert und im schlimmsten Fall zu einer Deaktivierung führt. Um falsche Erkennungen weiter zu minimieren, werden oftmals mehrere Ansätze kombiniert.
 
 In der Praxis setzen Automobilhersteller wie Daimler \cite{Daimler} und Volkswagen, sowie Automobilzulieferer wie Bosch \cite{Bosch} auf die Analyse des Fahrverhaltens. Insbesondere Spurhalten und ruckartiges Gegenlenken scheinen ein signifikantes Indiz für beginnende Übermüdung zu sein. Weiterhin sind externe Geräte und einige Apps für Smartphones erhältlich. \\
 
 \textbf{Stand der Technik} \\
-Wie bereits erwähnt, existieren verschiedene Vorgehen, für die \acl{ME} im Fahrzeug. Ansätze mit Körpersensoren liefern gute Ergebnisse, müssen jedoch am Körper angebracht werden, was zu einer Beeinträchtigung führen kann.\\
+Wie bereits erwähnt, existieren verschiedene Vorgehen, für die \acl{ME} im Fahrzeug. Ansätze mit Körpersensoren liefern gute Ergebnisse, müssen jedoch am Körper angebracht werden, was zu einer Beeinträchtigung führen kann. Im folgenden werden verschiedene Forschungsergebnisse vorgestellt und bewertet, eine weitere Übersicht findet sich auch in \cite{Sahayadhas_121216937}.\\
 
 Bundele and Banerjee \citep{Bundele:2009:DFV:1806338.1806478} zeigten, dass Müdigkeit über die elektrodermale Hautreaktion und Pulsoxymetrie erkannt werden kann. Die elektrodermale Hautreaktion (galvanische Hautreaktion, GSR) misst hierbei die Hautleitfähigkeit und hängt mit der Schweißproduktion zusammen. Bei der Pulsoxymetrie kann, durch ein optische Verfahren, die Sauerstoffsättigung des Blutes gemessen werden. In diesem Fall bedeutet eine geringere Sättigung ein erhöhtes Müdigkeitsgefühl. Diese Werte werden durch Körpersensoren ermittelt und werden mit einem Multi Layer Perceptron (MLP) klassifiziert. Interessant ist zudem der Einsatz von sogenannten Smart-Clothes (E-textiles), welche die Sensoren in der Kleidung eingearbeitet haben und somit zu ein Non-Inversiven Ansatz führen.\\
 
@@ -118,7 +120,7 @@ Neben den Ansätzen mit Körpersensoren, existieren weitere Ansätze die mit Hil
 
 Mit der CarSafe App entwickleten You et al. \cite{You:2013:CAA:2462456.2465428} ein visuelles System zur Überwachung des Fahrers und der Straße. Hierfür genügt ein aktuelles Smartphone. Die App deckt hierbei neben der \acl{ME} auch andere Gefahrensituation (\acl{bspw} zu dicht Auffahren) ab. Es werden eine Analyse des Fahrers (Kopfpose und Augenstatus), sowie der Fahrweise kombiniert und der Fahrer gewarnt. Kamerabasierte Systeme sind angenehm für den Fahrer, da er keine weitere Hardware (Sensoren) installieren muss. Jedoch ist eine Kamera optischen Grenzen unterworfen, was den Einsatz bei Nacht oder schlechtem Wetter erschwert. Für eine \acl{ME} mit Smartphone, aber ohne Kameraeinsatz, könnte \acl{bspw} die App V-Sense \cite{Chen:2015:ISV:2742647.2742659} genutzt werden, da sie lediglich  eingebaute Sensoren nutzt.
 
-TODO EEG\\
+\subsection{Ansätze mit EEG und EKG}
 Subasi \cite{Subasi:2005:ARA:1707423.1707550}\\
 Wilson \cite{wilson_890161}\\
 Khalifa \cite{khalifa_893852}\\
@@ -128,12 +130,15 @@ Johnson et. al \cite{Johnson11} nutzen EEG.\\
 Lin et al. \cite{Lin05eeg-baseddrowsiness}
 Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker-Fusion Test \\
 
-TODO ECG\\
+EKG
 Zhang \cite{zhang_6513058}
 
 
 \section{Evaluation einer \acl{ME} im Simulationsumfeld}
 \label{chap:eval}
+
+Tests mit übermüdeten Fahrern im Straßenverkehr lassen sich aus naheliegenden Gründen nicht durchführen. Die Fremd- und Selbstgefährdung ist deutlich zu hoch, auch wenn sich so die realistischsten Ergebnisse erzielen lassen. Auch die Durchführung in einem echten Fahrzeug und einem abgegrenzten Testgelände, würden zumindest ein Risiko für den Fahrer bedeuten.
+Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können.
 
 \begin{itemize}
   \item Unterschiede / Einschränkungen echtes Fahrzeug / Simulator
