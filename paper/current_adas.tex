@@ -32,7 +32,7 @@
 \maketitle
 \sloppypar{
 \begin{abstract}
-Mit Fortschreiten der Technik verbreiten sich \acl{FAS}en immer weiter - auch die \acl{ME} ist ein solches System. In einem kurzen Überblick, werden verschiedene Funktionsweisen und Ansätze von Systemen zur \acl{ME} vorgestellt. Die  Erkennung mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der Reutlingen University evaluiert.
+Mit Fortschreiten der Technik verbreiten sich \acl{FAS}en immer weiter - auch die \acl{ME} ist ein solches System. In einem kurzen Überblick, werden verschiedene Funktionsweisen und Ansätze von Systemen zur \acl{ME} vorgestellt. Die  Erkennung mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der Reutlingen University evaluiert. Weiterhin wird die Möglichkeit einer einfachen Portieren der Anwendung vom Simulator in ein echtes Fahrzeug geprüft.
 
 \end{abstract}
 
@@ -46,15 +46,13 @@ Experimentation
 
 \section{Einleitung}
 \label{chap:intro}
-Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. So halten sie auch in Mittel- und Kleinwagen Einzug und helfen bei der Vermeidung schwerer Unfälle. Einen Überblick zur aktuellen Entwicklung bei \acl{FASs} gibt es in Abschnitt \ref{sec:fas}.
+Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. So halten sie auch in Mittel- und Kleinwagen Einzug und helfen bei der Vermeidung schwerer Unfälle. 
 
-Um ein neues System auszuprobieren, setzen Automobilhersteller, wie auch Wissenschaftler, auf Tests in einem Simulator (unter Laborbedingungen), bevor es in echte Fahrzeuge integriert werden. Eine solche Simulationsumgebung, wie sie an der Reutlingen University genutzt wird, wird in Abschnitt \ref{sec:sim} vorgestellt.
+Um ein neues System auszuprobieren, setzen Automobilhersteller, wie auch Wissenschaftler, auf Tests in einem Simulator (unter Laborbedingungen), bevor es in echte Fahrzeuge integriert werden. 
 
-In der vorgestellten Arbeit wird die \acl{ME} als Vertreter eines  \acl{FAS}s näher beleuchtet und verschieden Umsetzungsvorschläge gegenübergestellt (Kapitel \ref{chap:me}). In Kapitel \ref{chap:eval} wird ein solches System mit Körpersensoren (EEG, EKG) evaluiert und im Simulationsumfeld der Reutlingen University getestet. Eine Zusammenfassung und weitere Schritte werden in Kapitel \ref{chap:outro} beschrieben.
+In der vorgestellten Arbeit wird die \acl{ME} als Vertreter eines \acl{FAS}s näher beleuchtet und verschieden Umsetzungsvorschläge gegenübergestellt (Kapitel \ref{chap:me}). In Kapitel \ref{chap:eval} wird ein solches System mit Körpersensoren (EEG, EKG) evaluiert und im Simulationsumfeld der Reutlingen University getestet. Eine Zusammenfassung und weitere Schritte werden in Kapitel \ref{chap:outro} beschrieben.
 
-\subsection{\acl{FASs}}
-\label{sec:fas}
-
+\textbf{\acl{FASs}}\\
 - Studie zu Unfällen -
  \cite{Feld:2010:MIA:1719970.1720063}
 
@@ -73,21 +71,21 @@ Ein \acl{FAS} kann auf verschiedenste Arten mit dem Fahrer kommunizieren. Es han
 \textbf{Systeme} \\
 Jeder Automobilhersteller entwickelt mittlerweile seine eigenen \acl{FASs}. Datenerhebung (Sensoren), Berechnung und Kommunikation werden vom Fahrzeug selbst durchgeführt. Durch die Abschottung des Fahrzeugs sind Fahrzeugdaten nicht öffentlich zugänglich und können nur schwer von Außenstehenden genutzt werden. 
 
-Für wissenschaftliche Arbeiten bleibt entweder eine Kooperation mit Automobilherstellern oder das Ausweichen auf andere Devices, wie ein Smartphone und die Nutzung von Daten aus dem Internet (\acl{bspw} Kartendienste). Chen \cite{Chen:2015:ISV:2742647.2742659} und You \cite{You:2013:CAA:2462456.2465428} verfolgten diesen Ansatz. Smartphone bieten durch ihren hohen Verbreitungsgrad eine günstige Alternative zu eingebauten Systemen, können jedoch nicht auf Daten des Fahrzeugs zugreifen und müssen einfache Daten, wie \acl{bspw} Geschwindigkeit, selbst berechnen.
+Für wissenschaftliche Arbeiten bleibt entweder eine Kooperation mit Automobilherstellern oder das Ausweichen auf andere Devices, wie ein Smartphone und die Nutzung von Daten aus dem Internet (\acl{bspw} Kartendienste). Chen \cite{Chen:2015:ISV:2742647.2742659} und You \cite{You:2013:CAA:2462456.2465428} verfolgten diesen Ansatz. Smartphone bieten durch ihren hohen Verbreitungsgrad eine günstige Alternative zu eingebauten Systemen, können jedoch nicht auf Daten des Fahrzeugs zugreifen und müssen einfache Daten, wie \acl{bspw} Geschwindigkeit, selbst berechnen.\\
 
-\subsection{Körpersensoren}
-\label{sec:sens}
+
+
+\textbf{Körpersensoren}\\
 Körpersensoren messen verschiedenste Werte eines lebenden Körpers, wie den Puls, Temperatur oder Hirnwellen. Meistens werden sie direkt am oder im Körper eingesetzt.\\
 
 Bei der Elektroenzephalografie (EEG) werden Elektroden auf der Kopfhaut angebracht und damit die Aktivität des Gehirns gemessen. Sie wird in der Medizin für die Diagnose von Epilepsie oder bei Komapatienten eingesetzt. Zudem findet sie in Schlaflabors Anwendung, um verschiedene Schlafphasen zu erfassen. Der Zusammenhang von Schlaf und Hirnaktivität kann auch bei der \acl{ME} in Fahrzeugen genutzt werden, um \acl{bspw} ein drohenden Sekundenschlaf zu erkennen \cite{Santamaria_eeg}.\\
 
 Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivität des Herzmuskels dar. So lassen sich vielfältige Aussagen über den Zustand des Herzens machen. Weiterhin können Herzrythmus und -frequenz Hinweise auf eine einfallende Müdigkeit des Fahrers geben. \\
 
-Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulografie (EOG). Hierbei kann die Bewegung der Augen bzw. das Ruhepotential der Netzthaut gemessen werden. Dazu werden Elektroden entweder rechts und links oder oben und unter dem Auge angebracht.
+Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulografie (EOG). Hierbei kann die Bewegung der Augen bzw. das Ruhepotential der Netzthaut gemessen werden. Dazu werden Elektroden entweder rechts und links oder oben und unter dem Auge angebracht.\\
 
 
-\subsection{Simulationsumgebung}
-\label{sec:sim}
+\textbf{Simulationsumgebung}\\
 \begin{itemize}
   \item Aufbau des Simulators
   \item Technische Kommunikation im Fahrzeug / Simulator \cite{serial}
@@ -110,17 +108,20 @@ Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-
 In der Praxis setzen Automobilhersteller wie Daimler \cite{Daimler} und Volkswagen, sowie Automobilzulieferer wie Bosch \cite{Bosch} auf die Analyse des Fahrverhaltens. Insbesondere Spurhalten und ruckartiges Gegenlenken scheinen ein signifikantes Indiz für beginnende Übermüdung zu sein. Weiterhin sind externe Geräte und einige Apps für Smartphones erhältlich. \\
 
 \textbf{Stand der Technik} \\
-Wie bereits erwähnt, existieren verschiedene Vorgehen, für die \acl{ME} im Fahrzeug. Ansätze mit Körpersensoren liefern gute Ergebnisse, müssen jedoch am Körper angebracht werden, was zu einer Beeinträchtigung führen kann. Im folgenden werden verschiedene Forschungsergebnisse vorgestellt und bewertet, eine weitere Übersicht findet sich auch in \cite{Sahayadhas_121216937}.\\
+Wie bereits erwähnt, existieren verschiedene Vorgehen, für die \acl{ME} im Fahrzeug. Im folgenden werden verschiedene Forschungsergebnisse vorgestellt und bewertet, eine weitere Übersicht findet sich auch in \cite{Sahayadhas_121216937}.\\
+
+Es existieren einige Ansätze die mit Hilfe von Kameras den Fahrer und die Straße beobachten. Zhang et al. \cite{Zhang:2015:RSD:2753829.2629482} stellen hierzu eine Applikation mit der Verbindung eines Farb- und Tiefenbildes vor. Mit Hilfe einer Microsoft Kinect werden sowohl die Kopfpose, als auch die Augenstatus bestimmt. Um das System robuster zu gestalten, wird aus dem Farbbild,  zusätzlich zum Vorhandenen, das Tiefenbild berechnet. Mit der CarSafe App entwickleten You et al. \cite{You:2013:CAA:2462456.2465428} ein visuelles System zur Überwachung des Fahrers und der Straße. Hierfür genügt ein aktuelles Smartphone. Die App deckt hierbei neben der \acl{ME} auch andere Gefahrensituation (\acl{bspw} zu dicht Auffahren) ab. Es werden eine Analyse des Fahrers (Kopfpose und Augenstatus), sowie der Fahrweise kombiniert und der Fahrer gewarnt. Kamerabasierte Systeme sind angenehm für den Fahrer, da er keine weitere Hardware (Sensoren) installieren muss. Jedoch ist eine Kamera optischen Grenzen unterworfen, was den Einsatz bei Nacht oder schlechtem Wetter erschwert. Für eine \acl{ME} mit Smartphone, aber ohne Kameraeinsatz, könnte \acl{bspw} die App V-Sense \cite{Chen:2015:ISV:2742647.2742659} genutzt werden, da sie lediglich  eingebaute Sensoren nutzt.
 
 Bundele and Banerjee \citep{Bundele:2009:DFV:1806338.1806478} zeigten, dass Müdigkeit über die elektrodermale Hautreaktion und Pulsoxymetrie erkannt werden kann. Die elektrodermale Hautreaktion (galvanische Hautreaktion, GSR) misst hierbei die Hautleitfähigkeit und hängt mit der Schweißproduktion zusammen. Bei der Pulsoxymetrie kann, durch ein optische Verfahren, die Sauerstoffsättigung des Blutes gemessen werden. In diesem Fall bedeutet eine geringere Sättigung ein erhöhtes Müdigkeitsgefühl. Diese Werte werden durch Körpersensoren ermittelt und werden mit einem Multi Layer Perceptron (MLP) klassifiziert. Interessant ist zudem der Einsatz von sogenannten Smart-Clothes (E-textiles), welche die Sensoren in der Kleidung eingearbeitet haben und somit zu ein Non-Inversiven Ansatz führen.\\
 
 Park et al. \cite{Park:2009:DDD:1667780.1667798} beschränken sich in ihrer Arbeit auf die Analyse der Pulswelle durch Photoplethysmography (PPG), mit einem eingebauten Sensor am Lenkrad. Dies stellt schon ein größeren Eingriff in die Umgebung des Fahrzeugs dar, als es im Abschnitt zuvor der Fall war. Die Daten der PPG werden mit einer Support Vector Maschine eingeordnet. Es zeigte sich, dass die Ausschlagshöhe des Puls in gute Mittel für die Erkennung von Müdigkeit darstellt. Um die Ergebnisse zu verbessern, wurde die entwickelte Software mit einem zuvor entwickelten visuellen System zur Kopfbewegung gekoppelt. \\
 
-Neben den Ansätzen mit Körpersensoren, existieren weitere Ansätze die mit Hilfe von Kameras den Fahrer und die Straße beobachten. Zhang et al. \cite{Zhang:2015:RSD:2753829.2629482} stellen hierzu eine Applikation mit der Verbindung eines Farb- und Tiefenbildes vor. Mit Hilfe einer Microsoft Kinect werden sowohl die Kopfpose, als auch die Augenstatus bestimmt. Um das System robuster zu gestalten, wird aus dem Farbbild,  zusätzlich zum Vorhandenen, das Tiefenbild berechnet.\\
+EKG \\
+Zhang \cite{zhang_6513058}\\
+Rogado \cite{Rogado_4913155}\\
+Vicente \cite{Vicente_6164509}\\
 
-Mit der CarSafe App entwickleten You et al. \cite{You:2013:CAA:2462456.2465428} ein visuelles System zur Überwachung des Fahrers und der Straße. Hierfür genügt ein aktuelles Smartphone. Die App deckt hierbei neben der \acl{ME} auch andere Gefahrensituation (\acl{bspw} zu dicht Auffahren) ab. Es werden eine Analyse des Fahrers (Kopfpose und Augenstatus), sowie der Fahrweise kombiniert und der Fahrer gewarnt. Kamerabasierte Systeme sind angenehm für den Fahrer, da er keine weitere Hardware (Sensoren) installieren muss. Jedoch ist eine Kamera optischen Grenzen unterworfen, was den Einsatz bei Nacht oder schlechtem Wetter erschwert. Für eine \acl{ME} mit Smartphone, aber ohne Kameraeinsatz, könnte \acl{bspw} die App V-Sense \cite{Chen:2015:ISV:2742647.2742659} genutzt werden, da sie lediglich  eingebaute Sensoren nutzt.
-
-\subsection{Ansätze mit EEG und EKG}
+EEG \\
 Subasi \cite{Subasi:2005:ARA:1707423.1707550}\\
 Wilson \cite{wilson_890161}\\
 Khalifa \cite{khalifa_893852}\\
@@ -130,23 +131,42 @@ Johnson et. al \cite{Johnson11} nutzen EEG.\\
 Lin et al. \cite{Lin05eeg-baseddrowsiness}
 Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker-Fusion Test \\
 
-EKG
-Zhang \cite{zhang_6513058}
+
+\begin{itemize}
+  \item Gegenüberstellung der verschiedenen Ansätze
+  \item Wo gibt es schwächen? Welche Nische wurde noch nicht beleuchtet
+\end{itemize}
+
+\section{Vorschlag}
+\label{chap:proposal}
+\begin{itemize}
+  \item Warum noch eine Arbeit über \acl{ME}?
+  \item Warum EKG / EEG?
+\end{itemize}
 
 
-\section{Evaluation einer \acl{ME} im Simulationsumfeld}
+\section{Evaluationsplan / Versuchsaufbau}
 \label{chap:eval}
 
 Tests mit übermüdeten Fahrern im Straßenverkehr lassen sich aus naheliegenden Gründen nicht durchführen. Die Fremd- und Selbstgefährdung ist deutlich zu hoch, auch wenn sich so die realistischsten Ergebnisse erzielen lassen. Auch die Durchführung in einem echten Fahrzeug und einem abgegrenzten Testgelände, würden zumindest ein Risiko für den Fahrer bedeuten.
-Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können.
+Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können. 
+
+Dennoch sind Feldversuche ab einem gewissen Entwicklungsstand unumgänglich und sei es nur, um zu Prüfen, ob es in einer realen Testfahrt zu Fehlalarmen kommt. Darum muss die Anwendung sowohl im Simulator, als auch in einem realen Fahrzeug funktionieren und ohne großen Aufwand portiert werden können. Wenn die gelingt, kann die Anwendung sowohl in unserem Simulator, eine realen Fahrzeug oder einem anderen Simulator genutzt werden und dort etablierte Systeme zur \acl{ME} validieren.
 
 \begin{itemize}
   \item Unterschiede / Einschränkungen echtes Fahrzeug / Simulator
   \item Versuchsaufbau
-  \item Ergebnis / Evtl. Prototyp
 \end{itemize}
 
-\section{Fazit}
+
+\section{Ergebnis}
+\label{chap:result}
+\begin{itemize}
+  \item Ergebnis / Evtl. Prototyp
+  \item Portierung der Anwendung von Simulator zu echtem Auto
+\end{itemize}
+
+\section{Fazit und Ausblick}
 \label{chap:outro}
 \begin{itemize}
   \item Weitere Schritte
