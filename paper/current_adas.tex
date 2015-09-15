@@ -57,19 +57,13 @@ In der vorgestellten Arbeit wird die \acl{ME} als Vertreter eines \acl{FAS}s nä
 - Studie zu Unfällen -
  \cite{Feld:2010:MIA:1719970.1720063}
 
-\acl{FASs} bieten dem Fahrer zum einen ein Komfortplus oder erhöhen die Sicherheit beim Fahren. So führen Einparkassistent,  Geschwindigkeitsregelanlage oder Navigation zu deutlich entspannterem Fahren. Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).\\
-
-\textbf{Überblick und Klassifizierung} \\
-\acl{FASs} bieten dem Fahrer zum einen ein Komfortplus oder erhöhen die Sicherheit beim Fahren. So führen Einparkassistent, Tempomat oder Navigation zu deutlich entspannterem Fahren. 
-Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).
+\acl{FASs} bieten dem Fahrer zum einen ein Komfortplus oder erhöhen die Sicherheit beim Fahren. So führen Einparkassistent,  Geschwindigkeitsregelanlage oder Navigation zu einer deutlich entspannteren Fahrt. Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).\\
 
 Kompaß \cite{fasFuture} unterteilt \acl{FASs}, gemessen an der Reaktionszeit, in Planung, Führung und Stabilisierung. Hierbei fällt \acl{bspw} Navigation in die Planungsebene, da die Berechnung der Route mit unter mehrere Minuten brauchen kann. Auf Führungsebene werden dem Fahrer Empfehlungen und Warnungen innerhalb weniger Sekunden mitgeteilt, auf die er dann reagieren kann. Greift das System selbständig in den Fahrprozess ein, muss dies meist innerhalb von Millisekunden geschehen und dient oftmals zur Stabilisierungen, wie \acl{bspw} bei einem Fahrdynamik-Regelsystem.\\
 
-\textbf{Rückmeldung} \\
 Ein \acl{FAS} kann auf verschiedenste Arten mit dem Fahrer kommunizieren. Es handelt sich um eine klassische HCI-Schnittstelle. Am gebräuchlichsten, auch für sonstige Warnungen, sind schon seit längerem Optische und Akustische Signale. Aber auch Vibrationen in Lenkrad und Sitz zeigen gute Ergebnisse, wenn zwischen Signal und Nachricht ein Zusammenhang besteht (Bspw. Vibriert das Lenkrad bei verlassen der Spur).
 \cite{Bertoldi:2010:MAD:2002368.2002370} beschreibt hierzu die verschiedenen Anwendungsgebiete und Unterschiede. \\
 
-\textbf{Systeme} \\
 Jeder Automobilhersteller entwickelt mittlerweile seine eigenen \acl{FASs}. Datenerhebung (Sensoren), Berechnung und Kommunikation werden vom Fahrzeug selbst durchgeführt. Durch die Abschottung des Fahrzeugs sind Fahrzeugdaten nicht öffentlich zugänglich und können nur schwer von Außenstehenden genutzt werden. 
 
 Für wissenschaftliche Arbeiten bleibt entweder eine Kooperation mit Automobilherstellern oder das Ausweichen auf andere Devices, wie ein Smartphone und die Nutzung von Daten aus dem Internet (\acl{bspw} Kartendienste). Chen \cite{Chen:2015:ISV:2742647.2742659} und You \cite{You:2013:CAA:2462456.2465428} verfolgten diesen Ansatz. Smartphone bieten durch ihren hohen Verbreitungsgrad eine günstige Alternative zu eingebauten Systemen, können jedoch nicht auf Daten des Fahrzeugs zugreifen und müssen einfache Daten, wie \acl{bspw} Geschwindigkeit, selbst berechnen.\\
@@ -91,7 +85,7 @@ Die Simulationsumgebung der \acl{RTU} ermöglicht es, Testfahrten unter möglich
 Sie ist ausgestattet mit einem Autositz, einem Lenkrad und Pedalen, sowie einer Gangschaltung. Weiterhin bringen drei $48^{\prime\prime}$ Monitore und ein Dolby-Surround-System einen audiovisuellen Eindruck einer Fahrsituation.
 
 Auf technischer Ebene wird das System von drei Computer mit Leben gefüllt. Auf dem Simulations-Computer läuft die vom DFKI Saarbrücken entwickelte Software OpenDS \footnote{\url{http://www.dfki.de/web/aktuelles/aktuelles/cebit2013/opends}}. Hier können mehrere Karten und Konfigurationen eingestellt und getestet werden. Alle Simulationsdaten, werden via TCP/IP an den Daten-Computer gesendet, dieser stellt die Daten über ein CAN-Interface zur Verfügung und loggt diese zusätzlich. Das CAN-Interface simuliert die Kommunikation mit dem Steuergerät eines realen Fahrzeugs. Der Anwendungs-Computer kann die CAN Daten über eine Schnittstelle empfangen und seine eigentlich Arbeit verrichten. Für Ein- und Ausgaben der Anwendung, befindet sich ein Touchscreen neben dem Lenkrad.
-\begin{figure}[h]
+\begin{figure}[h]Weiterhin 
   \begin{center}
     \includegraphics[width=6.5cm]{img/architecture}
     \label{fig:architecure}
@@ -114,7 +108,7 @@ Dabei soll nicht nur während Micro- oder Sekundenschlaf, sondern schon früher 
 
 \textbf{Überblick und Klassifizierung} \\
 Die Erkennung von Müdigkeit kann auf ganz verschiedene Arten gelöst werden. Ein Ansatz versucht über Körpersignale herauszufinden, ob eine Müdigkeit bevorsteht. Wohingegen mit der Analyse des Fahrverhaltens das Selbe mit Sensoren an und im Auto realisiert wird.
-Bei der Erkennung über Körpersignale, können wiederum Körpersensoren oder Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.
+Bei der Erkennung über Körpersignale, können wiederum Körpersensoren oder Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.Weiterhin 
 
 Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-Algorithmen. Die gesammelten Daten geben nur Hinweise und sind kein Garant für eine Erkennung von Müdigkeit. \acl{MESs} wandeln hier auf einem schmalen Grad, da es zum einen um die Verhinderung schwerer Unfälle geht, zum anderen aber ein falsch auslösendes System die Akzeptanz vermindert und im schlimmsten Fall zu einer Deaktivierung führt. Um falsche Erkennungen weiter zu minimieren, werden oftmals mehrere Ansätze kombiniert.
 
@@ -141,15 +135,25 @@ Johnson et. al \cite{Johnson11} nutzen EEG.\\
 Lin et al. \cite{Lin05eeg-baseddrowsiness}
 Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker-Fusion Test \\
 
-Die meisten Body-Sensoren liefern gute Ergebnisse, sind aber wegen ihrer invasiven Eingenschaften (Die Sensoren liegen direkt am Körper an) weniger für den Serienbetrieb geeignet. Um dieses Problem zu lösen, stellte der französische Automobilzulieferer seinen intelligenten Autositz "Active-Wellness" vor. Der Sitz ist mit passiven Sensoren ausgestattet und misst ständig den Herzrhythmus, die Atmung und weitere biometrische Daten, um bei einfallender Müdigkeit gegenzusteuern \footnote{\url{http://www.faurecia.de/node/1780}}.
+
+
+Systeme die das Fahrverhalten analysieren und daraus Rückschlüsse auf den Wachheitsgrad des Fahrers ziehen, sind in der Praxis weit verbreitet. Die Sensoren sind im Fahrzeug fest verbaut und das System kann auf das jeweilige Fahrzeug abgestimmt werden. Hier liegt schon das erste Problem, da die Systeme nicht in einem Fahrzeug einer anderen Marke einsetzbar sind. Weiterhin finden sich im Internet viele Fragen zum Grund der Pausenempfehlung. Videobasierte Systeme erfüllen ebenfalls ihren Zweck, sind aber leicht durch äußere Einflüsse, wie \acl{bspw} Licht, beeinflussbar. Auch wenn Systeme mit Infrarot Kameras diese Problem vermindern, stellt kommt es auch hier zu Problemen mit (Sonnen-)Brillenträgern, wenn die Augen nicht richtig erkannt werden können. Die meisten Body-Sensoren liefern sehr gute Ergebnisse, sind aber wegen ihrer invasiven Eingenschaften (Die Sensoren liegen direkt am Körper an) weniger für den Serienbetrieb geeignet. Um dieses Problem zu lösen, stellte der französische Automobilzulieferer seinen intelligenten Autositz "Active-Wellness" vor. Der Sitz ist mit passiven Sensoren ausgestattet und misst ständig den Herzrhythmus, die Atmung und weitere biometrische Daten, um bei einfallender Müdigkeit gegenzusteuern \footnote{\url{http://www.faurecia.de/node/1780}}. 
+Aufgrund der hohen Genauigkeit von EEG, EKG und Co. sind diese Systeme zumindest für die Validierung anderer Systeme in der Testphase nützlich. Gelingt es zudem den invasiven Charakter gering zu halten oder gar ganz zu vermeiden, sind diese Systeme das Mittel der Wahl.\\
 
 \begin{itemize}
   \item Gegenüberstellung der verschiedenen Ansätze
   \item Wo gibt es schwächen? Welche Nische wurde noch nicht beleuchtet
 \end{itemize}
 
-\section{Vorschlag}
+\section{Portables System zur \acl{ME} mit Body-Sensoren}
 \label{chap:prop}
+Tests mit übermüdeten Fahrern im Straßenverkehr lassen sich aus naheliegenden Gründen nicht durchführen. Die Fremd- und Selbstgefährdung ist deutlich zu hoch, auch wenn sich so die realistischsten Ergebnisse erzielen lassen. Auch die Durchführung in einem echten Fahrzeug und einem abgegrenzten Testgelände, würden zumindest ein Risiko für den Fahrer bedeuten.
+Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können. 
+
+Dennoch sind Feldversuche ab einem gewissen Entwicklungsstand unumgänglich und sei es nur, um zu Prüfen, ob es in einer realen Testfahrt zu Fehlalarmen kommt. Darum muss die Anwendung sowohl im Simulator, als auch in einem realen Fahrzeug funktionieren und ohne großen Aufwand portiert werden können. Wenn die gelingt, kann die Anwendung sowohl in unserem Simulator, eine realen Fahrzeug oder einem anderen Simulator genutzt werden und dort etablierte Systeme zur \acl{ME} validieren.
+
+Aufgrund der Beschriebene Vorteile von Body-Sensoren, soll das zu entwickelnde System mit Body-Sensorik arbeiten. EEG und EKG stehen in der Simulationsumgebung der \acl{RTU} zur Verfügung. Das System soll in der Lage sein, einfallende Müdigkeit zu erkennen und in angemessener Weise zu reagieren. Die Daten der Überwachung sollen mit eindeutigem Zeitstempel geloggt werden, um sie mit anderen Daten, wie Videoaufzeichnung oder anderer Systeme zu einem späteren Zeitpunkt vergleichen zu können. Das System soll portable sein, sodass es ohne großen Aufwand in einem echten Fahrzeug oder einen anderen Simulator eingesetzt werden kann.
+
 \begin{itemize}
   \item Warum noch eine Arbeit über \acl{ME}?
   \item Warum EKG / EEG?
@@ -159,10 +163,7 @@ Die meisten Body-Sensoren liefern gute Ergebnisse, sind aber wegen ihrer invasiv
 \section{Evaluationsplan / Versuchsaufbau}
 \label{chap:eval}
 
-Tests mit übermüdeten Fahrern im Straßenverkehr lassen sich aus naheliegenden Gründen nicht durchführen. Die Fremd- und Selbstgefährdung ist deutlich zu hoch, auch wenn sich so die realistischsten Ergebnisse erzielen lassen. Auch die Durchführung in einem echten Fahrzeug und einem abgegrenzten Testgelände, würden zumindest ein Risiko für den Fahrer bedeuten.
-Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können. 
 
-Dennoch sind Feldversuche ab einem gewissen Entwicklungsstand unumgänglich und sei es nur, um zu Prüfen, ob es in einer realen Testfahrt zu Fehlalarmen kommt. Darum muss die Anwendung sowohl im Simulator, als auch in einem realen Fahrzeug funktionieren und ohne großen Aufwand portiert werden können. Wenn die gelingt, kann die Anwendung sowohl in unserem Simulator, eine realen Fahrzeug oder einem anderen Simulator genutzt werden und dort etablierte Systeme zur \acl{ME} validieren.
 
 \begin{itemize}
   \item Unterschiede / Einschränkungen echtes Fahrzeug / Simulator
