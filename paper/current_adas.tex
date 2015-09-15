@@ -26,13 +26,14 @@
 \acro{ADAS}{Advanced Driver Assistance System}
 \acro{ADASs}{Advanced Driver Assistance Systems}
 \acro{bspw}{beispielsweise}
+\acro{RTU}{Reutlingen University}
 \end{acronym}
 
 
 \maketitle
 \sloppypar{
 \begin{abstract}
-Mit Fortschreiten der Technik verbreiten sich \acl{FAS}en immer weiter - auch die \acl{ME} ist ein solches System. In einem kurzen Überblick, werden verschiedene Funktionsweisen und Ansätze von Systemen zur \acl{ME} vorgestellt. Die  Erkennung mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der Reutlingen University evaluiert. Weiterhin wird die Möglichkeit einer einfachen Portieren der Anwendung vom Simulator in ein echtes Fahrzeug geprüft.
+Mit Fortschreiten der Technik verbreiten sich \acl{FAS}en immer weiter - auch die \acl{ME} ist ein solches System. In einem kurzen Überblick, werden verschiedene Funktionsweisen und Ansätze von Systemen zur \acl{ME} vorgestellt. Die  Erkennung mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der \acl{RTU} evaluiert. Weiterhin wird die Möglichkeit einer einfachen Portieren der Anwendung vom Simulator in ein echtes Fahrzeug geprüft.
 
 \end{abstract}
 
@@ -50,7 +51,7 @@ Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, we
 
 Um ein neues System auszuprobieren, setzen Automobilhersteller, wie auch Wissenschaftler, auf Tests in einem Simulator (unter Laborbedingungen), bevor es in echte Fahrzeuge integriert werden. 
 
-In der vorgestellten Arbeit wird die \acl{ME} als Vertreter eines \acl{FAS}s näher beleuchtet und verschieden Umsetzungsvorschläge gegenübergestellt (Kapitel \ref{chap:me}). In Kapitel \ref{chap:eval} wird ein solches System mit Körpersensoren (EEG, EKG) evaluiert und im Simulationsumfeld der Reutlingen University getestet. Eine Zusammenfassung und weitere Schritte werden in Kapitel \ref{chap:outro} beschrieben.
+In der vorgestellten Arbeit wird die \acl{ME} als Vertreter eines \acl{FAS}s näher beleuchtet und verschieden Umsetzungsvorschläge gegenübergestellt (Kapitel \ref{chap:me}). In Kapitel \ref{chap:prop} wird ein solches System mit Körpersensoren (EEG, EKG) vorgestellt und in Kapitel \ref{chap:eval} die Umsetzbarkeit im Simulationsumfeld der \acl{RTU} evaluiert. Das Ergebnis und  weitere Schritte werden in Kapitel \ref{chap:result} und \ref{chap:outro} beschrieben.\\
 
 \textbf{\acl{FASs}}\\
 - Studie zu Unfällen -
@@ -86,6 +87,18 @@ Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulogr
 
 
 \textbf{Simulationsumgebung}\\
+Die Simulationsumgebung der \acl{RTU} ermöglicht es, Testfahrten unter möglichst realistischen Bedingungen zu durchzuführen (Siehe Abb. \ref{fig:architecure}). 
+Sie ist ausgestattet mit einem Autositz, einem Lenkrad und Pedalen, sowie einer Gangschaltung. Weiterhin bringen drei $48^{\prime\prime}$ Monitore und ein Dolby-Surround-System einen audiovisuellen Eindruck einer Fahrsituation.
+
+Auf technischer Ebene wird das System von drei Computer mit Leben gefüllt. Auf dem Simulations-Computer läuft die vom DFKI Saarbrücken entwickelte Software OpenDS \footnote{\url{http://www.dfki.de/web/aktuelles/aktuelles/cebit2013/opends}}. Hier können mehrere Karten und Konfigurationen eingestellt und getestet werden. Alle Simulationsdaten, werden via TCP/IP an den Daten-Computer gesendet, dieser stellt die Daten über ein CAN-Interface zur Verfügung und loggt diese zusätzlich. Das CAN-Interface simuliert die Kommunikation mit dem Steuergerät eines realen Fahrzeugs. Der Anwendungs-Computer kann die CAN Daten über eine Schnittstelle empfangen und seine eigentlich Arbeit verrichten. Für Ein- und Ausgaben der Anwendung, befindet sich ein Touchscreen neben dem Lenkrad.
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=6.5cm]{img/architecture}
+    \label{fig:architecure}
+    \caption[Aufbau des Simulators]{Der Aufbau des Simulators der \acl{RTU}}
+  \end{center}
+\end{figure}
+
 \begin{itemize}
   \item Aufbau des Simulators
   \item Technische Kommunikation im Fahrzeug / Simulator \cite{serial}
@@ -114,12 +127,9 @@ Es existieren einige Ansätze die mit Hilfe von Kameras den Fahrer und die Stra�
 
 Bundele and Banerjee \citep{Bundele:2009:DFV:1806338.1806478} zeigten, dass Müdigkeit über die elektrodermale Hautreaktion und Pulsoxymetrie erkannt werden kann. Die elektrodermale Hautreaktion (galvanische Hautreaktion, GSR) misst hierbei die Hautleitfähigkeit und hängt mit der Schweißproduktion zusammen. Bei der Pulsoxymetrie kann, durch ein optische Verfahren, die Sauerstoffsättigung des Blutes gemessen werden. In diesem Fall bedeutet eine geringere Sättigung ein erhöhtes Müdigkeitsgefühl. Diese Werte werden durch Körpersensoren ermittelt und werden mit einem Multi Layer Perceptron (MLP) klassifiziert. Interessant ist zudem der Einsatz von sogenannten Smart-Clothes (E-textiles), welche die Sensoren in der Kleidung eingearbeitet haben und somit zu ein Non-Inversiven Ansatz führen.\\
 
-Park et al. \cite{Park:2009:DDD:1667780.1667798} beschränken sich in ihrer Arbeit auf die Analyse der Pulswelle durch Photoplethysmography (PPG), mit einem eingebauten Sensor am Lenkrad. Dies stellt schon ein größeren Eingriff in die Umgebung des Fahrzeugs dar, als es im Abschnitt zuvor der Fall war. Die Daten der PPG werden mit einer Support Vector Maschine eingeordnet. Es zeigte sich, dass die Ausschlagshöhe des Puls in gute Mittel für die Erkennung von Müdigkeit darstellt. Um die Ergebnisse zu verbessern, wurde die entwickelte Software mit einem zuvor entwickelten visuellen System zur Kopfbewegung gekoppelt. \\
+Park et al. \cite{Park:2009:DDD:1667780.1667798} beschränken sich in ihrer Arbeit auf die Analyse der Pulswelle durch Photoplethysmography (PPG), mit einem eingebauten Sensor am Lenkrad. Dies stellt schon ein größeren Eingriff in die Umgebung des Fahrzeugs dar, als es im Abschnitt zuvor der Fall war. Die Daten der PPG werden mit einer Support Vector Maschine (SVM) eingeordnet. Es zeigte sich, dass die Ausschlagshöhe des Puls ein gutes Mittel für die Erkennung von Müdigkeit darstellt. Um die Ergebnisse zu verbessern, wurde die entwickelte Software mit einem zuvor entwickelten visuellen System zur Kopfbewegung gekoppelt. \\
 
-EKG \\
-Zhang \cite{zhang_6513058}\\
-Rogado \cite{Rogado_4913155}\\
-Vicente \cite{Vicente_6164509}\\
+Zhang et al. \cite{zhang_6513058} befassten sich ebenfalls mit der Überwachung von Herzfunktionen, jedoch mit Hilfe eines EKGs. Sie fanden heraus, dass die Wavelet Packet Energie in bestimmten Frequenzbereichen auf eine Veränderung des QRS hinweist, welcher wiederum als Indiz für einfallende Müdigkeit genutzt werden kann. Dies erhöht nach ihren Angaben die Geschwindigkeit und die Genauigkeit der Erkennung. In Verbindung mit der Wavelet Entropie kann eine trainierte SVM nahezu 100\% erreichen. Rogado et al. \cite{Rogado_4913155} nutzen ebenfalls Daten aus dem EKG, um daraus die Herzfrequenzvariabilität (HFR, english HRV) zu berechnen und drohendes Einschlafen zu erkennen. Ähnliches Verhalten untersuchten Vicente et al. \cite{Vicente_6164509} \textbf{TODO}.  
 
 EEG \\
 Subasi \cite{Subasi:2005:ARA:1707423.1707550}\\
@@ -131,6 +141,7 @@ Johnson et. al \cite{Johnson11} nutzen EEG.\\
 Lin et al. \cite{Lin05eeg-baseddrowsiness}
 Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker-Fusion Test \\
 
+Die meisten Body-Sensoren liefern gute Ergebnisse, sind aber wegen ihrer invasiven Eingenschaften (Die Sensoren liegen direkt am Körper an) weniger für den Serienbetrieb geeignet. Um dieses Problem zu lösen, stellte der französische Automobilzulieferer seinen intelligenten Autositz "Active-Wellness" vor. Der Sitz ist mit passiven Sensoren ausgestattet und misst ständig den Herzrhythmus, die Atmung und weitere biometrische Daten, um bei einfallender Müdigkeit gegenzusteuern \footnote{\url{http://www.faurecia.de/node/1780}}.
 
 \begin{itemize}
   \item Gegenüberstellung der verschiedenen Ansätze
@@ -138,7 +149,7 @@ Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker
 \end{itemize}
 
 \section{Vorschlag}
-\label{chap:proposal}
+\label{chap:prop}
 \begin{itemize}
   \item Warum noch eine Arbeit über \acl{ME}?
   \item Warum EKG / EEG?
