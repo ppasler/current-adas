@@ -33,7 +33,7 @@
 \maketitle
 \sloppypar{
 \begin{abstract}
-Mit Fortschreiten der Technik verbreiten sich \acl{FAS}en immer weiter - auch die \acl{ME} ist ein solches System. In einem kurzen Überblick, werden verschiedene Funktionsweisen und Ansätze von Systemen zur \acl{ME} vorgestellt. Die  Erkennung mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der \acl{RTU} evaluiert. Weiterhin wird die Möglichkeit einer einfachen Portieren der Anwendung vom Simulator in ein echtes Fahrzeug geprüft.
+Mit Fortschreiten der Technik verbreiten sich \acl{FAS}en immer weiter - auch die \acl{ME} ist ein solches System. In einem kurzen Überblick, werden verschiedene Funktionsweisen und Ansätze von Systemen zur \acl{ME} vorgestellt. Die  Erkennung mit Body-Sensorik wird auf seine Umsetzbarkeit im Simulationsumfeld der \acl{RTU} evaluiert. Weiterhin wird die Möglichkeit einer einfachen Portieren der Anwendung vom Simulator in ein echtes Fahrzeug geprüft. Das vorgestellte System, soll somit ein gefordertes Maß an Genauigkeit, Tragekomfort und Mobilität vereinen.
 
 \end{abstract}
 
@@ -53,11 +53,11 @@ Um ein neues System auszuprobieren, setzen Automobilhersteller, wie auch Wissens
 
 In der vorgestellten Arbeit wird die \acl{ME} als Vertreter eines \acl{FAS}s näher beleuchtet und verschieden Umsetzungsvorschläge gegenübergestellt (Kapitel \ref{chap:me}). In Kapitel \ref{chap:prop} wird ein solches System mit Körpersensoren (EEG, EKG) vorgestellt und in Kapitel \ref{chap:eval} die Umsetzbarkeit im Simulationsumfeld der \acl{RTU} evaluiert. Das Ergebnis und  weitere Schritte werden in Kapitel \ref{chap:result} und \ref{chap:outro} beschrieben.\\
 
-\textbf{\acl{FASs}}\\
+\subsection{\acl{FASs}}
 - Studie zu Unfällen -
  \cite{Feld:2010:MIA:1719970.1720063}
 
-\acl{FASs} bieten dem Fahrer zum einen ein Komfortplus oder erhöhen die Sicherheit beim Fahren. So führen Einparkassistent,  Geschwindigkeitsregelanlage oder Navigation zu einer deutlich entspannteren Fahrt. Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).\\
+\acl{FASs} erhöhen dem Fahrer zum einen den Komfort und / oder die Sicherheit beim Fahren. So führen Einparkassistent,  Geschwindigkeitsregelanlage oder Navigation zu einer deutlich entspannteren Fahrt. Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).\\
 
 Kompaß \cite{fasFuture} unterteilt \acl{FASs}, gemessen an der Reaktionszeit, in Planung, Führung und Stabilisierung. Hierbei fällt \acl{bspw} Navigation in die Planungsebene, da die Berechnung der Route mit unter mehrere Minuten brauchen kann. Auf Führungsebene werden dem Fahrer Empfehlungen und Warnungen innerhalb weniger Sekunden mitgeteilt, auf die er dann reagieren kann. Greift das System selbständig in den Fahrprozess ein, muss dies meist innerhalb von Millisekunden geschehen und dient oftmals zur Stabilisierungen, wie \acl{bspw} bei einem Fahrdynamik-Regelsystem.\\
 
@@ -70,17 +70,17 @@ Für wissenschaftliche Arbeiten bleibt entweder eine Kooperation mit Automobilhe
 
 
 
-\textbf{Körpersensoren}\\
+\subsection{Körpersensoren}
 Körpersensoren messen verschiedenste Werte eines lebenden Körpers, wie den Puls, Temperatur oder Hirnwellen. Meistens werden sie direkt am oder im Körper eingesetzt.\\
 
 Bei der Elektroenzephalografie (EEG) werden Elektroden auf der Kopfhaut angebracht und damit die Aktivität des Gehirns gemessen. Sie wird in der Medizin für die Diagnose von Epilepsie oder bei Komapatienten eingesetzt. Zudem findet sie in Schlaflabors Anwendung, um verschiedene Schlafphasen zu erfassen. Der Zusammenhang von Schlaf und Hirnaktivität kann auch bei der \acl{ME} in Fahrzeugen genutzt werden, um \acl{bspw} ein drohenden Sekundenschlaf zu erkennen \cite{Santamaria_eeg}.\\
 
-Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivität des Herzmuskels dar. So lassen sich vielfältige Aussagen über den Zustand des Herzens machen. Weiterhin können Herzrythmus und -frequenz Hinweise auf eine einfallende Müdigkeit des Fahrers geben. \\
+Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivität des Herzmuskels dar. So lassen sich vielfältige Aussagen über den Zustand des Herzens machen. Weiterhin können Herzrhythmus und -frequenz Hinweise auf eine einfallende Müdigkeit des Fahrers geben. \\
 
-Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulografie (EOG). Hierbei kann die Bewegung der Augen bzw. das Ruhepotential der Netzthaut gemessen werden. Dazu werden Elektroden entweder rechts und links oder oben und unter dem Auge angebracht.\\
+Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulografie (EOG). Hierbei kann die Bewegung der Augen bzw. das Ruhepotential der Netzhaut gemessen werden. Dazu werden Elektroden entweder rechts und links oder oben und unter dem Auge angebracht.\\
 
 
-\textbf{Simulationsumgebung}\\
+\subsection{Simulationsumgebung}
 Die Simulationsumgebung der \acl{RTU} ermöglicht es, Testfahrten unter möglichst realistischen Bedingungen zu durchzuführen (Siehe Abb. \ref{fig:architecure}). 
 Sie ist ausgestattet mit einem Autositz, einem Lenkrad und Pedalen, sowie einer Gangschaltung. Weiterhin bringen drei $48^{\prime\prime}$ Monitore und ein Dolby-Surround-System einen audiovisuellen Eindruck einer Fahrsituation.
 
@@ -92,6 +92,12 @@ Auf technischer Ebene wird das System von drei Computer mit Leben gefüllt. Auf 
     \caption[Aufbau des Simulators]{Der Aufbau des Simulators der \acl{RTU}}
   \end{center}
 \end{figure}
+
+Die vorhandenen Sensoren sind folgende:
+\begin{itemize}
+	\item EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}}
+	\item EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}}
+\end{itemize}
 
 \begin{itemize}
   \item Aufbau des Simulators
@@ -106,7 +112,7 @@ Müdigkeit senkt die Konzentrationsfähigkeit des Fahrers und kann zu einer erh�
 Die \acl{ME} versucht an Hand verschiedener Daten und Sensoren, frühzeitig zu erkennen, ob der Fahrer gerade Anzeichen einer bevorstehenden Müdigkeit zeigt und empfiehlt eine Pause.
 Dabei soll nicht nur während Micro- oder Sekundenschlaf, sondern schon früher gewarnt werden. \\
 
-\textbf{Überblick und Klassifizierung} \\
+\subsection{Überblick und Klassifizierung}
 Die Erkennung von Müdigkeit kann auf ganz verschiedene Arten gelöst werden. Ein Ansatz versucht über Körpersignale herauszufinden, ob eine Müdigkeit bevorsteht. Wohingegen mit der Analyse des Fahrverhaltens das Selbe mit Sensoren an und im Auto realisiert wird.
 Bei der Erkennung über Körpersignale, können wiederum Körpersensoren oder Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.Weiterhin 
 
@@ -114,7 +120,7 @@ Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-
 
 In der Praxis setzen Automobilhersteller wie Daimler \cite{Daimler} und Volkswagen, sowie Automobilzulieferer wie Bosch \cite{Bosch} auf die Analyse des Fahrverhaltens. Insbesondere Spurhalten und ruckartiges Gegenlenken scheinen ein signifikantes Indiz für beginnende Übermüdung zu sein. Weiterhin sind externe Geräte und einige Apps für Smartphones erhältlich. \\
 
-\textbf{Stand der Technik} \\
+\subsection{Stand der Technik}
 Wie bereits erwähnt, existieren verschiedene Vorgehen, für die \acl{ME} im Fahrzeug. Im folgenden werden verschiedene Forschungsergebnisse vorgestellt und bewertet, eine weitere Übersicht findet sich auch in \cite{Sahayadhas_121216937}.\\
 
 Es existieren einige Ansätze die mit Hilfe von Kameras den Fahrer und die Straße beobachten. Zhang et al. \cite{Zhang:2015:RSD:2753829.2629482} stellen hierzu eine Applikation mit der Verbindung eines Farb- und Tiefenbildes vor. Mit Hilfe einer Microsoft Kinect werden sowohl die Kopfpose, als auch die Augenstatus bestimmt. Um das System robuster zu gestalten, wird aus dem Farbbild,  zusätzlich zum Vorhandenen, das Tiefenbild berechnet. Mit der CarSafe App entwickleten You et al. \cite{You:2013:CAA:2462456.2465428} ein visuelles System zur Überwachung des Fahrers und der Straße. Hierfür genügt ein aktuelles Smartphone. Die App deckt hierbei neben der \acl{ME} auch andere Gefahrensituation (\acl{bspw} zu dicht Auffahren) ab. Es werden eine Analyse des Fahrers (Kopfpose und Augenstatus), sowie der Fahrweise kombiniert und der Fahrer gewarnt. Kamerabasierte Systeme sind angenehm für den Fahrer, da er keine weitere Hardware (Sensoren) installieren muss. Jedoch ist eine Kamera optischen Grenzen unterworfen, was den Einsatz bei Nacht oder schlechtem Wetter erschwert. Für eine \acl{ME} mit Smartphone, aber ohne Kameraeinsatz, könnte \acl{bspw} die App V-Sense \cite{Chen:2015:ISV:2742647.2742659} genutzt werden, da sie lediglich  eingebaute Sensoren nutzt.
@@ -136,7 +142,7 @@ Lin et al. \cite{Lin05eeg-baseddrowsiness}
 Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker-Fusion Test \\
 
 
-
+\subsection{Vergleich}
 Systeme die das Fahrverhalten analysieren und daraus Rückschlüsse auf den Wachheitsgrad des Fahrers ziehen, sind in der Praxis weit verbreitet. Die Sensoren sind im Fahrzeug fest verbaut und das System kann auf das jeweilige Fahrzeug abgestimmt werden. Hier liegt schon das erste Problem, da die Systeme nicht in einem Fahrzeug einer anderen Marke einsetzbar sind. Weiterhin finden sich im Internet viele Fragen zum Grund der Pausenempfehlung. Videobasierte Systeme erfüllen ebenfalls ihren Zweck, sind aber leicht durch äußere Einflüsse, wie \acl{bspw} Licht, beeinflussbar. Auch wenn Systeme mit Infrarot Kameras diese Problem vermindern, kommt es auch hier zu Problemen mit (Sonnen-)Brillenträgern, da die Augen nicht richtig erkannt werden können. Die meisten Body-Sensoren liefern sehr gute Ergebnisse, sind aber wegen ihrer invasiven Eingenschaften (Die Sensoren liegen direkt am Körper an) weniger für den Serienbetrieb geeignet. Um dieses Problem zu lösen, stellte der französische Automobilzulieferer seinen intelligenten Autositz "Active-Wellness" vor. Der Sitz ist mit passiven Sensoren ausgestattet und misst ständig den Herzrhythmus, die Atmung und weitere biometrische Daten, um bei einfallender Müdigkeit gegenzusteuern \footnote{\url{http://www.faurecia.de/node/1780}}. 
 Aufgrund der hohen Genauigkeit von EEG, EKG und Co. sind diese Systeme zumindest für die Validierung anderer Systeme in der Testphase nützlich. Gelingt es zudem den invasiven Charakter gering zu halten oder gar ganz zu vermeiden, sind Systeme mit Body-Sensoren das Mittel der Wahl.\\
 
@@ -201,7 +207,7 @@ Für Phase eins muss zuerst die Hardware (EKG, EEG) an den Daten-Computer angesc
 
 
 \balance
-\bibliographystyle{abbrv} % abbrv, alpha, plain, unsrt, apalike
+\bibliographystyle{unsrt} % abbrv, alpha, plain, unsrt, apalike
 \bibliography{Quellen,Zotero}
 
 
