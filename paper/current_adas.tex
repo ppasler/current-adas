@@ -2,7 +2,7 @@
 
 \graphicspath{{images/}{./}}
 
-\title{Fahrerassistenzsysteme: Müdigkeitserkennung im Simulationsumfeld \titlenote{ \scriptsize \flushleft Betreuer Hochschule:  \  \ Prof. Dr. Martinez\\ \qquad \qquad \qquad \qquad \quad \ \  Hochschule Reutlingen\\ \qquad \quad \quad \quad \qquad \qquad \ \ Natividad.Martinez@Reutlingen-\\ \qquad \qquad \qquad \qquad \quad \ \ University.de\\  Informatics Inside 2015 II\\ Wissenschaftliche Vertiefungskonferenz \\ 18. November 2015, Hochschule Reutlingen\\  \copyright 2015 Paul Pasler}}
+\title{Fahrerassistenzsysteme: Müdigkeitserkennung im Simulationsumfeld \titlenote{ \scriptsize \flushleft Betreuer Hochschule:  \  \ Prof. Dr. Martinez\\ \qquad \qquad \qquad \qquad \quad \ \  Hochschule Reutlingen\\ \qquad \quad \quad \quad \qquad \qquad \ \ Natividad.Martinez@Reutlingen-\\ \qquad \qquad \qquad \qquad \quad \ \ University.de\\  Wissenschaftliche Vertiefungskonferenz 2015\\ Wissenschaftliche Vertiefungskonferenz \\ 18. November 2015, Hochschule Reutlingen\\  \copyright 2015 Paul Pasler}}
 
 
 \numberofauthors{3}
@@ -152,7 +152,7 @@ Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. Die
 
 Dennoch sind Feldversuche ab einem gewissen Entwicklungsstand unumgänglich und sei es nur, um zu Prüfen, ob es in einer realen Testfahrt zu Fehlalarmen kommt. Darum muss die Anwendung sowohl im Simulator, als auch in einem realen Fahrzeug funktionieren und ohne großen Aufwand portiert werden können. Wenn die gelingt, kann die Anwendung sowohl in unserem Simulator, eine realen Fahrzeug oder einem anderen Simulator genutzt werden und dort etablierte Systeme zur \acl{ME} validieren.\\
 
-Aufgrund der Beschriebene Vorteile von Body-Sensoren, soll das zu entwickelnde System mit Body-Sensorik arbeiten. EEG und EKG stehen in der Simulationsumgebung der \acl{RTU} zur Verfügung. Das System soll in der Lage sein, einfallende Müdigkeit zu erkennen und in angemessener Weise zu reagieren. Die Daten der Überwachung sollen mit eindeutigem Zeitstempel geloggt werden, um sie mit anderen Daten, wie Videoaufzeichnung oder anderer Systeme zu einem späteren Zeitpunkt vergleichen zu können. Das System soll portable sein, sodass es ohne großen Aufwand in einem echten Fahrzeug oder einen anderen Simulator eingesetzt werden kann.
+Aufgrund der beschriebene Vorteile von Body-Sensoren, soll das zu entwickelnde System mit ebendiesen arbeiten. EEG und EKG stehen in der Simulationsumgebung der \acl{RTU} zur Verfügung. Das System soll in der Lage sein, einfallende Müdigkeit zu erkennen und in angemessener Weise zu reagieren. Die Daten der Überwachung sollen mit eindeutigem Zeitstempel geloggt werden, um sie mit anderen Daten, wie Videoaufzeichnung oder die anderer Systeme zu einem späteren Zeitpunkt vergleichen zu können. Das System soll portabel sein, sodass es ohne großen Aufwand in einem echten Fahrzeug oder einen anderen Simulator eingesetzt werden kann.
 
 \begin{itemize}
   \item Warum noch eine Arbeit über \acl{ME}?
@@ -166,7 +166,7 @@ Aufgrund der Beschriebene Vorteile von Body-Sensoren, soll das zu entwickelnde S
 Das zu entwickelnde System wird in mehreren Schritten implementiert. In der ersten Phase werden die Body-Sensoren in die Simulationsumgebung der \acl{RTU} integriert und erste Tests am Simulator durchgeführt. In der zweiten Phase soll das getestete System in einem Feldversuch in ein echtes Fahrzeug integriert werden.\\
 
 Zuallererst benötigt man ein Szenario, um Daten mit einfallender Müdigkeit zu erhalten. Es gilt beim Versuchsaufbau eine möglichst große Chance auf Sekundenschlaf bei den Probanden zu provozieren. Horne und Reyner legten nahe, dass die meisten Unfälle im Zusammenhang mit Schlaf in Großbritannien zwischen 02:00 - 06:00 und 14:00 - 16:00 passierten \cite{Horne_1757738}. Weiterhin lässt sich beobachten, dass Personen die 24 Stunden gar nicht oder nicht ausreichend (< 6h) geschlafen haben, deutlich anfälliger für Sekundenschlaf sind \cite{Peters_1}. 
-Ein weiterer Faktor ist das Testszenario selbst. Es sollte möglichst gut erkennbar machen, ob der Proband gerade Fahrfehler macht oder nicht. Weiterhin kann auch eine "`langweilige Teststrecke"' eine schnellere Ermüdung begünstigen. Langes geradeaus fahren und wenig Abwechslung sind zwar langweilig, aber nicht sehr anstrengend, darum sollte es eine Aufgabe sein, die den Probanden über die ganze Zeit fordert. Auch die Länge der Fahrt spielt eine Rolle, je länger die Fahraufgabe dauert, desto größer die Chance auf das Eintreten einer einfallenden Müdigkeit.
+Ein weiterer Faktor ist das Testszenario selbst. Es sollte möglichst gut erkennbar machen, ob der Proband gerade Fahrfehler macht und diese mit seinem Wachheitsgrad zusammenhängen. Weiterhin kann auch eine "`langweilige Teststrecke"' eine schnellere Ermüdung begünstigen. Langes geradeaus fahren und wenig Abwechslung sind zwar langweilig, aber nicht sehr anstrengend, darum sollte es eine Aufgabe sein, die den Probanden über die ganze Zeit fordert. Auch die Länge der Fahrt spielt eine Rolle, je länger die Fahraufgabe dauert, desto größer die Chance auf das Eintreten einer einfallenden Müdigkeit.
 
 Für Phase eins muss zuerst die Hardware (EKG, EEG) an den Daten-Computer angeschlossen werden. 
 
