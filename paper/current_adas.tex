@@ -27,6 +27,8 @@
 \acro{ADASs}{Advanced Driver Assistance Systems}
 \acro{bspw}{beispielsweise}
 \acro{RTU}{Reutlingen University}
+\acro{BS}{Body-Sensoren}
+
 \end{acronym}
 
 
@@ -47,11 +49,11 @@ Experimentation
 
 \section{Einleitung}
 \label{chap:intro}
-Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. So halten sie auch in Mittel- und Kleinwagen Einzug und helfen bei der Vermeidung schwerer Unfälle. Die \acl{ME} unterstützt dem Fahrer und rät ihm zu gegebenen Anlass eine Pause einzulegen. Hierbei zeigt die Erkennung mit Körpersensoren (EEG, EKG) sehr gute Ergebnisse. Der Tragekomfort macht diese Systeme aber für die Praxis meist ungeeignet. \\
+Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. So halten sie auch in Mittel- und Kleinwagen Einzug und helfen bei der Vermeidung schwerer Unfälle. Die \acl{ME} unterstützt dem Fahrer und rät ihm zu gegebenen Anlass eine Pause einzulegen. Hierbei zeigt die Erkennung mit \acl{BS} (EEG, EKG) sehr gute Ergebnisse. Der Tragekomfort macht diese Systeme aber für die Praxis meist ungeeignet. \\
 
 Ziel der Arbeit ist es, ein Konzept zu entwickeln, dass das Problem der invasiven Sensoren weitestgehend eliminiert und den Fahrer wenig bis gar nicht beeinträchtigen. Dies soll im Simulationsumfeld der \acl{RTU} getestet werden und später in einem echten Fahrzeug validiert werden. Weiterhin soll das System in der Lage sein mit anderen Systemen gekoppelt zu werden, um die Ergebnisse zu verbessern.\\ 
 
-Die Ausarbeitung gliedert sich folgendermaßen. Im Kapitel \ref{chap:me} werden verschiedene  Umsetzungsvorschläge zur \acl{ME} aufgezeigt und verglichen. Das Konzept eines portablen Systems zur \acl{ME} mit Körpersensoren wird im Kapitel \ref{chap:prop} vorgestellt. Der Versuchsaufbau und das Testszenario im Simulationsumfeld der \acl{RTU} ist Thema von Kapitel \ref{chap:eval}. Das Ergebnis und weitere Schritte werden in Kapitel \ref{chap:result} und \ref{chap:outro} beschrieben.\\
+Die Ausarbeitung gliedert sich folgendermaßen. Im Kapitel \ref{chap:me} werden verschiedene  Umsetzungsvorschläge zur \acl{ME} aufgezeigt und verglichen. Das Konzept eines portablen Systems zur \acl{ME} mit \acl{BS} wird im Kapitel \ref{chap:prop} vorgestellt. Der Versuchsaufbau und das Testszenario im Simulationsumfeld der \acl{RTU} ist Thema von Kapitel \ref{chap:eval}. Das Ergebnis und weitere Schritte werden in Kapitel \ref{chap:result} und \ref{chap:outro} beschrieben.\\
 
 \subsection{\acl{FASs}}
 - Studie zu Unfällen -
@@ -70,14 +72,16 @@ Für wissenschaftliche Arbeiten bleibt entweder eine Kooperation mit Automobilhe
 
 
 
-\subsection{Körpersensoren}
-Körpersensoren messen verschiedenste Werte eines lebenden Körpers, wie den Puls, Temperatur oder Hirnwellen. Meistens werden sie direkt am oder im Körper eingesetzt.\\
+\subsection{\acl{BS}}
+\acl{BS} messen verschiedenste Werte eines lebenden Körpers, wie den Puls, Temperatur oder Hirnwellen. Meistens werden sie direkt am oder im Körper eingesetzt.\\
 
-Bei der Elektroenzephalografie (EEG) werden Elektroden auf der Kopfhaut angebracht und damit die Aktivität des Gehirns gemessen. Sie wird in der Medizin für die Diagnose von Epilepsie oder bei Komapatienten eingesetzt. Zudem findet sie in Schlaflabors Anwendung, um verschiedene Schlafphasen zu erfassen. Der Zusammenhang von Schlaf und Hirnaktivität kann auch bei der \acl{ME} in Fahrzeugen genutzt werden, um \acl{bspw} ein drohenden Sekundenschlaf zu erkennen \cite{Santamaria_eeg}.\\
+Bei der Elektroenzephalografie (EEG) werden Elektroden auf der Kopfhaut angebracht und damit die Aktivität des Gehirns gemessen. Sie wird in der Medizin für die Diagnose von Epilepsie oder bei Komapatienten eingesetzt. Zudem findet sie in Schlaflabors Anwendung, um verschiedene Schlafphasen zu erfassen. Der Zusammenhang von Schlaf und Hirnaktivität kann auch bei der \acl{ME} in Fahrzeugen genutzt werden, um \acl{bspw} ein drohenden Sekundenschlaf zu erkennen \cite{Santamaria_eeg}. \\
 
-Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivität des Herzmuskels dar. So lassen sich vielfältige Aussagen über den Zustand des Herzens machen. Weiterhin können Herzrhythmus und -frequenz Hinweise auf eine einfallende Müdigkeit des Fahrers geben. Für die Messung des EKG Signals existieren mehrere Methoden, im medizinischen Bereich werden Elektroden an verschiedenen Körperstellen geklebt. Weiterhin werden, vor allem im Sport, Sensoren mit Gummibändern an Brust oder Handgelenk befestigt.\\
+Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivität des Herzmuskels dar. So lassen sich vielfältige Aussagen über den Zustand des Herzens machen. Weiterhin können Herzrhythmus und -frequenz Hinweise auf eine einfallende Müdigkeit des Fahrers geben. Für die Messung des EKG Signals existieren mehrere Methoden, im medizinischen Bereich werden Elektroden an verschiedenen Körperstellen geklebt. Weiterhin werden, vor allem im Sport, Sensoren mit Gummibändern an Brust oder Handgelenk befestigt. \\
 
 Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulografie (EOG). Hierbei kann die Bewegung der Augen bzw. das Ruhepotential der Netzhaut gemessen werden. Dazu werden Elektroden entweder rechts und links oder oben und unter dem Auge angebracht.\\
+
+Für das Portable System zur Müdigkeitserkennung wird ein EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}} und ein Brustband EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}} eingesetzt.
 
 
 \subsection{Simulationsumgebung}
@@ -94,17 +98,6 @@ Auf technischer Ebene wird das System von drei Computer mit Leben gefüllt. Auf 
   \end{center}
 \end{figure}
 
-Die vorhandenen Sensoren sind folgende:
-\begin{itemize}
-	\item EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}}
-	\item EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}}
-\end{itemize}
-
-\begin{itemize}
-  \item Aufbau des Simulators
-  \item Technische Kommunikation im Fahrzeug / Simulator \cite{serial}
-\end{itemize}
-
 
 
 \section{Systeme zur \acl{ME}}
@@ -114,7 +107,7 @@ Die \acl{ME} versucht an Hand verschiedener Daten und Sensoren, frühzeitig zu e
 
 \subsection{Überblick und Klassifizierung}
 Die Erkennung von Müdigkeit kann auf ganz verschiedene Arten gelöst werden. Ein Ansatz versucht über Körpersignale herauszufinden, ob eine Müdigkeit bevorsteht. Wohingegen mit der Analyse des Fahrverhaltens das Selbe mit Sensoren an und im Auto realisiert wird.
-Bei der Erkennung über Körpersignale, können wiederum Körpersensoren oder Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.Weiterhin 
+Bei der Erkennung über Körpersignale, können wiederum \acl{BS} oder Computer-Vision-Techniken zur Überwachung des Fahrers genutzt werden. Zu unterscheiden ist weiterhin die physische und psychische Müdigkeit, welche sich jedoch beide negativ auf die Fähigkeiten des Fahrers auswirken. Alle Verfahren, die auf Senoren am Körper, die extra angezogen werden (bspw. ein Pulsmesser am Ohr, EEG) werden als inversive Verfahren bezeichnet.Weiterhin 
 
 Allen System gemein ist die Nutzung von Klassifizierungs- bzw. Machine-Learning-Algorithmen. Die gesammelten Daten geben nur Hinweise und sind kein Garant für eine Erkennung von Müdigkeit. \acl{MESs} wandeln hier auf einem schmalen Grad, da es zum einen um die Verhinderung schwerer Unfälle geht, zum anderen aber ein falsch auslösendes System die Akzeptanz vermindert und im schlimmsten Fall zu einer Deaktivierung führt. Um falsche Erkennungen weiter zu minimieren, werden oftmals mehrere Ansätze kombiniert.
 
@@ -125,7 +118,7 @@ Wie bereits erwähnt, existieren verschiedene Vorgehen, für die \acl{ME} im Fah
 
 Es existieren einige Ansätze die mit Hilfe von Kameras den Fahrer und die Straße beobachten. Zhang et al. \cite{Zhang:2015:RSD:2753829.2629482} stellen hierzu eine Applikation mit der Verbindung eines Farb- und Tiefenbildes vor. Mit Hilfe einer Microsoft Kinect werden sowohl die Kopfpose, als auch die Augenstatus bestimmt. Um das System robuster zu gestalten, wird aus dem Farbbild,  zusätzlich zum Vorhandenen, das Tiefenbild berechnet. Mit der CarSafe App entwickleten You et al. \cite{You:2013:CAA:2462456.2465428} ein visuelles System zur Überwachung des Fahrers und der Straße. Hierfür genügt ein aktuelles Smartphone. Die App deckt hierbei neben der \acl{ME} auch andere Gefahrensituation (\acl{bspw} zu dicht Auffahren) ab. Es werden eine Analyse des Fahrers (Kopfpose und Augenstatus), sowie der Fahrweise kombiniert und der Fahrer gewarnt. Kamerabasierte Systeme sind angenehm für den Fahrer, da er keine weitere Hardware (Sensoren) installieren muss. Jedoch ist eine Kamera optischen Grenzen unterworfen, was den Einsatz bei Nacht oder schlechtem Wetter erschwert. Für eine \acl{ME} mit Smartphone, aber ohne Kameraeinsatz, könnte \acl{bspw} die App V-Sense \cite{Chen:2015:ISV:2742647.2742659} genutzt werden, da sie lediglich  eingebaute Sensoren nutzt.
 
-Bundele and Banerjee \citep{Bundele:2009:DFV:1806338.1806478} zeigten, dass Müdigkeit über die elektrodermale Hautreaktion und Pulsoxymetrie erkannt werden kann. Die elektrodermale Hautreaktion (galvanische Hautreaktion, GSR) misst hierbei die Hautleitfähigkeit und hängt mit der Schweißproduktion zusammen. Bei der Pulsoxymetrie kann, durch ein optische Verfahren, die Sauerstoffsättigung des Blutes gemessen werden. In diesem Fall bedeutet eine geringere Sättigung ein erhöhtes Müdigkeitsgefühl. Diese Werte werden durch Körpersensoren ermittelt und werden mit einem Multi Layer Perceptron (MLP) klassifiziert. Interessant ist zudem der Einsatz von sogenannten Smart-Clothes (E-textiles), welche die Sensoren in der Kleidung eingearbeitet haben und somit zu ein Non-Inversiven Ansatz führen.\\
+Bundele and Banerjee \citep{Bundele:2009:DFV:1806338.1806478} zeigten, dass Müdigkeit über die elektrodermale Hautreaktion und Pulsoxymetrie erkannt werden kann. Die elektrodermale Hautreaktion (galvanische Hautreaktion, GSR) misst hierbei die Hautleitfähigkeit und hängt mit der Schweißproduktion zusammen. Bei der Pulsoxymetrie kann, durch ein optische Verfahren, die Sauerstoffsättigung des Blutes gemessen werden. In diesem Fall bedeutet eine geringere Sättigung ein erhöhtes Müdigkeitsgefühl. Diese Werte werden durch \acl{BS} ermittelt und werden mit einem Multi Layer Perceptron (MLP) klassifiziert. Interessant ist zudem der Einsatz von sogenannten Smart-Clothes (E-textiles), welche die Sensoren in der Kleidung eingearbeitet haben und somit zu ein Non-Inversiven Ansatz führen.\\
 
 Park et al. \cite{Park:2009:DDD:1667780.1667798} beschränken sich in ihrer Arbeit auf die Analyse der Pulswelle durch Photoplethysmography (PPG), mit einem eingebauten Sensor am Lenkrad. Dies stellt schon ein größeren Eingriff in die Umgebung des Fahrzeugs dar, als es im Abschnitt zuvor der Fall war. Die Daten der PPG werden mit einer Support Vector Maschine (SVM) eingeordnet. Es zeigte sich, dass die Ausschlagshöhe des Puls ein gutes Mittel für die Erkennung von Müdigkeit darstellt. Um die Ergebnisse zu verbessern, wurde die entwickelte Software mit einem zuvor entwickelten visuellen System zur Kopfbewegung gekoppelt. \\
 
@@ -147,31 +140,32 @@ Systeme die das Fahrverhalten analysieren und daraus Rückschlüsse auf den Wach
 
 Videobasierte Systeme erfüllen ebenfalls ihren Zweck, sind aber leicht durch äußere Einflüsse, wie \acl{bspw} schlecht Lichtverhältnisse, beeinflussbar. Auch wenn Systeme mit Infrarotkameras diese Probleme vermindern, kann es sein, das \acl{bspw} Augen von (Sonnen-)Brillenträgern nicht richtig erkannt werden können. \\
 
-Die meisten Body-Sensoren liefern sehr gute Ergebnisse, sind aber wegen ihrer invasiven Eingenschaften (Die Sensoren liegen direkt am Körper an) weniger für den Serienbetrieb geeignet. Um dieses Problem zu lösen, stellte der französische Automobilzulieferer seinen intelligenten Autositz "Active-Wellness" vor. Der Sitz ist mit passiven Sensoren ausgestattet und misst ständig den Herzrhythmus, die Atmung und weitere biometrische Daten, um bei einfallender Müdigkeit gegenzusteuern \footnote{\url{http://www.faurecia.de/node/1780}}. Auch Pulsmesser am Handgelenk werden immer besser, sind dabei nicht größer als eine Uhr und bieten ein vertretbaren Tragekomfort. \\
+Die meisten \acl{BS} liefern sehr gute Ergebnisse, sind aber wegen ihrer invasiven Eingenschaften (Die Sensoren liegen direkt am Körper an) weniger für den Serienbetrieb geeignet. Um dieses Problem zu lösen, stellte der französische Automobilzulieferer seinen intelligenten Autositz "Active-Wellness" vor. Der Sitz ist mit passiven Sensoren ausgestattet und misst ständig den Herzrhythmus, die Atmung und weitere biometrische Daten, um bei einfallender Müdigkeit gegenzusteuern \footnote{\url{http://www.faurecia.de/node/1780}}. Auch Pulsmesser am Handgelenk werden immer besser, sind dabei nicht größer als eine Uhr und bieten ein vertretbaren Tragekomfort. \\
 
-Aufgrund der hohen Genauigkeit von EEG, EKG und Co. sind diese Systeme zur Verbesserung oder Validierung anderer Systeme in der Testphase nützlich. Gelingt es zudem den invasiven Charakter gering zu halten oder gar ganz zu vermeiden, sind Systeme mit Body-Sensoren auch für den Produktiveinsatz geeignet. Es bleibt zu zeigen, dass Genauigkeit und Tragekomfort im richtigen Verhältnis stehen. Hat sich ein System in der Simulationsumgebung bewährt, sollte das System in einem realen Fahrzeug getestet werden können.  \\
+Aufgrund der hohen Genauigkeit von EEG, EKG und Co. sind diese Systeme zur Verbesserung oder Validierung anderer Systeme in der Testphase nützlich. Gelingt es zudem den invasiven Charakter gering zu halten oder gar ganz zu vermeiden, sind Systeme mit \acl{BS} auch für den Produktiveinsatz geeignet. Es bleibt zu zeigen, dass Genauigkeit und Tragekomfort im richtigen Verhältnis stehen. Hat sich ein System in der Simulationsumgebung bewährt, sollte das System in einem realen Fahrzeug getestet werden können.  \\
 
 \begin{itemize}
   \item Gegenüberstellung der verschiedenen Ansätze
   \item Wo gibt es schwächen? Welche Nische wurde noch nicht beleuchtet
 \end{itemize}
 
-\section{Portables System zur \acl{ME} mit Body-Sensoren}
+\section{Portables System zur \acl{ME} mit \acl{BS}}
 \label{chap:prop}
 Wie im vorherigen Absatz gesehen, existieren sehr viele verschiedene Lösungen zur \acl{ME} in Fahrzeugen. Invasive Systeme beeinträchtigen den Fahrer und sind für die Praxis weniger geeignet. 
-Aufgrund der beschriebene Vorteile von Body-Sensoren, soll das zu entwickelnde System jedoch mit eben diesen arbeiten und das Problem des Tragekomforts gelöst werden.\\
+Aufgrund der beschriebene Vorteile von \acl{BS}, soll das zu entwickelnde System jedoch mit eben diesen arbeiten und das Problem des Tragekomforts gelöst werden.\\
 
 Tragekomfort / Genauigkeit\\
-EEG und EKG stehen in der Simulationsumgebung der \acl{RTU} zur Verfügung. Das System soll in der Lage sein, einfallende Müdigkeit zu erkennen und in angemessener Weise zu reagieren. Bei der Anwendung der Sensoren, soll insbesondere auf den Tragekomfort geachtet werden. Im besten Fall nimmt der Fahrer die Sensoren nicht wahr und wird durch diese nicht abgelenkt. Das EEG scheidet bei dieser Betrachtung von vorne herein aus und wird im Test nur zur Validierung genutzt. Im Bereich des EKGs existieren Lösungen mit höheren Tragekomfort. Diese liefern jedoch oftmals weniger gute Daten. Daher muss gezeigt werden, dass die Genauigkeit hoch und die Fehlerrate möglichst niedrig bleibt. 
+EEG und EKG stehen in der Simulationsumgebung der \acl{RTU} zur Verfügung. Das System soll in der Lage sein, einfallende Müdigkeit zu erkennen und in angemessener Weise zu reagieren. Bei der Anwendung der Sensoren, soll insbesondere auf den Tragekomfort geachtet werden. Im besten Fall nimmt der Fahrer die Sensoren nicht wahr und wird durch diese nicht abgelenkt. Das EEG scheidet bei dieser Betrachtung von vorne herein aus und wird im Test nur zur Verfeinerung bzw. Validierung genutzt. Im Bereich des EKGs existieren Lösungen mit höheren Tragekomfort. Diese liefern jedoch oftmals weniger gute Daten. Daher muss gezeigt werden, dass die Genauigkeit hoch und die Fehlerrate möglichst niedrig bleibt. 
 Darum schlagen wir eine Umsetzung mit einem EKG Brustband (Siehe Kapitel \ref{subsec:sim}) vor, welches bei der Entwicklung von einem EEG validiert wird. Ein Austausch des Brustbandes durch einen Pulsmesser oder eine Smartwatch ist vorstellbar.\\
 
 Portabel\\
-Tests mit übermüdeten Fahrern im Straßenverkehr lassen sich aus naheliegenden Gründen nicht durchführen. Die Fremd- und Selbstgefährdung ist deutlich zu hoch, auch wenn sich so die realistischsten Ergebnisse erzielen lassen. Auch die Durchführung in einem echten Fahrzeug und einem abgegrenzten Testgelände, würden zumindest ein Risiko für den Fahrer bedeuten.
-Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können. Dennoch sind Feldversuche ab einem gewissen Entwicklungsstand unumgänglich und sei es nur, um zu Prüfen, ob es in einer realen Testfahrt zu Fehlalarmen kommt. Darum muss die Anwendung sowohl im Simulator, als auch in einem realen Fahrzeug funktionieren und ohne großen Aufwand portiert werden können. Wenn dies gelingt, kann die Anwendung sowohl in unserem Simulator, einem realen Fahrzeug oder einem anderen Simulator genutzt werden, um dort etablierte Systeme zur \acl{ME} zu ergänzen oder zu  validieren.
+Tests mit übermüdeten Fahrern im Straßenverkehr lassen sich aus naheliegenden Gründen nicht durchführen. Die Fremd- und Selbstgefährdung ist deutlich zu hoch, auch wenn sich so die realistischsten Ergebnisse erzielen lassen. Auch die Durchführung in einem echten Fahrzeug und einem abgegrenzten Testgelände, würden zumindest ein Risiko für den Fahrer bedeuten. Darum bleibt meist nur eine Simulation, um das System zu \acl{ME} zu testen. 
+Dennoch sind Feldversuche ab einem gewissen Entwicklungsstand unumgänglich und sei es nur, um zu Prüfen, ob es in einer realen Testfahrt zu Fehlalarmen kommt. Darum muss die Anwendung sowohl im Simulator, als auch in einem realen Fahrzeug funktionieren und ohne großen Aufwand portiert werden können. Wenn dies gelingt, kann die Anwendung sowohl in unserem Simulator, einem realen Fahrzeug oder einem anderen Simulator genutzt werden, um dort etablierte Systeme zur \acl{ME} zu ergänzen oder zu  validieren.
 Das vorgestellte System muss demnach mit möglichst wenig Hardware auskommen und sich leicht auf andere Geräte portieren lassen. Im einfachsten Fall genügt ein Laptop oder Smartphone, einer Erweiterung auf einer Smartwatch ist vorstellbar.\\
 
-Um das System auch zur Verbesserung oder Validierung anderer Systeme zur \acl{ME} zu nutzen, werden öffentliche Schnittstellen definiert und ein sauberes Logging der Daten implementiert. Die Daten der Überwachung sollen mit eindeutigem Zeitstempel versehen werden, um sie mit anderen Daten, wie Videoaufzeichnung oder die anderer Systeme zu einem späteren Zeitpunkt vergleichen zu können. 
+Um das System auch zur Verbesserung oder Validierung anderer Systeme zur \acl{ME} zu nutzen, werden öffentliche Schnittstellen definiert und ein sauberes Logging der Daten implementiert. Die Daten der Überwachung sollen mit eindeutigem Zeitstempel versehen werden. So können sie mit anderen Daten, wie Videoaufzeichnung oder die anderer Systeme, zu einem späteren Zeitpunkt verglichen werden. 
 
+Erkennt das System eine drohende Müdigkeit, soll es den Fahrer über ein optisches oder akustisches Signal warnen. Das System soll mehrere Warnstufen zu kennen und je nach Müdigkeitsgrad reagieren. Ebenso wäre ein Rückmeldemechanismus vorstellbar, bei dem der Fahrer dem System einen Fehlalarm mitteilen kann. Diese Erweiterung ist jedoch mit Vorsicht zu genießen, da sich der Fahrer falsch einschätzen kann.
 
 \begin{itemize}
   \item Warum noch eine Arbeit über \acl{ME}?
@@ -179,17 +173,27 @@ Um das System auch zur Verbesserung oder Validierung anderer Systeme zur \acl{ME
 \end{itemize}
 
 
-\section{Evaluationsplan / Versuchsaufbau}
+\section{Evaluationsplan}
 \label{chap:eval}
 
-Das zu entwickelnde System wird in mehreren Schritten implementiert. In der ersten Phase werden Tests mit den zur Verfügung stehenden Body-Sensoren durchgeführt. Diese werden in die Simulationsumgebung der \acl{RTU} integriert und erste Tests am Simulator durchgeführt. In der zweiten Phase soll das getestete System in einem Feldversuch in ein echtes Fahrzeug integriert werden.\\
+Das zu entwickelnde System wird in mehreren Schritten implementiert. In der ersten Phase werden Tests mit den zur Verfügung stehenden \acl{BS} durchgeführt. Diese werden in die Simulationsumgebung der \acl{RTU} integriert und erste Tests am Simulator durchgeführt. In der zweiten Phase soll das getestete System in einem Feldversuch in ein echtes Fahrzeug integriert werden.\\
 
-\subsection{Body Sensoren}
+\subsection{Sensordaten}
 Für Phase eins muss zuerst die Hardware (EKG, EEG) an den Daten-Computer angeschlossen werden. Ist die Integration erfolgreich, werden erste Tests mit den Sensoren durchgeführt - Latenz oder Störsignale müssen beachtet werden. 
+\begin{itemize}
+	\item Tests mit EEG und EKG
+\end{itemize}
 
+\subsection{Versuchsaufbau}
+Das portable System zu \acl{ME} wird am Fahrsimulator der \acl{RTU} entwickelt und getestet.
+Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können. 
+
+\begin{itemize}
+	\item Skizze / Bild?
+\end{itemize}
 
 \subsection{Testszenario}
-Zuallererst benötigt man ein Szenario, um Daten mit einfallender Müdigkeit zu erhalten. Es gilt beim Versuchsaufbau eine möglichst große Chance auf Sekundenschlaf bei den Probanden zu provozieren. Horne und Reyner legten nahe, dass die meisten Unfälle im Zusammenhang mit Schlaf in Großbritannien zwischen 02:00 - 06:00 und 14:00 - 16:00 passierten \cite{Horne_1757738}. Weiterhin lässt sich beobachten, dass Personen die 24 Stunden gar nicht oder nicht ausreichend (< 6h) geschlafen haben, deutlich anfälliger für Sekundenschlaf sind \cite{Peters_1}. 
+Um Daten mit einfallender Müdigkeit zu erhalten, muss ein passendes Szenario im Simulator erstellt werden. Es gilt beim Versuchsaufbau eine möglichst große Chance auf Sekundenschlaf bei den Probanden zu provozieren. Horne und Reyner legten nahe, dass die meisten Unfälle im Zusammenhang mit Schlaf in Großbritannien zwischen 02:00 - 06:00 und 14:00 - 16:00 passierten \cite{Horne_1757738}. Weiterhin lässt sich beobachten, dass Personen die 24 Stunden gar nicht oder nicht ausreichend (< 6h) geschlafen haben, deutlich anfälliger für Sekundenschlaf sind \cite{Peters_1}. 
 Ein weiterer Faktor ist das Testszenario selbst. Es sollte möglichst gut erkennbar machen, ob der Proband gerade Fahrfehler macht und diese mit seinem Wachheitsgrad zusammenhängen. Weiterhin kann auch eine "`langweilige Teststrecke"' eine schnellere Ermüdung begünstigen. Langes geradeaus fahren und wenig Abwechslung sind zwar langweilig, aber nicht sehr anstrengend, darum sollte es eine Aufgabe sein, die den Probanden über die ganze Zeit fordert. Auch die Länge der Fahrt spielt eine Rolle, je länger die Fahraufgabe dauert, desto größer die Chance auf das Eintreten einer einfallenden Müdigkeit.
 
 
