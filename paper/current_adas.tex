@@ -47,19 +47,20 @@ Mit Fortschreiten der Technik, verbreiten sich \acl{FAS}en immer weiter. Besonde
 Experimentation
 }
 
-\section{Einleitung}
+\section{Einleitung - WARUM?}
 \label{chap:intro}
-Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. Mittlerweile halten sie auch in Mittel- und Kleinwagen Einzug. Sie erhöhen den Komfort und helfen bei der Vermeidung schwerer Unfälle. Die \acl{ME} unterstützt dem Fahrer und rät ihm zu gegebenen Anlass eine Pause einzulegen. Hierbei zeigt die Erkennung mit \acl{BS} (EEG, EKG) sehr gute Ergebnisse. Der geringe Tragekomfort der \acl{BS} macht diese Systeme aber für die Praxis meist ungeeignet. \\
+Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. Mittlerweile halten sie auch in Mittel- und Kleinwagen Einzug. Sie erhöhen den Komfort und helfen bei der Vermeidung schwerer Unfälle. Die \acl{ME} unterstützt dem Fahrer und rät ihm zu gegebenen Anlass eine Pause einzulegen. 
+\textbf{- Studie zu Unfällen -}\\ 
+
 
 \textbf{MEHR...}
 Ziel der Arbeit ist es, ein Konzept für ein System zur \acl{ME} mit \acl{BS} zu entwickeln. Das Problem der invasiven Sensoren soll weitestgehend eliminiert und den Fahrer wenig bis gar nicht beeinträchtigen. Das System soll im Simulationsumfeld der \acl{RTU} entwickelt und getestet werden. Die Ergebnisse sollen später leicht in ein echtes Fahrzeug portiert und validiert werden können. Weiterhin soll das System in der Lage sein mit anderen Systemen gekoppelt zu werden, um die Ergebnisse insgesamt zu verbessern. Damit hilft das vorgestellte Konzept, den Fahrer vor einer drohenden Müdigkeit zu warnen und so schwere Unfälle zu vermeiden.\\ 
 
-Die Ausarbeitung gliedert sich folgendermaßen. Im Kapitel \ref{chap:me} werden verschiedene Forschungsergebnisse zur \acl{ME} aufgezeigt und in Kapitel \ref{chap:an} verglichen. Das Konzept eines portablen Systems zur \acl{ME} mit \acl{BS} wird im Kapitel \ref{chap:prop} vorgestellt. Der Versuchsaufbau und das Testszenario im Simulationsumfeld der \acl{RTU} ist Thema von Kapitel \ref{chap:eval}. Das Ergebnis und weitere Schritte werden in Kapitel \ref{chap:result} und \ref{chap:outro} beschrieben. In den anschließenden Absätzen werden Grundlagen von für die kommenden Kapitel erläutert. \\
+Die Ausarbeitung gliedert sich folgendermaßen. Im Kapitel \ref{chap:me} werden verschiedene Forschungsergebnisse zur \acl{ME} aufgezeigt und in Kapitel \ref{chap:an} verglichen. Das Konzept eines portablen Systems zur \acl{ME} mit \acl{BS} wird im Kapitel \ref{chap:prop} vorgestellt. Der Versuchsaufbau und das Testszenario im Simulationsumfeld der \acl{RTU} ist Thema von Kapitel \ref{chap:eval}. Das Ergebnis und weitere Schritte werden in Kapitel \ref{chap:result} und \ref{chap:outro} beschrieben. In den anschließenden Absätzen werden Grundlagen für die kommenden Kapitel erläutert. \\
+
+\section{Grundlagen}
 
 \subsection{\acl{FASs}}
-- Studie zu Unfällen -
- \cite{Feld:2010:MIA:1719970.1720063}
-
 \acl{FASs} erhöhen dem Fahrer zum einen den Komfort und / oder die Sicherheit beim Fahren. So führen Einparkassistent,  Geschwindigkeitsregelanlage oder Navigation zu einer deutlich entspannteren Fahrt. Spurhalte-, Spurwechsel- oder Notbremsassistent wiederum unterstützen bei potentiell gefährlichen Manövern. Auch die \acl{ME} fällt in die zweite Kategorie (mehr dazu in Kapitel \ref{chap:me}).\\
 
 Kompaß \cite{fasFuture} unterteilt \acl{FASs}, gemessen an der Reaktionszeit, in Planung, Führung und Stabilisierung. Hierbei fällt \acl{bspw} Navigation in die Planungsebene, da die Berechnung der Route mit unter mehrere Minuten brauchen kann. Auf Führungsebene werden dem Fahrer Empfehlungen und Warnungen innerhalb weniger Sekunden mitgeteilt, auf die er dann reagieren kann. Greift das System selbständig in den Fahrprozess ein, muss dies meist innerhalb von Millisekunden geschehen und dient oftmals zur Stabilisierungen, wie \acl{bspw} bei einem Fahrdynamik-Regelsystem.\\
@@ -88,8 +89,7 @@ Das Elektrokardiogramm (EKG) misst die Herzspannungskurve und stellt die Aktivit
 
 Eine weitere Möglichkeit Körperfunktionen aufzuzeichnen ist die Elektrookulografie (EOG). Hierbei kann die Bewegung der Augen bzw. das Ruhepotential der Netzhaut gemessen werden. Dazu werden Elektroden entweder rechts und links oder oben und unter dem Auge angebracht.\\
 
-Für das Portable System zur Müdigkeitserkennung wird ein EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}} und ein Brustband EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}} eingesetzt.
-
+Grundlagen von \acl{FAS}, \acl{ME} und \acl{BS} waren Thema des vergangenen Kapitels. Für die Realisation von Systemen zur \acl{ME} existieren verschiedene Arbeiten, diese werden im nächsten Kapitel vorgestellt.
 
 \section{Stand der Technik}
 \label{chap:me}
@@ -114,6 +114,7 @@ Johnson et. al \cite{Johnson11} nutzen EEG.\\
 Lin et al. \cite{Lin05eeg-baseddrowsiness}
 Ronzhina et al. \cite{Ronzhina:2011:UEV:2093698.2093733} evaluierten den Flicker-Fusion Test \\
 
+Die Vielzahl an unterschiedlichen Arbeiten zum Thema \acl{ME} zeigt die Bandbreite der möglichen Umsetzungen. Im kommenden Kapitel werden diese Analysiert und Verglichen.
 
 \section{Vergleich / Analyse}
 \label{chap:an}
@@ -130,11 +131,12 @@ Aufgrund der hohen Genauigkeit von EEG, EKG und Co. sind diese Systeme zur Verbe
   \item Wo gibt es schwächen? Welche Nische wurde noch nicht beleuchtet
 \end{itemize}
 
-\section{Portables System zur \acl{ME} mit \acl{BS}}
+Die verschiedenen Ansätze zur \acl{ME} haben ihre Stärken und Schwächen. Arbeiten mit Körpersensoren zeigten bessere Ergebnisse als Systeme mit Kamera und Analyse des Fahrverhaltens. Im folgenden Kapitel wird dieser Ansatz daher für Entwicklung eines System zur \acl{ME} weiterverfolgt.
+
+\section{Portables System zur \acl{ME} mit \acl{BS} / Model - WAS?}
 \label{chap:prop}
 \textbf{machbarkeitsstudie, blockdiagram}
-Wie im vorherigen Absatz gesehen, existieren sehr viele verschiedene Lösungen zur \acl{ME} in Fahrzeugen. Invasive Systeme beeinträchtigen den Fahrer und sind für die Praxis weniger geeignet. 
-Aufgrund der beschriebene Vorteile von \acl{BS}, soll das zu entwickelnde System jedoch mit eben diesen arbeiten und das Problem des Tragekomforts gelöst werden.\\
+Wie im vorherigen Absatz gesehen, existieren sehr viele verschiedene Lösungen zur \acl{ME} in Fahrzeugen. Invasive Systeme beeinträchtigen den Fahrer und sind für die Praxis weniger geeignet. Aufgrund der beschriebene Vorteile von \acl{BS}, soll das zu entwickelnde System jedoch mit eben diesen arbeiten und das Problem des Tragekomforts gelöst werden.\\
 
 EEG und EKG stehen in der Simulationsumgebung der \acl{RTU} zur Verfügung. Das System soll in der Lage sein, einfallende Müdigkeit zu erkennen und in angemessener Weise zu reagieren. Bei der Anwendung der Sensoren, soll insbesondere auf den Tragekomfort geachtet werden. Im besten Fall nimmt der Fahrer die Sensoren nicht wahr und wird durch diese nicht abgelenkt. Das EEG scheidet bei dieser Betrachtung von vorne herein aus und wird im Test nur zur Verfeinerung bzw. Validierung genutzt. Im Bereich des EKGs existieren Lösungen mit höheren Tragekomfort. Diese liefern jedoch oftmals weniger gute Daten. Daher muss gezeigt werden, dass die Genauigkeit hoch und die Fehlerrate möglichst niedrig bleibt. 
 Darum schlagen wir eine Umsetzung mit einem EKG Brustband (Siehe Kapitel \ref{subsec:sim}) vor, welches bei der Entwicklung von einem EEG validiert wird. Ein Austausch des Brustbandes durch einen Pulsmesser oder eine Smartwatch ist vorstellbar.\\
@@ -152,22 +154,22 @@ Erkennt das System eine drohende Müdigkeit, soll es den Fahrer über ein optisc
   \item Warum EKG / EEG?
 \end{itemize}
 
+Die Anforderungen eines portablen Systems zur \acl{ME} mit \acl{BS} waren Thema des vergangenen Kapitels. Im folgenden wird das weitere Vorgehen, sowie Voraussetzungen zur Umsetzung beschrieben.
 
-\section{Evaluationsplan / Machbarkeit / Model}
+\section{Evaluationsplan - WIE?}
 \label{chap:eval}
-Um das zu entwickelnde System zu implementieren, müssen die notwendigen Schritte analysiert werden. Wichtige Bausteine sind die Datenaggregation der \acl{BS} und deren Anbindung in die Simulationsumgebung der \acl{RTU}. Die Datenaufbereitung und Klassifizierung sind weitere Teile Anwendung. Die Rückmeldung erkannter Müdigkeit ist der letzte Schritt. In den folgenden Absätzen werden Versuche und Voraussetzungen vorgestellt.
-
-für den Fahrer wird in mehreren Schritten implementiert. In der ersten Phase werden Tests mit den zur Verfügung stehenden \acl{BS} durchgeführt. Diese werden in die Simulationsumgebung der \acl{RTU} integriert und erste Tests am Simulator durchgeführt. In der zweiten Phase soll das getestete System in einem Feldversuch in ein echtes Fahrzeug integriert werden.\\
+Um das zu entwickelnde System zu implementieren, müssen die notwendigen Schritte analysiert werden. Wichtige Bausteine sind die Datenaggregation der \acl{BS} und deren Anbindung in die Simulationsumgebung der \acl{RTU}. Die Datenaufbereitung und Klassifizierung sind weitere Teile Anwendung. Die Rückmeldung erkannter Müdigkeit ist der letzte Schritt. Bei der Evaluation müssen die Anforderungen Genauigkeit, Tragekomfort und Portierbarkeit beachtet werden. In den folgenden Absätzen werden hierzu Versuche und Voraussetzungen vorgestellt.
 
 
 \subsection{Datenaggregation / Sensordaten}
 Die Daten der genutzten EKG- und EEG-Sensoren müssen auf ihre Tauglichkeit geprüft werden. Dies kann unabhängig von Simulationsumfeld geschehen. Latenz oder Störsignale müssen beachtet und möglichst eliminiert werden. 
+
+Für das System wird ein EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}} und ein Brustband EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}} eingesetzt. \\
 \begin{itemize}
 	\item Tests mit EEG und EKG
 \end{itemize}
 
 \subsection{Anbindung in die Simulationsumgebung}
-\label{subsec:sim}
 Die Simulationsumgebung der \acl{RTU} ermöglicht es, Testfahrten unter möglichst realistischen Bedingungen zu durchzuführen (Siehe Abb. \ref{fig:architecure}). Sie ist ausgestattet mit einem Autositz, einem Lenkrad und Pedalen, sowie einer Gangschaltung. Weiterhin bringen drei $48^{\prime\prime}$ Monitore und ein Dolby-Surround-System einen audiovisuellen Eindruck einer Fahrsituation.
 
 Auf technischer Ebene wird das System von drei Computer mit Leben gefüllt. Auf dem Simulations-Computer läuft die vom DFKI Saarbrücken entwickelte Software OpenDS \footnote{\url{http://www.dfki.de/web/aktuelles/aktuelles/cebit2013/opends}}. Hier können mehrere Karten und Konfigurationen eingestellt und getestet werden. Alle Simulationsdaten, werden via TCP/IP an den Daten-Computer gesendet. Dieser stellt die Daten über ein CAN-Interface zur Verfügung und loggt diese zusätzlich. Das CAN-Interface simuliert die Kommunikation mit dem Steuergerät eines realen Fahrzeugs. Der Anwendungs-Computer kann die CAN Daten über eine Schnittstelle empfangen und seine eigentliche Arbeit verrichten. Für Ein- und Ausgaben der Anwendung, befindet sich ein Touchscreen neben dem Lenkrad.
@@ -180,6 +182,7 @@ Auf technischer Ebene wird das System von drei Computer mit Leben gefüllt. Auf 
 \end{figure}
 
 Für die Anbindung der \acl{BS}...
+
 
 \subsection{Versuchsaufbau}
 Das portable System zu \acl{ME} wird am Fahrsimulator der \acl{RTU} entwickelt und getestet.
