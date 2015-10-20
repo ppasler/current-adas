@@ -126,6 +126,8 @@ Die Vielzahl an unterschiedlichen Arbeiten zum Thema \acl{ME} zeigt die Bandbrei
 
 \section{Vergleich / Analyse}
 \label{chap:an}
+Nach der Vorstellung der \acl{MESs} in verschiedensten Ausprägungen, werden diese nun bewertet und verglichen.\\
+
 Systeme die das Fahrverhalten analysieren und daraus Rückschlüsse auf den Wachheitsgrad des Fahrers ziehen, sind in der Praxis weit verbreitet. Die Sensoren sind im Fahrzeug fest verbaut und das System kann auf das jeweilige Fahrzeug abgestimmt werden. Hier liegt schon das erste Problem, da die Systeme nicht in einem Fahrzeug einer anderen Marke einsetzbar sind. Weiterhin finden sich im Internet viele Fragen zum Grund der Pausenempfehlung.\\
 
 Videobasierte Systeme erfüllen ebenfalls ihren Zweck, sind aber leicht durch äußere Einflüsse, wie \acl{bspw} schlecht Lichtverhältnisse, beeinflussbar. Auch wenn Systeme mit Infrarotkameras diese Probleme vermindern, kann es sein, das \acl{bspw} Augen von (Sonnen-)Brillenträgern nicht richtig erkannt werden können.\\
@@ -136,7 +138,7 @@ Aufgrund der hohen Genauigkeit von EEG, EKG und Co. sind diese Systeme zur Verbe
 
 Die verschiedenen Ansätze zur \acl{ME} haben ihre Stärken und Schwächen. Arbeiten mit Körpersensoren zeigten bessere Ergebnisse als Systeme mit Kamera und Analyse des Fahrverhaltens. Im folgenden Kapitel wird dieser Ansatz daher für Entwicklung eines System zur \acl{ME} weiterverfolgt.
 
-\section{Portables System zur \acl{ME} mit \acl{BS} / Model - WAS?}
+\section{Portables System zur \acl{ME} mit \acl{BS} - WAS?}
 \label{chap:prop}
 \textbf{machbarkeitsstudie, blockdiagram}\\
 Wie im vorherigen Absatz gesehen, existieren sehr viele verschiedene Lösungen zur \acl{ME} in Fahrzeugen. Aufgrund der beschriebene Vorteile von \acl{BS}, soll das zu entwickelnde System jedoch mit eben diesen arbeiten und das Problem des Tragekomforts gelöst werden. Das vorgeschlagene System soll Genauigkeit, Tragekomfort und Portabilität maximieren (Siehe Abb. \ref{fig:emphasis}). \\
@@ -168,17 +170,24 @@ Um das zu entwickelnde System zu implementieren, müssen die notwendigen Schritt
 
 \begin{figure}[h] 
   \begin{center}
-    \includegraphics[width=6cm]{img/block}
+    \includegraphics[width=5.5cm]{img/block}
     \caption{Der Ablauf der Datenströme und Aufgaben der Anwendung}
     \label{fig:block}
   \end{center}
 \end{figure}
 
 \subsection{Datenaggregation / Sensordaten}
-Die Daten der genutzten EKG- und EEG-Sensoren müssen auf ihre Tauglichkeit geprüft werden. Dies kann unabhängig von Simulationsumfeld geschehen. Latenz oder Störsignale müssen beachtet und möglichst eliminiert werden. \\
+Die Daten der genutzten EKG- und EEG-Sensoren müssen auf ihre Tauglichkeit geprüft werden. Dies kann unabhängig von Simulationsumfeld geschehen. Latenz oder Störsignale müssen beachtet und möglichst eliminiert werden. Ebenso muss die Aufbereitung der Signale erfolgen, sodass der Klassifizierer trainiert und getestet werden kann. Das kontinuierliche Signal muss im ersten Schritt in ein diskretes Signal umgewandelt werden. Dann können die Werte weiterverarbeitet werden, um ein aussagekräftiges Feature-Set zu erhalten.\\
 
-Für das System wird ein EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}} und ein Brustband EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}} eingesetzt. Das EEG ist in der Simulationumgebung der \acl{RTU} bereits einsatzbereit. Die Anbindung des EKG Brustbands muss noch implementiert werden.
+Für das System wird ein EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}} und ein Brustband EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}} eingesetzt (Siehe Abb. \ref{fig:sensors}). Das EEG ist in der Simulationumgebung der \acl{RTU} bereits einsatzbereit. Die Anbindung des EKG Brustbands muss noch implementiert werden.
 
+\begin{figure}[h] 
+  \begin{center}
+    \includegraphics[width=6cm]{img/sensors}
+    \caption{Links: EKG Brustband Zephyr Bioharnes; Rechts: EEG Epoc Emotiv}
+    \label{fig:sensors}
+  \end{center}
+\end{figure}
 
 \subsection{Anbindung in die Simulationsumgebung}
 \label{subsec:sim}
