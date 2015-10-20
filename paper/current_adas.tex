@@ -175,9 +175,9 @@ Um das zu entwickelnde System zu implementieren, müssen die notwendigen Schritt
 \end{figure}
 
 \subsection{Datenaggregation / Sensordaten}
-Die Daten der genutzten EKG- und EEG-Sensoren müssen auf ihre Tauglichkeit geprüft werden. Dies kann unabhängig von Simulationsumfeld geschehen. Latenz oder Störsignale müssen beachtet und möglichst eliminiert werden. 
+Die Daten der genutzten EKG- und EEG-Sensoren müssen auf ihre Tauglichkeit geprüft werden. Dies kann unabhängig von Simulationsumfeld geschehen. Latenz oder Störsignale müssen beachtet und möglichst eliminiert werden. \\
 
-Für das System wird ein EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}} und ein Brustband EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}} eingesetzt.
+Für das System wird ein EEG Epoc Emotiv \footnote{\url{https://emotiv.com/epoc.php}} und ein Brustband EKG Zephyr Bioharnes \footnote{\url{http://www.zephyranywhere.com/products/bioharness-3}} eingesetzt. Das EEG ist in der Simulationumgebung der \acl{RTU} bereits einsatzbereit. Die Anbindung des EKG Brustbands muss noch implementiert werden.
 
 
 \subsection{Anbindung in die Simulationsumgebung}
@@ -194,8 +194,8 @@ Auf technischer Ebene wird das System von drei Computer mit Leben gefüllt. Auf 
 \end{figure}
 
 \subsection{Algorithmen zur \acl{ME}}
-Wie gesehen benötigt man für die Erkennung von Müdigkeit einen Machine-Learning-Algorithmus. In den betrachteten wissenschaftlichen Arbeiten wurde zumeist auf Künstliche Neuronale Netzwerke vertraut. Diese bilden ein vereinfachtes Modell des menschlichen Gehirns nach und wurden 1943 von Warren McCulloch und Walter Pitts entwickelt \cite{ann}.
-Weiterhin werden Wavelet-Transformationen zur Vorverarbeitung der Signale verwendet, um aus dem kontinuierlichen, ein diskretes Signal zu machen.
+Wie gesehen benötigt man für die Erkennung von Müdigkeit einen Machine-Learning-Algorithmus. In den betrachteten wissenschaftlichen Arbeiten wurde häufig auf Künstliche Neuronale Netzwerke vertraut \cite{wilson_890161} - \cite{Murthy_1}. Diese bilden ein vereinfachtes Modell des menschlichen Gehirns nach und wurden 1943 von Warren McCulloch und Walter Pitts entwickelt \cite{ann}.
+Weiterhin werden Wavelet-Transformationen \cite{Chui:1992:IW:163196} zur Vorverarbeitung der Signale verwendet, um aus dem kontinuierlichen, ein diskretes Signal zu machen.
 
 \subsection{Testszenario}
 \label{sec:scene}
@@ -203,23 +203,12 @@ Das portable System zu \acl{ME} wird am Fahrsimulator der \acl{RTU} entwickelt u
 Die Simulation kann jedoch nur ein Modell der Wirklichkeit sein und liefert nur eingeschränkte Ergebnisse. So konnten Blana et al. \cite{Blana_1} zeigen, dass sich das Fahrverhalten bei höheren Geschwindigkeiten im echten Straßenverkehr und im Simulationsumfeld unterscheidet. Engstrom et al.  \cite{Engstrom_2322937} konnten ebenfalls Unterschiede feststellen, zeigten jedoch auch, das Tests im Simulator dennoch valide Ergebnisse liefern können. \\
 
 Um Daten mit einfallender Müdigkeit zu erhalten, muss ein passendes Szenario im Simulator erstellt werden. Es gilt beim Versuchsaufbau eine möglichst große Chance auf Sekundenschlaf bei den Probanden zu provozieren. Horne und Reyner legten nahe, dass die meisten Unfälle im Zusammenhang mit Schlaf in Großbritannien zwischen 02:00 - 06:00 und 14:00 - 16:00 passierten \cite{Horne_1757738}. Weiterhin lässt sich beobachten, dass Personen die 24 Stunden gar nicht oder nicht ausreichend (< 6h) geschlafen haben, deutlich anfälliger für Sekundenschlaf sind \cite{Peters_1}. 
-Ein weiterer Faktor ist das Testszenario selbst. Es sollte möglichst gut erkennbar machen, ob der Proband gerade Fahrfehler macht und diese mit seinem Wachheitsgrad zusammenhängen. Weiterhin kann auch eine "`langweilige Teststrecke"' eine schnellere Ermüdung begünstigen. Langes geradeaus fahren und wenig Abwechslung sind zwar langweilig, aber nicht sehr anstrengend, darum sollte es eine Aufgabe sein, die den Probanden über die ganze Zeit fordert. Auch die Länge der Fahrt spielt eine Rolle, je länger die Fahraufgabe dauert, desto größer die Chance auf das Eintreten einer einfallenden Müdigkeit.
+Ein weiterer Faktor ist das Testszenario selbst. Es sollte möglichst gut erkennbar machen, ob der Proband gerade Fahrfehler macht und diese mit seinem Wachheitsgrad zusammenhängen. Weiterhin kann auch eine "`langweilige Teststrecke"' eine schnellere Ermüdung begünstigen. Langes geradeaus fahren und wenig Abwechslung sind zwar langweilig, aber nicht sehr anstrengend, darum sollte es eine Aufgabe sein, die den Probanden über die ganze Zeit fordert. Auch die Länge der Fahrt spielt eine Rolle, je länger die Fahraufgabe dauert, desto größer die Chance auf das Eintreten einer einfallenden Müdigkeit. \\
 
+Vorstellbar ist somit folgender Ablauf: 1) 10min Einführung und Fahrsimulator ausprobieren. 2) 10min Straßenverkehr mit anderen Verkehrsteilnehmern unter Beachtung der Straßenverkehrsregeln. 3) 20min Gerade aus fahren und Spur halten 4) 10min Wiederholung von Schritt 2. 5) 10min Befragung und Selbsteinschätzung.
+Im besten Fall lassen sich bei der Spurhalte-Aufgabe gegen Ende mehr Fahrfehler beobachten. Weiterhin sollte der Fahrer in Schritt 4) ein Unterschied zu Schritt 2) feststellen lassen.\\
 
-\begin{itemize}
-  \item Szenario entwerfen
-  \item Hardware einrichten und verdrahten
-  \item Daten vom Sensor bis zur Anwendung
-  \item Daten aufbereiten und signifikante Features herausarbeiten
-  \item Trainingsdaten erstellen
-  \item Passenden Machine Learning Algorithmus finden und trainieren
-  \item Anwendung Testen
-\end{itemize}
-
-\begin{itemize}
-  \item Unterschiede / Einschränkungen echtes Fahrzeug / Simulator
-  \item Versuchsaufbau
-\end{itemize}
+In den vergangenen Abschnitten wurde die Vorgehensweise und weitere Schritte näher erläutert. Im kommenden Kapitel werden die Ergebnisse zusammengefasst und bewertet.
 
 
 \section{Ergebnis}
