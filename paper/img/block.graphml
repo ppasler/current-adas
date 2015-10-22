@@ -16,61 +16,28 @@
     <data key="d0"/>
     <node id="n0">
       <data key="d6">
-        <y:GenericNode configuration="BevelNode3">
-          <y:Geometry height="52.0" width="126.80000000000001" x="-84.30000000000001" y="106.0"/>
-          <y:Fill color="#008000" transparent="false"/>
-          <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="44.771484375" x="41.014257812500006" y="12.359375">EEG<y:LabelModel>
+        <y:ShapeNode>
+          <y:Geometry height="235.0" width="189.9999999999999" x="277.52847999999994" y="61.68976000000029"/>
+          <y:Fill color="#99CCFF" transparent="false"/>
+          <y:BorderStyle color="#808080" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="150.416015625" x="19.791992187499943" y="10.43680726600985">Anwendung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
-              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="-0.5" nodeRatioX="0.0" nodeRatioY="-0.4555880541871921" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
             </y:ModelParameter>
           </y:NodeLabel>
-        </y:GenericNode>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
       </data>
     </node>
     <node id="n1">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="112.31023999999968" width="172.9999999999999" x="99.0" y="185.28976000000029"/>
+          <y:Geometry height="112.31023999999968" width="189.9999999999999" x="70.02848" y="61.68976000000032"/>
           <y:Fill color="#CCFFFF" transparent="false"/>
           <y:BorderStyle color="#808080" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="109.01953125" x="31.990234374999943" y="4.987916293103439">Fahrzeug<y:LabelModel>
-              <y:SmartNodeLabelModel distance="4.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="-0.5" nodeRatioX="0.0" nodeRatioY="-0.4555880541871921" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-            </y:ModelParameter>
-          </y:NodeLabel>
-          <y:Shape type="rectangle"/>
-        </y:ShapeNode>
-      </data>
-    </node>
-    <node id="n2">
-      <data key="d6">
-        <y:ShapeNode>
-          <y:Geometry height="235.0" width="172.9999999999999" x="301.9999999999999" y="61.68976000000029"/>
-          <y:Fill color="#99CCFF" transparent="false"/>
-          <y:BorderStyle color="#808080" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="137.10546875" x="17.947265624999943" y="10.43680726600985">Anwendung<y:LabelModel>
-              <y:SmartNodeLabelModel distance="4.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="-0.5" nodeRatioX="0.0" nodeRatioY="-0.4555880541871921" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-            </y:ModelParameter>
-          </y:NodeLabel>
-          <y:Shape type="rectangle"/>
-        </y:ShapeNode>
-      </data>
-    </node>
-    <node id="n3">
-      <data key="d6">
-        <y:ShapeNode>
-          <y:Geometry height="112.31023999999968" width="172.9999999999999" x="99.0" y="61.68976000000032"/>
-          <y:Fill color="#CCFFFF" transparent="false"/>
-          <y:BorderStyle color="#808080" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="149.859375" x="11.570312499999943" y="11.66961499999968">Simulator RT<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="124.8388671875" x="32.58056640624994" y="11.66961499999968">Simulator<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -81,13 +48,29 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n4">
+    <node id="n2">
+      <data key="d6">
+        <y:GenericNode configuration="BevelNode3">
+          <y:Geometry height="52.0" width="163.152" x="-129.7236992" y="169.4"/>
+          <y:Fill color="#008000" transparent="false"/>
+          <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="49.375" x="56.88849999999999" y="11.1953125">EKG<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+        </y:GenericNode>
+      </data>
+    </node>
+    <node id="n3">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="235.0" width="172.9999999999999" x="-103.99999999999989" y="61.68976000000032"/>
-          <y:Fill color="#CCFFCC" transparent="false"/>
+          <y:Geometry height="235.0" width="189.9999999999999" x="-137.47151999999994" y="61.68976000000032"/>
+          <y:Fill color="#D2FFCC" transparent="false"/>
           <y:BorderStyle color="#808080" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="109.517578125" x="31.741210937499943" y="10.43680726600985">Sensoren<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="157.720703125" x="16.139648437499943" y="10.43680726600985">Aggregation<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -98,13 +81,13 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n5">
+    <node id="n4">
       <data key="d6">
         <y:GenericNode configuration="BevelNode3">
-          <y:Geometry height="52.0" width="126.80000000000001" x="-84.30000000000001" y="169.4"/>
+          <y:Geometry height="52.0" width="163.152" x="-129.7236992" y="106.0"/>
           <y:Fill color="#008000" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="45.25" x="40.775000000000006" y="12.359375">EKG<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="48.8486328125" x="57.15168359374999" y="11.1953125">EEG<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -114,13 +97,30 @@
         </y:GenericNode>
       </data>
     </node>
+    <node id="n5">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="112.31023999999968" width="189.9999999999999" x="70.02848" y="185.28976000000029"/>
+          <y:Fill color="#CCFFFF" transparent="false"/>
+          <y:BorderStyle color="#808080" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="119.521484375" x="35.23925781249994" y="4.987916293103439">Fahrzeug<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="-0.5" nodeRatioX="0.0" nodeRatioY="-0.4555880541871921" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
     <node id="n6">
       <data key="d6">
         <y:GenericNode configuration="BevelNode3">
-          <y:Geometry height="52.0" width="146.0" x="112.49999999999994" y="106.0"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="79.27408000000008" y="106.0"/>
           <y:Fill color="#008080" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="143.365234375" x="1.3173828125" y="12.359375">CAN-Interface
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="157.3017578125" x="7.849121093749943" y="11.1953125">CAN-Interface
 <y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
@@ -134,10 +134,10 @@
     <node id="n7">
       <data key="d6">
         <y:GenericNode configuration="BevelNode3">
-          <y:Geometry height="52.0" width="146.0" x="314.4999999999999" y="105.99999999999999"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="286.98392319999994" y="106.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="134.37109375" x="5.814453125" y="12.359375000000014">Aufbereitung<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="147.408203125" x="12.795898437499943" y="11.1953125">Aufbereitung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -150,10 +150,10 @@
     <node id="n8">
       <data key="d6">
         <y:GenericNode configuration="BevelNode3">
-          <y:Geometry height="52.0" width="146.0" x="314.4999999999999" y="167.79999999999998"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="286.98392319999994" y="167.79999999999998"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="112.14453125" x="16.927734375" y="12.359375">Erkennung<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="122.958984375" x="25.020507812499943" y="11.1953125">Erkennung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -166,10 +166,10 @@
     <node id="n9">
       <data key="d6">
         <y:GenericNode configuration="BevelNode3">
-          <y:Geometry height="52.0" width="146.0" x="314.4999999999999" y="229.59999999999997"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="286.98392319999994" y="229.59999999999997"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="141.236328125" x="2.3818359375" y="12.359375">Rückmeldung<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="154.9599609375" x="9.020019531249943" y="11.1953125">Rückmeldung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -182,10 +182,10 @@
     <node id="n10">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="30.0" x="170.49999999999994" y="240.59999999999997"/>
+          <y:Geometry height="30.0" width="30.0" x="149.52847999999994" y="248.46431999999996"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="50.5625" modelName="custom" textColor="#000000" visible="true" width="130.923828125" x="-50.4619140625" y="-10.28125">Direkte 
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="55.21875" modelName="custom" textColor="#000000" visible="true" width="143.6162109375" x="-56.80810546875" y="-12.609375000000028">Direkte 
 Übertragung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
@@ -200,10 +200,10 @@
     <node id="n11">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="52.0" width="126.80000000000001" x="-84.30000000000001" y="106.0"/>
+          <y:Geometry height="52.0" width="163.152" x="-129.7236992" y="106.0"/>
           <y:Fill color="#99CC00" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="44.771484375" x="41.014257812500006" y="12.359375">EEG<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="48.8486328125" x="57.15168359374999" y="11.1953125">EEG<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -217,10 +217,10 @@
     <node id="n12">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="52.0" width="126.80000000000001" x="-84.30000000000001" y="169.4"/>
+          <y:Geometry height="52.0" width="163.152" x="-129.7236992" y="169.4"/>
           <y:Fill color="#99CC00" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="45.25" x="40.775000000000006" y="12.359375">EKG<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="49.375" x="56.88849999999999" y="11.1953125">EKG<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -234,10 +234,10 @@
     <node id="n13">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="52.0" width="146.0" x="112.49999999999994" y="106.0"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="79.27408000000008" y="106.0"/>
           <y:Fill color="#33CCCC" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="143.365234375" x="1.3173828125" y="12.359375">CAN-Interface<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="157.3017578125" x="7.849121093749943" y="11.1953125">CAN-Interface<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -251,10 +251,10 @@
     <node id="n14">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="52.0" width="146.0" x="314.4999999999999" y="106.0"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="286.98392319999994" y="106.0"/>
           <y:Fill color="#517CFF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="134.37109375" x="5.814453125" y="12.359375">Aufbereitung<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="147.408203125" x="12.795898437499943" y="11.1953125">Aufbereitung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -268,10 +268,10 @@
     <node id="n15">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="52.0" width="146.0" x="314.4999999999999" y="167.79999999999998"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="286.98392319999994" y="167.79999999999998"/>
           <y:Fill color="#517CFF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="112.14453125" x="16.927734375" y="12.359375">Erkennung<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="122.958984375" x="25.020507812499943" y="11.1953125">Erkennung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -285,10 +285,10 @@
     <node id="n16">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="52.0" width="146.0" x="314.4999999999999" y="229.59999999999997"/>
+          <y:Geometry height="52.0" width="172.9999999999999" x="286.98392319999994" y="229.59999999999997"/>
           <y:Fill color="#517CFF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="141.236328125" x="2.3818359375" y="12.359375">Rückmeldung<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="22" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="29.609375" modelName="custom" textColor="#000000" visible="true" width="154.9599609375" x="9.020019531249943" y="11.1953125">Rückmeldung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -299,7 +299,7 @@
         </y:ShapeNode>
       </data>
     </node>
-    <edge id="e0" source="n0" target="n6">
+    <edge id="e0" source="n4" target="n6">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -311,14 +311,14 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e1" source="n5" target="n6">
+    <edge id="e1" source="n2" target="n6">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="56.438860799999986" y="195.4"/>
-            <y:Point x="56.438860799999986" y="132.0"/>
+          <y:Path sx="0.0" sy="0.0" tx="-36.592770410958714" ty="0.0">
+            <y:Point x="42.79918079999999" y="195.4"/>
+            <y:Point x="42.79918079999999" y="132.0"/>
           </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:LineStyle color="#000000" type="line" width="2.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -328,7 +328,7 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:LineStyle color="#000000" type="line" width="2.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -338,7 +338,7 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:LineStyle color="#000000" type="line" width="2.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -348,22 +348,22 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:LineStyle color="#000000" type="line" width="2.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e5" source="n0" target="n7">
+    <edge id="e5" source="n4" target="n7">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="84.95432352000068" y="132.0"/>
-            <y:Point x="84.95432352000068" y="219.87267200000036"/>
-            <y:Point x="287.3543235200007" y="219.87267200000036"/>
-            <y:Point x="287.3543235200007" y="132.0"/>
+            <y:Point x="61.744093760000666" y="132.0"/>
+            <y:Point x="61.744093760000666" y="231.66915200000037"/>
+            <y:Point x="268.34888352000075" y="231.66915200000037"/>
+            <y:Point x="268.34888352000075" y="132.0"/>
           </y:Path>
-          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
+          <y:LineStyle color="#000000" type="dashed" width="2.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>

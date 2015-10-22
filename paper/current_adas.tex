@@ -84,7 +84,7 @@ Bei der Erkennung über Körpersignale, können wiederum \acl{BS} oder Computer-
 
 \begin{figure}[h] 
   \begin{center}
-    \includegraphics[width=6cm]{img/ddd}
+    \includegraphics[width=5.5cm]{img/ddd}
     \caption{Einteilung der Systeme zur \acl{ME}}
     \label{fig:block}
   \end{center}
@@ -165,12 +165,13 @@ Die Anforderungen eines portablen Systems zur \acl{ME} mit \acl{BS} waren Thema 
 
 \section{Evaluationsplan - WIE?}
 \label{chap:eval}
-Um das zu entwickelnde System zu implementieren, müssen die notwendigen Schritte ausgearbeitet werden (Siehe Abb. \ref{fig:block}). Wichtige Bausteine sind die Datenaggregation der \acl{BS} und deren Anbindung in die Simulationsumgebung der \acl{RTU}. Die Datenaufbereitung und Klassifizierung sind weitere Teile Anwendung. Die Rückmeldung erkannter Müdigkeit ist der letzte Schritt. Bei der Evaluation müssen die Anforderungen Genauigkeit, Tragekomfort und Portierbarkeit beachtet werden. In den folgenden Absätzen werden hierzu Versuche und Voraussetzungen vorgestellt.
+Um das zu entwickelnde System zu implementieren, müssen die notwendigen Schritte ausgearbeitet werden (Siehe Abb. \ref{fig:block}). Bausteine sind zu beginn die Datenaggregation der EKG- und EEG-Sensoren. Diese Daten müssen in der  Simulationsumgebung  der \acl{RTU} bzw. später im realen Fahrzeug direkt Übertragen werden. Die Datenaufbereitung und Klassifizierung sind Aufgaben der Anwendung. Die Rückmeldung erkannter Müdigkeit wird ebenfalls von der Anwendung angestoßen. 
+Bei der Evaluation müssen die Anforderungen Genauigkeit, Tragekomfort und Portierbarkeit beachtet werden. In den folgenden Absätzen werden hierzu Versuche und Voraussetzungen vorgestellt.
 
 \begin{figure}[h] 
   \begin{center}
-    \includegraphics[width=6cm]{img/block}
-    \caption{Der Ablauf der Datenströme und Aufgaben der Anwendung}
+    \includegraphics[width=5.5cm]{img/block}
+    \caption{Der Ablauf der Datenströme und Aufgaben des Systems. Aggregation der Sensordaten, Datenübertragung im Simulator oder Fahrzeug, Verarbeitung der Daten in der Anwendung}
     \label{fig:block}
   \end{center}
 \end{figure}
