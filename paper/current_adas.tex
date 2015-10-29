@@ -120,14 +120,16 @@ Park et al. \cite{Park:2009:DDD:1667780.1667798} beschränken sich in ihrer Arbe
 
 Zhang et al. \cite{zhang_6513058} befassten sich ebenfalls mit der Überwachung von Herzfunktionen, jedoch mit Hilfe eines EKGs. Sie fanden heraus, dass die Wavelet Packet Energie in bestimmten Frequenzbereichen auf eine Veränderung des QRS-Komplexes hinweist. Dieser kann wiederum als Indiz für einfallende Müdigkeit genutzt werden. Durch diesen Schritt erhöht sich  die Geschwindigkeit und die Genauigkeit der Erkennung. In Verbindung mit der Wavelet Entropie kann eine trainierte SVM nahezu 100\% erreichen. Rogado et al. \cite{Rogado_4913155} nutzen ebenfalls Daten aus dem EKG, um daraus die Herzfrequenzvariabilität (HFR) zu berechnen und drohendes Einschlafen zu erkennen. Ähnliches Verhalten untersuchten Vicente et al. \cite{Vicente_6164509}. \\
 
-Khushaba et al. \cite{Khushaba_5580017} versuchten das EKG Signal mit dem EEG Signal zu koppeln, um die Qualität der Erkennung zu verbessern. Sie verglichen die Erfolgsrate von EKG und EEG, sowie EOG und EEG. Sie nutzen hierfür einen "`fuzzy wavelet"' basierten Algorithmus und zeigten, dass das EEG, sowie die Kombination des EEG mit EKG oder EOG gute Ergebnisse liefert. Johnson et. al \cite{Johnson11} führten Versuche mit einem EEG und EOG durch. Mit der Diskriminanzanalyse zur Klassifizierung fanden sie heraus, dass das EEG alleine ausreicht und das EOG nicht benötigt wird. Hierfür wurde zwei parallele Studien durchgeführt. Wilson et al. \cite{wilson_890161} nutzten einen ähnlichen Ansatz, betrachteten jedoch von vornherein nur das EGG und versuchten die Klassifizierung mit einem Neuronalen Netzwerk durchzuführen. Sie hielten das Neuronale Netzwerk durchaus für geeignet, konnten aber kein brauchbares Ergebnis erzielen. Zu einem vergleichbaren Ergebnis kamen Kahlifa et al. \cite{khalifa_893852}. Anders Subasi und Abdulhamit \cite{Subasi:2005:ARA:1707423.1707550}, sie konnten mit einer diskreten Wavelet-Transformation und einem Neuronalen Netz ein gutes Resultat erzielen. Sie konnten die Zustände Aufmerksam, Schläfrig (drowsy) und Schlafend mit jeweils über 90\% erkennen. Vuckovic et al. \cite{Vuckovic2002349} nutzen ebenfalls ein künstliches Neuronales Netz und machten hierzu verschiedene Versuche zum besten Algorithmus zur Erstellung des Netzes. Der Learning Vector Quantization lieferte bessere Ergebnisse, als der Widrow-Hoff Algorithmus und die Levenberg–Marquardt Regel. Im Vergleich zur Klassifizierung von EEG Experten, wurde mit ihrem System  eine über 90\% Übereinstimmung erreicht. Murthy und Khan \cite{Murthy_1} verbanden EEG Signale mit einer CV-Technik zur Augenliderkennung und nutzten hierfür ebenfalls ein Neuronales Netz. Mit Hilfe dieser multimodalen Daten, konnten ebenfalls drei Status erkannt werden: Wach, Schläfrig und Schlafend.
-Huang et al. \cite{Huang_548971} nutzten ein Hidden Markov Model für die Klassifizierung. Auch dieser Machnie Learning Algorithmus ist nach eigener Aussage geeignet, um aus einem EEG-Signal, passende Schlüsse für die \acl{ME} zu ziehen. Lin et al. \cite{Lin05eeg-baseddrowsiness} nutzten die Unabhängige Komponenten Analyse und Lineare Regression und konnten zeigen, dass hiermit eine Erkennungsrate von bis zu 88\% möglich ist.\\
+Khushaba et al. \cite{Khushaba_5580017} versuchten das EKG Signal mit dem EEG Signal zu koppeln, um die Qualität der Erkennung zu verbessern. Sie verglichen die Erfolgsrate von EKG und EEG, sowie EOG und EEG. Sie nutzen hierfür einen "`fuzzy wavelet"' basierten Algorithmus und zeigten, dass das EEG, sowie die Kombination des EEG mit EKG oder EOG gute Ergebnisse liefert. Johnson et. al \cite{Johnson11} führten Versuche mit einem EEG und EOG durch. Mit der Diskriminanzanalyse (DA) zur Klassifizierung fanden sie heraus, dass das EEG alleine ausreicht und das EOG nicht benötigt wird. Hierfür wurde zwei parallele Studien durchgeführt. Wilson et al. \cite{wilson_890161} nutzten einen ähnlichen Ansatz, betrachteten jedoch von vornherein nur das EGG und versuchten die Klassifizierung mit einem Künstlichen Neuronalen Netzwerk (KNN) durchzuführen. Sie hielten das Neuronale Netzwerk durchaus für geeignet, konnten aber kein brauchbares Ergebnis erzielen. Zu einem vergleichbaren Ergebnis kamen Kahlifa et al. \cite{khalifa_893852}. Anders Subasi und Abdulhamit \cite{Subasi:2005:ARA:1707423.1707550}, sie konnten mit einer diskreten Wavelet-Transformation und einem Neuronalen Netz ein gutes Resultat erzielen. Sie konnten die Zustände Aufmerksam, Schläfrig (drowsy) und Schlafend mit jeweils über 90\% erkennen. Vuckovic et al. \cite{Vuckovic2002349} nutzen ebenfalls ein künstliches Neuronales Netz und machten hierzu verschiedene Versuche zum besten Algorithmus zur Erstellung des Netzes. Der Learning Vector Quantization lieferte bessere Ergebnisse, als der Widrow-Hoff Algorithmus und die Levenberg–Marquardt Regel. Im Vergleich zur Klassifizierung von EEG Experten, wurde mit ihrem System  eine über 90\% Übereinstimmung erreicht. Murthy und Khan \cite{Murthy_1} verbanden EEG Signale mit einer CV-Technik zur Augenliderkennung und nutzten hierfür ebenfalls ein Neuronales Netz. Mit Hilfe dieser multimodalen Daten, konnten ebenfalls drei Status erkannt werden: Wach, Schläfrig und Schlafend.
+Huang et al. \cite{Huang_548971} nutzten ein Hidden Markov Model (HMM) für die Klassifizierung. Auch dieser Machnie Learning Algorithmus ist nach eigener Aussage geeignet, um aus einem EEG-Signal, passende Schlüsse für die \acl{ME} zu ziehen. Lin et al. \cite{Lin05eeg-baseddrowsiness} nutzten die Unabhängige Komponenten Analyse (UKA) und Lineare Regression (LR) und konnten zeigen, dass hiermit eine Erkennungsrate von bis zu 88\% möglich ist.\\
 
 Die Vielzahl an unterschiedlichen Arbeiten zum Thema \acl{ME} zeigt die Bandbreite der möglichen Umsetzungen und Kombinationen. Im kommenden Kapitel werden diese Analysiert und Verglichen.
 
 \section{Vergleich / Analyse}
 \label{chap:an}
-Nach der Vorstellung der Arbeiten zu \acl{MESs}, werden diese nun bewertet und verglichen. Die Forschungsergebnisse werden auf Genauigkeit, Komfort,  Portabilität und Störanfälligkeit geprüft.\\
+Nach der Vorstellung der Arbeiten zu \acl{MESs}, werden diese nun bewertet und verglichen. Die Forschungsergebnisse werden auf Genauigkeit und Störanfälligkeit, sowie Komfort und Portabilität geprüft. 
+
+Die beiden ersten Kriterien liegen für ein sicherheitsrelevantes System auf der Hand. Es muss Fehlerfrei und Robust arbeiten. Fehlender Komfort hingegen führt zu einer geringeren Nutzer-Akzeptanz und verfälscht unter Umständen das Ergebnis, da der Fahrer vom System abgelenkt werden kann. Um die Anwendung dann in möglichst vielen Szenarien und Umgebungen einzusetzen  ist es wichtig, eine Lösung zu finden, die ohne größeren Aufwand portiert werden kann. \\
 
 Systeme die das Fahrverhalten analysieren und daraus Rückschlüsse auf den Wachheitsgrad des Fahrers ziehen, sind in der Praxis weit verbreitet. Beispielsweise nutzen Systeme von Daimler \cite{Daimler} oder Volkswagen \cite{Bosch} dieses Verfahren. Die Sensoren (Lenkbewegung, Spurhaltesensoren, Geschwindigkeit usw.) sind entweder fest im Fahrzeug verbaut oder werden per Computer errechnet. Fest verbaute Sensoren müssen auf das jeweilige Fahrzeug abgestimmt werden und sind nicht portierbar. Hier liegt schon das erste Problem, da die Systeme nicht in einem Fahrzeug einer anderen Marke einsetzbar sind. Für den Fahrer sind diese Systeme jedoch sehr angenehm in der Nutzung, da er vom System nur dann etwas mitbekommt, wenn er vor Müdigkeit gewarnt wird. Da diese Systeme von vielen Automobilherstellern verwendet werden, lässt sich annehmen, dass sie in der Praxis genau funktionieren. Hierzu konnten jedoch keine Studien gefunden werden, da die Automobilhersteller ihre Forschungsergebnisse nicht veröffentlichen. Dennoch finden sich im Internet mehrere Forenbeiträge, in denen die Nutzer fragen, wie die Pausenempfehlung funktioniert bzw. warum es zu Fehlalarmen kommt \footnote{\url{http://www.motor-talk.de/forum/muedigkeitserkennung-wie-funktioniert-sie-t4515648.html} Stand 28.10.2015}. Dies kann darauf hindeuten, dass die Erkennung nicht für alle Bedingungen (Kurven, Unebenheiten auf der Straße) einwandfrei arbeitet. \\
 
@@ -147,6 +149,48 @@ Wie gesehen, haben die verschiedenen Ansätze zur \acl{ME} Stärken und Schwäch
     \label{fig:analysis}
   \end{center}
 \end{figure}
+
+
+\begin{table*}[t]
+ \caption{Vergleichstabelle}
+ \begin{tabular}{clllll}
+  \hline
+	\textbf{Ref.} & \textbf{Sensor} & \textbf{Klas.} & \textbf{Merkmal} &  \textbf{Genauigkeit} \\
+	 \hline
+	 \multicolumn{5}{c}{\textit{Fahrverhaltensanalyse}} \\
+	 \multicolumn{5}{c}{Keine Daten vorhanden} \\
+	 \hline
+
+	 \multicolumn{5}{c}{\textit{Kamerabasiert}} \\
+	 \cite{Zhang:2015:RSD:2753829.2629482} & Kinect & - & Kopfpose, Augenstatus & - \\
+	 \cite{You:2013:CAA:2462456.2465428} & Smartphone Kamera & - & Kopfpose, Augenstatus & - \\
+	 \cite{Bergasa_1603553} & Infrarot Kamera & - & PERCLOS & \textasciitilde 100\% \\
+	 \hline
+
+	 \multicolumn{5}{c}{\textit{Körpersensorbasiert}} \\
+	 \citep{Bundele:2009:DFV:1806338.1806478} & GSR & MLP & Sauerstoffsättigung & -\\
+	 \cite{Park:2009:DDD:1667780.1667798} & PPG & SVM & Puls-Ausschlagshöhe & -\\
+	 \cite{zhang_6513058} & EKG & SVM & QRS-Komplex & \textasciitilde 100\% \\
+	 \cite{Rogado_4913155} & EKG & - & HFR & - \\
+	 \cite{Vicente_6164509} & EKG & - & HFR & - \\
+
+	 \cite{Khushaba_5580017} & EKG, EEG, EOG & - & HFR & - \\
+	 \cite{Johnson11} & EEG, EOG & DA & - &  \\
+
+	 \cite{wilson_890161} & EEG & KNN & - & Nichts \\
+	 \cite{khalifa_893852} & EEG & KNN & - & Nichts \\
+	 \cite{Subasi:2005:ARA:1707423.1707550} & EEG & KNN & - & 90\% \\
+	 \cite{Vuckovic2002349} & EEG & KNN & - & 90\% \\
+	 \cite{Huang_548971} & EEG & HMM & - & - \\
+	 \cite{Lin05eeg-baseddrowsiness} & EEG & UKA, LR & - & - \\
+     \hline
+	 \multicolumn{5}{c}{\textit{Mischformen}} \\
+	 \cite{Murthy_1} & EEG, Kamera & KNN & - & - \\
+
+	 \hline
+   \end{tabular}
+  \label{tab:meinetabelle}
+\end{table*}
 
 Körpersensoren zeigten die besten Ergebnisse im Vergleich zu Systemen mit Kamera oder Analyse des Fahrverhaltens. Jedoch ist allen Systemen, unter idealen Bedingungen, eine hohe Genauigkeit gemein.
 Die Unabhängigkeit von äußeren Einflüssen (Licht- und Straßenverhältnisse) macht \acl{BS} zu einer zuverlässigen Lösung. Wobei kamerabasierte Ansätze am anfälligsten für äußere Störfaktoren sind. 
