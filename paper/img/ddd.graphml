@@ -134,6 +134,7 @@
           <y:Geometry height="52.0" width="190.4000000000001" x="-93.90000000000003" y="643.25"/>
           <y:Fill color="#99CCFF" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="4.0" x="93.20000000000005" y="24.0"/>
         </y:GenericNode>
       </data>
     </node>
@@ -141,7 +142,7 @@
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="52.0" width="607.25" x="-93.9" y="438.5"/>
-          <y:Fill color="#517CFF" transparent="false"/>
+          <y:Fill color="#7597FF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="24" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" textColor="#000000" visible="true" width="299.65234375" x="153.798828125" y="10.03125">Müdigkeitserkennung<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -158,7 +159,7 @@
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="52.0" width="398.984375" x="114.36562499999997" y="506.75"/>
-          <y:Fill color="#00CCFF" transparent="false"/>
+          <y:Fill color="#47DAFF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="162.076171875" x="118.4541015625" y="12.359375">Körpersignale<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -175,7 +176,7 @@
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="52.0" width="190.39999999999998" x="322.95" y="575.0"/>
-          <y:Fill color="#00CCFF" transparent="false"/>
+          <y:Fill color="#47DAFF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="174.15625" x="8.121874999999989" y="12.359375">Body-Sensoren<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -192,7 +193,7 @@
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="52.0" width="190.4796875" x="114.48515624999993" y="575.0"/>
-          <y:Fill color="#00CCFF" transparent="false"/>
+          <y:Fill color="#47DAFF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="130.15234375" x="30.163671875000006" y="12.359375">CV-Technik<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -209,7 +210,7 @@
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="52.0" width="190.4796875" x="-93.93984375000002" y="575.0"/>
-          <y:Fill color="#00CCFF" transparent="false"/>
+          <y:Fill color="#47DAFF" transparent="false"/>
           <y:BorderStyle color="#C0C0C0" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="27.28125" modelName="custom" textColor="#000000" visible="true" width="163.677734375" x="13.400976562500006" y="12.359375">Fahrverhalten<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
