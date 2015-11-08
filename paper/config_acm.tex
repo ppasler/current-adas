@@ -16,11 +16,13 @@
 
 \usepackage[nolist]{acronym}
  
-\usepackage[usenames,dvipsnames]{xcolor}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[greyscale]{xcolor} 
 % automatic crosslinks
 \usepackage[hyphens]{url}
-\usepackage[colorlinks=true,citecolor=black,linkcolor=black,filecolor=black,urlcolor=black,pagebackref=true]{hyperref}
-\hypersetup{colorlinks=true,citecolor=black,linkcolor=black,filecolor=black,urlcolor=black,pagebackref=true}
+\usepackage[colorlinks=false,
+            allbordercolors={0 0 0},
+            pdfborderstyle={/S/U/W 0.5}]{hyperref}
 %glossaries
 %\usepackage{makeidx}
 %\makeindex
