@@ -1,0 +1,79 @@
+\input{config_acm}
+
+\graphicspath{{img/}{./}}
+\usepackage{graphicx}
+\title{Portable System to Detect driver drowsiness with Body Sensors (PoSDBoS) \titlenote{ \scriptsize 
+  \flushleft Betreuer Hochschule:  \ \ Prof. Dr. Martinez\\ 
+  \qquad \qquad \qquad \qquad \quad \ \  Hochschule Reutlingen\\ 
+  \qquad \quad \quad \quad \qquad \qquad \ \ Natividad.Martinez@Reutlingen-\\
+  \qquad \qquad \qquad \qquad \quad \ \ University.de 
+  \flushleft \ \ \includegraphics[width=1.8cm]{iot_hs_rt} \ \ \quad Master Project IoT 2016\\
+  \ \ \\
+  31. Juli 2016, Hochschule Reutlingen\\ 
+  \copyright  ~ 2016 Paul Pasler}}
+
+
+\numberofauthors{3}
+\author{
+	\alignauthor
+	  \center
+		\aufnt{Paul Pasler}\\
+          \affaddr{Reutlingen University}\\
+        \textbf{\textsf{Paul.Pasler@Student.Reutlingen-University.DE}}
+}
+
+
+\begin{document}
+\begin{acronym}
+\acro{FAS}{Fahrerassistenzsystem}
+\acro{FASs}{Fahrerassistenzsysteme}
+\acro{ME}{Müdigkeitserkennung}
+\acro{MESs}{Müdigkeitserkennungssysteme}
+\acro{ADAS}{Advanced Driver Assistance System}
+\acro{ADASs}{Advanced Driver Assistance Systems}
+\acro{bspw}{beispielsweise}
+\acro{RTU}{Reutlingen University}
+\acro{BS}{Körpersensoren}
+\end{acronym}
+
+
+\maketitle
+\sloppypar{
+\begin{abstract}
+Mit Fortschreiten der Technik, verbreiten sich \acl{FAS}en immer weiter. Besonders der Teilbereich der \acl{ME} hilft schwere Unfälle zu vermeiden. Die \acl{ME} mit Body-Sensorik liefert sehr gute Ergebnisse, scheitert aber in der Praxis häufig auf Grund seines invasiven Charakters. Für die vorgelegte Arbeit werden Forschungsergebnisse aus diesem Bereich evaluiert und daraus im Simulationsumfeld der \acl{RTU}  ein Konzept entwickelt, dass Körperfunktionen überwacht und diese auswertet, ohne den Fahrer zu beeinträchtigen. Weiterhin wird die Möglichkeit einer einfachen Portierung der Anwendung vom Simulator in ein echtes Fahrzeug geprüft. Das vorgestellte Konzept, soll somit ein Höchstmaß an Genauigkeit, Tragekomfort und Mobilität vereinen.
+
+\end{abstract}
+
+\keywords{
+\acf{ADAS}, \acl{FAS}, \acl{ME}
+}
+
+\category{A.0}{ACM}{
+Experimentation
+}
+
+
+\section{Einleitung}
+\label{chap:intro}
+Fristeten \acl{FASs} vor wenigen Jahren ein Nischendasein in Oberklassewagen, werden sie immer günstiger und beliebter. Mittlerweile halten sie auch in Mittelklasse- und Kleinwagen Einzug. Die Unternehmensberatung Strategy Analytics geht in den nächsten Jahren von einer Versechsfachung von verbauten \acl{FASs} aus \cite{strategy_analytics}. Denn sie erhöhen den Komfort und helfen bei der Vermeidung schwerer Unfälle. So schätzt die Boston Consulting Group, dass durch den flächendeckenden Einsatz von \acl{FASs}, die Unfallrate in den USA um bis zu 28\% zurückgehen könnte \cite{bcgperspectives}. \acl{ME} ist eines dieser Systeme zur Vermeidung von müdigkeitsbedingter Unachtsamkeit oder Sekundenschlaf. Beispielsweise rät die \acl{ME} "`Attention Assist"' von Daimler dem Fahrer, zu gegebenen Anlass, eine Pause einzulegen und zeigt ein Kaffeesymbol im Cockpit an \cite{Daimler}. Denn laut dem Deutschen Verkehrssicherheitsrat zählt Müdigkeit, neben überhöhter Geschwindigkeit, zu den häufigsten Unfallursachen und ist damit für jeden fünften schweren Unfall verantwortlich \cite{dvr_statistic}. In einer Studie der amerikanischen "`National Sleep Foundation"' \cite{nsf_statistic}, gab die Hälfte der Befragten an, dass sie schon einmal schläfrig gefahren seien und fast jeder dritte sogar kurz am Lenkrad eingeschlafen war. Dies zeigt die Wichtigkeit einer Erkennung von Müdigkeit und einer Meldung an den Fahrer.
+
+
+\begin{figure*} 
+  \begin{center}
+    \includegraphics[width=12cm]{aufbau}
+    \caption{Skizze des Systemaufbaus: \acl{BS} (Elektroenzephalografie / Elektrokardiogramm) liefert Daten an die Applikation und ein Feedback-Device warnt den müden Fahrer. Bild zeigt den Fahrsimulator der \acl{RTU}.}
+    \label{fig:sketch}
+  \end{center}
+\end{figure*}
+
+Um das Risiko eines Unfalls auf Grund von Übermüdung zu senken, soll langfristig ein multimodales System zu \acl{ME} entwickelt werden (Siehe Abb. \ref{fig:sketch}). Solche Systeme existieren bereits, es fehlt jedoch oftmals an Komfort und Portabilität. Ziel dieser Arbeit ist es, aktuelle Arbeiten zu diesem Thema zu sichten und ein Konzept für ein solches System mit \acl{BS} zu erstellen. Die \acl{BS} messen Signale direkt am Körper und können somit sofort auf Veränderungen reagieren. Ein Algorithmus versucht an Hand der Messdaten zu erkennen, ob der Fahrer übermüdet. Diese Systeme müssen richtig und genau funktionieren, sodass die Sicherheit zu jeder Zeit gewährleistet ist. Da die Sensoren direkt am Körper anliegen, können sie den Fahrer beeinträchtigen. Das Problem der invasiven Sensoren soll weitestgehend eliminiert und den Fahrer wenig bis gar nicht stören. Feldversuche eignen sich nicht zur Entwicklung eines solchen Systems, da Eigen- und Fremdgefährdung eines übermüdeten Fahrers nicht vertretbar sind. Das System soll darum im Simulationsumfeld der \acl{RTU} entwickelt und getestet werden. Dennoch müssen die Ergebnisse einem Test im Straßenverkehr standhalten, da es unter Umständen zu anderen Signalen, \acl{bspw} aufgrund von erhöhtem Stress, kommen kann. Darum soll das System später leicht in ein echtes Fahrzeug portiert und validiert werden können. Gelingt dies, kann es zudem mit anderen Systemen gekoppelt zu werden, um das Ergebnis insgesamt zu verbessern. Damit hilft das vorgestellte Konzept, den Fahrer vor einer drohenden Müdigkeit zu warnen und so schwere Unfälle zu vermeiden.\\ 
+
+Die Ausarbeitung gliedert sich folgendermaßen. Im Kapitel \ref{chap:me} werden verschiedene Forschungsergebnisse zur \acl{ME} aufgezeigt und in Kapitel \ref{chap:an} verglichen. Das Konzept eines portablen Systems zur \acl{ME} mit \acl{BS} wird im Kapitel \ref{chap:prop} vorgestellt. Der Versuchsaufbau und das Testszenario im Simulationsumfeld der \acl{RTU} ist Thema von Kapitel \ref{chap:eval}. Das Ergebnis und weitere Schritte werden in Kapitel \ref{chap:outro} beschrieben. In den anschließenden Absätzen werden Grundlagen für die kommenden Kapitel erläutert.
+
+
+\balance
+\bibliographystyle{unsrt} % abbrv, alpha, plain, unsrt, apalike
+\bibliography{Quellen}
+
+
+\end{document}
