@@ -410,7 +410,7 @@ class Emotiv(object):
         devices = []
         try:
             for device in hid.find_all_hid_devices():
-                if device.vendor_id != 0x21A1 and device.vendor_id != 0xED02:
+                if device.vendor_id != 0x1234 and device.vendor_id != 0xED02:
                     continue
                 if device.product_name == 'Brain Waves':
                     devices.append(device)
@@ -428,6 +428,11 @@ class Emotiv(object):
                     self.serial_number = device.serial_number
                     device.set_raw_data_handler(self.handler)
                 elif device.product_name == 'Emotiv RAW DATA':
+                    devices.append(device)
+                    device.open()
+                    self.serial_number = device.serial_number
+                    device.set_raw_data_handler(self.handler)
+                elif device.product_name == 'EEG Signals':
                     devices.append(device)
                     device.open()
                     self.serial_number = device.serial_number
@@ -541,6 +546,7 @@ class Emotiv(object):
                     gevent.sleep(DEVICE_POLL_INTERVAL)
             except KeyboardInterrupt:
                 self.running = False
+                raise
         hidraw.close()
         gevent.kill(crypto, KeyboardInterrupt)
         gevent.kill(console_updater, KeyboardInterrupt)
@@ -551,7 +557,7 @@ class Emotiv(object):
         """
         if is_old_model(sn):
             self.old_model = True
-        print self.old_model
+        print "Old model: " +  str(self.old_model)
         k = ['\0'] * 16
         k[0] = sn[-1]
         k[1] = '\0'
