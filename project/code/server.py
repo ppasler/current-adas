@@ -43,6 +43,8 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_GET(self):
         """Respond to a GET request."""
+
+        #<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
         global emotiv
         packet = emotiv.dequeue()
         if packet != None:
@@ -74,7 +76,7 @@ class EpocServer(object):
         try:
             server.ping()
         except Exception:
-            print "Ignore, 1 ping is enough"
+            """Ignore, 1 ping is enough"""
             
 
     def run(self):
@@ -84,7 +86,6 @@ class EpocServer(object):
             try:
                 self.httpd.handle_request()
             except KeyboardInterrupt, SystemExit:
-                print "STOP in the name of love"
                 self.stop()
                 raise
             
@@ -98,9 +99,18 @@ if __name__ == "__main__":
     emotiv = Emotiv(display_output=False)
     server = EpocServer()
     try:
-        threading.Thread(target=server.run).start()
+        print "starting server and emotiv"
+        t = threading.Thread(target=server.run)
+        t.start()
         emotiv.setup()
-    except KeyboardInterrupt, SystemExit:
-        print "STOP this shit"
+        
+        print "closing server and emotiv"
         emotiv.close()
         server.stop()
+    except KeyboardInterrupt, SystemExit:
+        emotiv.close()
+        server.stop()
+    finally:
+        print "exit now..."
+        t.join()
+        print "...really"

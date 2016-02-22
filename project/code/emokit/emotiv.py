@@ -12,6 +12,9 @@ from Crypto.Cipher import AES
 from Crypto import Random
 from gevent.queue import Queue
 from subprocess import check_output
+import time
+
+fname = time.strftime("%Y-%M-%d-%H-%M", time.gmtime()) + '_EEG.csv'
 
 # How long to gevent-sleep if there is no data on the EEG.
 # To be precise, this is not the frequency to poll on the input device
@@ -358,7 +361,7 @@ class Emotiv(object):
     """
     Receives, decrypts and stores packets received from Emotiv Headsets.
     """
-    def __init__(self, display_output=True, serial_number="", is_research=False):
+    def __init__(self, display_output=True, serial_number="", is_research=False, write_to_file =False):
         """
         Sets up initial values.
         """
@@ -368,6 +371,7 @@ class Emotiv(object):
         self.packets_processed = 0
         self.battery = 0
         self.display_output = display_output
+        self.write_to_file = write_to_file
         self.is_research = is_research
         self.sensors = {
             'F3': {'value': 0, 'quality': 0},
@@ -438,7 +442,23 @@ class Emotiv(object):
                     self.serial_number = device.serial_number
                     device.set_raw_data_handler(self.handler)
             crypto = gevent.spawn(self.setup_crypto, self.serial_number)
+            
             console_updater = gevent.spawn(self.update_console)
+
+            if self.write_to_file:
+                print fname
+                if os.path.isfile(fname) == False:
+                    header = 'Timestamp;';
+                    for k in enumerate(self.sensors):
+                        header = header + k[1] + ';';
+                    header = header + 'QY;QF3;QF4;QP7;QFC6;QF7;QF8;QT7;QP8;QFC5;QAF4;QUnknown;QT8;QX;QO2;QO1;QAF3'
+                    
+                    with open(fname, 'w') as f:
+                        f.write(header + '\n')
+                        f.close()
+                print "asd"
+                file_updater = gevent.spawn(self.update_file)
+            
             while self.running:
                 try:
                     gevent.sleep(0)
@@ -449,6 +469,9 @@ class Emotiv(object):
                 device.close()
             gevent.kill(crypto, KeyboardInterrupt)
             gevent.kill(console_updater, KeyboardInterrupt)
+            if self.write_to_file:
+                gevent.kill(file_updater, KeyboardInterrupt)
+
 
     def handler(self, data):
         """
@@ -635,8 +658,26 @@ class Emotiv(object):
                 print "Battery: %i" % g_battery
                 gevent.sleep(.001)
 
+    def update_file(self):    
+        start = int(round(time.time() * 1000));
+        print str(start)
+        with open(fname, 'a') as f:
+            while self.running:
+                f.write(str(time.time()))
+                for k in enumerate(self.sensors):
+                    f.write(';' + str(self.sensors[k[1]]['value']))
+                for k in enumerate(self.sensors):
+                    f.write(';' + str(self.sensors[k[1]]['quality']))
+                f.write('\n')
+                if self.packets_received % 200 == 0:
+                    f.flush()
+                    f.close();
+                    f = open(fname, 'a')
+                gevent.sleep(0.001)
+        f.close()
+
 if __name__ == "__main__":
-    a = Emotiv()
+    a = Emotiv(display_output=False, write_to_file =True)
     try:
         a.setup()
     except KeyboardInterrupt:
