@@ -23,7 +23,8 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
 
     def _add_error(self):
-        self.send_response(501)
+        self.send_response(500)
+        self.send_header("Content-type", "text/html")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
 
@@ -33,26 +34,29 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         """Respond to a POST request, used to stop the server with a ping."""
 
+    def _buildDataMap(self, packet):
+        data = packet.sensors
+        data.pop("Unknown",None)
+        data["UNIX_TIME"] = time.time()
+        return data
+        
+
     def do_GET(self):
         """Respond to a GET request."""
-        print self
-
         global emotiv
         packet = emotiv.dequeue()
         if packet != None:
-            print packet
-
             self._add_success()
 
-            data = packet.sensors
-            
-            data.pop("Unknown",None)
-            data["UNIX_TIME"] = time.time()
+            data = self._buildDataMap(packet)
             if(self.path == "/header"):
-                data = epoc_data.keys()
-            self.wfile.write(json.dumps(data))
+                self.wfile.write(json.dumps(data.keys()))
+            else:
+                self.wfile.write(json.dumps(data))
         else:
             self._add_error()
+            self.wfile.write("No data found")
+
 
 class EpocServer(object):
     def __init__(self, host="localhost", port=9000):      

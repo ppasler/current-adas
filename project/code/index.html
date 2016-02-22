@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+input {
+    margin-left: 10px;
+}
+
+#labels {
+	font-size: 14px;
+	float: right;
+}
+
+#graph {
+	float: left;
+}
+
+#message {
+	border-radius: 3px;
+    text-align: center;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.success {
+	background-color: #0f0;
+}
+
+.error {
+	background-color: #f00;
+}
+
+.warn {
+	background-color: #ff0;
+}
+
+</style>
+<body>
+<div id="message"></div>
+<div id="labels"></div>
+
+<div id="graph"></div>
+
+<script src="js/d3.v3.min.js"></script>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script>
+// fetch interval
+var interval = 500;
+
+// number of samples
+var nSamples = 60;
+
+var fetchData = true;
+var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = window.outerWidth - margin.left - margin.right - 200,
+    height = window.outerHeight - margin.top - margin.bottom - 200;
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category20();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var line = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.UNIX_TIME); })
+    .y(function(d) { return y(d.pin); });
+
+var svg = d3.select("#graph").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+function add_message(type, msg){
+	var $msg = $("#message");
+	$msg.removeClass().addClass(type).html(msg);
+}
+		
+var header = []
+function addLabels() {
+	header.forEach(function(v, i){
+	if(v !== "UNIX_TIME")
+		labels.append('<div class="' + v + '">' +
+				'<input type="checkbox" class="pinLabels" value="' + v + '" id="' + v + '" checked />' + 
+				'<span style="color: ' + color(v) + ';">' + v + ' </span>' +
+				' (<span class="quality" style="color: #aaa;"> ? </span>)' +
+			'<div>');
+	});
+}
+
+function fetchHeader(){
+	$.ajax({
+		url: "http://localhost:9000/header",
+		method: "GET",
+		dataType: "json",
+		async: false,
+		timeout: 3000,
+		success: function(newData){
+			header = newData;
+		},
+		error: function(xhr, status, text){
+			add_message("error", text || "Error fetching data");
+			console.log("ERROR: " + text);
+		}
+	});
+}
+fetchHeader();
+	
+var data = [];
+
+function initSvg(){
+	d3.select("svg").remove();
+
+	svg = d3.select("#graph").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+}
+
+function fetchAndAddNewData(){
+	$.ajax({
+		url: "http://localhost:9000/",
+		method: "GET",
+		dataType: "json",
+		timeout: 3000,
+		success: function(newData){
+			// really simple validation...
+			if(newData.hasOwnProperty(header[0])){
+				if(data.length > nSamples){
+					data.shift();
+				}
+				data.push(newData);
+				updateGraph();
+				add_message("success", "successfully fetched");
+			} else {
+				if(header.length <= 0) {
+					fetchHeader();
+					addLabels();
+				} else {
+					add_message("warn", "invalid data");
+				}
+			}
+		},
+		error: function(xhr, status, text){
+			add_message("error", text || "Error fetching data");
+		}
+	});
+}
+
+function updateQuality(name, value){
+	var color = "#000";
+	if(value > 9){
+		color = "#008000";
+	} else if(value > 6){
+		color = "#FDD017";
+	} else if (value > 3){
+		color = "#F87217";
+	} else if (value > 0){
+		color = "#f00";
+	}
+	$("." + name + " .quality").html(value).css("color", color);
+}
+
+function updateGraph() {
+	svg.selectAll("*").remove();
+	color.domain(d3.keys(data[0]).filter(function(key) { return key !== "UNIX_TIME"; }));
+	
+	data[data.length - 1].UNIX_TIME = new Date(data[data.length - 1].UNIX_TIME *1000);
+
+	var pins = color.domain().map(function(name) {
+		return {
+			name: name,
+			values: data.map(function(d) {
+				updateQuality(name, d[name]["quality"]);
+				return {UNIX_TIME: d.UNIX_TIME, pin: +d[name]["value"]};
+			})
+		};
+	});
+	x.domain(d3.extent(data, function(d) { return d.UNIX_TIME; }));
+
+	y.domain([
+		d3.min(pins, function(c) { 
+			if($("#"+c.name).prop('checked')){
+				return d3.min(c.values, function(v) { 
+					return v.pin;
+				}); 
+			}
+			return Number.MAX_SAFE_INTEGER;
+		}),
+		d3.max(pins, function(c) { 
+			if($("#"+c.name).prop('checked')){
+				return d3.max(c.values, function(v) { return v.pin; }); 
+			}
+			return Number.MIN_SAFE_INTEGER;
+		})
+	]);
+
+	svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + height + ")")
+		.call(xAxis);
+
+	svg.append("g")
+		.attr("class", "y axis")
+		.call(yAxis)
+		.append("text")
+		.attr("transform", "rotate(-90)")
+		.attr("y", 6)
+		.attr("dy", ".71em")
+		.style("text-anchor", "end")
+		.text("pin");
+
+	var pin = svg.selectAll(".pin")
+		.data(pins)
+		.enter().append("g")
+		.attr("class", "pin");
+
+	pin.append("path")
+		.attr("class", "line")
+		.attr("d", function(d) { return line(d.values); })
+		.style("stroke", function(d) {
+			if($("#"+d.name).prop('checked')){
+				return color(d.name);
+			}
+			return "rgba(255,255,255,0.0)";
+		});
+
+	pin.append("text")
+		.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+		.attr("transform", function(d) { return "translate(" + x(d.value.UNIX_TIME) + "," + y(d.value.pin) + ")"; })
+		.attr("x", 3)
+		.attr("dy", ".35em")
+		.style("fill", function(d) {
+			if($("#"+d.name).prop('checked')){
+				return color(d.name);
+			}
+			return "rgba(255,255,255,0.0)";
+		})
+		.text(function(d) { return d.name; });
+}
+
+fetchAndAddNewData();
+setInterval(function(){
+	if(fetchData)
+		fetchAndAddNewData();
+}, interval);
+
+var labels = $("#labels");
+addLabels();
+labels.append('<input type="checkbox" value="toggleLabels" id="toggleLabels" checked />De-/Select all');
+labels.append('<div class="buttons"><input type="button" value="Stop" id="startstop" />');
+
+$("#startstop").click(function(){
+	fetchData = !fetchData;
+	$(this).val("Start");
+	if(fetchData === true){
+		$(this).val("Stop");
+	}
+});
+
+labels.append('<input type="button" value="Show" id="show" title="Show data in logs" /></div>');
+
+$("#show").click(function(){
+	console.log(data);
+});
+
+$("#toggleLabels").change(function() {
+	var checked = false;
+	if($(this).prop('checked')){
+		checked = true;
+	}
+	$(".pinLabels").each(function(){
+		$(this).prop('checked', checked);
+	});
+});
+</script>
+
+
+
+
+
+
+

@@ -107,7 +107,7 @@ def main():
     for name in 'AF3 F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 AF4'.split(' '):
         graphers.append(Grapher(screen, name, len(graphers)))
     fullscreen = False
-    emotiv = Emotiv(display_output=True)
+    emotiv = Emotiv(display_output=False)
     gevent.spawn(emotiv.setup)
     gevent.sleep(0)
     while emotiv.running:
