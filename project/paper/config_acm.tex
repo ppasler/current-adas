@@ -1,0 +1,51 @@
+\documentclass[8pt,a5paper]{acm_proc_article-sp}
+% fix umlauts
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}  % Times new Roman
+\usepackage{mathptmx}
+\usepackage[]{blindtext}
+\usepackage[a5paper, left=1.70cm, right=1.20cm, top=1.30cm, bottom=1.40cm]{geometry}
+\usepackage{epstopdf}
+% balance columns. original from acm doesn't work
+\usepackage{balance}
+% colors
+\usepackage[compact]{titlesec}
+\usepackage{natbib}
+\titlespacing{\section}{0pt}{*0.7}{*0.5}
+
+\usepackage[nolist]{acronym}
+ 
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[greyscale]{xcolor} 
+% automatic crosslinks
+\usepackage[hyphens]{url}
+\usepackage[colorlinks=false,
+            allbordercolors={0 0 0},
+            pdfborderstyle={/S/U/W 0.5}]{hyperref}
+%glossaries
+%\usepackage{makeidx}
+%\makeindex
+%\usepackage[nomain]{glossaries}
+%\makeglossaries
+%\makeindex
+
+\newcommand{\glspl}[1]{{#1}}
+
+% http://en.wikibooks.org/wiki/LaTeX/Glossary
+% http://mirror.informatik.uni-mannheim.de/pub/mirrors/tex-archive/macros/latex/contrib/glossaries/glossariesbegin.pdf
+
+% Definitionsliste
+\newcommand{\defitem}[1]{\item[#1]\phantomsection\label{#1}\hfill\\} 
+\newcommand{\defref}[1]{\hyperref[#1]{#1}} 
+\newcommand{\rem}[1]{}
+% Marking colors
+\definecolor{todo}{rgb}{1,0.2,0.2}
+\definecolor{reconsider}{rgb}{0.6,0.6,0.3}
+\newcommand{\todo}[1]{{\color{todo} #1}}
+\newcommand{\reconsider}[1]{{\color{reconsider} #1}}
+
+% Hurenkinder und Schusterjungen verhindern
+\clubpenalty10000
+\widowpenalty10000
+\displaywidowpenalty=10000
