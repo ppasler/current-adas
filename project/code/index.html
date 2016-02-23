@@ -296,10 +296,18 @@ $("#startstop").click(function(){
 });
 
 labels.append('<input type="button" value="Show" id="show" title="Show data in logs" /></div>');
+labels.append('<input type="button" value="Clear" id="clear" title="Clear data" /></div>');
+
+
 
 $("#show").click(function(){
 	console.log(data);
 });
+
+$("#clear").click(function(){
+	data = [];
+});
+
 
 $("#toggleLabels").change(function() {
 	var checked = false;
