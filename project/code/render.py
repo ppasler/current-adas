@@ -16,6 +16,9 @@ if platform.system() == "Windows":
 import gevent
 from emokit.emotiv import Emotiv
 
+'''Tested value for no movement'''
+GYRO_DEFAULT = 22*2
+
 quality_color = {
     "0": (0, 0, 0),
     "1": (255, 0, 0),
@@ -27,6 +30,7 @@ quality_color = {
     "7": (0, 255, 0),
 }
 
+'''Quality in EPOC+ reaches from 0 - 15'''
 old_quality_color = {"0": (0, 0, 0)}
 
 def createQuality():
@@ -37,9 +41,9 @@ def createQuality():
         old_quality_color[str(12+i)] = (0, 255, 0)
 
 createQuality()
-print old_quality_color
 
 resolution = (1600, 900)
+
 emotiv = None
 
 class Grapher(object):
@@ -103,7 +107,7 @@ def main():
     """
     Creates pygame window and graph drawing workers for each sensor.
     """
-    global gheight
+    global gheight, emotiv, pygame
     pygame.init()
     screen = pygame.display.set_mode(resolution)
     graphers = []
@@ -116,7 +120,6 @@ def main():
     for name in 'AF3 F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 AF4'.split(' '):
         graphers.append(Grapher(screen, name, len(graphers)))
     fullscreen = False
-    global emotiv
     emotiv = Emotiv(display_output=False)
     gevent.spawn(emotiv.setup)
     gevent.sleep(0)
@@ -151,17 +154,18 @@ def main():
             while packets_in_queue < 8:
                 packet = emotiv.dequeue()
                 if abs(packet.gyro_x) > 1:
-                    cursor_x += packet.gyro_x
+                    cursor_x += packet.gyro_x-GYRO_DEFAULT
                 if abs(packet.gyro_y) > 1:
-                    cursor_y += packet.gyro_y
+                    cursor_y += packet.gyro_y-GYRO_DEFAULT
                 map(lambda x: x.update(packet), graphers)
                 if recording:
                     record_packets.append(packet)
                 updated = True
                 packets_in_queue += 1
-        except Exception as e:
+        except Exception, KeyboardInterrupt:
             logging.exception("154")
-            
+            emotiv.close()
+            pygame.quit()    
 
         if updated:
             screen.fill((75, 75, 75))
@@ -176,7 +180,9 @@ def main():
 try:
     gheight = (resolution[1]-resolution[1]*0.1) / 14
     main()
-except Exception as e:
+except Exception, KeyboardInterrupt:
     logging.exception("169")
 finally:
+    emotiv.close()
+    pygame.quit()
     sys.exit(0) 
