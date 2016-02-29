@@ -44,8 +44,8 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         """Respond to a GET request."""
 
-        #<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
         global emotiv
+        # TODO handle emotiv not connected
         packet = emotiv.dequeue()
         if packet != None:
             self._add_success()
@@ -89,7 +89,6 @@ class EpocServer(object):
                 self.stop()
                 raise
             
-
         print time.asctime(), "Server Stops - %s:%s" % self.server_address
         self.httpd.server_close();
 
@@ -97,6 +96,7 @@ class EpocServer(object):
 
 if __name__ == "__main__":
     emotiv = Emotiv(display_output=False)
+    emotiv
     server = EpocServer()
     try:
         print "starting server and emotiv"
