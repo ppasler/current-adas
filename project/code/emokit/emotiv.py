@@ -456,7 +456,6 @@ class Emotiv(object):
                     with open(fname, 'w') as f:
                         f.write(header + '\n')
                         f.close()
-                print "asd"
                 file_updater = gevent.spawn(self.update_file)
             
             while self.running:
