@@ -23,3 +23,24 @@ https://www.efs-auto.com/leistungen/querschnittsfunktionen/fahrwerksimulation/um
 
 #other
 http://www.hochschule-kempten.de/studies/degree-courses/engineering/advanced-driver-assistance-systems-adas/studienbeginn.html?L=1
+
+
+#Links
+[Emotiv Lib](https://github.com/openyou/emokit/tree/master/python)
+
+[Emotiv Demo](https://www.youtube.com/watch?v=Ve7MEuuzXuY&feature=youtu.be)
+
+Emotiv Problems
+* [Broken Sensor](https://emotiv.com/forum/messages/forum14/topic1059/message16779/?sphrase_id=183168#message16779)
+* [Request](https://emotiv.zendesk.com/hc/en-us/requests/28262)
+
+
+[Compiled Python libs for windows](http://www.lfd.uci.edu/~gohlke/pythonlibs)
+* scipy
+* numpy
+* matplotlib
+* scikit-learn
+
+[EEG Libs](http://www.goomedic.com/opensource-eeg-libraries-and-toolkits-for-developers.html)
+
+[FFT Sound Example](http://samcarcagno.altervista.org/blog/basic-sound-processing-python/)
