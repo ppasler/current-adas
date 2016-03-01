@@ -133,3 +133,4 @@ docs/ThesisEmre.pdf
 *.pyc
 *.csv
 /project/paper/doc/*.pdf
+/project/code/util/example_full.csv
