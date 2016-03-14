@@ -43,4 +43,7 @@ Emotiv Problems
 
 [EEG Libs](http://www.goomedic.com/opensource-eeg-libraries-and-toolkits-for-developers.html)
 
+FFT
 [FFT Sound Example](http://samcarcagno.altervista.org/blog/basic-sound-processing-python/)
+FFT Video [Pt I](https://www.youtube.com/watch?v=xiDzwiwTVW4] [Pt 2](https://www.youtube.com/watch?v=LNXVCBbSzkU)
+[FFT Script](https://www.tu-chemnitz.de/informatik/ThIS/downloads/courses/ws02/datkom/Fouriertransformation.pdf)
