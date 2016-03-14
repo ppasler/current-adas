@@ -49,6 +49,15 @@ class EEGTableData(object):
 
         return self.getColumn(column_name, from_index, to_index)
 
+    def getSampleRate(self):
+        data = self.getColumn("Timestamp")
+        duration = data[len(data)-1] - data[0]
+        print len(data)
+        print duration
+        return len(data) / duration
+
+
+
         
 
         
