@@ -5,20 +5,21 @@ Inspired by http://samcarcagno.altervista.org/blog/basic-sound-processing-python
 from pylab import*
 from scipy.io import wavfile
 
-sampFreq, s1 = wavfile.read('440_sine.wav')
-#sampFreq, s1 = wavfile.read('20000hz.wav')
+#sampFreq, s1 = wavfile.read('440_sine.wav')
+sampFreq, s1 = wavfile.read('12000hz.wav')
 
 if len(s1.shape) == 2:
     s1 = s1[:,0]
 
 if len(s1) > 8192:
-    s1 = s1[:8192]
+    s1 = s1[:128]
 
+print repr(s1)
 n = float(len(s1))
 
 print "DType %s" % s1.dtype
 print "Sound File Shape " + str(s1.shape)
-print "Sample Frequency / Entries: %.2f / %.2f" % (n, sampFreq)
+print "Sample Frequency / Entries: %.2f / %.2f" % (sampFreq, n)
 print "Duration %.2f ms" % ((n / sampFreq)*1000)
 
 s1 = s1 / (2.**15)

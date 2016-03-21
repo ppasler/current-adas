@@ -1,15 +1,17 @@
 #!/usr/bin/python
 
-from numpy import genfromtxt, delete, array
+from numpy import genfromtxt, delete, array, shape
 
 DEFAULT_DELIMITER = ";"
+TIMESTAMP_STRING = "Timestamp"
 
 class EEGTableData(object):
     def __init__(self, header=None, data=None, file_path=""):
         self.file_path = file_path
         self.header = header
         self.data = data
-        self.len = len(data)
+        if data is not None:
+            self.len = len(data)
 
     def setHeader(self, header):
         self.header = header
@@ -18,10 +20,17 @@ class EEGTableData(object):
         self.data = data
         self.len = len(data)
 
-    def getTimeIndex(self, from_time):
-        for i, r in enumerate(self.data):
-            date = r[0]
-            if date >= from_time:
+    def getTimeIndex(self, fromTime):
+        '''returns index of the given from_time
+            if from_time < min(timestamp) return 0
+            if from_time > max(timestamp) return len(data)
+            '''
+        data = self.getColumn(TIMESTAMP_STRING)
+        if not self._timeInData(data, fromTime):
+            raise ValueError('could not find %f in data' % fromTime)
+        
+        for i, time in enumerate(data):
+            if time >= fromTime:
                 return i
 
     def getColumn(self, column_name, offset=0, limit=-1, length=-1):
@@ -37,33 +46,43 @@ class EEGTableData(object):
         index = self.header.index(column_name)
         return self.data[:, index][offset:limit]      
 
-    def getColumnByTime(self, column_name, from_time, to_time):
-        from_index, to_index = 0, -1
-        for i, r in enumerate(self.data):
-            date = r[0]
-            if date >= from_time and from_index == 0:
-                from_index = i
-            if date >= to_time:
-                to_index = i
+    def getColumnByTime(self, columnName, fromTime, toTime):
+        fromIndex, toIndex = -1, -1
+
+        if fromTime > toTime:
+            fromTime, toTime = self._switchTime(fromTime, toTime)
+        
+        data = self.getColumn(TIMESTAMP_STRING)
+        
+        if not self._timeInData(data, fromTime):
+            raise ValueError('could not find %f in data' % fromTime)
+
+        if not self._timeInData(data, toTime):
+            raise ValueError('could not find %f in data' % toTime)
+
+        for i, time in enumerate(data):
+            if time >= fromTime and fromIndex == -1:
+                fromIndex = i
+            if time >= toTime:
+                toIndex = i
                 break
 
-        return self.getColumn(column_name, from_index, to_index)
+        return self.getColumn(columnName, fromIndex, toIndex)
 
     def getSampleRate(self):
-        data = self.getColumn("Timestamp")
-        duration = data[len(data)-1] - data[0]
-        print len(data)
-        print duration
-        return len(data) / duration
+        data = self.getColumn(TIMESTAMP_STRING)
+        duration = data[self.len-1] - data[0]
+        return self.len / duration  
 
-
-
+    def _switchTime(self, time1, time2):
+        return time2, time1
         
 
-        
+    def _timeInData(self, data, time):
+        return (min(data) <= time <= max(data))
 
     def __repr__(self):
-        return "EEGTableData from '%s' len %d\nheader %s" % (self.file_path, self.len, self.header)
+        return "EEGTableData from '%s' shape %s\nheader %s" % (self.file_path, shape(self.data), self.header)
 
 class EEGTableReader(object):
 
@@ -95,15 +114,11 @@ if __name__ == "__main__":
     e = EEGTableReader()
     #eeg_data = e.readFile("example_full.csv")
     eeg_data = e.readFile("example_short.csv")
-
-    print eeg_data
-
-    print eeg_data.getColumn("F4", 2, 7)
-    print eeg_data.getColumn("F4", 2, length=5)
-    print eeg_data.getColumnByTime("F4", 1456820379.22, 1456820379.27)
+    print eeg_data.data
     from_index = eeg_data.getTimeIndex(1456820379.22)
     to_index = eeg_data.getTimeIndex(1456820379.27)
     print eeg_data.getColumn("F4", from_index, to_index)
+    eeg_data.getTimeIndex(123)
 
 
 
