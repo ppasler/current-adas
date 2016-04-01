@@ -15,6 +15,7 @@ from emokit.emotiv import Emotiv
 emotiv = None
 
 class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    '''This Handles a request'''
 
     def _add_success(self):
         self.send_response(200)
@@ -61,6 +62,12 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 
 class EpocServer(object):
+    '''
+    Serve EPOC data on localhost:9000 by default
+    /           returns a map of EPOC vales
+    /header     returns a list of all data keys
+    '''
+    
     def __init__(self, host="localhost", port=9000):      
         self.server_address = (host, port)
         self.run_server = True
@@ -80,6 +87,7 @@ class EpocServer(object):
             
 
     def run(self):
+        '''Serve EPOC data until forever'''
         self.httpd = self.server_class(self.server_address, self.handler_class)
         print time.asctime(), "Server Starts - %s:%s" % self.server_address
         while self.run_server:
