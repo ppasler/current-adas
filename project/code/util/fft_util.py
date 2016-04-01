@@ -6,7 +6,12 @@ import numpy as np
 from signal_util import SignalUtil
 
 class FFTUtil(object):
-    '''inspired by:
+    '''
+        process raw eeg data by performing a fast-fourier-transformation
+        
+        see ../examples/fft_sound_example.py
+        
+        inspired by:
         * http://samcarcagno.altervista.org/blog/basic-sound-processing-python/
         * https://web.archive.org/web/20120615002031/http://www.mathworks.com/support/tech-notes/1700/1702.html
     '''
@@ -49,8 +54,6 @@ class FFTUtil(object):
 
     def fft(self, data):
         '''FFT with several processing steps'''
-        n_data = float(len(data))                   # length of data points
-
         data = self.signal_util.normalize(data)     # normalize from -1 to 1
 
         # make sure n_data is a power of 2

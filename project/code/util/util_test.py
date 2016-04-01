@@ -182,17 +182,17 @@ class TestEEGTableReader(unittest.TestCase):
     def test_readData(self):
         file_path = "example_short.csv"
         if os.path.isfile(file_path):
-            data = self.reader.readData(file_path)
+            self.reader.readData(file_path)
 
     def test_readHeader(self):
         file_path = "example_short.csv"
         if os.path.isfile(file_path):
-            data = self.reader.readHeader(file_path)
-
-    def test_readHeader(self):
+            self.reader.readHeader(file_path)
+            
+    def test_readFile(self):
         file_path = "example_short.csv"
         if os.path.isfile(file_path):
-            data = self.reader.readFile(file_path)
+            self.reader.readFile(file_path)
 
 
 class TestEEGTableData(unittest.TestCase):
@@ -297,7 +297,7 @@ class TestEEGTableData(unittest.TestCase):
         self.assertTrue(sameEntries(column4, [3, 4, 5, 6])) 
 
 
-    def test_getTimeIndex_outOfRange(self):
+    def test_getColumnByTime_outOfRange(self):
         with self.assertRaises(ValueError):
             self.eeg_data.getColumnByTime("Z", 1456820378.00, 1456820379.75)
 
