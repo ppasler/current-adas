@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-from numpy import genfromtxt, delete, array, shape
+from numpy import genfromtxt, delete, shape
 
-DEFAULT_DELIMITER = ";"
-TIMESTAMP_STRING = "Timestamp"
+DEFAULT_DELIMITER = ";" # default delimiter for CSV file
+TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
 
 class EEGTableData(object):
     def __init__(self, header=None, data=None, file_path=""):
@@ -21,10 +21,15 @@ class EEGTableData(object):
         self.len = len(data)
 
     def getTimeIndex(self, fromTime):
-        '''returns index of the given from_time
-            if from_time < min(timestamp) return 0
-            if from_time > max(timestamp) return len(data)
-            '''
+        '''
+        get the index for the given fromTime
+        if fromTime < min(timestamp) return 0
+        if fromTime > max(timestamp) return len(data)
+        
+        :param    float    fromTime:    time as unix timestamp 
+        
+        :return   returns the index of the given fromTime 
+        '''
         data = self.getColumn(TIMESTAMP_STRING)
         if not self._timeInData(data, fromTime):
             raise ValueError('could not find %f in data' % fromTime)
@@ -34,6 +39,17 @@ class EEGTableData(object):
                 return i
 
     def getColumn(self, column_name, offset=0, limit=-1, length=-1):
+        '''
+        get dataset from a certain column, either from offset to limit or till length
+        if only column_name is specified, it returns the whole column
+        if offset and length are both defined, length will be ignored
+        
+        :param string column_name:   the name of the column
+        :param int    offset:        startindex of dataset
+        :param int    limit:         endpoint of dataset
+        :param int    length:        length of dataset
+        '''
+        
         if column_name not in self.header:
             return None
 
@@ -47,6 +63,15 @@ class EEGTableData(object):
         return self.data[:, index][offset:limit]      
 
     def getColumnByTime(self, columnName, fromTime, toTime):
+        '''
+        get dataset from a certain column, for a time interval (fromTime -> toTime)
+             
+        :param string    columnName:   the name of the column 
+        :param float     fromTime:     start time of dataset as unix timestamp   
+        :param float     toTime:       start time of dataset as unix timestamp
+        
+        :raise ValueError if time could not be found in dataset 
+        '''
         fromIndex, toIndex = -1, -1
 
         if fromTime > toTime:
