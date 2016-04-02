@@ -35,7 +35,8 @@ class EEGSignalPlotter(object):
             self.plotFFTSignal(eeg_data, label)
 
     def plotFFTSignal(self, eeg_data, label):
-        figure, ax = plt.subplots(9)
+        #http://stackoverflow.com/questions/332289/how-do-you-change-the-size-of-figures-drawn-with-matplotlib
+        figure, ax = plt.subplots(9, figsize=(16, 9))
         axRaw, axNorm, axFFT, axLogFFT, axChan = ax[0], ax[1], ax[2], ax[3], ax[4:]
         
         fft_util = FFTUtil()
@@ -71,6 +72,10 @@ class EEGSignalPlotter(object):
         for i, (label, freqRange) in enumerate(EEGUtil.channel_ranges.iteritems()):
             self.plotEEGChannel(fft, label, freqRange, axChan[i])
 
+        #http://stackoverflow.com/questions/12439588/how-to-maximize-a-plt-show-window-using-python
+        mng = plt.get_current_fig_manager()
+        mng.resize(*mng.window.maxsize())
+        mng.window.wm_geometry("+0+0")
             
         plt.show()
         
