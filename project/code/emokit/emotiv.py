@@ -732,7 +732,7 @@ class DummyData(object):
     
     def _getDataPath(self):
         scriptPath = os.path.dirname(os.path.abspath(__file__))
-        return scriptPath + "/dummyData.csv" 
+        return scriptPath + "/../examples/example_4096.csv" 
         
     def _readRawData(self):       
         rawData = delete(genfromtxt(self._getDataPath(), dtype=float, delimiter=";"), 0, 0)
@@ -769,7 +769,7 @@ class DummyData(object):
             quality = row[self.header.index("Q" + h)]
             ret[h] = {
                 "value": value,
-                "quality": quality   
+                "quality": int(quality)   
             }
         return ret    
 
@@ -784,6 +784,9 @@ class DummyPacket(object):
     
     def __init__(self, data):
         self.sensors = data
+        self.gyro_x = data["X"]["value"]
+        self.gyro_y = data["Y"]["value"]
+        self.old_model = True
 
 if __name__ == "__main__":
     a = Emotiv(display_output=False, write_to_file=True)

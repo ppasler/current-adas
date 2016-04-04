@@ -15,6 +15,9 @@ if platform.system() == "Windows":
     import socket  # Needed to prevent gevent crashing on Windows. (surfly / gevent issue #459)
 import gevent
 from emokit.emotiv import Emotiv
+import os
+
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (50,50)
 
 '''Tested value for no movement'''
 GYRO_DEFAULT = 22*2
@@ -162,8 +165,8 @@ def main():
                     record_packets.append(packet)
                 updated = True
                 packets_in_queue += 1
-        except Exception, KeyboardInterrupt:
-            logging.exception("154")
+        except (Exception, KeyboardInterrupt):
+            logging.exception()
             emotiv.close()
             pygame.quit()    
 
@@ -180,8 +183,8 @@ def main():
 try:
     gheight = (resolution[1]-resolution[1]*0.1) / 14
     main()
-except Exception, KeyboardInterrupt:
-    logging.exception("169")
+except (Exception, KeyboardInterrupt):
+    logging.exception()
 finally:
     emotiv.close()
     pygame.quit()
