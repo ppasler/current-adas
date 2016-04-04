@@ -12,7 +12,11 @@ from Crypto.Cipher import AES
 from Crypto import Random
 from gevent.queue import Queue
 from subprocess import check_output
+from numpy import genfromtxt, delete
 import time
+
+deviceConnected = False
+dummyData = None
 
 fname = time.strftime("%Y-%M-%d-%H-%M", time.gmtime()) + '_EEG.csv'
 
@@ -225,18 +229,18 @@ def get_linux_setup():
             path = path + split_path[i] + "/"
             i += 1
         raw_inputs.append([path, filename])
-    for input in raw_inputs:
+    for rawInput in raw_inputs:
         try:
-            with open(input[0] + "/manufacturer", 'r') as f:
+            with open(rawInput[0] + "/manufacturer", 'r') as f:
                 manufacturer = f.readline()
                 f.close()
             if "Emotiv Systems" in manufacturer:
-                with open(input[0] + "/serial", 'r') as f:
+                with open(rawInput[0] + "/serial", 'r') as f:
                     serial = f.readline().strip()
                     f.close()
-                print "Serial: " + serial + " Device: " + input[1]
+                print "Serial: " + serial + " Device: " + rawInput[1]
                 # Great we found it. But we need to use the second one...
-                hidraw = input[1]
+                hidraw = rawInput[1]
                 hidraw_id = int(hidraw[-1])
                 # The dev headset might use the first device, or maybe if more than one are connected they might.
                 hidraw_id += 1
@@ -291,7 +295,7 @@ class EmotivPacket(object):
         sensors['X']['value'] = self.gyro_x
         sensors['Y']['value'] = self.gyro_y
         for name, bits in sensor_bits.items():
-            #Get Level for sensors subtract 8192 to get signed value
+            # Get Level for sensors subtract 8192 to get signed value
             value = get_level(self.raw_data, bits) - 8192
             setattr(self, name, (value,))
             sensors[name]['value'] = value
@@ -361,7 +365,7 @@ class Emotiv(object):
     """
     Receives, decrypts and stores packets received from Emotiv Headsets.
     """
-    def __init__(self, display_output=True, serial_number="", is_research=False, write_to_file =False):
+    def __init__(self, display_output=True, serial_number="", is_research=False, write_to_file=False):
         """
         Sets up initial values.
         """
@@ -411,6 +415,7 @@ class Emotiv(object):
         """
         Setup for headset on the Windows platform. 
         """
+        global deviceConnected        
         devices = []
         try:
             for device in hid.find_all_hid_devices():
@@ -441,36 +446,42 @@ class Emotiv(object):
                     device.open()
                     self.serial_number = device.serial_number
                     device.set_raw_data_handler(self.handler)
-            crypto = gevent.spawn(self.setup_crypto, self.serial_number)
-            
-            console_updater = gevent.spawn(self.update_console)
-
-            if self.write_to_file:
-                print fname
-                if os.path.isfile(fname) == False:
-                    header = 'Timestamp;';
-                    for k in enumerate(self.sensors):
-                        header = header + k[1] + ';';
-                    header = header + 'QY;QF3;QF4;QP7;QFC6;QF7;QF8;QT7;QP8;QFC5;QAF4;QUnknown;QT8;QX;QO2;QO1;QAF3'
-                    
-                    with open(fname, 'w') as f:
-                        f.write(header + '\n')
-                        f.close()
-                file_updater = gevent.spawn(self.update_file)
+            deviceConnected = (len(devices) > 0)
+            if deviceConnected:            
+                crypto = gevent.spawn(self.setup_crypto, self.serial_number)      
+                console_updater = gevent.spawn(self.update_console)
+                if self.write_to_file:
+                    print fname
+                    if os.path.isfile(fname) == False:
+                        header = 'Timestamp;';
+                        for k in enumerate(self.sensors):
+                            header = header + k[1] + ';';
+                        header = header + 'QY;QF3;QF4;QP7;QFC6;QF7;QF8;QT7;QP8;QFC5;QAF4;QUnknown;QT8;QX;QO2;QO1;QAF3'
+                           
+                        with open(fname, 'w') as f:
+                            f.write(header + '\n')
+                            f.close()
+                    file_updater = gevent.spawn(self.update_file)
+            else:
+                global dummyData
+                dummyData = DummyData()
             
             while self.running:
                 try:
                     gevent.sleep(0)
                 except KeyboardInterrupt:
                     self.running = False
+                
         finally:
-            for device in devices:
-                device.close()
-            gevent.kill(crypto, KeyboardInterrupt)
-            gevent.kill(console_updater, KeyboardInterrupt)
-            if self.write_to_file:
-                gevent.kill(file_updater, KeyboardInterrupt)
-
+            if deviceConnected: 
+                for device in devices:
+                    device.close()
+           
+                gevent.kill(crypto, KeyboardInterrupt)
+                gevent.kill(console_updater, KeyboardInterrupt)
+                if self.write_to_file:
+                    gevent.kill(file_updater, KeyboardInterrupt)
+  
 
     def handler(self, data):
         """
@@ -509,7 +520,7 @@ class Emotiv(object):
                     if _os_decryption:
                         self.packets.put_nowait(EmotivPacket(data))
                     else:
-                        #Queue it!
+                        # Queue it!
                         self.packets_received += 1
                         tasks.put_nowait(data)
                     gevent.sleep(0)
@@ -558,7 +569,7 @@ class Emotiv(object):
                     if _os_decryption:
                         self.packets.put_nowait(EmotivPacket(data))
                     else:
-                        #Queue it!
+                        # Queue it!
                         tasks.put_nowait(''.join(map(chr, data[1:])))
                         self.packets_received += 1
                     gevent.sleep(0)
@@ -579,7 +590,7 @@ class Emotiv(object):
         """
         if is_old_model(sn):
             self.old_model = True
-        print "Old model: " +  str(self.old_model)
+        print "Old model: " + str(self.old_model)
         k = ['\0'] * 16
         k[0] = sn[-1]
         k[1] = '\0'
@@ -629,10 +640,13 @@ class Emotiv(object):
         """
         Returns an EmotivPacket popped off the Queue.
         """
-        try:
-            return self.packets.get()
-        except Exception, e:
-            print e
+        if deviceConnected:
+            try:
+                return self.packets.get()
+            except Exception, e:
+                print e
+        else:
+            return dummyData.get()
 
     def close(self):
         """
@@ -651,13 +665,26 @@ class Emotiv(object):
                 else:
                     os.system('clear')
                 print "Packets Received: %s Packets Processed: %s" % (self.packets_received, self.packets_processed)
-                print('\n'.join("%s Reading: %s Quality: %s" %
+                print('\n'.join("%s Reading: %s Quality: %s" % 
                                 (k[1], self.sensors[k[1]]['value'],
                                  self.sensors[k[1]]['quality']) for k in enumerate(self.sensors)))
                 print "Battery: %i" % g_battery
                 gevent.sleep(.001)
 
-    def update_file(self):    
+    def update_file(self):   
+        '''
+        writes data rows as CSV
+        including 
+        * Timestamp, Unknown
+        * Gyroscope: X, Y
+        * EEG 
+        * * Data:      F3
+        * * Qualitiy: QF3
+          
+        Timestamp;       F3;    X;  ... QF3
+        1459760953.863;  -58.0  -1; ... 6.0
+        
+        ''' 
         start = int(round(time.time() * 1000));
         print str(start)
         with open(fname, 'a') as f:
@@ -675,8 +702,91 @@ class Emotiv(object):
                 gevent.sleep(0.001)
         f.close()
 
+class DummyData(object):
+    '''
+    Util for EPOC dummy data 
+    
+    Converts CSV style data to a emotiv object
+
+    CSV
+    Timestamp;       F3;    X;  ... QF3
+    1459760953.863;  -58.0  -1; ... 6.0 
+    
+    emotiv
+    {
+        "Timestamp": 1459760953.863,
+        "F3" :{
+            "value":   -58.0,
+            "quality": 6.0,
+        }
+        ...
+    
+    }
+    '''
+    
+    def __init__(self):
+        self.index = 0
+        self._buildDataStructure()
+        print "Using %d dummy datasets" % self.len
+
+    
+    def _getDataPath(self):
+        scriptPath = os.path.dirname(os.path.abspath(__file__))
+        return scriptPath + "/dummyData.csv" 
+        
+    def _readRawData(self):       
+        rawData = delete(genfromtxt(self._getDataPath(), dtype=float, delimiter=";"), 0, 0)
+        self.len = len(rawData)
+        return rawData
+
+    def _readHeader(self):
+        with open(self._getDataPath(), 'rb') as f:
+            self.header = f.readline().strip().split(";")
+        
+        fields = self.header[:]
+        fields.remove("Timestamp")
+        fields.remove("Unknown")
+        self.fields = filter(lambda x: not (x.startswith("Q")), fields)
+        print self.header
+        print self.fields
+        
+
+    def _buildDataStructure(self):
+        self._readHeader()
+        rawData = self._readRawData()
+
+        data = []
+        
+        for raw in rawData:
+            data.append(self._buildRow(raw))
+        
+        self.data = data   
+                
+    def _buildRow(self, row):
+        ret = {}
+        for h in self.fields:
+            value = row[self.header.index(h)]
+            quality = row[self.header.index("Q" + h)]
+            ret[h] = {
+                "value": value,
+                "quality": quality   
+            }
+        return ret    
+
+    def get(self):
+        '''get the current dummy data row'''
+        row = self.data[self.index]
+        row["Timestamp"] = time.time()
+        self.index = (self.index + 1) % self.len
+        return DummyPacket(row)
+
+class DummyPacket(object):
+    
+    def __init__(self, data):
+        self.sensors = data
+
 if __name__ == "__main__":
-    a = Emotiv(display_output=False, write_to_file =True)
+    a = Emotiv(display_output=False, write_to_file=True)
     try:
         a.setup()
     except KeyboardInterrupt:

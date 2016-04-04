@@ -124,18 +124,18 @@ class EEGTableReader(object):
     This class reads EEGTables created by emotiv.py
     '''
 
-    def readHeader(self, file_path, delimiter=DEFAULT_DELIMITER):
+    def readHeader(self, filePath, delimiter=DEFAULT_DELIMITER):
         '''
         Reads the first row of the table to create a list of header values
         by default the delimiter for the csv table is ";"
         
-        :param string   file_path
+        :param string   filePath
         :param string   delimiter   
         
         :return list    header column
         '''
         header = None
-        with open(file_path, 'rb') as f:
+        with open(filePath, 'rb') as f:
             header = f.readline().strip().split(delimiter)
             
         return header

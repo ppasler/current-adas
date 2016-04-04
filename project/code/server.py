@@ -1,9 +1,6 @@
 #!/usr/bin/python
 
 import BaseHTTPServer
-import SocketServer
-import errno
-import socket
 import threading
 import json
 import xmlrpclib
@@ -37,7 +34,8 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def _buildDataMap(self, packet):
         data = packet.sensors
-        data.pop("Unknown",None)
+        if "Unknown" in data:
+            data.pop("Unknown",None)
         data["UNIX_TIME"] = time.time()
         return data
         
@@ -46,7 +44,6 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         """Respond to a GET request."""
 
         global emotiv
-        # TODO handle emotiv not connected
         packet = emotiv.dequeue()
         if packet != None:
             self._add_success()
@@ -93,7 +90,7 @@ class EpocServer(object):
         while self.run_server:
             try:
                 self.httpd.handle_request()
-            except KeyboardInterrupt, SystemExit:
+            except (KeyboardInterrupt, SystemExit):
                 self.stop()
                 raise
             
@@ -104,18 +101,19 @@ class EpocServer(object):
 
 if __name__ == "__main__":
     emotiv = Emotiv(display_output=False)
-    emotiv
     server = EpocServer()
     try:
         print "starting server and emotiv"
         t = threading.Thread(target=server.run)
         t.start()
+        
         emotiv.setup()
         
         print "closing server and emotiv"
         emotiv.close()
         server.stop()
-    except KeyboardInterrupt, SystemExit:
+    except (KeyboardInterrupt, SystemExit) as e:
+        print e.getMessage()
         emotiv.close()
         server.stop()
     finally:
