@@ -31,7 +31,7 @@ class EEGSignalPlotter(object):
 
     def plotFFTSignal(self, eeg_data, label):
         #http://stackoverflow.com/questions/332289/how-do-you-change-the-size-of-figures-drawn-with-matplotlib
-        figure, ax = plt.subplots(9, figsize=(16, 9))
+        _, ax = plt.subplots(9, figsize=(16, 9))
         axRaw, axNorm, axFFT, axLogFFT, axChan = ax[0], ax[1], ax[2], ax[3], ax[4:]
         
         sampFreq = eeg_data.getSampleRate()
