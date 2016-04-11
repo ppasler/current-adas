@@ -257,6 +257,23 @@ def is_old_model(serial_number):
 class EmotivPacket(object):
     """
     Basic semantics for input bytes.
+    
+    {
+        "sensors": {
+            "F3" :{
+                "value":   -58.0,
+                "quality": 6.0,
+            }
+            ...
+            "X" :{
+                "value":   0.0,
+                "quality": 0.0,
+            }
+        },
+        "gyro_x": 0.0,
+        "gyro_y": 0.0,
+        ...
+    }
     """
 
     def __init__(self, data, sensors, model):
@@ -571,6 +588,9 @@ class Emotiv(object):
     def dequeue(self):
         """
         Returns an EmotivPacket popped off the Queue.
+        @see: EmotivPacket
+        
+        @return: EmotivPacket
         """
         if deviceConnected:
             try:
@@ -712,6 +732,9 @@ class DummyData(object):
         return DummyPacket(row)
 
 class DummyPacket(object):
+    '''Dummy object for 
+    @see: EmotivPacket
+    '''
     
     def __init__(self, data):
         self.sensors = data
