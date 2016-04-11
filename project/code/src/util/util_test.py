@@ -106,27 +106,6 @@ class TestFFTUtil(unittest.TestCase):
         # should be around 12000
         self.assertTrue(11800 < freqArray[maxIndex] < 12200)
         
-        #self._printFft(data, fft)
-
-    def _printFft(self, data, fft):
-        
-        figure, axFFT = plt.subplots(1)
-                
-        sampFreq = 44100
-        
-        n = float(len(data))
-        nUniquePts = np.ceil((n+1)/2.0)
-        
-        freqArray = np.arange(0, nUniquePts, 1.0) * (sampFreq / n);
-        print "%d, %d" % (len(fft), len(freqArray))
-        axFFT.plot(freqArray, fft, color='k')
-        axFFT.set_xlabel('Frequency (Hz)')
-        axFFT.set_ylabel('Power (dB)')
-        
-        #axLogFFT.plot(freqArray, 10*np.log10(fft), color='k')
-        
-        plt.show()
-
 
 class TestEEGUtil(unittest.TestCase):
 

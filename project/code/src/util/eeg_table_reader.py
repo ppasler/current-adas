@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
+import os
+
 from numpy import genfromtxt, delete, shape
+
 
 DEFAULT_DELIMITER = ";" # default delimiter for CSV file
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
@@ -181,12 +184,14 @@ class EEGTableReader(object):
 if __name__ == "__main__":
     e = EEGTableReader()
     #eeg_data = e.readFile("example_full.csv")
-    eeg_data = e.readFile("example_short.csv")
+    scriptPath = os.path.dirname(os.path.abspath(__file__))
+    eeg_data = e.readFile(scriptPath + "/../../examples/example_32.csv")
+    
     print eeg_data.data
     from_index = eeg_data.getTimeIndex(1456820379.22)
     to_index = eeg_data.getTimeIndex(1456820379.27)
     print eeg_data.getColumn("F4", from_index, to_index)
-    eeg_data.getTimeIndex(123)
+    eeg_data.getTimeIndex(1456820379.23)
 
 
 

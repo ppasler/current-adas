@@ -50,6 +50,7 @@ class DataCollectorTest(unittest.TestCase):
         
         self.assertEqual(self.notifyCalled, 0)
         
+        # stop populating after 1 round
         try:
             self.collector.collectData()
         except RuntimeError:
