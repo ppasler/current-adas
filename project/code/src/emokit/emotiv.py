@@ -4,9 +4,6 @@ system_platform = platform.system()
 if system_platform == "Windows":
         import socket  # Needed to prevent gevent crashing on Windows. (surfly / gevent issue #459)
         import pywinusb.hid as hid
-else:
-    if system_platform == "Darwin":
-        import hid
 import gevent
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -18,7 +15,8 @@ import time
 deviceConnected = False
 dummyData = None
 
-fname = time.strftime("%Y-%M-%d-%H-%M", time.gmtime()) + '_EEG.csv'
+scriptPath = os.path.dirname(os.path.abspath(__file__))
+fname = scriptPath + "/../../data/" + time.strftime("%Y-%M-%d-%H-%M", time.gmtime()) + '_EEG.csv'
 
 # How long to gevent-sleep if there is no data on the EEG.
 # To be precise, this is not the frequency to poll on the input device
@@ -250,21 +248,6 @@ def get_linux_setup():
         except IOError as e:
             print "Couldn't open file: %s" % e
 
-
-def hid_enumerate():
-    """
-    Returns key values from each hid device found by hidapi.
-    Find the output for your device if the product and vendor IDs don't work.
-    Only works for OS X.
-    """
-    for d in hid.enumerate(0, 0):
-        keys = d.keys()
-        keys.sort()
-        for key in keys:
-            print "%s : %s" % (key, d[key])
-            print ""
-  
-
 def is_old_model(serial_number):
         if "GM" in serial_number[-2:]:
                 return False
@@ -408,8 +391,6 @@ class Emotiv(object):
             self.setup_windows()
         elif system_platform == "Linux":
             self.setup_posix()
-        elif system_platform == "Darwin":
-            self.setup_darwin()
 
     def setup_windows(self):
         """
@@ -451,7 +432,7 @@ class Emotiv(object):
                 crypto = gevent.spawn(self.setup_crypto, self.serial_number)      
                 console_updater = gevent.spawn(self.update_console)
                 if self.write_to_file:
-                    print fname
+                    print "Writing to file: " + fname
                     if os.path.isfile(fname) == False:
                         header = 'Timestamp;';
                         for k in enumerate(self.sensors):
@@ -533,55 +514,6 @@ class Emotiv(object):
         hidraw.close()
         if not _os_decryption:
             gevent.kill(crypto, KeyboardInterrupt)
-        gevent.kill(console_updater, KeyboardInterrupt)
-
-    def setup_darwin(self):
-        """
-        Setup for headset on the OS X platform.
-        Receives packets from headset and sends them to a Queue to be processed
-        by the crypto greenlet.
-        """
-        _os_decryption = False
-        # Change these values to the hex equivalent from the output of hid_enumerate. If they are incorrect.
-        # Current values = VendorID: 8609 ProductID: 1
-        hidraw = hid.device(0x21a1, 0x0001)
-        if not hidraw:
-            hidraw = hid.device(0x21a1, 0x1234)
-        if not hidraw:
-            hidraw = hid.device(0xed02, 0x1234)
-        if not hidraw:
-            print "Device not found. Uncomment the code in setup_darwin and modify hid.device(vendor_id, product_id)"
-            raise ValueError
-        if self.serial_number == "":
-            print "Serial number needs to be specified manually in __init__()."
-            raise ValueError
-        crypto = gevent.spawn(self.setup_crypto, self.serial_number)
-        console_updater = gevent.spawn(self.update_console)
-        zero = 0
-        while self.running:
-            try:
-                # Doesn't seem to matter how big we make the buffer 32 returned every time, 33 for other platforms
-                data = hidraw.read(34)
-                if len(data) == 32:
-                    # Most of the time the 0 is truncated? That's ok we'll add it...
-                    data = [zero] + data
-                if data != "":
-                    if _os_decryption:
-                        self.packets.put_nowait(EmotivPacket(data))
-                    else:
-                        # Queue it!
-                        tasks.put_nowait(''.join(map(chr, data[1:])))
-                        self.packets_received += 1
-                    gevent.sleep(0)
-                else:
-                    # No new data from the device; yield
-                    # We cannot sleep(0) here because that would go 100% CPU if both queues are empty.
-                    gevent.sleep(DEVICE_POLL_INTERVAL)
-            except KeyboardInterrupt:
-                self.running = False
-                raise
-        hidraw.close()
-        gevent.kill(crypto, KeyboardInterrupt)
         gevent.kill(console_updater, KeyboardInterrupt)
 
     def setup_crypto(self, sn):
@@ -731,8 +663,7 @@ class DummyData(object):
 
     
     def _getDataPath(self):
-        scriptPath = os.path.dirname(os.path.abspath(__file__))
-        return scriptPath + "/../examples/example_4096.csv" 
+        return scriptPath + "/../../examples/example_4096.csv" 
         
     def _readRawData(self):       
         rawData = delete(genfromtxt(self._getDataPath(), dtype=float, delimiter=";"), 0, 0)

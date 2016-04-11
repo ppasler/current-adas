@@ -2,9 +2,8 @@
 
 
 from emokit.emotiv import Emotiv
-from simple_signal_window import SimpleSignalWindow
-
-emotiv = None
+from window.rectangular_signal_window import RectangularSignalWindow
+import gevent
 
 class DataCollector(object):
     '''
@@ -16,11 +15,17 @@ class DataCollector(object):
 
     '''
 
-    def __init__(self, windowSize=32):
-        self.windows = (SimpleSignalWindow(windowSize), SimpleSignalWindow(windowSize))
+    def __init__(self, datasource, windowSize=32):
+        self.collect = True;
+        self.datasource = datasource
+        self.windows = (RectangularSignalWindow(windowSize), RectangularSignalWindow(windowSize))
         [self.windows[0].addValue(0) for _ in range(windowSize/2)]
         for window in self.windows:
             window.registerObserver(self)
+    
+    def collectData(self):
+        while self.collect:
+            self.addValue(self.datasource.dequeue())
         
     def notify(self, data):
         '''handle data row'''
@@ -32,7 +37,11 @@ class DataCollector(object):
     
 
 if __name__ == "__main__":
-    dc = DataCollector()
+    emotiv = Emotiv(display_output=False)
+    gevent.spawn(emotiv.setup)
+    gevent.sleep(0)
+
+    dc = DataCollector(emotiv)
+    dc.collectData()
     
-    #emotiv = Emotiv(display_output=False)
-    #emotiv.setup()
+

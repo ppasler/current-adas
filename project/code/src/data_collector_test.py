@@ -10,10 +10,10 @@ from data_collector import DataCollector
 WINDOW_SIZE = 4
 
 
-class TestSignalUtil(unittest.TestCase):
+class DataCollectorTest(unittest.TestCase):
 
     def setUp(self):
-        self.collector = DataCollector(WINDOW_SIZE)
+        self.collector = DataCollector(DummyDataSource(), WINDOW_SIZE)
 
     def notify(self, data):
         self.notifyCalled += 1
@@ -22,7 +22,10 @@ class TestSignalUtil(unittest.TestCase):
         for i in range(start, count):
             self.collector.addValue(i)
 
-    def test_windowsFilled(self):
+    def _fillWindowFull(self):
+        self._fillValues(WINDOW_SIZE)
+
+    def test_windowsFilled(self):        
         win1 = self.collector.windows[0]
         win2 = self.collector.windows[1]
         self.assertEquals(win1.window, [0, 0])
@@ -36,26 +39,17 @@ class TestSignalUtil(unittest.TestCase):
         self.assertEquals(win1.window, [2, 3])
         self.assertEquals(win2.window, []) 
 
-    def test__register(self):
-        self.notifyCalled = 0
-        win1, win2 = self.collector.windows
-        win1.registerObserver(self)
-        win2.registerObserver(self)
-        self._fillValues(WINDOW_SIZE)
-        self.assertEqual(self.notifyCalled, 2)
-
-    def test__unregister(self):
-        self.notifyCalled = 0
-        win1, win2 = self.collector.windows
-        win1.registerObserver(self)
-        win2.registerObserver(self)
-        self._fillValues(WINDOW_SIZE)
-        self.assertEqual(self.notifyCalled, 2)
-                
-        win2.unregisterObserver(self)
-        self._fillValues(WINDOW_SIZE)
-        self.assertEqual(self.notifyCalled, 3) 
         
+class DummyDataSource(object):
+    
+    def __init__(self):
+        self.data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        self.len = len(self.data)
+        self.index = -1;
+
+    def dequeue(self):
+        self.index = (self.index+1) % self.len
+        return self.data[self.index]
     
 if __name__ == '__main__':
     unittest.main()
