@@ -604,6 +604,7 @@ class Emotiv(object):
         """
         Shuts down the running greenlets.
         """
+        print("%s: closing data source" % self.__class__.__name__)     
         self.running = False
 
     def update_console(self):

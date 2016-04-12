@@ -25,7 +25,6 @@ class ConfigTest(unittest.TestCase):
         with self.assertRaises(ConfigParser.NoSectionError):
             self.config.getConfig("unknown")
 
-
     def test_getInvalidConfig(self):
         with self.assertRaises(ValueError):
             self.config.getConfig("fail")

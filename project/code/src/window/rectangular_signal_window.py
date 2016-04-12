@@ -4,14 +4,17 @@ Created on 05.04.2016
 @author: Paul Pasler
 '''
 from window.signal_window import SignalWindow
+from copy import deepcopy
 
 class RectangularSignalWindow(SignalWindow):
     '''
     Interface for window function
     '''
     
-    def __init__(self, windowSize):
+    def __init__(self, windowSize, fields):
         super(RectangularSignalWindow, self).__init__(windowSize)
+        self._initWindow(fields)
+        self._resetWindow()
             
     def notifyObserver(self, data):
         data = self._doWindowFunction(data)
@@ -22,10 +25,28 @@ class RectangularSignalWindow(SignalWindow):
         '''Simple window rectangular function '''
         return data
     
-    def addValue(self, value):
-        self.window.append(value)
+    def _resetWindow(self):
+        self.index = 0
+        self.window = deepcopy(self.initWindow)
+
+    def _initWindow(self, fields):
+        self.initWindow = {}
+        for key in fields:
+            self.initWindow[key] = {"value": [], "quality": []}
+    
+    def _addDataToWindow(self, data):   
+        for key, date in data.iteritems():
+            field = self.window[key]
+            field["value"].append(date["value"])
+            field["quality"].append(date["quality"])
+            
+    def addData(self, data):
+        #TODO potential bottleneck
+        self._addDataToWindow(data)
+        self.index += 1
+        
         if self.isFull():
-            data = self.window[:]
-            self.window = []
+            data = self.window.copy()
+            self._resetWindow()
             self.notifyObserver(data)
             

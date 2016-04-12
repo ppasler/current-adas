@@ -13,7 +13,8 @@ class SignalWindow:
     def __init__(self, windowSize):
         self.observer = []
         self.windowSize = windowSize
-        self.window = [] 
+        self.window = {}
+        self.index = 0
 
         
     def registerObserver(self, observer):
@@ -25,15 +26,42 @@ class SignalWindow:
     
     @abc.abstractmethod
     def notifyObserver(self, data):
+        '''returns data like this      
+        {
+            "X": {
+                "value":     [1, 2, 3],
+                "quality":   [1, 2, 3]  
+            },
+            "F3": {
+                "value":     [1, 2, 3],
+                "quality":   [1, 2, 3]  
+            }, ...
+        }
+        
+        '''
         pass
     
     def isFull(self):
-        return len(self.window) >= self.windowSize
+        return self.index >= self.windowSize
     
     @abc.abstractmethod
-    def addValue(self, value):
+    def addData(self, data):
+        '''expects data like this      
+        {
+            "X": {
+                "value":     1,
+                "quality":   2  
+            },
+            "F3": {
+                "value":     3,
+                "quality":   4  
+            }, ...
+        }
+        
+        @param data: dict
+        '''
         pass
     
     def __repr__(self):
-        return "%s: { windowSize = %d, numValue = %d }" % (self.__class__.__name__, self.windowSize, len(self.window))
+        return "%s: { windowSize = %d, numValue = %d }" % (self.__class__.__name__, self.windowSize, self.index)
             

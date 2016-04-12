@@ -1,9 +1,13 @@
 #!/usr/bin/python
 
 
+from time import sleep
+
+import gevent
+
 from emokit.emotiv import Emotiv
 from window.rectangular_signal_window import RectangularSignalWindow
-import gevent
+
 
 class DataCollector(object):
     '''
@@ -23,23 +27,42 @@ class DataCollector(object):
         '''
         self.datasource = datasource    
         if datasource == None:
-            self.setDefaultDataSource()
+            self._setDefaultDataSource()
         self.fields = fields
-        self.windowSize = windowSize
+        self._buildSignalWindows(windowSize, windowCount)
         self.collect = True;
-        self._buildWindows(windowSize, windowCount)
         
-    def setDefaultDataSource(self):
+    def _setDefaultDataSource(self):
+        '''Set Emotiv as default source and starts it inside a gevent context'''
         emotiv = Emotiv(display_output=False)
         gevent.spawn(emotiv.setup)
         gevent.sleep(0)
         self.datasource = emotiv
     
-    def _buildWindows(self, windowSize, windowCount):
-        self.windows = (RectangularSignalWindow(windowSize), RectangularSignalWindow(windowSize))
-        [self.windows[0].addValue({}) for _ in range(windowSize/2)]
+    def _buildSignalWindows(self, windowSize, windowCount):
+        #TODO windowCount
+        self.windows = []
+        for _ in range(windowCount):
+            window = RectangularSignalWindow(windowSize, self.fields)
+            self.windows.append(window)
+            
+        self.windows[0].index = windowSize / 2
+        
         for window in self.windows:
             window.registerObserver(self)
+    
+    def setHandler(self, dataHandler):
+        self.dataHandler = dataHandler
+      
+    def collectData(self):
+        '''collect data and only take sensor data (ignoring timestamp, gyor_x, gyro_y properties)'''
+        print("%s: starting data collection" % self.__class__.__name__)     
+        while self.collect:
+            data = self.datasource.dequeue().sensors
+            filteredData = self.filter(data)
+            self._addData(filteredData)
+        print("%s: closing data collection" % self.__class__.__name__)     
+        self.datasource.close()
     
     def filter(self, data):
         '''filter dict and take only wanted fields from data
@@ -48,26 +71,17 @@ class DataCollector(object):
         @return: filtered data set
         '''
         return {x: data[x] for x in self.fields}
-    
-    def collectData(self):
-        '''collect data and only take sensor data (ignoring timestamp, gyor_x, gyro_y properties)'''
-        while self.collect:
-            data = self.datasource.dequeue().sensors
-            filteredData = self.filter(data)
-            self.addValue(filteredData)
-        print "closing data source"     
-        self.datasource.close()
-    
-    def close(self):
-        self.collect = False
+
+    def _addData(self, data):
+        for window in self.windows:
+            window.addData(data)
         
     def notify(self, data):
         '''handle data row'''
-        #TODO handle it
+        self.dataHandler(data)
         
-    def addValue(self, value):
-        for window in self.windows:
-            window.addValue(value)
+    def close(self):
+        self.collect = False
 
     
 
@@ -77,6 +91,10 @@ if __name__ == "__main__":
     gevent.sleep(0)
 
     dc = DataCollector(emotiv, ["X", "F3"])
+    handler = lambda x: x
+    dc.setHandler(handler)
     dc.collectData()
+    sleep(2)
+    dc.close()
     
 

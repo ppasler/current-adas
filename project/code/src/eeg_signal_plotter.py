@@ -8,7 +8,7 @@ from util.fft_util import FFTUtil
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
 
-
+import os.path
 
 class EEGSignalPlotter(object):
 
@@ -40,6 +40,8 @@ class EEGSignalPlotter(object):
         # plot raw and normalized signal
         self.plotRaw(axRaw, axNorm, sampFreq, raw)
 
+
+        raw = SignalUtil().normalize(raw)     # normalize from -1 to 1
 
         fft = FFTUtil().fft(raw)
         # plot FFT with normal and LOG scale
@@ -86,11 +88,13 @@ class EEGSignalPlotter(object):
         axChan.set_ylabel(channel)
 
 if __name__ == "__main__":
-    eeg_data = EEGTableReader().readFile("examples/example_4096.csv")
+    scriptPath = os.path.dirname(os.path.abspath(__file__))
+    eegPath = scriptPath + "/../examples/example_4096.csv"
+    eegData = EEGTableReader().readFile(eegPath)
     util = FFTUtil()
     eutil = EEGUtil()
 
-    raw = eeg_data.getColumn("F7", 0, 32)
+    raw = eegData.getColumn("F7", 0, 32)
     fft = util.fft(raw)
     
     e = EEGSignalPlotter()
@@ -98,6 +102,6 @@ if __name__ == "__main__":
 
     #labels = eeg_data.header
     #e.plotRawSignal(eeg_data, ["F7", "F8"])
-    e.plotFFTSignals(eeg_data, ["F7"])
+    e.plotFFTSignals(eegData, ["F7"])
 
 

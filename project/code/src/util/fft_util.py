@@ -3,8 +3,6 @@
 
 import numpy as np
 
-from signal_util import SignalUtil
-
 class FFTUtil(object):
     '''
         process raw eeg data by performing a fast-fourier-transformation
@@ -15,10 +13,6 @@ class FFTUtil(object):
         * http://samcarcagno.altervista.org/blog/basic-sound-processing-python/
         * https://web.archive.org/web/20120615002031/http://www.mathworks.com/support/tech-notes/1700/1702.html
     '''
-
-    def __init__(self):
-        """This class does FFT for EEG signals"""
-        self.signal_util = SignalUtil()
 
     def _removeMirrored(self, fft_data):
         '''remove mirrored data, only take left side'''
@@ -54,7 +48,6 @@ class FFTUtil(object):
 
     def fft(self, data):
         '''FFT with several processing steps'''
-        data = self.signal_util.normalize(data)     # normalize from -1 to 1
 
         # make sure n_data is a power of 2
         fft_data = np.fft.fft(data)                 # fourier transform

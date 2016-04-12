@@ -1,21 +1,23 @@
 #!/usr/bin/python
 
+import threading
+from time import sleep
 import unittest
-import numpy as np
-import matplotlib.pyplot as plt
-import os.path
-
-from string import ascii_uppercase
 
 from data_collector import DataCollector
 
-WINDOW_SIZE = 4
 
+WINDOW_SIZE = 4
+FIELDS = ["A", "B", "C"]
 
 class DataCollectorTest(unittest.TestCase):
 
     def setUp(self):
-        self.collector = DataCollector(DummyDataSource(WINDOW_SIZE), list(ascii_uppercase), WINDOW_SIZE)
+        self.collector = DataCollector(DummyDataSource(WINDOW_SIZE), 
+                                       FIELDS, 
+                                       WINDOW_SIZE)
+        dataHandler = lambda x: x
+        self.collector.setHandler(dataHandler)
         self.notifyCalled = 0
 
     def notify(self, data):
@@ -24,26 +26,40 @@ class DataCollectorTest(unittest.TestCase):
     def _fillValues(self, count):
         data = self.collector.datasource.data
         for i in range(count):
-            self.collector.addValue(data[i])
+            self.collector._addData(data[i].sensors)
 
     def _fillWindowFull(self):
         self._fillValues(WINDOW_SIZE)
 
-    def test_windowsFilled(self):        
+    def getInitWindow(self):
+        d = {}
+        for key in FIELDS:
+            d[key] = {"value": [], "quality": []} 
+        return d
+
+    def test_windowsFilled(self):
+        initWindow = self.getInitWindow()
+                
         win1 = self.collector.windows[0]
         win2 = self.collector.windows[1]
-        self.assertEquals(win1.window, [{}, {}])
-        self.assertEquals(win2.window, [])
+        
+        self.assertEquals(win1.index, WINDOW_SIZE / 2)
+        self.assertEquals(win1.window, initWindow)
+        self.assertEquals(win2.index, 0)
+        self.assertEquals(win2.window, initWindow)
         
         self._fillValues(WINDOW_SIZE / 2)
-        self.assertEquals(win1.window, [])
-        self.assertEquals(len(win2.window), 2) 
-        
-        self._fillValues(WINDOW_SIZE / 2)
-        self.assertEquals(len(win1.window), 2) 
-        self.assertEquals(win2.window, []) 
+        self.assertEquals(win1.window, initWindow)
+        self.assertEquals(win1.index, 0) 
+        self.assertEquals(win2.index, WINDOW_SIZE / 2)
+        self.assertEquals(win2.window["A"], {'quality': ['A_0', 'A_1'], 'value': ['A_0', 'A_1']})
 
-    def test_addValue(self):
+        
+        self._fillValues(WINDOW_SIZE / 2)
+        self.assertEquals(win1.index, 2) 
+        self.assertEquals(win2.window, initWindow) 
+
+    def test_addData(self):
         win1, win2 = self.collector.windows
         win1.registerObserver(self)
         win2.registerObserver(self)
@@ -51,15 +67,17 @@ class DataCollectorTest(unittest.TestCase):
         self.assertEqual(self.notifyCalled, 0)
         
         # stop populating after 1 round
-        try:
-            self.collector.collectData()
-        except RuntimeError:
-            pass
+        collectorThread = threading.Thread(target=self.collector.collectData)
+        collectorThread.start()
         
-        self.assertEqual(self.notifyCalled, 2)
+        sleep(0.1)
+        self.collector.close()
+        collectorThread.join()
+
+        self.assertTrue(self.notifyCalled > 0)
     
     def test_filter(self):
-        fields = ["A", "S", "X"]
+        fields = ["A", "C"]
         self.collector.fields = fields
         
         data = self.collector.datasource.data;
@@ -81,23 +99,19 @@ class DummyDataSource(object):
 
     def _buildData(self, length):
         ret = []
-        abc = ascii_uppercase
         for i in range(length):
             d = {}
-            for c in abc:
-                d[c] = c + "_" + str(i)
-            ret.append(DummyPacket(d))    
+            for c in FIELDS:
+                d[c] = {"value": c + "_" + str(i), "quality": c + "_" + str(i**2)} 
+            ret.append(DummyPacket(d))
         return ret
 
     def dequeue(self):
-        self.index = (self.index+1)
-        if self.infinite:
-            self.index %= self.len
-        elif self.index >= self.len:
-            raise RuntimeError("Empty Source")
-        
+        self.index = (self.index+1) % self.len
         return self.data[self.index]
 
+    def close(self):
+        pass
 
 class DummyPacket(object):
     def __init__(self, data):
