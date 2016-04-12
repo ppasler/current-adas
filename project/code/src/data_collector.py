@@ -21,9 +21,9 @@ class DataCollector(object):
 
     def __init__(self, datasource=None, fields=[], windowSize=32, windowCount=2):
         '''
-        @param datasource: object which provides EmotivPackage by calling dequeu()
-        @param fields: list of key which are taken from the EmotivData
-        @param windowSize: size of one window  
+        :param datasource: object which provides EmotivPackage by calling dequeu()
+        :param fields: list of key which are taken from the EmotivData
+        :param windowSize: size of one window  
         '''
         self.datasource = datasource    
         if datasource == None:
@@ -66,9 +66,9 @@ class DataCollector(object):
     
     def filter(self, data):
         '''filter dict and take only wanted fields from data
-        @param data: whole raw data
+        :param data: whole raw data
         
-        @return: filtered data set
+        :return: filtered data set
         '''
         return {x: data[x] for x in self.fields}
 

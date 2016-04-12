@@ -19,9 +19,9 @@ class ProcessingChain(object):
     def splitData(self, data):
         '''split eeg and gyro data
         
-        @param data: all values as dict
+        :param data: all values as dict
         
-        @return: 
+        :return: 
             eegData: eeg values as dict
             gyroData: gyro values as dict
         '''

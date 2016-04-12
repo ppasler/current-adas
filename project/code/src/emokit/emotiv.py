@@ -590,7 +590,7 @@ class Emotiv(object):
         Returns an EmotivPacket popped off the Queue.
         @see: EmotivPacket
         
-        @return: EmotivPacket
+        :return: EmotivPacket
         """
         if deviceConnected:
             try:

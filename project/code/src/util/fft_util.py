@@ -6,12 +6,13 @@ import numpy as np
 class FFTUtil(object):
     '''
         process raw eeg data by performing a fast-fourier-transformation
-        
-        see ../../examples/fft_sound_example.py
-        
+
+        see: src.example.fft_sound_example
+
         inspired by:
-        * http://samcarcagno.altervista.org/blog/basic-sound-processing-python/
-        * https://web.archive.org/web/20120615002031/http://www.mathworks.com/support/tech-notes/1700/1702.html
+        
+        * `basic sound processing python <http://samcarcagno.altervista.org/blog/basic-sound-processing-python>`_
+        * `tech notes fft <https://web.archive.org/web/20120615002031/http://www.mathworks.com/support/tech-notes/1700/1702.html>`_
     '''
 
     def _removeMirrored(self, fft_data):

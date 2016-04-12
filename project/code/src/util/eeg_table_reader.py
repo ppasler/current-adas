@@ -31,7 +31,7 @@ class EEGTableData(object):
         
         :param    float   fromTime:    time as unix timestamp 
         
-        @return   int     the index of the given fromTime 
+        :return   int     the index of the given fromTime 
         '''
         data = self.getColumn(TIMESTAMP_STRING)
         if not self._timeInData(data, fromTime):
@@ -52,7 +52,7 @@ class EEGTableData(object):
         :param     int    limit:         endpoint of dataset
         :param     int    length:        length of dataset
         
-        @return    array  dataset for given column   
+        :return    array  dataset for given column   
         '''
         
         if columnName not in self.header:
@@ -75,7 +75,7 @@ class EEGTableData(object):
         :param float     fromTime:     start time of dataset as unix timestamp   
         :param float     toTime:       start time of dataset as unix timestamp
         
-        @return array    dataset for given column   
+        :return array    dataset for given column   
         
         :raise ValueError if time could not be found in dataset 
         '''
@@ -105,7 +105,7 @@ class EEGTableData(object):
         '''
         calcs the samplerate for the whole dataset based on the timestamp column   
         
-        @return int    samplerate
+        :return int    samplerate
 
         '''
         data = self.getColumn(TIMESTAMP_STRING)
@@ -135,7 +135,7 @@ class EEGTableReader(object):
         :param string   filePath
         :param string   delimiter   
         
-        @return list    header column
+        :return list    header column
         '''
         header = None
         with open(filePath, 'rb') as f:
@@ -158,7 +158,7 @@ class EEGTableReader(object):
         :param string   filePath
         :param string   delimiter   
         
-        @return array   data columns
+        :return array   data columns
         '''
         data = delete(genfromtxt(filePath, dtype=float, delimiter=delimiter), 0, 0)
         return data

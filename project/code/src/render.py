@@ -18,7 +18,6 @@ from emokit.emotiv import Emotiv
 import os
 
 
-def render():
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (50,50)
 
 '''Tested value for no movement'''

@@ -7,21 +7,26 @@ class SignalUtil(object):
 
     def normalize(self, data):
         '''normalizes data between -1 and 1
-        @param data: array like list of values
         
-        @return: normalized data
+        :param numpy.array data: list of values
+        
+        :return: normalized data
+        :rtype: numpy.array
         '''
         
         extreme = float(max(max(data), abs(min(data))))
         return data / extreme
 
     def energy(self, data):
-        '''calc energy E = sum(data ** 2) https://en.wikipedia.org/wiki/Energy_(signal_processing)
+        '''calculates signal energy 
         
-        @param data: array like list of values
+        ``E = sum(data ** 2)``
         
-        @return: signal energy
+        * `Energy_(signal_processing) <https://en.wikipedia.org/wiki/Energy_(signal_processing)>`_
         
+        :param numpy.array data: list of values
+        
+        :return: signal energy
+        :rtype: float
         '''
-        
         return sum(data ** 2)

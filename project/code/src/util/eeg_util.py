@@ -39,7 +39,7 @@ class EEGUtil(object):
         
         :param array    fft     eeg data with performed fft
         
-        @return dict    split channels as map
+        :return dict    split channels as map
         '''
         channels = {}
         for label, freqRange in EEGUtil.channel_ranges.iteritems():
@@ -52,7 +52,7 @@ class EEGUtil(object):
         
         :param array    fft     eeg data with performed fft
         
-        @return array   split from 0-4hz
+        :return array   split from 0-4hz
         '''
         return fft[slice(*self.channel_ranges["delta"])]
                
@@ -62,7 +62,7 @@ class EEGUtil(object):
         
         :param array    fft     eeg data with performed fft
         
-        @return array   split from 4-8hz
+        :return array   split from 4-8hz
         '''
         return fft[slice(*self.channel_ranges["theta"])]
                 
@@ -72,7 +72,7 @@ class EEGUtil(object):
         
         :param array    fft     eeg data with performed fft
         
-        @return array   split from 8-13hz
+        :return array   split from 8-13hz
         '''
         return fft[slice(*self.channel_ranges["alpha"])]
                 
@@ -82,7 +82,7 @@ class EEGUtil(object):
         
         :param array    fft     eeg data with performed fft
         
-        @return array   split from 13-30hz
+        :return array   split from 13-30hz
         '''
         return fft[slice(*self.channel_ranges["beta"])]
           
@@ -92,6 +92,6 @@ class EEGUtil(object):
         
         :param array    fft     eeg data with performed fft
         
-        @return array   split from 30-99hz
+        :return array   split from 30-99hz
         '''
         return fft[slice(*self.channel_ranges["gamma"])]

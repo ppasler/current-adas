@@ -58,7 +58,7 @@ class SignalWindow:
             }, ...
         }
         
-        @param data: dict
+        :param data: dict
         '''
         pass
     
