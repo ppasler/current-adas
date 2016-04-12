@@ -5,6 +5,7 @@ Created on 05.04.2016
 '''
 from window.signal_window import SignalWindow
 from copy import deepcopy
+from numpy import array
 
 class RectangularSignalWindow(SignalWindow):
     '''

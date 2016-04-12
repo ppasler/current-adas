@@ -4,7 +4,7 @@ from time import sleep
 import threading
 from util.signal_util import SignalUtil
 
-
+from numpy import array
 
 
 class ProcessingChain(object):
@@ -14,7 +14,7 @@ class ProcessingChain(object):
         self.gyroFields = ConfigProvider().getEmotivConfig()["gyroFields"]
 
         self.processingConfig = ConfigProvider().getProcessingConfig()
-        self.signlaUtil = SignalUtil()
+        self.signalUtil = SignalUtil()
     
     def splitData(self, data):
         '''split eeg and gyro data
@@ -35,9 +35,14 @@ class ProcessingChain(object):
         eegData, gyroData = self.splitData(data)
         self.processEEGData(eegData)
         self.processGyroData(gyroData)
+    
+    def normalizeEEGSignals(self, eegData):
+        return {x: self.signalUtil.normalize(array(eegData[x]["value"])) for x in eegData}
             
     def processEEGData(self, eegData):
-        pass#print eegData
+        normalizedSignals = self.normalizeAll(eegData)
+        print eegData
+        print normalizedSignals
          
     def processGyroData(self, gyroData):
         pass#print gyroData

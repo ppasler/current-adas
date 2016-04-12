@@ -2,9 +2,10 @@
 
 import unittest
 from window.rectangular_signal_window import RectangularSignalWindow
+from numpy import array
 
 WINDOW_SIZE = 4
-
+INIT_WINDOW = {"X": {'quality': [], 'value': []}}
 
 class SignalWindowTest(unittest.TestCase):
 
@@ -22,13 +23,13 @@ class SignalWindowTest(unittest.TestCase):
         self._fillValues(WINDOW_SIZE)
 
     def test_windowsFilled(self):        
-        self.assertEquals(self.window.window, {"X": {'quality': [], 'value': []}})
+        self.assertEquals(self.window.window, INIT_WINDOW)
         
         self._fillValues(WINDOW_SIZE / 2)
         self.assertEquals(self.window.window, {"X": {'quality': [0, 1], 'value': [0, 1]}}) 
         
         self._fillValues(WINDOW_SIZE, WINDOW_SIZE / 2)
-        self.assertEquals(self.window.window, {"X": {'quality': [], 'value': []}}) 
+        self.assertEquals(self.window.window, INIT_WINDOW) 
 
     def test__register(self):
         self.notifyCalled = 0
