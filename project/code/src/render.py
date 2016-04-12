@@ -17,6 +17,8 @@ import gevent
 from emokit.emotiv import Emotiv
 import os
 
+
+def render():
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (50,50)
 
 '''Tested value for no movement'''
@@ -180,12 +182,14 @@ def main():
             updated = False
         gevent.sleep(0)
 
-try:
-    gheight = (resolution[1]-resolution[1]*0.1) / 14
-    main()
-except (Exception, KeyboardInterrupt):
-    logging.exception()
-finally:
-    emotiv.close()
-    pygame.quit()
-    sys.exit(0) 
+if __name__ == "__main__":
+    
+    try:
+        gheight = (resolution[1]-resolution[1]*0.1) / 14
+        main()
+    except (Exception, KeyboardInterrupt):
+        logging.exception()
+    finally:
+        emotiv.close()
+        pygame.quit()
+        sys.exit(0) 
