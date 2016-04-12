@@ -3,7 +3,7 @@
 import ConfigParser
 import unittest
 
-from config import ConfigProvider
+from config.config import ConfigProvider
 
 
 class ConfigTest(unittest.TestCase):

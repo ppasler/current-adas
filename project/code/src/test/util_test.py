@@ -5,10 +5,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os.path
 
-from fft_util import FFTUtil
-from eeg_util import EEGUtil
-from signal_util import SignalUtil
-from eeg_table_reader import EEGTableReader, EEGTableData
+from util.fft_util import FFTUtil
+from util.eeg_util import EEGUtil
+from util.signal_util import SignalUtil
+from util.eeg_table_reader import EEGTableReader, EEGTableData
 
 
 TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -24258, -18459,

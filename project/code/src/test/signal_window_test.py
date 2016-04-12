@@ -2,7 +2,6 @@
 
 import unittest
 from window.rectangular_signal_window import RectangularSignalWindow
-from numpy import array
 
 WINDOW_SIZE = 4
 INIT_WINDOW = {"X": {'quality': [], 'value': []}}

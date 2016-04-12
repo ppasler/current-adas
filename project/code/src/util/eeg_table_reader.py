@@ -181,7 +181,7 @@ class EEGTableReader(object):
     
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     e = EEGTableReader()
     #eeg_data = e.readFile("example_full.csv")
     scriptPath = os.path.dirname(os.path.abspath(__file__))

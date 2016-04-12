@@ -62,6 +62,6 @@ class SignalWindow:
         '''
         pass
     
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "%s: { windowSize = %d, numValue = %d }" % (self.__class__.__name__, self.windowSize, self.index)
             

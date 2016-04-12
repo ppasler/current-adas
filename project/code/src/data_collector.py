@@ -85,7 +85,7 @@ class DataCollector(object):
 
     
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     emotiv = Emotiv(display_output=False)
     gevent.spawn(emotiv.setup)
     gevent.sleep(0)

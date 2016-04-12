@@ -40,7 +40,7 @@ class ProcessingChain(object):
         return {x: self.signalUtil.normalize(array(eegData[x]["value"])) for x in eegData}
             
     def processEEGData(self, eegData):
-        normalizedSignals = self.normalizeAll(eegData)
+        normalizedSignals = self.normalizeEEGSignals(eegData)
         print eegData
         print normalizedSignals
          
@@ -81,7 +81,7 @@ class FeatureExtractor(object):
         print("%s: closing feature extractor" % self.__class__.__name__)     
 
         
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     extractor = FeatureExtractor()
     extractor.start()
     
