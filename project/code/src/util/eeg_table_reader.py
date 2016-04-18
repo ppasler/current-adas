@@ -9,7 +9,18 @@ DEFAULT_DELIMITER = ";" # default delimiter for CSV file
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
 
 class EEGTableData(object):
+    '''
+    Representation of EEG table data
+    '''
+
     def __init__(self, header=None, data=None, file_path=""):
+        '''
+        table data with header, data and the filepath
+        
+        :param header:
+        :param data:
+        :param file_path:
+        '''
         self.file_path = file_path
         self.header = header
         self.data = data

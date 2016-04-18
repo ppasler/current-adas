@@ -37,9 +37,9 @@ class EEGUtil(object):
          "gamma": [5, 6, 7]
         }
         
-        :param array    fft     eeg data with performed fft
+        :param array fft:     eeg data with performed fft
         
-        :return dict    split channels as map
+        :return dict: split channels as map
         '''
         channels = {}
         for label, freqRange in EEGUtil.channel_ranges.iteritems():
