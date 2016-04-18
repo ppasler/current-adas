@@ -4,6 +4,14 @@ src.example package
 Submodules
 ----------
 
+src.example.eeg_signal_plotter module
+-------------------------------------
+
+.. automodule:: src.example.eeg_signal_plotter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 src.example.fft_sound_example module
 ------------------------------------
 
@@ -16,6 +24,14 @@ src.example.plotter module
 --------------------------
 
 .. automodule:: src.example.plotter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.example.render module
+-------------------------
+
+.. automodule:: src.example.render
     :members:
     :undoc-members:
     :show-inheritance:

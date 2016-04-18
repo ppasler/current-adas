@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,8 +10,6 @@ from util.eeg_table_reader import EEGTableReader
 from util.fft_util import FFTUtil
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
-
-import os.path
 
 class EEGSignalPlotter(object):
 
@@ -89,7 +90,7 @@ class EEGSignalPlotter(object):
 
 if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))
-    eegPath = scriptPath + "/../examples/example_4096.csv"
+    eegPath = scriptPath + "/../../examples/example_4096.csv"
     eegData = EEGTableReader().readFile(eegPath)
     util = FFTUtil()
     eutil = EEGUtil()

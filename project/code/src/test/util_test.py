@@ -13,6 +13,8 @@ from util.signal_util import SignalUtil
 from util.eeg_table_reader import EEGTableReader, EEGTableData
 
 
+import inspect
+
 TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -24258, -18459,
         29368,  10325, -32229,  -1401,  32616,  -7633, -30503,  16079,
         26049, -23294, -19599,  28721,  11644, -31946,  -2798,  32720,
@@ -302,7 +304,21 @@ class TestEEGTableData(unittest.TestCase):
         self.assertFalse(self.eeg_data._timeInData(data, 1456820378))
         self.assertFalse(self.eeg_data._timeInData(data, 1456820382))
 
+class Clazz(object):
+    
+    def __init__(self):
+        pass
+
+
+    def test(self, test):
+        pass
+    
 if __name__ == '__main__':
+    c = Clazz()
+    print inspect.getargspec(c.__init__).args
+    print inspect.getargspec(c.test).args
+
+    
     unittest.main()
 
 

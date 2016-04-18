@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+#!/usr/bin/python
 """
 emokit - emotiv epoc reverse engineering
-~~~~~~~~~~~~~~~
 
 :copyright: (c) 2013 by ???
 :license: ???

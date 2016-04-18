@@ -14,13 +14,13 @@
 
 import sys
 import os
+import inspect
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sourcePath = os.path.abspath('.') + "/../"
-print os.path.isfile(sourcePath + "server.py")
 sys.path.insert(0, sourcePath)
 
 # -- General configuration ------------------------------------------------
@@ -35,7 +35,8 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
-    'sphinx.ext.autodoc'
+    'sphinx.ext.autodoc',
+    'sphinx.ext.imgmath'
 ]
 
 
@@ -118,7 +119,7 @@ todo_include_todos = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -294,3 +295,15 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+def isDefaultConstructor(name, obj):
+    return name == "__init__" and len(inspect.getargspec(obj).args) > 1
+    
+
+def skip(app, what, name, obj, skip, options):
+    if isDefaultConstructor(name, obj):
+        return False
+    return skip
+
+def setup(app):
+    app.connect("autodoc-skip-member", skip)

@@ -2,7 +2,7 @@ import os
 import platform
 system_platform = platform.system()
 if system_platform == "Windows":
-        import pywinusb.hid as hid
+    import pywinusb.hid as hid
 import gevent
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -733,7 +733,7 @@ class DummyData(object):
 
 class DummyPacket(object):
     '''Dummy object for 
-    @see: EmotivPacket
+    :see: EmotivPacket
     '''
     
     def __init__(self, data):

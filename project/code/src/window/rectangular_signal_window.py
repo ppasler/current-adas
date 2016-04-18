@@ -3,9 +3,8 @@ Created on 05.04.2016
 
 @author: Paul Pasler
 '''
-from window.signal_window import SignalWindow
+from signal_window import SignalWindow
 from copy import deepcopy
-from numpy import array
 
 class RectangularSignalWindow(SignalWindow):
     '''

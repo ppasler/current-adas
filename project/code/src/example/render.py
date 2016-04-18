@@ -1,18 +1,20 @@
 #!/usr/bin/python
 # Renders a window with graph values for each sensor and a box for gyro values.
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 try:
     import psyco
     psyco.full()
 except ImportError:
     print 'No psyco. Expect poor performance. Not really...'
 
-import sys
 import logging
 import pygame
 from pygame import FULLSCREEN
 import gevent
 from emokit.emotiv import Emotiv
-import os
 
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (50,50)

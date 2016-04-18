@@ -14,16 +14,18 @@ class DataCollector(object):
     collects EEG signals and passes them
     has 2 windows for which overlap 
        
-    win 1:  x x x x|x x x x|x x x x
-    win 2:  x x|x x x x|x x x x|x x
+    ``win 1: x x x x|x x x x|x x x x`` 
+      
+    ``win 2: x x|x x x x|x x x x|x x``
     
     '''
 
     def __init__(self, datasource=None, fields=[], windowSize=32, windowCount=2):
         '''
-        :param datasource: object which provides EmotivPackage by calling dequeu()
-        :param fields: list of key which are taken from the EmotivData
-        :param windowSize: size of one window  
+        :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
+        :param list fields: list of key which are taken from the EmotivData
+        :param int windowSize: size of one window (default 32)
+        :param int windowCount: number of windows (default 2)
         '''
         self.datasource = datasource    
         if datasource == None:
