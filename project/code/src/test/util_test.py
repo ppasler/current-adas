@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import unittest
 import numpy as np
-import matplotlib.pyplot as plt
 import os.path
 
 from util.fft_util import FFTUtil
@@ -116,6 +118,11 @@ class TestEEGUtil(unittest.TestCase):
         data = [1, 2, 3, 4, 5, 6, 7, 8]
 
         channels = self.util.getChannels(data)
+        self.assertTrue(len(channels) == 5)
+        self.assertTrue(len(channels["delta"]) > 0)
+        self.assertTrue(len(channels["theta"]) > 0)
+        
+        self.assertTrue(len(channels["alpha"]) == 0)
 
     def test_getChannels(self):
         fft = TEST_DATA_12000Hz

@@ -16,10 +16,10 @@ class EEGTableData(object):
         if data is not None:
             self.len = len(data)
 
-    def setHeader(self, header):
+    def setHeader(self, header):  # pragma: no cover
         self.header = header
 
-    def setData(self, data):
+    def setData(self, data):  # pragma: no cover
         self.data = data
         self.len = len(data)
 

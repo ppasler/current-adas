@@ -9,10 +9,7 @@ except ImportError:
 import sys
 import logging
 import pygame
-import platform
 from pygame import FULLSCREEN
-if platform.system() == "Windows":
-    import socket  # Needed to prevent gevent crashing on Windows. (surfly / gevent issue #459)
 import gevent
 from emokit.emotiv import Emotiv
 import os

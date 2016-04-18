@@ -2,7 +2,6 @@ import os
 import platform
 system_platform = platform.system()
 if system_platform == "Windows":
-        import socket  # Needed to prevent gevent crashing on Windows. (surfly / gevent issue #459)
         import pywinusb.hid as hid
 import gevent
 from Crypto.Cipher import AES

@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import unittest
 from window.rectangular_signal_window import RectangularSignalWindow
 
