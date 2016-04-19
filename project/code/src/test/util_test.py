@@ -12,9 +12,6 @@ from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
 from util.eeg_table_reader import EEGTableReader, EEGTableData
 
-
-import inspect
-
 TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -24258, -18459,
         29368,  10325, -32229,  -1401,  32616,  -7633, -30503,  16079,
         26049, -23294, -19599,  28721,  11644, -31946,  -2798,  32720,
@@ -51,6 +48,13 @@ class TestSignalUtil(unittest.TestCase):
         self.assertEqual(len(testList), len(normList))
         self.assertTrue(max(normList) <= 1)
         self.assertTrue(min(normList) >= -1)
+
+    def test_normalize2(self):
+        testList = np.array([0, -5, 1, 10])
+        normList = self.util.normalize2(testList)
+        self.assertEqual(len(testList), len(normList))
+        self.assertTrue(max(normList) <= 1)
+        self.assertTrue(min(normList) >= 0)
 
     def test_energie(self):
         testList = np.array([1, 2, 3, 4])
@@ -134,7 +138,7 @@ class TestEEGUtil(unittest.TestCase):
         self.assertTrue(all([x in fft for x in flattenChannels]))
         
         self.assertTrue(len(flattenChannels) <= len(fft))
-        self.assertTrue(len(flattenChannels) == 99)
+        self.assertTrue(len(flattenChannels) == 98)
 
     
     def test_getSingleChannels(self):
@@ -142,7 +146,8 @@ class TestEEGUtil(unittest.TestCase):
         channels = self.util.getChannels(fft)
 
         delta = self.util.getDeltaChannel(fft)
-        self.assertTrue(len(delta) == 4)
+        # TODO delta range from 0.5 to 4Hz, actual range from 1 - 4Hz
+        self.assertTrue(len(delta) == 3)
         self.assertTrue(all([x in channels["delta"] for x in delta]))
                
         theta = self.util.getThetaChannel(fft)
@@ -304,21 +309,7 @@ class TestEEGTableData(unittest.TestCase):
         self.assertFalse(self.eeg_data._timeInData(data, 1456820378))
         self.assertFalse(self.eeg_data._timeInData(data, 1456820382))
 
-class Clazz(object):
-    
-    def __init__(self):
-        pass
-
-
-    def test(self, test):
-        pass
-    
 if __name__ == '__main__':
-    c = Clazz()
-    print inspect.getargspec(c.__init__).args
-    print inspect.getargspec(c.test).args
-
-    
     unittest.main()
 
 

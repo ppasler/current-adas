@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-DELTA_RANGE = (0, 4)
+DELTA_RANGE = (1, 4)
 THETA_RANGE = (4, 8)
 ALPHA_RANGE = (8, 13)
 BETA_RANGE  = (13, 30)
@@ -13,11 +13,11 @@ class EEGUtil(object):
     This class does useful things with EEG signals
     
     Like splitting by channel
-    DELTA =  0 -  4hz
-    THETA =  4 -  8hz
-    ALPHA =  8 - 13hz
-    BETA  = 13 - 30hz
-    GAMMA = 30 - 99hz
+    DELTA =  0.5 -  4hz
+    THETA =  4   -  8hz
+    ALPHA =  8   - 13hz
+    BETA  = 13   - 30hz
+    GAMMA = 30   - 99hz
     
     '''
 
@@ -52,7 +52,7 @@ class EEGUtil(object):
         
         :param array    fft     eeg data with performed fft
         
-        :return array   split from 0-4hz
+        :return array   split from 0.5-4hz
         '''
         return fft[slice(*self.channel_ranges["delta"])]
                
