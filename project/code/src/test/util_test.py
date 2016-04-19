@@ -1,16 +1,21 @@
 #!/usr/bin/python
 
+import os.path
 import sys, os
+import unittest
+
+from scipy.signal.filter_design import freqz
+
+import numpy as np
+from util.eeg_table_reader import EEGTableReader, EEGTableData
+from util.eeg_util import EEGUtil
+from util.fft_util import FFTUtil
+from util.signal_util import SignalUtil
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-import unittest
-import numpy as np
-import os.path
 
-from util.fft_util import FFTUtil
-from util.eeg_util import EEGUtil
-from util.signal_util import SignalUtil
-from util.eeg_table_reader import EEGTableReader, EEGTableData
 
 TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -24258, -18459,
         29368,  10325, -32229,  -1401,  32616,  -7633, -30503,  16079,
@@ -60,6 +65,41 @@ class TestSignalUtil(unittest.TestCase):
         testList = np.array([1, 2, 3, 4])
         energy = self.util.energy(testList)
         self.assertTrue(energy == 30)
+        
+    def test_butter_bandpass(self):
+        b, a = self.util.butter_bandpass(5, 5, 16)
+        w, h = freqz(b, a, worN=32)
+        h = abs(h)
+        m = max(h)
+        #print h, list(h).index(m)
+
+    def test_butter_bandpass_egde(self):
+        # no signal allowed
+        b, a = self.util.butter_bandpass(5, 5, 16)
+        _, h = freqz(b, a, worN=32)
+        self.assertEquals(np.count_nonzero(abs(h)), 0)
+        
+        # everything gets through (except 0)
+        b, a = self.util.butter_bandpass(0, 8, 16)
+        _, h = freqz(b, a, worN=16)
+        self.assertAlmostEqual(sum(abs(h)), len(h)-1, delta = 1)
+
+
+    def test_butter_bandpass_error(self):
+        self.util.butter_bandpass(0, 4, 8)
+
+        with self.assertRaises(ValueError):
+            _ = self.util.butter_bandpass(2, 4, 4)
+        with self.assertRaises(ValueError):
+            _ = self.util.butter_bandpass(2, 4, 7)
+            
+        with self.assertRaises(ValueError):
+            _ = self.util.butter_bandpass(-1, 4, 8)
+
+    def test_butter_bandpass_filter(self):
+        x = [1, -1, 1, -1]
+        y = self.util.butter_bandpass_filter(x, 1, 2, 10)
+        
 
 class TestFFTUtil(unittest.TestCase):
 
