@@ -46,7 +46,7 @@ class SignalUtil(object):
         '''
         return sum(data ** 2)
 
-    def butter_bandpass(self, lowcut, highcut, sampFreq, order=5):
+    def butterBandpass(self, lowcut, highcut, sampFreq, order=5):
         '''
         Creates a butterworth filter design from lowcut to highcut and returns the filter coefficients
         :see: `scipy.signal.butter <http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html#scipy.signal.butter>`_
@@ -67,12 +67,12 @@ class SignalUtil(object):
         return b, a
     
     
-    def butter_bandpass_filter(self, data, lowcut, highcut, fs, order=5):
-        b, a = self.butter_bandpass(lowcut, highcut, fs, order)
+    def butterBandpassFilter(self, data, lowcut, highcut, fs, order=5):
+        b, a = self.butterBandpass(lowcut, highcut, fs, order)
         y = lfilter(b, a, data)
         return y
     
-    def butter_bandpass_filter2(self, data, lowcut, highcut, fs, order=5):
-        b, a = self.butter_bandpass(lowcut, highcut, fs, order)
+    def butterBandpassFilter2(self, data, lowcut, highcut, fs, order=5):
+        b, a = self.butterBandpass(lowcut, highcut, fs, order)
         y = filtfilt(b, a, data)
         return y

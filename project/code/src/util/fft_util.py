@@ -15,10 +15,10 @@ class FFTUtil(object):
         * `tech notes fft <https://web.archive.org/web/20120615002031/http://www.mathworks.com/support/tech-notes/1700/1702.html>`_
     '''
 
-    def _removeMirrored(self, fft_data):
+    def _removeMirrored(self, fft_data, n):
         '''remove mirrored data, only take left side'''
         
-        nUniquePts = np.ceil((len(fft_data)+1)/2.0)
+        nUniquePts = np.ceil((n+1)/2.0)
         return fft_data[0:nUniquePts]
 
     def _doubleValues(self, fft_data):
@@ -35,12 +35,10 @@ class FFTUtil(object):
 
         return fft_data
 
-    def _process(self, fft_data):
-        n_fft_data = float(len(fft_data))
-        
+    def _process(self, fft_data, n):
         fft_data = abs(fft_data)
 
-        fft_data = fft_data / n_fft_data    # scale by the number of points so that
+        fft_data = fft_data / float(n)      # scale by the number of points so that
                                             # the magnitude does not depend on the length 
                                             # of the signal or on its sampling frequency  
         fft_data = fft_data**2              # square it to get the power 
@@ -49,14 +47,14 @@ class FFTUtil(object):
 
     def fft(self, data):
         '''FFT with several processing steps'''
-
+        n = len(data)
         # make sure n_data is a power of 2
-        fft_data = np.fft.fft(data)                 # fourier transform
+        fft_data = np.fft.fft(data)                   # fourier transform
 
-        fft_data = self._removeMirrored(fft_data)   # remove mirrored data
-        
-        fft_data = self._process(fft_data)          # process fft data
+        fft_data = self._removeMirrored(fft_data, n)  # remove mirrored data
 
-        fft_data = self._doubleValues(fft_data)     # make sure energy stays the same
+        fft_data = self._process(fft_data, n)         # process fft data
+
+        fft_data = self._doubleValues(fft_data)       # make sure energy stays the same
 
         return fft_data

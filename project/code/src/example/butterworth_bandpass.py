@@ -37,7 +37,7 @@ class BandPathExample(object):
         plt.figure(1)
         plt.clf()
         for order in [3, 6, 9]:
-            b, a = self.su.butter_bandpass(lowcut, highcut, fs, order=order)
+            b, a = self.su.butterBandpass(lowcut, highcut, fs, order=order)
             w, h = freqz(b, a, worN=2000)
             plt.plot((fs * 0.5 / np.pi) * w, abs(h), label="order = %d" % order)
         
@@ -70,7 +70,7 @@ class BandPathExample(object):
         
         for label, (lowcut, highcut) in EEGUtil.channel_ranges.iteritems():
             if label != "gamma":
-                y = self.su.butter_bandpass_filter(x, lowcut, highcut, fs, order=6)
+                y = self.su.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
                 plt.plot(t, y, label='%s (%d - %dHz)' % (label, lowcut, highcut))
     
         plt.xlabel('time (seconds)')
@@ -96,7 +96,7 @@ class BandPathExample(object):
         plt.clf()
         plt.plot(t, s1, label='sound signal')
         
-        y = self.su.butter_bandpass_filter(s1, 11000, 13000, fs, order=6)
+        y = self.su.butterBandpassFilter(s1, 11000, 13000, fs, order=6)
         #wavfile.write(path + '12000hz_cut.wav', fs, y)
     
         plt.plot(t, y, label='%s (%d - %dHz)' % ("12000Hz", 11000, 13000))
@@ -120,7 +120,7 @@ class BandPathExample(object):
         plt.figure(2)
         plt.clf()
         plt.plot(t, x, label='Noisy signal')
-        y = self.butter_bandpass_filter(x, lowcut, highcut, fs, order=6)
+        y = self.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
         plt.plot(t, y, label='Filtered signal (%g Hz)' % f0)
         plt.xlabel('time (seconds)')
         plt.hlines([-a, a], 0, T, linestyles='--')
