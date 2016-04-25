@@ -112,7 +112,7 @@ class EEGTableData(object):
 
         return self.getColumn(columnName, fromIndex, toIndex)
 
-    def getSampleRate(self):
+    def getSamplingRate(self):
         '''
         calcs the samplerate for the whole dataset based on the timestamp column   
         

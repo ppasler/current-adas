@@ -13,10 +13,8 @@ import numpy as np
 
 def getFFT(s1, n):
     p = fft(s1) # take the fourier transform
-    print p
     nUniquePts = ceil((n + 1) / 2.0)
     p = p[0:nUniquePts]
-    print p
     p = abs(p)
     p = p / n # scale by the number of points so that
     # the magnitude does not depend on the length
@@ -24,7 +22,6 @@ def getFFT(s1, n):
     p = p ** 2 # square it to get the power
 # multiply by two (see technical document for details)
 # odd nfft excludes Nyquist point
-    print p
     if n % 2 > 0: # we've got odd number of points fft
         p[1:len(p)] = p[1:len(p)] * 2
     else:
@@ -40,27 +37,26 @@ def getFFTUtil(s1, n):
 def main():
 
     path = "../../examples/"
-    #sampFreq, s1 = wavfile.read(path + '440_sine.wav')
-    sampFreq, s1 = wavfile.read(path + '12000hz.wav')
+    #samplingRate, s1 = wavfile.read(path + '440_sine.wav')
+    samplingRate, s1 = wavfile.read(path + '12000hz.wav')
     
     if len(s1.shape) == 2:
         s1 = s1[:,0]
     
     if len(s1) > 8192:
-        s1 = s1[:4]
+        s1 = s1[:256]
     
-    print repr(s1)
     n = float(len(s1))
     
     print "DType %s" % s1.dtype
     print "Sound File Shape " + str(s1.shape)
-    print "Sample Frequency / Entries: %.2f / %.2f" % (sampFreq, n)
-    print "Duration %.2f ms" % ((n / sampFreq)*1000)
+    print "Sample Frequency / Entries: %.2f / %.2f" % (samplingRate, n)
+    print "Duration %.2f ms" % ((n / samplingRate)*1000)
     
     s1 = s1 / (2.**15)
     # Plotting the Tone
     timeArray = arange(0, n, 1)
-    timeArray = timeArray / sampFreq
+    timeArray = timeArray / samplingRate
     timeArray = timeArray * 1000  #scale to milliseconds
     
     _, (axTone, axFreq, axLogFreq) = subplots(3)
@@ -73,7 +69,7 @@ def main():
     nUniquePts, p = getFFT(s1, n)
     #nUniquePts, p = getFFTUtil(s1, n)
     
-    freqArray = arange(0, nUniquePts, 1.0) * (sampFreq / n);
+    freqArray = arange(0, nUniquePts, 1.0) * (samplingRate / n);
     
     print "FreqMax %fHz" % freqArray[np.argmax(p)]
     

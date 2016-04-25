@@ -5,16 +5,20 @@ import threading
 from util.signal_util import SignalUtil
 
 from numpy import array
+from util.eeg_util import EEGUtil
 
 
 class ProcessingChain(object):
     
     def __init__(self):
-        self.eegFields = ConfigProvider().getEmotivConfig()["eegFields"]
-        self.gyroFields = ConfigProvider().getEmotivConfig()["gyroFields"]
-
-        self.processingConfig = ConfigProvider().getProcessingConfig()
+        config = ConfigProvider()
+        self.eegFields = config.getEmotivConfig()["eegFields"]
+        self.gyroFields = config.getEmotivConfig()["gyroFields"]
+        self.samplingRate = config.getConfig("eeg")["samplingRate"]
+        
+        self.processingConfig = config.getProcessingConfig()
         self.signalUtil = SignalUtil()
+        self.eegUtil = EEGUtil()
     
     def splitData(self, data):
         '''split eeg and gyro data
@@ -40,10 +44,11 @@ class ProcessingChain(object):
         return {x: self.signalUtil.normalize(array(eegData[x]["value"])) for x in eegData}
             
     def processEEGData(self, eegData):
-        normalizedSignals = self.normalizeEEGSignals(eegData)
-        print eegData
-        print normalizedSignals
-         
+        for pin, signal in eegData.iteritems():
+            signal = self.signalUtil.normalize(array(signal["value"]))
+            waves = self.eegUtil.getWaves(signal, self.samplingRate)
+
+
     def processGyroData(self, gyroData):
         pass#print gyroData
 

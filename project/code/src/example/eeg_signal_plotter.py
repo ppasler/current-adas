@@ -35,18 +35,18 @@ class EEGSignalPlotter(object):
         _, ax = plt.subplots(9, figsize=(16, 9))
         axRaw, axNorm, axFFT, axLogFFT, axChan = ax[0], ax[1], ax[2], ax[3], ax[4:]
         
-        sampFreq = eeg_data.getSampleRate()
+        samplingRate = eeg_data.getSamplingRate()
         raw = eeg_data.getColumn(label, 0, 1024)
         
         # plot raw and normalized signal
-        self.plotRaw(axRaw, axNorm, sampFreq, raw)
+        self.plotRaw(axRaw, axNorm, samplingRate, raw)
 
 
         raw = SignalUtil().normalize(raw)     # normalize from -1 to 1
 
         fft = FFTUtil().fft(raw)
         # plot FFT with normal and LOG scale
-        self.plotFFT(axFFT, axLogFFT, sampFreq, raw, fft)
+        self.plotFFT(axFFT, axLogFFT, samplingRate, raw, fft)
 
         # plot channels
         #for i, (label, freqRange) in enumerate(EEGUtil.channel_ranges.iteritems()):
@@ -54,7 +54,7 @@ class EEGSignalPlotter(object):
         
         # plot channels
         for i, (label, freqRange) in enumerate(EEGUtil.channel_ranges.iteritems()):
-            self.plotEEGChannel2(raw, freqRange, eeg_data.getSampleRate(), axChan[i])
+            self.plotEEGChannel2(raw, freqRange, eeg_data.getSamplingRate(), axChan[i])
 
 
         self.configureFigure()     
@@ -62,14 +62,14 @@ class EEGSignalPlotter(object):
         plt.show()
         
 
-    def getTimeArray(self, n, sampFreq):
+    def getTimeArray(self, n, samplingRate):
         timeArray = np.arange(0, n, 1)
-        timeArray = timeArray / sampFreq
+        timeArray = timeArray / samplingRate
         timeArray = timeArray * 1000 #scale to milliseconds
         return timeArray
 
-    def plotRaw(self, axRaw, axNorm, sampFreq, raw):
-        timeArray = self.getTimeArray(len(raw), sampFreq)
+    def plotRaw(self, axRaw, axNorm, samplingRate, raw):
+        timeArray = self.getTimeArray(len(raw), samplingRate)
         axRaw.plot(timeArray, raw)
         axNorm.plot(timeArray, SignalUtil().normalize(raw), color='k')
 
@@ -78,10 +78,10 @@ class EEGSignalPlotter(object):
         return timeArray
 
 
-    def plotFFT(self, axFFT, axLogFFT, sampFreq, raw, fft):
+    def plotFFT(self, axFFT, axLogFFT, samplingRate, raw, fft):
         n = float(len(raw))
         nUniquePts = np.ceil((n + 1) / 2.0)
-        freqArray = np.arange(0, nUniquePts, 1.0) * (sampFreq / n)
+        freqArray = np.arange(0, nUniquePts, 1.0) * (samplingRate / n)
         axFFT.plot(freqArray, fft, color='k')
         axFFT.set_xlabel('Frequency (Hz)')
         axFFT.set_ylabel('Power (dB)')
@@ -96,9 +96,9 @@ class EEGSignalPlotter(object):
         axChan.set_xlabel('Frequency (Hz)')
         axChan.set_ylabel(channel)
         
-    def plotEEGChannel2(self, raw, freqRange, sampFreq, axChan):
-        timeArray = self.getTimeArray(len(raw), sampFreq)
-        filtered = SignalUtil().butterBandpassFilter(raw, freqRange[0], freqRange[1],  sampFreq)
+    def plotEEGChannel2(self, raw, freqRange, samplingRate, axChan):
+        timeArray = self.getTimeArray(len(raw), samplingRate)
+        filtered = SignalUtil().butterBandpassFilter(raw, freqRange[0], freqRange[1],  samplingRate)
         axChan.plot(timeArray, filtered, color='k')
         axChan.set_xlabel('Frequency (Hz)')
         axChan.set_ylabel(freqRange)

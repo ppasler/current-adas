@@ -4,9 +4,9 @@ import os.path
 import sys
 import unittest
 
-from scipy.signal.filter_design import freqz
-from scipy.io import wavfile
 from pylab import ceil
+from scipy.io import wavfile
+from scipy.signal.filter_design import freqz
 
 import numpy as np
 from util.eeg_table_reader import EEGTableReader, EEGTableData
@@ -14,8 +14,10 @@ from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
 from util.signal_util import SignalUtil
 
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
+
 
 TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -24258, -18459,
         29368,  10325, -32229,  -1401,  32616,  -7633, -30503,  16079,
@@ -62,27 +64,10 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(min(normList) >= -1)
         self.assertTrue(sameEntries(testList, normList))
 
-    def test_normalize2(self):
-        testList = np.array([0, -5, 1, 10])
-        normList = self.util.normalize2(testList)
-        self.assertEqual(len(testList), len(normList))
-        self.assertTrue(max(normList) <= 1)
-        self.assertTrue(min(normList) >= 0)
-
-    def test_normalize2_zero(self):
-        testList = np.array([0, 0, 0, 0])
-        normList = self.util.normalize2(testList)
-        self.assertEqual(len(testList), len(normList))
-        self.assertTrue(max(normList) <= 1)
-        self.assertTrue(min(normList) >= -1)
-        self.assertTrue(sameEntries(testList, normList))
-
     def test_energie(self):
         testList = np.array([1, 2, 3, 4])
         energy = self.util.energy(testList)
         self.assertTrue(energy == 30)
-        
-
 
 class TestFrequencyFilter(unittest.TestCase):
     
@@ -91,17 +76,17 @@ class TestFrequencyFilter(unittest.TestCase):
         self._setSignalParams()
         
     def _setSignalParams(self, offset=0, length=-1):
-        self.sampFreq, self.data= self._readSoundFile(offset=offset, length=length)
+        self.samplingRate, self.data= self._readSoundFile(offset=offset, length=length)
         self.n = len(self.data)
         self.nUniquePts = ceil((self.n+1)/2.0)
         
-        self.freqArray = np.arange(0, self.nUniquePts, 1.0) * (self.sampFreq / self.n)
+        self.freqArray = np.arange(0, self.nUniquePts, 1.0) * (self.samplingRate / self.n)
     
     def test_butterBandpass(self):
-        sampFreq = 32
-        i = sampFreq / 4
-        b, a = self.util.butterBandpass(i-1, i+1, sampFreq)
-        _, h = freqz(b, a, worN=sampFreq*4)
+        samplingRate = 32
+        i = samplingRate / 4
+        b, a = self.util.butterBandpass(i-1, i+1, samplingRate)
+        _, h = freqz(b, a, worN=samplingRate*4)
         h = abs(h)
         self.assertEqual(np.argmax(h), len(h)/2)
         self.assertAlmostEqual(max(h), 1, delta=0.1)
@@ -117,6 +102,10 @@ class TestFrequencyFilter(unittest.TestCase):
         
         # everything gets through (except 0)
         b, a = self.util.butterBandpass(0, 8, 16)
+        _, h = freqz(b, a, worN=16)
+        self.assertAlmostEqual(sum(abs(h)), len(h)-1, delta = 1)
+        
+        b, a = self.util.butterBandpass(0.5, 8, 16)
         _, h = freqz(b, a, worN=16)
         self.assertAlmostEqual(sum(abs(h)), len(h)-1, delta = 1)
 
@@ -138,8 +127,7 @@ class TestFrequencyFilter(unittest.TestCase):
         _ = self.util.butterBandpassFilter(x, 1, 2, 10)
     
     def _readSoundFile(self, fileName='12000hz.wav', offset=0, length=-1):
-        path = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
-        sampFreq, data = wavfile.read(path + fileName)
+        samplingRate, data = wavfile.read(PATH + fileName)
         if len(data.shape) == 2:
             data = data[:,0]
         
@@ -147,7 +135,7 @@ class TestFrequencyFilter(unittest.TestCase):
             data = data[offset:offset+length]
         
         data = self.util.normalize(data)
-        return sampFreq, data
+        return samplingRate, data
 
     def _getMaxFrequency(self, data, freqArray):
         fft = FFTUtil().fft(data)
@@ -158,42 +146,42 @@ class TestFrequencyFilter(unittest.TestCase):
         self.assertAlmostEqual(freqMax, 12000.0, delta= 1000)
 
     def test_butterBandpassFilter_filterNoCut(self):
-        cut = self.util.butterBandpassFilter(self.data, 1000, self.sampFreq/2-1000, self.sampFreq)
+        cut = self.util.butterBandpassFilter(self.data, 1000, self.samplingRate/2-1000, self.samplingRate)
         freqMax = self._getMaxFrequency(cut, self.freqArray)
         self.assertAlmostEqual(freqMax, 12000.0, delta= 1000)
 
     def test_butterBandpassFilter_filterAroundMax(self):
-        cut = self.util.butterBandpassFilter(self.data, 11000, 13000, self.sampFreq)
+        cut = self.util.butterBandpassFilter(self.data, 11000, 13000, self.samplingRate)
         freqMax = self._getMaxFrequency(cut, self.freqArray)
         self.assertAlmostEqual(freqMax, 12000.0, delta= 1000)
     
     def test_butterBandpassFilter_filterAboveMax(self):
-        cut = self.util.butterBandpassFilter(self.data, 0, 2000, self.sampFreq)
+        cut = self.util.butterBandpassFilter(self.data, 0, 2000, self.samplingRate)
         freqMax = self._getMaxFrequency(cut, self.freqArray)
         self.assertNotEqual(freqMax, 12000.0)
         self.assertAlmostEqual(freqMax, 1000.0, delta= 1000)
         
     def test_butterBandpassFilter_filterBeyondMax(self):
-        cut = self.util.butterBandpassFilter(self.data, self.sampFreq/2-2000, self.sampFreq/2, self.sampFreq)
+        cut = self.util.butterBandpassFilter(self.data, self.samplingRate/2-2000, self.samplingRate/2, self.samplingRate)
         freqMax = self._getMaxFrequency(cut, self.freqArray)
         self.assertNotEqual(freqMax, 12000.0)
-        self.assertAlmostEqual(freqMax, self.sampFreq/2-1000, delta= 1000)
+        self.assertAlmostEqual(freqMax, self.samplingRate/2-1000, delta= 1000)
 
     def test_butterBandpassFilter_short(self):
         self._setSignalParams(length=4)
         freqMax = self._getMaxFrequency(self.data, self.freqArray)
         self.assertAlmostEqual(freqMax, 12000.0, delta= 1000)
         
-        cut = self.util.butterBandpassFilter(self.data, 1000, self.sampFreq/2-1000, self.sampFreq)
+        cut = self.util.butterBandpassFilter(self.data, 1000, self.samplingRate/2-1000, self.samplingRate)
         freqMax = self._getMaxFrequency(cut, self.freqArray)
         self.assertAlmostEqual(freqMax, 12000.0, delta= 1000)
 
     def test_butterBandpassFilter_originalAndShort(self):
-        cutOrig = self.util.butterBandpassFilter(self.data, 1000, self.sampFreq/2-1000, self.sampFreq)
+        cutOrig = self.util.butterBandpassFilter(self.data, 1000, self.samplingRate/2-1000, self.samplingRate)
         freqMaxOrig = self._getMaxFrequency(self.data, self.freqArray)
         
         self._setSignalParams(length=4)
-        cutShort = self.util.butterBandpassFilter(self.data, 1000, self.sampFreq/2-1000, self.sampFreq)
+        cutShort = self.util.butterBandpassFilter(self.data, 1000, self.samplingRate/2-1000, self.samplingRate)
         freqMaxShort = self._getMaxFrequency(self.data, self.freqArray)
         
         self.assertAlmostEqual(freqMaxShort, freqMaxOrig, delta=1000)
@@ -239,7 +227,7 @@ class TestFFTUtil(unittest.TestCase):
     def testFft(self):
         # 128 pts from a 12.000Hz tone with a sample rate of 44.100
         data = TEST_DATA_12000Hz
-        sampFreq = 44100
+        samplingRate = 44100
 
         fft = self.util.fft(data)
 
@@ -249,7 +237,7 @@ class TestFFTUtil(unittest.TestCase):
         maxIndex = np.argmax(fft)
 
         # calc frequency array
-        freqArray = np.arange(0, nUniquePts, 1.0) * (sampFreq / n);
+        freqArray = np.arange(0, nUniquePts, 1.0) * (samplingRate / n);
 
         # should be around 12000
         self.assertTrue(11800 < freqArray[maxIndex] < 12200)
@@ -259,6 +247,10 @@ class TestEEGUtil(unittest.TestCase):
 
     def setUp(self):
         self.util = EEGUtil()
+
+    def test__getSliceParams(self):
+        for _, freqRange in self.util.channel_ranges.iteritems():
+            self.assertEqual(type(self.util._getSliceParam(freqRange)[0]), int)
 
     def test_getChannels_short(self):
         data = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -278,34 +270,68 @@ class TestEEGUtil(unittest.TestCase):
         self.assertTrue(all([x in fft for x in flattenChannels]))
         
         self.assertTrue(len(flattenChannels) <= len(fft))
-        self.assertTrue(len(flattenChannels) == 98)
 
-    
     def test_getSingleChannels(self):
         fft = TEST_DATA_12000Hz
         channels = self.util.getChannels(fft)
 
         delta = self.util.getDeltaChannel(fft)
         # TODO delta range from 0.5 to 4Hz, actual range from 1 - 4Hz
-        self.assertTrue(len(delta) == 3)
+        self.assertEqual(len(delta), 3)
         self.assertTrue(all([x in channels["delta"] for x in delta]))
                
         theta = self.util.getThetaChannel(fft)
-        self.assertTrue(len(theta) == 4)
+        self.assertEqual(len(theta), 4)
         self.assertTrue(all([x in channels["theta"] for x in theta]))
                 
         alpha = self.util.getAlphaChannel(fft)
-        self.assertTrue(len(alpha) == 5)
+        self.assertEqual(len(alpha), 5)
         self.assertTrue(all([x in channels["alpha"] for x in alpha]))
                 
         beta = self.util.getBetaChannel(fft)
-        self.assertTrue(len(beta) == 17)
+        self.assertEqual(len(beta), 17)
         self.assertTrue(all([x in channels["beta"] for x in beta]))
           
         gamma = self.util.getGammaChannel(fft)
-        self.assertTrue(len(gamma) == 69)
-        self.assertTrue(all([x in channels["gamma"] for x in gamma]))        
+        self.assertEqual(len(gamma), len(range(*self.util.channel_ranges["gamma"])))
+        self.assertTrue(all([x in channels["gamma"] for x in gamma]))
 
+    def test_getWaves(self):
+        eeg_data = EEGTableReader().readFile(PATH + "example_32.csv")
+        eeg = eeg_data.getColumn("F3")
+        nEeg = len(eeg)
+        waves = self.util.getWaves(eeg, eeg_data.getSamplingRate())
+        
+        self.assertEqual(len(waves), 5)
+        for _, wave in waves.iteritems():
+            self.assertEqual(len(wave), nEeg)
+
+    def test_getSingleWaves(self):
+        eeg_data = EEGTableReader().readFile(PATH + "example_32.csv")
+        eeg = eeg_data.getColumn("F3")
+        nEeg = len(eeg)
+        samplingRate = eeg_data.getSamplingRate()
+        waves = self.util.getWaves(eeg, samplingRate)
+
+        delta = self.util.getDeltaWaves(eeg, samplingRate)
+        self.assertEqual(len(delta), nEeg)
+        self.assertTrue(all([x in waves["delta"] for x in delta]))
+
+        theta = self.util.getThetaWaves(eeg, samplingRate)
+        self.assertEqual(len(theta), nEeg)
+        self.assertTrue(all([x in waves["theta"] for x in theta]))
+
+        alpha = self.util.getAlphaWaves(eeg, samplingRate)
+        self.assertEqual(len(alpha), nEeg)
+        self.assertTrue(all([x in waves["alpha"] for x in alpha]))
+
+        beta = self.util.getBetaWaves(eeg, samplingRate)
+        self.assertEqual(len(beta), nEeg)
+        self.assertTrue(all([x in waves["alpha"] for x in alpha]))
+          
+        gamma = self.util.getGammaWaves(eeg, samplingRate)
+        self.assertEqual(len(gamma), nEeg)
+        self.assertTrue(all([x in waves["gamma"] for x in gamma]))
 
 class TestEEGTableReader(unittest.TestCase):
 
@@ -313,19 +339,25 @@ class TestEEGTableReader(unittest.TestCase):
         self.reader = EEGTableReader()
 
     def test_readData(self):
-        file_path = "example_short.csv"
+        file_path = PATH + "example_32.csv"
         if os.path.isfile(file_path):
             self.reader.readData(file_path)
+        else:
+            print "'%s' not found" % file_path
 
     def test_readHeader(self):
-        file_path = "example_short.csv"
+        file_path = PATH + "example_32.csv"
         if os.path.isfile(file_path):
             self.reader.readHeader(file_path)
-            
+        else:
+            print "'%s' not found" % file_path
+
     def test_readFile(self):
-        file_path = "example_short.csv"
+        file_path = PATH + "example_32.csv"
         if os.path.isfile(file_path):
             self.reader.readFile(file_path)
+        else:
+            print "'%s' not found" % file_path
 
 
 class TestEEGTableData(unittest.TestCase):
@@ -345,9 +377,9 @@ class TestEEGTableData(unittest.TestCase):
         ])
         self.eeg_data = EEGTableData(self.header, self.data)
 
-    def test_getSampleRate(self):
+    def test_getSamplingRate(self):
         # 9 values within 2 seconds = sampling rate 4.5
-        self.assertTrue(self.eeg_data.getSampleRate() == 4.5)
+        self.assertTrue(self.eeg_data.getSamplingRate() == 4.5)
 
     def countOcc(self, a, x):
         return len(np.where(a==x)[0])

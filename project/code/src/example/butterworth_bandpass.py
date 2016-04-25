@@ -16,7 +16,7 @@ from util.signal_util import SignalUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-class BandPathExample(object):
+class BandPassExample(object):
     
     def __init__(self):
         self.su = SignalUtil()
@@ -57,9 +57,9 @@ class BandPathExample(object):
         # Filter a noisy signal.
         
         data = self.getEEGSignal()
-        fs = data.getSampleRate();
+        fs = data.getSamplingRate();
         x = data.getColumn("F3")
-        x = SignalUtil().normalize2(x)
+        x = SignalUtil().normalize(x)
         
         duration = self.getDuration(data)
         t = np.linspace(0, duration, len(x), endpoint=False)
@@ -68,10 +68,9 @@ class BandPathExample(object):
         plt.clf()
         plt.plot(t, x, label='normalized signal')
         
-        for label, (lowcut, highcut) in EEGUtil.channel_ranges.iteritems():
-            if label != "gamma":
-                y = self.su.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
-                plt.plot(t, y, label='%s (%d - %dHz)' % (label, lowcut, highcut))
+        for label, (lowcut, highcut) in EEGUtil().channel_ranges.iteritems():
+            y = self.su.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
+            plt.plot(t, y, label='%s (%d - %dHz)' % (label, lowcut, highcut))
     
         plt.xlabel('time (seconds)')
         plt.grid(True)
@@ -112,7 +111,6 @@ class BandPathExample(object):
         T = 0.05
         nsamples = T * fs
         t = np.linspace(0, T, nsamples, endpoint=False)
-        print t
         a = 0.02
         f0 = 600.0 # frequency
         x = self.getSignal(a, t, f0)
@@ -143,4 +141,4 @@ class BandPathExample(object):
         plt.show()
 
 if __name__ == "__main__":
-    band = BandPathExample().main()
+    band = BandPassExample().main()
