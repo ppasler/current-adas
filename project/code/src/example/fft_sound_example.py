@@ -46,8 +46,8 @@ def main():
     if len(s1.shape) == 2:
         s1 = s1[:,0]
     
-    #if len(s1) > 8192:
-    #    s1 = s1[:16384]
+    if len(s1) > 8192:
+        s1 = s1[:4]
     
     print repr(s1)
     n = float(len(s1))

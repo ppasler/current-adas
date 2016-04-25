@@ -17,8 +17,6 @@ from util.signal_util import SignalUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-
-
 TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -24258, -18459,
         29368,  10325, -32229,  -1401,  32616,  -7633, -30503,  16079,
         26049, -23294, -19599,  28721,  11644, -31946,  -2798,  32720,
@@ -56,12 +54,28 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(max(normList) <= 1)
         self.assertTrue(min(normList) >= -1)
 
+    def test_normalize_zero(self):
+        testList = np.array([0, 0, 0, 0])
+        normList = self.util.normalize(testList)
+        self.assertEqual(len(testList), len(normList))
+        self.assertTrue(max(normList) <= 1)
+        self.assertTrue(min(normList) >= -1)
+        self.assertTrue(sameEntries(testList, normList))
+
     def test_normalize2(self):
         testList = np.array([0, -5, 1, 10])
         normList = self.util.normalize2(testList)
         self.assertEqual(len(testList), len(normList))
         self.assertTrue(max(normList) <= 1)
         self.assertTrue(min(normList) >= 0)
+
+    def test_normalize2_zero(self):
+        testList = np.array([0, 0, 0, 0])
+        normList = self.util.normalize2(testList)
+        self.assertEqual(len(testList), len(normList))
+        self.assertTrue(max(normList) <= 1)
+        self.assertTrue(min(normList) >= -1)
+        self.assertTrue(sameEntries(testList, normList))
 
     def test_energie(self):
         testList = np.array([1, 2, 3, 4])
@@ -74,7 +88,10 @@ class TestFrequencyFilter(unittest.TestCase):
     
     def setUp(self):
         self.util = SignalUtil()
-        self.sampFreq, self.data= self._readSoundFile()
+        self._setSignalParams()
+        
+    def _setSignalParams(self, offset=0, length=-1):
+        self.sampFreq, self.data= self._readSoundFile(offset=offset, length=length)
         self.n = len(self.data)
         self.nUniquePts = ceil((self.n+1)/2.0)
         
@@ -104,6 +121,7 @@ class TestFrequencyFilter(unittest.TestCase):
         self.assertAlmostEqual(sum(abs(h)), len(h)-1, delta = 1)
 
 
+    @unittest.skip("demonstrating skipping")
     def test_butterBandpass_error(self):
         self.util.butterBandpass(0, 4, 8)
 
@@ -111,7 +129,7 @@ class TestFrequencyFilter(unittest.TestCase):
             _ = self.util.butterBandpass(2, 4, 4)
         with self.assertRaises(ValueError):
             _ = self.util.butterBandpass(2, 4, 7)
-            
+
         with self.assertRaises(ValueError):
             _ = self.util.butterBandpass(-1, 4, 8)
 
@@ -119,12 +137,15 @@ class TestFrequencyFilter(unittest.TestCase):
         x = [1, -1, 1, -1]
         _ = self.util.butterBandpassFilter(x, 1, 2, 10)
     
-    def _readSoundFile(self, fileName='12000hz.wav'):
+    def _readSoundFile(self, fileName='12000hz.wav', offset=0, length=-1):
         path = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
         sampFreq, data = wavfile.read(path + fileName)
         if len(data.shape) == 2:
             data = data[:,0]
-            
+        
+        if(length > -1):
+            data = data[offset:offset+length]
+        
         data = self.util.normalize(data)
         return sampFreq, data
 
@@ -157,6 +178,28 @@ class TestFrequencyFilter(unittest.TestCase):
         freqMax = self._getMaxFrequency(cut, self.freqArray)
         self.assertNotEqual(freqMax, 12000.0)
         self.assertAlmostEqual(freqMax, self.sampFreq/2-1000, delta= 1000)
+
+    def test_butterBandpassFilter_short(self):
+        self._setSignalParams(length=4)
+        freqMax = self._getMaxFrequency(self.data, self.freqArray)
+        self.assertAlmostEqual(freqMax, 12000.0, delta= 1000)
+        
+        cut = self.util.butterBandpassFilter(self.data, 1000, self.sampFreq/2-1000, self.sampFreq)
+        freqMax = self._getMaxFrequency(cut, self.freqArray)
+        self.assertAlmostEqual(freqMax, 12000.0, delta= 1000)
+
+    def test_butterBandpassFilter_originalAndShort(self):
+        cutOrig = self.util.butterBandpassFilter(self.data, 1000, self.sampFreq/2-1000, self.sampFreq)
+        freqMaxOrig = self._getMaxFrequency(self.data, self.freqArray)
+        
+        self._setSignalParams(length=4)
+        cutShort = self.util.butterBandpassFilter(self.data, 1000, self.sampFreq/2-1000, self.sampFreq)
+        freqMaxShort = self._getMaxFrequency(self.data, self.freqArray)
+        
+        self.assertAlmostEqual(freqMaxShort, freqMaxOrig, delta=1000)
+        
+        for i in range(len(cutShort)):
+            self.assertAlmostEqual(cutOrig[i], cutShort[i], delta=0.02)
 
 class TestFFTUtil(unittest.TestCase):
 
@@ -408,16 +451,3 @@ class TestEEGTableData(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-
-
-
-
-
-
-
-    

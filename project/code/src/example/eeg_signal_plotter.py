@@ -49,8 +49,12 @@ class EEGSignalPlotter(object):
         self.plotFFT(axFFT, axLogFFT, sampFreq, raw, fft)
 
         # plot channels
+        #for i, (label, freqRange) in enumerate(EEGUtil.channel_ranges.iteritems()):
+        #    self.plotEEGChannel(fft, label, freqRange, axChan[i])
+        
+        # plot channels
         for i, (label, freqRange) in enumerate(EEGUtil.channel_ranges.iteritems()):
-            self.plotEEGChannel(fft, label, freqRange, axChan[i])
+            self.plotEEGChannel2(raw, freqRange, eeg_data.getSampleRate(), axChan[i])
 
 
         self.configureFigure()     
@@ -58,10 +62,14 @@ class EEGSignalPlotter(object):
         plt.show()
         
 
-    def plotRaw(self, axRaw, axNorm, sampFreq, raw):
-        timeArray = np.arange(0, len(raw), 1)
+    def getTimeArray(self, n, sampFreq):
+        timeArray = np.arange(0, n, 1)
         timeArray = timeArray / sampFreq
         timeArray = timeArray * 1000 #scale to milliseconds
+        return timeArray
+
+    def plotRaw(self, axRaw, axNorm, sampFreq, raw):
+        timeArray = self.getTimeArray(len(raw), sampFreq)
         axRaw.plot(timeArray, raw)
         axNorm.plot(timeArray, SignalUtil().normalize(raw), color='k')
 
@@ -87,6 +95,13 @@ class EEGSignalPlotter(object):
         axChan.plot(range(*freqRange), channels[channel], color='k')
         axChan.set_xlabel('Frequency (Hz)')
         axChan.set_ylabel(channel)
+        
+    def plotEEGChannel2(self, raw, freqRange, sampFreq, axChan):
+        timeArray = self.getTimeArray(len(raw), sampFreq)
+        filtered = SignalUtil().butterBandpassFilter(raw, freqRange[0], freqRange[1],  sampFreq)
+        axChan.plot(timeArray, filtered, color='k')
+        axChan.set_xlabel('Frequency (Hz)')
+        axChan.set_ylabel(freqRange)
 
 if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))

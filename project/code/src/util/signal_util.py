@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from scipy.signal import butter, lfilter, filtfilt
+from numpy import count_nonzero
 
 class SignalUtil(object):
 
@@ -15,8 +16,11 @@ class SignalUtil(object):
         :return: normalized data
         :rtype: numpy.array
         '''
-        
+        if count_nonzero(data) == 0:
+            return data
+
         extreme = float(max(max(data), abs(min(data))))
+
         return data / extreme
 
     def normalize2(self, data):
@@ -29,6 +33,9 @@ class SignalUtil(object):
         :return: normalized data
         :rtype: numpy.array
         '''
+        if count_nonzero(data) == 0:
+            return data
+
         dataMin = min(data)
         return (data-dataMin)/(max(data)-dataMin)
 
@@ -60,6 +67,12 @@ class SignalUtil(object):
         :return: filter coefficients a, b
         :rtype: float
         '''
+        # TODO throw exception here? 
+        if highcut > sampFreq / 2:
+            highcut = sampFreq / 2
+        if lowcut < 0:
+            lowcut = 0
+        
         nyq = 0.5 * sampFreq
         low = lowcut / nyq
         high = highcut / nyq
