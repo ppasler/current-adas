@@ -1,17 +1,21 @@
 #!/usr/bin/python
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 import threading
 from time import sleep
 import unittest
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from data_collector import DataCollector
+from util.eeg_table_util import EEGTablePacket
+
+
+
 
 
 WINDOW_SIZE = 4
-FIELDS = ["A", "B", "C"]
+FIELDS = ["A", "B", "C", "X", "Y"]
 
 class DataCollectorTest(unittest.TestCase):
 
@@ -106,7 +110,7 @@ class DummyDataSource(object):
             d = {}
             for c in FIELDS:
                 d[c] = {"value": c + "_" + str(i), "quality": c + "_" + str(i**2)} 
-            ret.append(DummyPacket(d))
+            ret.append(EEGTablePacket(d))
         return ret
 
     def dequeue(self):
@@ -115,24 +119,6 @@ class DummyDataSource(object):
 
     def close(self):
         pass
-
-class DummyPacket(object):
-    def __init__(self, data):
-        self.sensors = data
-
     
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-
-
-
-
-
-
-
-    

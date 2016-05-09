@@ -148,7 +148,6 @@ class EEGTableReader(object):
         
         :return list    header column
         '''
-        header = None
         with open(filePath, 'rb') as f:
             header = f.readline().strip().split(delimiter)
             

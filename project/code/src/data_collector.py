@@ -7,6 +7,7 @@ import gevent
 
 from emokit.emotiv import Emotiv
 from window.rectangular_signal_window import RectangularSignalWindow
+from client import EEGClient
 
 
 class DataCollector(object):
@@ -88,11 +89,13 @@ class DataCollector(object):
     
 
 if __name__ == "__main__": # pragma: no cover
-    emotiv = Emotiv(display_output=False)
-    gevent.spawn(emotiv.setup)
-    gevent.sleep(0)
+    #emotiv = Emotiv(display_output=False)
+    #gevent.spawn(emotiv.setup)
+    #gevent.sleep(0)
 
-    dc = DataCollector(emotiv, ["X", "F3"])
+    client = EEGClient("localhost", 9000)
+
+    dc = DataCollector(client, ["X", "F3"])
     handler = lambda x: x
     dc.setHandler(handler)
     dc.collectData()
