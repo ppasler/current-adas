@@ -7,7 +7,7 @@ Created on 09.05.2016
 import httplib
 import json
 import time
-from util.eeg_table_util import EEGTablePacket
+from util.eeg_table_to_packet_converter import EEGTablePacket
 
 
 class EEGClient(object):

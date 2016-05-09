@@ -35,7 +35,7 @@ class DataCollector(object):
         self._buildSignalWindows(windowSize, windowCount)
         self.collect = True;
         
-    def _setDefaultDataSource(self):
+    def _setDefaultDataSource(self): # pragma: no cover
         '''Set Emotiv as default source and starts it inside a gevent context'''
         emotiv = Emotiv(display_output=False)
         gevent.spawn(emotiv.setup)

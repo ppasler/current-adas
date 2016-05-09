@@ -9,10 +9,11 @@ from scipy.io import wavfile
 from scipy.signal.filter_design import freqz
 
 import numpy as np
-from util.eeg_table_reader import EEGTableReader, EEGTableData
+from util.eeg_table_util import EEGTableReader, EEGTableUtil
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
 from util.signal_util import SignalUtil
+from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -375,7 +376,7 @@ class TestEEGTableData(unittest.TestCase):
             [1456820380.75, 1, 2, 10],
             [1456820381.00, 1, 2, 11]
         ])
-        self.eeg_data = EEGTableData(self.header, self.data)
+        self.eeg_data = EEGTableUtil(self.header, self.data)
 
     def test_getSamplingRate(self):
         # 9 values within 2 seconds = sampling rate 4.5
@@ -480,6 +481,18 @@ class TestEEGTableData(unittest.TestCase):
         self.assertTrue(self.eeg_data._timeInData(data, 1456820379.75))
         self.assertFalse(self.eeg_data._timeInData(data, 1456820378))
         self.assertFalse(self.eeg_data._timeInData(data, 1456820382))
+
+
+class TestEEGTableToPacketUtil(unittest.TestCase):
+
+    def setUp(self):
+        self.util = EEGTableToPacketUtil()
+
+    def test_dequeue(self):
+        data = self.util.dequeue() 
+        self.assertEquals(len(data.sensors), 17)
+        self.assertTrue("X" in data.sensors.keys())
+        self.assertTrue("quality" in data.sensors["X"].keys())
 
 if __name__ == '__main__':
     unittest.main()

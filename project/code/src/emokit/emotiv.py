@@ -8,7 +8,7 @@ from Crypto.Cipher import AES
 import gevent
 from gevent.queue import Queue
 
-from util.eeg_table_util import EEGTableToPacketUtil
+from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
 
 
 system_platform = platform.system()
@@ -16,7 +16,7 @@ if system_platform == "Windows":
     import pywinusb.hid as hid
 
 deviceConnected = False
-dummyData = None
+eegTableData = None
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 fname = scriptPath + "/../../data/" + time.strftime("%Y-%M-%d-%H-%M", time.gmtime()) + '_EEG.csv'
@@ -464,8 +464,8 @@ class Emotiv(object):
                             f.close()
                     file_updater = gevent.spawn(self.update_file)
             else:
-                global dummyData
-                dummyData = EEGTableToPacketUtil()
+                global eegTableData
+                eegTableData = EEGTableToPacketUtil()
             
             while self.running:
                 try:
@@ -601,7 +601,7 @@ class Emotiv(object):
             except Exception, e:
                 print e
         else:
-            return dummyData.get()
+            return eegTableData.dequeue()
 
     def close(self):
         """

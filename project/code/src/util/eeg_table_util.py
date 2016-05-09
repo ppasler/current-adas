@@ -1,93 +1,204 @@
+#!/usr/bin/python
+
 import os
-from numpy import genfromtxt, delete
-import time
+
+from numpy import genfromtxt, delete, shape
 
 
-scriptPath = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_DELIMITER = ";" # default delimiter for CSV file
+TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
 
-class EEGTableToPacketUtil(object):
+class EEGTableUtil(object):
     '''
-    Util for EPOC dummy data 
-    
-    Converts CSV style data to a emotiv object
-
-    CSV
-    Timestamp;       F3;    X;  ... QF3
-    1459760953.863;  -58.0  -1; ... 6.0 
-    
-    emotiv
-    {
-        "Timestamp": 1459760953.863,
-        "F3" :{
-            "value":   -58.0,
-            "quality": 6.0,
-        }
-        ...
-    
-    }
+    Representation of EEG table data
     '''
-    
-    def __init__(self):
-        self.index = 0
-        self._buildDataStructure()
-        print "Using %d dummy datasets" % self.len
 
-    
-    def _getDataPath(self):
-        return scriptPath + "/../../examples/example_4096.csv" 
+    def __init__(self, header=None, data=None, file_path=""):
+        '''
+        table data with header, data and the filepath
         
-    def _readRawData(self):       
-        rawData = delete(genfromtxt(self._getDataPath(), dtype=float, delimiter=";"), 0, 0)
-        self.len = len(rawData)
-        return rawData
+        :param header:
+        :param data:
+        :param file_path:
+        '''
+        self.file_path = file_path
+        self.header = header
+        self.data = data
+        if data is not None:
+            self.len = len(data)
 
-    def _readHeader(self):
-        with open(self._getDataPath(), 'rb') as f:
-            self.header = f.readline().strip().split(";")
+    def setHeader(self, header):  # pragma: no cover
+        self.header = header
+
+    def setData(self, data):  # pragma: no cover
+        self.data = data
+        self.len = len(data)
+
+    def getTimeIndex(self, fromTime):
+        '''
+        get the index for the given fromTime
+        if fromTime < min(timestamp) return 0
+        if fromTime > max(timestamp) return len(data)
         
-        fields = self.header[:]
-        fields.remove("Timestamp")
-        fields.remove("Unknown")
-        self.fields = filter(lambda x: not (x.startswith("Q")), fields)
-        print self.header
-        print self.fields
+        :param    float   fromTime:    time as unix timestamp 
+        
+        :return   int     the index of the given fromTime 
+        '''
+        data = self.getColumn(TIMESTAMP_STRING)
+        if not self._timeInData(data, fromTime):
+            raise ValueError('could not find %f in data' % fromTime)
+        
+        for i, time in enumerate(data):
+            if time >= fromTime:
+                return i
+
+    def getColumn(self, columnName, offset=0, limit=-1, length=-1):
+        '''
+        get dataset from a certain column, either from offset to limit or till length
+        if only column_name is specified, it returns the whole column
+        if offset and length are both defined, length will be ignored
+        
+        :param     string column_name:   the name of the column
+        :param     int    offset:        startindex of dataset
+        :param     int    limit:         endpoint of dataset
+        :param     int    length:        length of dataset
+        
+        :return    array  dataset for given column   
+        '''
+        
+        if columnName not in self.header:
+            return None
+
+        if limit == -1:
+            if  length == -1:
+                limit = self.len
+            else:
+                limit = offset+length
+
+        index = self.header.index(columnName)
+        return self.data[:, index][offset:limit]      
+
+    def getColumnByTime(self, columnName, fromTime, toTime):
+        '''
+        get dataset from a certain column, for a time interval (fromTime -> toTime)
+             
+        :param string    columnName:   the name of the column 
+        :param float     fromTime:     start time of dataset as unix timestamp   
+        :param float     toTime:       start time of dataset as unix timestamp
+        
+        :return array    dataset for given column   
+        
+        :raise ValueError if time could not be found in dataset 
+        '''
+        fromIndex, toIndex = -1, -1
+
+        if fromTime > toTime:
+            fromTime, toTime = self._switchTime(fromTime, toTime)
+        
+        data = self.getColumn(TIMESTAMP_STRING)
+        
+        if not self._timeInData(data, fromTime):
+            raise ValueError('could not find %f in data' % fromTime)
+
+        if not self._timeInData(data, toTime):
+            raise ValueError('could not find %f in data' % toTime)
+
+        for i, time in enumerate(data):
+            if time >= fromTime and fromIndex == -1:
+                fromIndex = i
+            if time >= toTime:
+                toIndex = i
+                break
+
+        return self.getColumn(columnName, fromIndex, toIndex)
+
+    def getSamplingRate(self):
+        '''
+        calcs the samplerate for the whole dataset based on the timestamp column   
+        
+        :return int    samplerate
+
+        '''
+        data = self.getColumn(TIMESTAMP_STRING)
+        duration = data[self.len-1] - data[0]
+        return self.len / duration  
+
+    def _switchTime(self, time1, time2):
+        return time2, time1
         
 
-    def _buildDataStructure(self):
-        self._readHeader()
-        rawData = self._readRawData()
+    def _timeInData(self, data, time):
+        return (min(data) <= time <= max(data))
 
-        data = []
-        
-        for raw in rawData:
-            data.append(self._buildRow(raw))
-        
-        self.data = data   
-                
-    def _buildRow(self, row):
-        ret = {}
-        for h in self.fields:
-            value = row[self.header.index(h)]
-            quality = row[self.header.index("Q" + h)]
-            ret[h] = {
-                "value": value,
-                "quality": int(quality)   
-            }
-        return ret    
+    def __repr__(self):
+        return "EEGTableUtil from '%s' shape %s\nheader %s" % (self.file_path, shape(self.data), self.header)
 
-    def get(self):
-        '''get the current dummy data row'''
-        row = self.data[self.index]
-        row["Timestamp"] = time.time()
-        self.index = (self.index + 1) % self.len
-        return EEGTablePacket(row)
-
-class EEGTablePacket(object):
-    '''Object for EEG data :see: EmotivPacket
+class EEGTableReader(object):
     '''
+    This class reads EEGTables created by emotiv.py
+    '''
+
+    def readHeader(self, filePath, delimiter=DEFAULT_DELIMITER):
+        '''
+        Reads the first row of the table to create a list of header values
+        by default the delimiter for the csv table is ";"
+        
+        :param string   filePath
+        :param string   delimiter   
+        
+        :return list    header column
+        '''
+        with open(filePath, 'rb') as f:
+            header = f.readline().strip().split(delimiter)
+            
+        return header
+
+    def readData(self, filePath, delimiter=DEFAULT_DELIMITER):
+        '''
+        reads all rows of the table (except the first on) to create a 2D array of eeg values
+        by default the delimiter for the csv table is ";"
+        
+        [
+         ["timestamp_1", "val_1_1" ... "v_1_n"],
+         ["timestamp_2", "val_2_1" ... "v_2_n"],
+                ...
+         ["timestamp_m", "val_m_1" ... "v_m_n"],
+        ]
+        
+        :param string   filePath
+        :param string   delimiter   
+        
+        :return array   data columns
+        '''
+        data = delete(genfromtxt(filePath, dtype=float, delimiter=delimiter), 0, 0)
+        return data
+
+    def readFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
+        '''
+        reads the given file
+        
+        
+        :param filePath:
+        :param delimiter:
+        '''
+        if filePath == "":
+            return None
+
+        data = self.readData(filePath, delimiter)
+        header = self.readHeader(filePath, delimiter)
+
+        return EEGTableUtil(header, data, filePath)
     
-    def __init__(self, data):
-        self.sensors = data
-        self.gyro_x = data["X"]["value"]
-        self.gyro_y = data["Y"]["value"]
-        self.old_model = True
+
+
+if __name__ == "__main__":  # pragma: no cover
+    e = EEGTableReader()
+    #eeg_data = e.readFile("example_full.csv")
+    scriptPath = os.path.dirname(os.path.abspath(__file__))
+    eeg_data = e.readFile(scriptPath + "/../../examples/example_32.csv")
+    
+    print eeg_data.data
+    from_index = eeg_data.getTimeIndex(1456820379.22)
+    to_index = eeg_data.getTimeIndex(1456820379.27)
+    print eeg_data.getColumn("F4", from_index, to_index)
+    eeg_data.getTimeIndex(1456820379.23)

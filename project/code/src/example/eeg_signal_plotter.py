@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import numpy as np
 import matplotlib.pyplot as plt
 
-from util.eeg_table_reader import EEGTableReader
+from util.eeg_table_util import EEGTableReader
 from util.fft_util import FFTUtil
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil

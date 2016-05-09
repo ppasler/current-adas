@@ -8,21 +8,20 @@ import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from data_collector import DataCollector
-from util.eeg_table_util import EEGTablePacket
+from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
 
 
 
 
 
 WINDOW_SIZE = 4
-FIELDS = ["A", "B", "C", "X", "Y"]
+FIELDS = ["F3", "F4", "X", "Y"]
 
 class DataCollectorTest(unittest.TestCase):
 
     def setUp(self):
-        self.collector = DataCollector(DummyDataSource(WINDOW_SIZE), 
-                                       FIELDS, 
-                                       WINDOW_SIZE)
+        source = EEGTableToPacketUtil()
+        self.collector = DataCollector(source, FIELDS, WINDOW_SIZE)
         dataHandler = lambda x: x
         self.collector.setHandler(dataHandler)
         self.notifyCalled = 0
@@ -32,8 +31,11 @@ class DataCollectorTest(unittest.TestCase):
 
     def _fillValues(self, count):
         data = self.collector.datasource.data
+        fields = self.collector.fields
         for i in range(count):
-            self.collector._addData(data[i].sensors)
+            row = data[i].sensors
+            fData = {x: row[x] for x in fields}
+            self.collector._addData(fData)
 
     def _fillWindowFull(self):
         self._fillValues(WINDOW_SIZE)
@@ -59,9 +61,8 @@ class DataCollectorTest(unittest.TestCase):
         self.assertEquals(win1.window, initWindow)
         self.assertEquals(win1.index, 0) 
         self.assertEquals(win2.index, WINDOW_SIZE / 2)
-        self.assertEquals(win2.window["A"], {'quality': ['A_0', 'A_1'], 'value': ['A_0', 'A_1']})
+        self.assertEquals(win2.window["X"], {'quality': [0, 0], 'value': [22.0, 22.0]})
 
-        
         self._fillValues(WINDOW_SIZE / 2)
         self.assertEquals(win1.index, 2) 
         self.assertEquals(win2.window, initWindow) 
@@ -82,9 +83,9 @@ class DataCollectorTest(unittest.TestCase):
         collectorThread.join()
 
         self.assertTrue(self.notifyCalled > 0)
-    
+
     def test_filter(self):
-        fields = ["A", "C"]
+        fields = ["F3", "X"]
         self.collector.fields = fields
         
         data = self.collector.datasource.data;
@@ -95,30 +96,5 @@ class DataCollectorTest(unittest.TestCase):
         self.assertTrue(set(filteredData.keys()).issubset(set(fields)))
         self.assertTrue(set(filteredData.keys()).issuperset(set(fields)))
 
-        
-class DummyDataSource(object):
-    
-    def __init__(self, length, infinite=False):
-        self.data = self._buildData(length)
-        self.infinite = infinite
-        self.len = len(self.data)
-        self.index = -1;
-
-    def _buildData(self, length):
-        ret = []
-        for i in range(length):
-            d = {}
-            for c in FIELDS:
-                d[c] = {"value": c + "_" + str(i), "quality": c + "_" + str(i**2)} 
-            ret.append(EEGTablePacket(d))
-        return ret
-
-    def dequeue(self):
-        self.index = (self.index+1) % self.len
-        return self.data[self.index]
-
-    def close(self):
-        pass
-    
 if __name__ == '__main__':
     unittest.main()

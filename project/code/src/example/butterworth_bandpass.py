@@ -9,7 +9,7 @@ from pylab import arange
 
 import matplotlib.pyplot as plt
 import numpy as np
-from util.eeg_table_reader import EEGTableReader
+from util.eeg_table_util import EEGTableReader
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
 

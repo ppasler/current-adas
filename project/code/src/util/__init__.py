@@ -14,4 +14,4 @@ __author__ = "Paul Pasler <paul@ppasler.de>"
 __license__ = "???"
 __copyright__ = "Copyright 2013 Bryan Bishop"
 
-from . import eeg_table_reader
+from util import eeg_table_util
