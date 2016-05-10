@@ -9,12 +9,13 @@ from pylab import arange
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from util.eeg_table_util import EEGTableReader
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
 
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 class BandPassExample(object):
     
@@ -36,7 +37,7 @@ class BandPassExample(object):
         # Plot the frequency response for a few different orders.
         plt.figure(1)
         plt.clf()
-        for order in [3, 6, 9]:
+        for order in [6]:
             b, a = self.su.butterBandpass(lowcut, highcut, fs, order=order)
             w, h = freqz(b, a, worN=2000)
             plt.plot((fs * 0.5 / np.pi) * w, abs(h), label="order = %d" % order)
@@ -69,8 +70,9 @@ class BandPassExample(object):
         plt.plot(t, x, label='normalized signal')
         
         for label, (lowcut, highcut) in EEGUtil().channel_ranges.iteritems():
-            y = self.su.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
-            plt.plot(t, y, label='%s (%d - %dHz)' % (label, lowcut, highcut))
+            if label == "alpha":
+                y = self.su.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
+                plt.plot(t, y, label='%s (%d - %dHz)' % (label, lowcut, highcut))
     
         plt.xlabel('time (seconds)')
         plt.grid(True)
