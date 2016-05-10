@@ -37,7 +37,7 @@ class pcn(object):
 		# Add the inputs that match the bias node
 		inputs = np.concatenate((inputs,-np.ones((self.nData,1))),axis=1)
 		# Training
-		for n in range(nIterations):
+		for _ in range(nIterations):
 			#print "Iteration %d" % n
 			self.activations = self.pcnfwd(inputs);
 			self.weights -= eta*np.dot(np.transpose(inputs),self.activations-targets)
