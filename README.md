@@ -1,3 +1,12 @@
+#TODO
+* Daten aus SimToCAN holen
+* Lenkrad Lenkwinkel
+* Webcam ausprobieren
+* Klassifikator einbauen
+* Paper schreiben
+* Dokumentation fertigstellen
+
+
 # current-adas
 Current "Advanced Driver Assistance Systems"
 
