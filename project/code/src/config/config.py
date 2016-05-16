@@ -29,6 +29,10 @@ class ConfigProvider(object):
         '''get config for ProcessingChain '''
         return self.getConfig("emotiv")
 
+    def getNeuralNetworkConfig(self):
+        '''get config for ProcessingChain '''
+        return self.getConfig("nn")
+
     def getConfig(self, section):
         '''get config for section '''
         try:
