@@ -164,7 +164,7 @@ Diese Stellen werden dann in den EEG Daten mit dem Label "`Müde"' markiert, all
 \section{Müdigkeitserkennung mit einem EEG-Headset}
 \label{chap:implementation}
 
-Abbildung \ref{fig:data_stream} zeigt die Gesamtübersicht des entwickelten Systems dar. Alle blauen Klassen der Anwendung wurden in Python 2.7 implementiert. Der Fahrsimulator und seine Schnittstellen (rosa) in Java und C\#.
+Abbildung \ref{fig:data_stream} zeigt die Gesamtübersicht des entwickelten Systems dar. Alle blauen Klassen der Anwendung wurden in Python 2.7 implementiert. Der Fahrsimulator und seine Schnittstellen (rosa) in Java und C\#. Abschnitt \ref{sec:fetching} befasst sich mit den Rohdaten und deren Weiterreichung im System. Die Verarbeitung der Rohdaten ist Thema von Abschnitt \ref{sec:processing}. Im folgenden Abschnitt werden daraus die passenden Merkmale extrahiert. In Abschnitt \ref{sec:classification} wird die Arbeitsweise des Klassifikators näher beleuchtet. 
 
 
 \begin{figure*} 
@@ -196,7 +196,7 @@ Die Aufgabe der DataCollector-Klasse ist es, die einzelnen Signale in Sequenzfen
 \label{sec:processing}
 Die gefilterten EEG-Sequenzen durchlaufen nun eine Verarbeitungskette (Abb. \ref{fig:data_processing}). 
 
-Im ersten Schritt werden die Signale auf das Intervall 1 bis -1 normalisiert, dazu werden die Signale durch den jeweiligen Maximalwert geteilt. Dieses Vorgehen stellt sicher, dass die absolute Amplitude keinen Einfluss auf die Gewichtung im Klassifikator hat. Zudem wird die Datenmenge wiederum reduziert.
+Im ersten Schritt werden die Signale auf das Intervall 1 bis -1 normalisiert , dazu werden die Signale durch den jeweiligen Maximalwert bzw. Betrag des Minimalwertes geteilt. Dieses Vorgehen stellt sicher, dass die absolute Amplitude keinen Einfluss auf die Gewichtung im Klassifikator hat. Zudem wird die Datenmenge wiederum reduziert.
 
 Im zweiten Schritt werden die Signale in Frequenzbänder (EEG-Bänder)  unterteilt. Hierzu werden bestimmte Frequenzbereiche aus dem Signal entfernt, sodass nur die gewünschten Frequenzen erhalten bleiben. Diese EEG-Bänder gliedern sich in folgende Frequenzbereiche und werden nach griechischen Buchstaben benannt:
 \begin{itemize}
@@ -223,11 +223,21 @@ Um die einzelnen Frequenzbänder zu erhalten ist eine Filterfunktion notwendig. 
   \end{center}
 \end{figure}
 
+\subsection{Merkmalsextraktion}
+\label{sec:extraction}
 
 \subsection{Klassifikator}
 \label{sec:classification}
+Nachdem in vorherigen Abschnitt eine passende Merkmalsmenge erstellt wurde, geht es nun um die Entscheidung, ob der Fahrer Müde oder Wach ist bzw. ob das System eine Müdigkeitsmeldung erscheinen lässt. Für diese Klassifizierung werden im allgemeinen Machine-Learning-Algorithmen verwendet. Anhand von markierten Datensätzen wird versucht den Algorithmus zu Trainieren (Überwachtes Lernen). Dies dient dem Ziel, dass er auch unbekannte Daten klassifizieren kann. Dieser Vorgang wird Generalisierung bezeichnet und ist auch im menschlichen Lernen ein wichtiger Schritt.
 
+Für die Anwendung wurde zur Klassifizierung ein künstliches Neuronales Netz  ausgewählt. Es basiert auf einem erweiterten McCulloch-Pitts-Neuron \cite{ann} und ist der Funktionsweise des menschlichen Gehirns bzw. seinen Neuronen nachempfunden. Ein KNN lässt sich im einfachste Fall durch eine Merkmalsmenge $X = x_1, x_2 ... x_n$, dazugehörige Gewichte $W = w_1, w_2 ... w_n$, eine Übertragungsfunktion $\sum$ und eine Schwellwertfunktion $\theta$ beschreiben (Abb. \ref{fig:perceptron})
 
+\begin{figure}[h] 
+  \begin{center}
+    \includegraphics[width=5.5cm]{perceptron}
+    \caption[Perceptron]{Darstellung eines McCulloch-Pitts-Neurons. Die Merkmale $X$ werden mit den Gewichten $W$ multiplziert und in $\sum$ summiert. Wenn $h > \theta$ "`feuert"' das Neuron ($o = 1$). \label{fig:perceptron}}
+  \end{center}
+\end{figure}
 
 \section{Ergebnis}
 \label{chap:result}

@@ -276,7 +276,7 @@
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="125.0" x="434.1918604651163" y="458.01449966430664"/>
-          <y:Fill color="#999999" transparent="false"/>
+          <y:Fill color="#33CCCC" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="76.029296875" x="24.4853515625" y="5.1494140625">Classificator<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
