@@ -17,10 +17,10 @@
     <node id="n0">
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
-          <y:Geometry height="61.875" width="168.0" x="650.5154037475586" y="351.9551486968994"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Geometry height="67.875" width="168.0" x="650.5154037475586" y="349.4727973937988"/>
+          <y:Fill color="#FFB2D8" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="99.349609375" x="34.3251953125" y="21.5869140625">Drivingsimulator<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="99.349609375" x="34.3251953125" y="24.5869140625">Drivingsimulator<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -157,7 +157,7 @@
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="99.0" x="685.0154037475586" y="339.9551486968994"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#FF99CC" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="66.666015625" x="16.1669921875" y="5.1494140625">SimToCAN<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -405,6 +405,22 @@
         </y:GenericNode>
       </data>
     </node>
+    <node id="n24">
+      <data key="d6">
+        <y:GenericNode configuration="BevelNodeWithShadow">
+          <y:Geometry height="29.0" width="99.0" x="685.0154037475586" y="398.9551486968994"/>
+          <y:Fill color="#FF99CC" transparent="false"/>
+          <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="83.353515625" x="7.8232421875" y="5.1494140625">CAN Interface<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+        </y:GenericNode>
+      </data>
+    </node>
     <edge id="e0" source="n18" target="n1">
       <data key="d10">
         <y:PolyLineEdge>
@@ -525,12 +541,13 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e12" source="n0" target="n19">
+    <edge id="e12" source="n24" target="n19">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="62.192760426100676" ty="10.315398233498115">
-            <y:Point x="592.3000000000001" y="382.8926486968994"/>
-            <y:Point x="592.3000000000001" y="279.66139890488483"/>
+          <y:Path sx="-3.0154037475585938" sy="-3.455148696899414" tx="62.192760426100676" ty="10.315398233498115">
+            <y:Point x="731.5" y="445.3926486968994"/>
+            <y:Point x="585.3000000000001" y="445.3926486968994"/>
+            <y:Point x="585.3000000000001" y="279.66139890488483"/>
           </y:Path>
           <y:LineStyle color="#999999" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -611,7 +628,6 @@
       </data>
     </edge>
     <edge id="e20" source="n8" target="n23">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -622,7 +638,6 @@
       </data>
     </edge>
     <edge id="e21" source="n23" target="n19">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="52.47480620155034" ty="0.0"/>

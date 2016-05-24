@@ -37,7 +37,7 @@ class BandPassExample(object):
         # Plot the frequency response for a few different orders.
         plt.figure(1)
         plt.clf()
-        for order in [6]:
+        for order in [2, 4, 8]:
             b, a = self.su.butterBandpass(lowcut, highcut, fs, order=order)
             w, h = freqz(b, a, worN=2000)
             plt.plot((fs * 0.5 / np.pi) * w, abs(h), label="order = %d" % order)

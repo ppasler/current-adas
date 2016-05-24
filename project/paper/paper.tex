@@ -56,11 +56,6 @@ Experimentation
 \label{chap:intro}
 \acl{FASs} sind innerhalb weniger Jahren von der Oberklasse, in die Mittel-  und Kleinwagenklasse vorgedrungen. Die Unternehmensberatung Strategy Analytics schätzt, dass in den nächsten Jahren sechs mal soviele \acl{FASs} verbaut werden als heute \cite{strategy_analytics}. Sie bieten dem Fahrer erhöhten Komfort (Tempomat) oder die Sicherheit (Notbremsassistent). Laut der Boston Consulting Group, könnte der flächendeckende Einsatz von \acl{FASs}, die Unfallrate um ein knappes Drittel zurückgehen lassen \cite{bcgperspectives}. 
 
-Zu Gruppe der Sicherheitsrelevanten \acl{FASs} gehört auch die \acl{ME}. Beispielsweise rät die \acl{ME} "`Attention Assist"' von Daimler dem Fahrer, zu gegebenen Anlass, eine Pause einzulegen und zeigt ein Kaffeesymbol im Cockpit an \cite{Daimler}. So wird müdigkeitsbedingte Unachtsamkeit oder Sekundenschlaf, die oftmals die Folge von schweren Unfälle sind, entgegengewirkt.
-
-Neben überhöhter Geschwindigkeit, zählt laut dem Deutschen Verkehrssicherheitsrat Müdigkeit zu den häufigsten Unfallursachen und ist damit für jeden fünften schweren Unfall verantwortlich \cite{dvr_statistic}.  Dies verdeutlicht das Potential einer frühzeitigen Erkennung von Müdigkeit und einer Meldung an den Fahrer.
-
-
 \begin{figure*} 
   \begin{center}
     \includegraphics[width=12cm]{aufbau}
@@ -68,7 +63,20 @@ Neben überhöhter Geschwindigkeit, zählt laut dem Deutschen Verkehrssicherheit
   \end{center}
 \end{figure*}
 
-Um das Risiko eines Unfalls auf Grund von Übermüdung zu senken, soll langfristig ein multimodales System zu \acl{ME} entwickelt werden (Siehe Abb. \ref{fig:sketch}). Es existieren bereit diverse Systeme, denen es jedoch oftmals an Komfort und Portabilität mangelt. Ziel dieser Arbeit ist die Entwicklung eines Systems zur \acl{ME} mit einem EEG-Headset. 
+Zu Gruppe der Sicherheitsrelevanten \acl{FASs} gehört auch die \acl{ME}. Beispielsweise rät die \acl{ME} "`Attention Assist"' von Daimler dem Fahrer, zu gegebenen Anlass, eine Pause einzulegen und zeigt ein Kaffeesymbol im Cockpit an \cite{Daimler}. So wird müdigkeitsbedingte Unachtsamkeit oder Sekundenschlaf, die oftmals die Folge von schweren Unfälle sind, entgegengewirkt.
+
+In Deutschland wurden 2015 rund 2,5 Mio. Unfälle polizeilich aufgenommen, die Zahl der Verkehrstoten liegt bei 3.450 \cite{accident_statistic}. Neben überhöhter Geschwindigkeit, zählt laut dem Deutschen Verkehrssicherheitsrat Müdigkeit zu den häufigsten Unfallursachen und ist damit für jeden fünften schweren Unfall verantwortlich \cite{dvr_statistic}. Dies verdeutlicht das Potential einer frühzeitigen Erkennung von Müdigkeit und einer Meldung an den Fahrer.
+
+Für eine sichere und korrekte Erkennung von Übermüdung ergeben sich mehrere Problemstellungen (Abb. \ref{fig:ddd_problem}). Anzeichen von Müdigkeit müssen vom System genau analysiert werden, um eine sichere Aussage über die Fahrtauglichkeit des Fahrers treffen zu können. Erkennt das System eine gefährliche Situation, muss der Fahrer in geeigneter Weise darauf hingewiesen werden.
+
+\begin{figure}[h] 
+  \begin{center}
+    \includegraphics[width=5cm]{ddd_problem_detail}
+    \caption[Problem]{Das System zur \acl{ME} muss mehrere Probleme im Zusammenhang mit dem Fahrer lösen.\label{fig:ddd_problem}}
+  \end{center}
+\end{figure}
+
+Daraus ergeben sich Anforderungen für ein multimodales System zur \acl{ME}  (Abb. \ref{fig:sketch}). Es existieren bereit diverse Systeme, denen es jedoch oftmals an Komfort und Portabilität mangelt. Ziel dieser Arbeit ist die Entwicklung eines Systems zur \acl{ME} mit einem EEG-Headset. 
 Dessen Signale werden verarbeitet und mit einem KNN klassifiziert, mit dem Ziel den Fahrer rechtzeitig vor Übermüdung und deren Folgen zu warnen.
 Statt dem klassischen EEG wird ein Emotiv Epoc eingesetzt werden, dadurch  soll die Beeinträchtigung des Fahrers möglichst gering gehalten
 werden. Auch wenn sich der Ansatz weniger für den Serienbetrieb eignet, soll das System für die Validierung von berührungslosen Systemen verwendet werden. Die Notwendigen Testdaten werden im Rahmen des Projekts im Fahrsimulator der \acl{RTU} aufgenommen. Dennoch soll ganze System leicht portierbar sein, um es in einem echten Fahrzeug testen zu können.
@@ -112,7 +120,7 @@ Die Sensoren Anordnung ist an das internationale 10-20 System angelehnt (\ref{fi
   \end{center}
 \end{figure}
 
-\section{Datenbeschaffung}
+\section{Testdatenbeschaffung}
 \label{chap:data}
 Um Daten von übermüdeten Fahrern zu erhalten, kann natürlich kein Versuch im Straßenverkehr durchgeführt werden. Die Fremd- und Eigengefährdung wäre einfach zu groß. Darum fanden die Versuche in einer Simulationsumgebung statt. Im Fahrsimulator der IoT Labs\footnote{\url{http://iotlab.reutlingen-university.de/}} der \acl{RTU} wird im Experiment eine Nacht-Autobahnfahrt simuliert. Verschiedene Studien \cite{Engstrom_2322937}, \cite{Horne_1757738} legen nahe, dass sich  Simulationen zwar von der Realität unterscheiden, dass jedoch die Ergebnisse trotzdem valide und brauchbar sind.
 
@@ -156,10 +164,21 @@ Diese Stellen werden dann in den EEG Daten mit dem Label "`Müde"' markiert, all
 \section{Müdigkeitserkennung mit einem EEG-Headset}
 \label{chap:implementation}
 
-Das entwickelte System wurde in Python 2.7.x geschrieben und hat folgenden Aufbau (Abb. \ref{fig:data_stream}): 
+Abbildung \ref{fig:data_stream} zeigt die Gesamtübersicht des entwickelten Systems dar. Alle blauen Klassen der Anwendung wurden in Python 2.7 implementiert. Der Fahrsimulator und seine Schnittstellen (rosa) in Java und C\#.
+
+
+\begin{figure*} 
+  \begin{center}
+    \includegraphics[width=12cm]{data_stream}
+    \caption[Aufbau]{Das entwickelte System zur Müdigkeitserkennung. \label{fig:data_stream}}
+  \end{center}
+\end{figure*}
+
+\subsection{Datensammlung}
+\label{sec:fetching}
+ 
 Das EEG Hedset schickt enkodierte Byte-Sequenzen via Bluetooth, an die proprietären Emotiv Premium Libraries oder die Open-Source Lösung Emotkit (vgl. \ref{chap:eeg}). Die Emokit Klasse wurde für das Projekt leicht modifiziert, sodass sie sich ins System einfügt. So wurde Unterstützung für das neueste EPOC+ Modelle implementiert, sowie die Möglichkeit, Testdaten  aus aus dem TableReader zu versenden. 
-Die dekodierten Rohdaten enthalten 14 EEG Kanäle mit Wert und Qualität, die Gyroskopwerte in X- und Y-Richtung und einen Zeitstempel (Abb. \ref{fig:data_processing}). Diese Daten können als CSV gespeichert werden, sowie an einen HTTP-Server oder direkt an den DataCollector übergeben werden. Über den Server via HTTP integriert die SimToCAN Anwendung die EEG Daten in den Fahrsimulator und das virtuelle Steuergerät (\ref{chap:data}).
-Der DataCollector kann Daten direkt oder aus einem HTTP-Client empfangen. Die Schnittstelle zum Fahrsimulator bzw. zum virtuellen Steuergerät ist vorbereitet. Die Aufgabe der Klasse ist, die einzelnen Signale in Sequenzfenster von 32 Werten zu aggregieren. Es sind zwei dieser Fenster implementiert und sie überschneiden sich in der Hälfte. So ist gewährleistet, dass signifikante Stellen nicht verloren gehen. Die Fensterfunktion ist ein simples Rechteckfenster, sodass alle Werte gleich gewichtet werden. Eine andere Fensterfunktion bspw. mit Glockenkurvenerlauf (Hamming- oder Hann-Fenster) wäre einfach einzubauen.
+Die dekodierten Rohdaten enthalten 14 EEG Kanäle mit Wert und Qualität, die Gyroskopwerte in X- und Y-Richtung und einen Zeitstempel (Abb. \ref{fig:data_processing}). Diese Daten können als CSV gespeichert werden, sowie an einen HTTP-Server oder direkt an den DataCollector übergeben werden. Über den Server integriert die SimToCAN Anwendung via HTTP die EEG Daten in den Fahrsimulator und das virtuelle Steuergerät (\ref{chap:data}).
 
 \begin{figure}[h] 
   \begin{center}
@@ -168,12 +187,46 @@ Der DataCollector kann Daten direkt oder aus einem HTTP-Client empfangen. Die Sc
   \end{center}
 \end{figure}
 
-\begin{figure*} 
+Der DataCollector kann Daten direkt oder aus einem HTTP-Client empfangen. Die Schnittstelle zum Fahrsimulator bzw. zum CAR-Interface ist vorbereitet. So ist es möglich die Datensammlung und die Datenverarbeitung auf verschiedenen Rechnern durchzuführen.
+
+Die Aufgabe der DataCollector-Klasse ist es, die einzelnen Signale in Sequenzfenstern von 32 Signalwerten zu aggregieren. Es sind zwei dieser Fenster implementiert und sie überschneiden sich in der Hälfte. So ist gewährleistet, dass signifikante Stellen nicht verloren gehen. Die Fensterfunktion ist ein simples Rechteck, sodass alle Werte gleich gewichtet werden. Eine andere Fensterfunktion bspw. mit Glockenkurvenerlauf (Hamming- oder Hann-Fenster) wäre einfach einzubauen. Zudem fügt der DataCollector nur konfigurierte Kanäle hinzu, sodass sich die Datenmenge reduziert. Im folgenden Abschnitt werden die gefilterten Sequenzfenster nun verarbeitet und aufbereitet.
+
+
+\subsection{Datenverarbeitung}
+\label{sec:processing}
+Die gefilterten EEG-Sequenzen durchlaufen nun eine Verarbeitungskette (Abb. \ref{fig:data_processing}). 
+
+Im ersten Schritt werden die Signale auf das Intervall 1 bis -1 normalisiert, dazu werden die Signale durch den jeweiligen Maximalwert geteilt. Dieses Vorgehen stellt sicher, dass die absolute Amplitude keinen Einfluss auf die Gewichtung im Klassifikator hat. Zudem wird die Datenmenge wiederum reduziert.
+
+Im zweiten Schritt werden die Signale in Frequenzbänder (EEG-Bänder)  unterteilt. Hierzu werden bestimmte Frequenzbereiche aus dem Signal entfernt, sodass nur die gewünschten Frequenzen erhalten bleiben. Diese EEG-Bänder gliedern sich in folgende Frequenzbereiche und werden nach griechischen Buchstaben benannt:
+\begin{itemize}
+ \item $\delta$ : 0,1 bis < 4Hz
+ \item $\theta$ :   4 bis < 8Hz
+ \item $\alpha$ :   8 bis < 13Hz
+ \item $\beta$  :  13 bis < 30Hz
+ \item $\gamma$ :  > 30Hz
+\end{itemize}
+Den Frequenzbändern werden verschiedene Eigenschaften zugesprochen\\
+
+\textbf{TODO Frequenzbänder}\\
+
+Um die einzelnen Frequenzbänder zu erhalten ist eine Filterfunktion notwendig. Für die Anwendung wurde hierfür ein Buttworth-Filter\cite{Butterworth30} eingesetzt. Gleichung \ref{eq:butterworth} zeigt die Übertragungsfunktion mit $A_0$: Gleichspannungsverstärkung, $\Omega = \frac{f}{f_g}$: auf Grundfrequenz normierte Frequenz und $n$: Ordnung des Filters. Abbildung \ref{fig:butterworth_filter} zeigt exemplarisch Filterfunktionen verschiedener Ordnung mit den Grenzen von 500 bis 1250Hz. Alle Frequenzen darunter und darüber werden deutlich abgeschwächt bzw. gehen gegen null. Der Butterworth-Filter verläuft nahe Eins im gewünschten Bereich, fällt an den Grenzen ab und stellt sicher, dass das Signal an den Grenzen um $\frac{1}{\sqrt{2}} \approx 0.7071$ gemindert wird. Je höher die Ordnung, desto steiler geht die Funktion durch die angegebenen Grenzen. Der Filter lässt sich gut in Hardware realisieren.
+
+\begin{equation} \label{eq:butterworth}
+\left|\underline{A}\right|^2 = \frac{A_0^2}{1+ k_{2n} \Omega ^{2n}}
+\end{equation}
+
+\begin{figure}[h] 
   \begin{center}
-    \includegraphics[width=12cm]{data_stream}
-    \caption[Aufbau]{Das entwickelte System zur Müdigkeitserkennung. \label{fig:data_stream}}
+    \includegraphics[width=5.5cm]{butterworth_filter}
+    \caption[Butterworth-Filter]{Die Filterfunktion eines Butterworthfilters 2., 4,. und 8. Ordnung im Frequenzbereich von 500 bis 1250Hz. \label{fig:butterworth_filter}}
   \end{center}
-\end{figure*}
+\end{figure}
+
+
+\subsection{Klassifikator}
+\label{sec:classification}
+
 
 
 \section{Ergebnis}
