@@ -156,7 +156,17 @@ Diese Stellen werden dann in den EEG Daten mit dem Label "`Müde"' markiert, all
 \section{Müdigkeitserkennung mit einem EEG-Headset}
 \label{chap:implementation}
 
-Das entwickelte System hat folgenden Aufbau
+Das entwickelte System wurde in Python 2.7.x geschrieben und hat folgenden Aufbau (Abb. \ref{fig:data_stream}): 
+Das EEG Hedset schickt enkodierte Byte-Sequenzen via Bluetooth, an die proprietären Emotiv Premium Libraries oder die Open-Source Lösung Emotkit (vgl. \ref{chap:eeg}). Die Emokit Klasse wurde für das Projekt leicht modifiziert, sodass sie sich ins System einfügt. So wurde Unterstützung für das neueste EPOC+ Modelle implementiert, sowie die Möglichkeit, Testdaten  aus aus dem TableReader zu versenden. 
+Die dekodierten Rohdaten enthalten 14 EEG Kanäle mit Wert und Qualität, die Gyroskopwerte in X- und Y-Richtung und einen Zeitstempel (Abb. \ref{fig:data_processing}). Diese Daten können als CSV gespeichert werden, sowie an einen HTTP-Server oder direkt an den DataCollector übergeben werden. Über den Server via HTTP integriert die SimToCAN Anwendung die EEG Daten in den Fahrsimulator und das virtuelle Steuergerät (\ref{chap:data}).
+Der DataCollector kann Daten direkt oder aus einem HTTP-Client empfangen. Die Schnittstelle zum Fahrsimulator bzw. zum virtuellen Steuergerät ist vorbereitet. Die Aufgabe der Klasse ist, die einzelnen Signale in Sequenzfenster von 32 Werten zu aggregieren. Es sind zwei dieser Fenster implementiert und sie überschneiden sich in der Hälfte. So ist gewährleistet, dass signifikante Stellen nicht verloren gehen. Die Fensterfunktion ist ein simples Rechteckfenster, sodass alle Werte gleich gewichtet werden. Eine andere Fensterfunktion bspw. mit Glockenkurvenerlauf (Hamming- oder Hann-Fenster) wäre einfach einzubauen.
+
+\begin{figure}[h] 
+  \begin{center}
+    \includegraphics[width=5.5cm]{data_processing}
+    \caption[Datenverarbeitung]{Die Daten werden immer weiter reduziert und verarbeitet. \label{fig:data_processing}}
+  \end{center}
+\end{figure}
 
 \begin{figure*} 
   \begin{center}
