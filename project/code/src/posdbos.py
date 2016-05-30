@@ -3,9 +3,15 @@ Created on 30.05.2016
 
 @author: Paul Pasler
 '''
+import random
+import threading
+from time import sleep
+
 from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
 from feature_extractor import FeatureExtractor
+from output.drowsiness_monitor import DrowsinessMonitor
+
 
 class PoSDBoS(object):
     
@@ -18,7 +24,8 @@ class PoSDBoS(object):
         self.config = ConfigProvider()
         self._initNeuralNetwork(networkFile)
         self._initFeatureExtractor()
-        
+        self.dm = DrowsinessMonitor()
+
     def _initNeuralNetwork(self, networkFile):
         nn_conf = self.config.getNeuralNetworkConfig()
         if networkFile == None:
@@ -34,8 +41,18 @@ class PoSDBoS(object):
 
     def run(self):
         while self.running:
-            pass
+            n = random.randint(1, 10)
+            self.dm.setStatus(n%2)
+            sleep(0.1)
         self.fe.close()
+        self.dm.close()
 
 if __name__ == '__main__':
-    pass
+    p = PoSDBoS()
+    print "START"
+    t = threading.Thread(target=p.run)
+    t.start()
+    sleep(3)
+    p.close()
+    t.join()
+    print "END"
