@@ -4,6 +4,14 @@ src.test package
 Submodules
 ----------
 
+src.test.classificator_test module
+----------------------------------
+
+.. automodule:: src.test.classificator_test
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 src.test.config_test module
 ---------------------------
 

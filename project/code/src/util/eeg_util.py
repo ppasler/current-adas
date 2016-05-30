@@ -1,4 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 10.05.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
 from util.signal_util import SignalUtil
 from config.config import ConfigProvider
 from numpy import ceil
@@ -49,7 +58,8 @@ class EEGUtil(object):
         
         :param array fft:     eeg data with performed fft
         
-        :return dict: split channels as map
+        :return: split channels as map
+        :rtype: dict
         '''
         channels = {}
         for label, freqRange in EEGUtil.channel_ranges.iteritems():
@@ -63,9 +73,10 @@ class EEGUtil(object):
         '''
         Get delta channel of a fft signal
         
-        :param array    fft     eeg data with performed fft
+        :param array    fft:     eeg data with performed fft
         
-        :return array   split from 0.5-4hz
+        :return: split from 0.5-4hz
+        :rtype: array
         '''
         return fft[slice(*self._getSliceParam(self.channel_ranges["delta"]))]
                
@@ -73,9 +84,10 @@ class EEGUtil(object):
         '''
         Get theta channel of a fft signal
         
-        :param array    fft     eeg data with performed fft
+        :param array    fft:     eeg data with performed fft
         
-        :return array   split from 4-8hz
+        :return: split from 4-8hz
+        :rtype: array
         '''
         return fft[slice(*self.channel_ranges["theta"])]
                 
@@ -83,9 +95,10 @@ class EEGUtil(object):
         '''
         Get alpha channel of a fft signal
         
-        :param array    fft     eeg data with performed fft
+        :param array    fft:     eeg data with performed fft
         
-        :return array   split from 8-13hz
+        :return: split from 8-13hz
+        :rtype: array 
         '''
         return fft[slice(*self.channel_ranges["alpha"])]
                 
@@ -93,9 +106,10 @@ class EEGUtil(object):
         '''
         Get delta channel of a fft signal
         
-        :param array    fft     eeg data with performed fft
+        :param array    fft:     eeg data with performed fft
         
-        :return array   split from 13-30hz
+        :return: split from 13-30hz
+        :rtype: array 
         '''
         return fft[slice(*self.channel_ranges["beta"])]
           
@@ -103,9 +117,10 @@ class EEGUtil(object):
         '''
         Get delta channel of a fft signal
         
-        :param array    fft     eeg data with performed fft
+        :param array    fft:     eeg data with performed fft
         
-        :return array   split from 30-99hz
+        :return: split from 30-99hz
+        :rtype: array 
         '''
         return fft[slice(*self.channel_ranges["gamma"])]
 
@@ -121,7 +136,8 @@ class EEGUtil(object):
         
         :param numpy.array eeg:     eeg data with performed butterworth filter
         
-        :return dict: split channels as map
+        :return: split channels as map
+        :rtype: dict 
         '''
         waves = {}
         for label, (lowcut, highcut) in EEGUtil.channel_ranges.iteritems():
@@ -134,7 +150,8 @@ class EEGUtil(object):
         
         :param numpy.array    eeg     raw eeg data
         
-        :return numpy.array   filtered signal
+        :return: filtered signal
+        :rtype:  numpy.array
         '''
         lowcut, highcut = self.channel_ranges["delta"]
         return self.signalUtil.butterBandpassFilter(eeg, lowcut, highcut, samplingRate)
@@ -143,9 +160,10 @@ class EEGUtil(object):
         '''
         Get band pass filtered theta waves (4-8hz) of an eeg signal 
         
-        :param numpy.array    eeg     raw eeg data
+        :param numpy.array    eeg:     raw eeg data
         
-        :return numpy.array   filtered signal
+        :return: filtered signal
+        :rtype:  numpy.array
         '''
         lowcut, highcut = self.channel_ranges["theta"]
         return self.signalUtil.butterBandpassFilter(eeg, lowcut, highcut, samplingRate)
@@ -156,7 +174,8 @@ class EEGUtil(object):
         
         :param numpy.array    eeg     raw eeg data
         
-        :return numpy.array   filtered signal
+        :return: filtered signal
+        :rtype:  numpy.array
         '''
         lowcut, highcut = self.channel_ranges["alpha"]
         return self.signalUtil.butterBandpassFilter(eeg, lowcut, highcut, samplingRate)
@@ -167,7 +186,8 @@ class EEGUtil(object):
         
         :param numpy.array    eeg     raw eeg data
         
-        :return numpy.array   filtered signal
+        :return: filtered signal
+        :rtype:  numpy.array
         '''
         lowcut, highcut = self.channel_ranges["beta"]
         return self.signalUtil.butterBandpassFilter(eeg, lowcut, highcut, samplingRate)
@@ -178,7 +198,8 @@ class EEGUtil(object):
         
         :param numpy.array    eeg     raw eeg data
         
-        :return numpy.array   filtered signal
+        :return: filtered signal
+        :rtype:  numpy.array
         '''
         lowcut, highcut = self.channel_ranges["gamma"]
         return self.signalUtil.butterBandpassFilter(eeg, lowcut, highcut, samplingRate)

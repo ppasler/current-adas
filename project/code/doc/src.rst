@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    src.classification
     src.config
     src.emokit
     src.example
@@ -15,6 +16,14 @@ Subpackages
 
 Submodules
 ----------
+
+src.client module
+-----------------
+
+.. automodule:: src.client
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 src.data_collector module
 -------------------------
@@ -28,6 +37,14 @@ src.feature_extractor module
 ----------------------------
 
 .. automodule:: src.feature_extractor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.posdbos module
+------------------
+
+.. automodule:: src.posdbos
     :members:
     :undoc-members:
     :show-inheritance:

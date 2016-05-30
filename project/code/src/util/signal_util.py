@@ -1,4 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 10.05.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
 
 from scipy.signal import butter, lfilter
 from numpy import count_nonzero
@@ -66,7 +74,5 @@ class SignalUtil(object):
     
     def butterBandpassFilter(self, data, lowcut, highcut, samplingRate, order=5):
         b, a = self.butterBandpass(lowcut, highcut, samplingRate, order)
-        #TODO y u no use: y = filtfilt(b, a, data)
-        # - slower, other values
         y = lfilter(b, a, data)
         return y

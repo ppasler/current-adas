@@ -11,6 +11,7 @@ from pybrain.structure.modules.tanhlayer import TanhLayer
 from pybrain.supervised.trainers.backprop import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
 
+FILE_EXTENSION = ".nn"
 
 class NeuralNetwork(object):
     '''Neural network wrapper for the pybrain implementation
@@ -28,8 +29,12 @@ class NeuralNetwork(object):
         :param int nHiddenLayers: the number of hidden layers
         :parma int nOutputs: the number of output nodes
         :param bool bias: if True an bias node will be added
+        
+        :return: instance of a new neural network
+        :rtype: NeuralNetwork
         '''
         self.net = buildNetwork(nInputs, nHiddenLayers, nOutput, bias=bias, hiddenclass=TanhLayer)
+        return self
 
     def train(self, dataset, maxEpochs = 10, learningrate = 0.01, momentum = 0.99):
         '''trains a network with the given dataset
@@ -51,12 +56,23 @@ class NeuralNetwork(object):
         return self.net.activate(value)
 
     def save(self, name):
-        f = open(self.path + name, 'w')
+        '''saves the neural network
+        
+        :param string name: filename for the to be saved network
+        '''
+        f = open(self.path + name + FILE_EXTENSION, 'w')
         pickle.dump(self.net, f)
         f.close()
 
     def load(self, name):
-        f = open(self.path + name, 'r')
+        '''loades the neural network
+        
+        :param string name: filename for the to be loaded network
+        
+        :return: instance of a saved neural network
+        :rtype: NeuralNetwork
+        '''
+        f = open(self.path + name + FILE_EXTENSION, 'r')
         self.net = pickle.load(f)
         f.close()
         

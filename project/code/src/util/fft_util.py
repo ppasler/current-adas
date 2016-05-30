@@ -1,5 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+'''
+Created on 10.05.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
 
 import numpy as np
 
@@ -16,7 +23,8 @@ class FFTUtil(object):
     '''
 
     def _removeMirrored(self, fft_data, n):
-        '''remove mirrored data, only take left side'''
+        '''remove mirrored data, only take left side
+        '''
         
         nUniquePts = np.ceil((n+1)/2.0)
         return fft_data[0:nUniquePts]
@@ -46,7 +54,20 @@ class FFTUtil(object):
         return fft_data
 
     def fft(self, data):
-        '''FFT with several processing steps'''
+        '''FFT with several processing steps
+        
+        :param array data: raw signal data
+        * better use normalized data
+        * n_data should be a power of 2
+        
+        # fourier transform (numpy implementation)
+        # remove mirrored data
+        # process fft data
+        # make sure energy stays the same
+        
+        :return: tranformed data
+        :rtype: array
+        '''
         n = len(data)
         # make sure n_data is a power of 2
         fft_data = np.fft.fft(data)                   # fourier transform

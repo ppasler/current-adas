@@ -52,7 +52,7 @@ class TestNeuralNetwork(unittest.TestCase):
 
     def removeFile(self):
         try:
-            os.remove(self.nn.path + name)
+            os.remove(self.nn.path + name + ".nn")
         except OSError as e:
             print e.message
 

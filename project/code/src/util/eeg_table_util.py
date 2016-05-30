@@ -1,4 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 10.05.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
 
 import os
 
@@ -63,7 +71,8 @@ class EEGTableUtil(object):
         :param     int    limit:         endpoint of dataset
         :param     int    length:        length of dataset
         
-        :return    array  dataset for given column   
+        :return: dataset for given column
+        :rtype: array
         '''
         
         if columnName not in self.header:
@@ -86,9 +95,10 @@ class EEGTableUtil(object):
         :param float     fromTime:     start time of dataset as unix timestamp   
         :param float     toTime:       start time of dataset as unix timestamp
         
-        :return array    dataset for given column   
+        :return: dataset for given column
+        :rtype: array 
         
-        :raise ValueError if time could not be found in dataset 
+        :raise: ValueError if time could not be found in dataset 
         '''
         fromIndex, toIndex = -1, -1
 
@@ -116,7 +126,8 @@ class EEGTableUtil(object):
         '''
         calcs the samplerate for the whole dataset based on the timestamp column   
         
-        :return int    samplerate
+        :return: samplerate
+        :rtype: int
 
         '''
         data = self.getColumn(TIMESTAMP_STRING)
@@ -143,10 +154,11 @@ class EEGTableReader(object):
         Reads the first row of the table to create a list of header values
         by default the delimiter for the csv table is ";"
         
-        :param string   filePath
-        :param string   delimiter   
+        :param string:   filePath
+        :param string:   delimiter   
         
-        :return list    header column
+        :return: header column
+        :rtype: list
         '''
         with open(filePath, 'rb') as f:
             header = f.readline().strip().split(delimiter)
@@ -165,10 +177,11 @@ class EEGTableReader(object):
          ["timestamp_m", "val_m_1" ... "v_m_n"],
         ]
         
-        :param string   filePath
-        :param string   delimiter   
-        
-        :return array   data columns
+        :param string   filePath:
+        :param string   delimiter:
+
+        :return: data columns
+        :rtype: array
         '''
         data = delete(genfromtxt(filePath, dtype=float, delimiter=delimiter), 0, 0)
         return data
@@ -178,8 +191,11 @@ class EEGTableReader(object):
         reads the given file
         
         
-        :param filePath:
-        :param delimiter:
+        :param string filePath:
+        :param string delimiter:
+        
+        :return: eeg data
+        :rtype: EEGTabelUtil
         '''
         if filePath == "":
             return None
@@ -188,7 +204,6 @@ class EEGTableReader(object):
         header = self.readHeader(filePath, delimiter)
 
         return EEGTableUtil(header, data, filePath)
-    
 
 
 if __name__ == "__main__":  # pragma: no cover

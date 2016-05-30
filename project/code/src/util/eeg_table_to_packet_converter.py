@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 10.05.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
 import os
 import time
 
@@ -12,23 +22,25 @@ class EEGTableToPacketUtil(object):
     
     Converts CSV style data to a emotiv object
 
-    CSV
-    Timestamp;       F3;    X;  ... QF3
-    1459760953.863;  -58.0  -1; ... 6.0 
-    
-    emotiv
-    {
-        "Timestamp": 1459760953.863,
-        "F3" :{
-            "value":   -58.0,
-            "quality": 6.0,
-        }
-        ...
-    
-    }
+    | CSV
+    | ``Timestamp;         F3;   X; ... QF3``
+    | ``1459760953.863; -58.0;  -1; ... 6.0``
+     
+    | emotiv
+    | ``{``
+    |    ``"Timestamp": 1459760953.863,``
+    |    ``"F3" :{``
+    |        ``"value":   -58.0,``
+    |        ``"quality": 6.0,``
+    |    ``}``
+    |    ``...``
+    | ``}``
     '''
     
     def __init__(self):
+        '''
+        Reads data from ./../../examples/example_4096.csv and builds the data structure
+        '''
         self.reader = EEGTableReader()
         self.filepath = scriptPath + "/../../examples/example_4096.csv"
         self.index = 0
@@ -72,7 +84,10 @@ class EEGTableToPacketUtil(object):
         return EEGTablePacket(ret)
 
     def dequeue(self):
-        '''get the current dummy data row'''
+        '''get the current dummy data row
+        :return: data row
+        :rtype: EEGTablePacket 
+        '''
         row = self.data[self.index]
         row.sensors["Timestamp"] = time.time()
         self.index = (self.index + 1) % self.len

@@ -4,10 +4,18 @@ src.util package
 Submodules
 ----------
 
-src.util.eeg_table_reader module
---------------------------------
+src.util.eeg_table_to_packet_converter module
+---------------------------------------------
 
-.. automodule:: src.util.eeg_table_reader
+.. automodule:: src.util.eeg_table_to_packet_converter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.util.eeg_table_util module
+------------------------------
+
+.. automodule:: src.util.eeg_table_util
     :members:
     :undoc-members:
     :show-inheritance:
