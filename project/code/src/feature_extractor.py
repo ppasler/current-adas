@@ -61,7 +61,7 @@ class FeatureExtractor(object):
         '''
         Constructor
         '''
-        self.collectorConfig = ConfigProvider().getCollectorConfig()      
+        self.collectorConfig = ConfigProvider().getCollectorConfig()
         self.collector = DataCollector(None, **self.collectorConfig)
         self.collectorThread = threading.Thread(target=self.collector.collectData)
         

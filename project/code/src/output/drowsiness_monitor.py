@@ -11,7 +11,6 @@ import threading
 from time import sleep
 
 import pygame
-from pygame import FULLSCREEN
 
 
 resolution = (1600, 900)
@@ -34,9 +33,6 @@ class DrowsinessMonitor(object):
 
 
     def __init__(self):
-        '''
-        Constructor
-        '''
         self.running = True
         self.state = "awake";
 
@@ -55,7 +51,7 @@ class DrowsinessMonitor(object):
         font = pygame.font.Font(None, 64)
         text = font.render(self.curState["description"], 1, (255, 255, 255))
         text_pos = text.get_rect()
-        text_pos.centery = resolution[1]/2
+        text_pos.centery = self.screen.get_rect().centery
         text_pos.centerx = self.screen.get_rect().centerx
         self.screen.blit(text, text_pos)
 
