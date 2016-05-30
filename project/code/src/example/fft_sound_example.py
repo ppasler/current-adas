@@ -3,10 +3,13 @@ Shows simple sound processing with fft
 
 Inspired by `Basic Sound Processing with Python <http://samcarcagno.altervista.org/blog/basic-sound-processing-python/>`_
 '''
+import sys, os
 
 from pylab import fft, arange, log10, ceil
 from scipy.io import wavfile
 from matplotlib.pyplot import ylabel, xlabel, subplots, show
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from util.fft_util import FFTUtil
 import numpy as np
 

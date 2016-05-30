@@ -21,11 +21,11 @@ class DataCollector(object):
     
     '''
 
-    def __init__(self, datasource=None, fields=[], windowSize=32, windowCount=2):
+    def __init__(self, datasource=None, fields=[], windowSize=128, windowCount=2):
         '''
         :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
         :param list fields: list of key which are taken from the EmotivData
-        :param int windowSize: size of one window (default 32)
+        :param int windowSize: size of one window (default 128)
         :param int windowCount: number of windows (default 2)
         '''
         self.datasource = datasource    
