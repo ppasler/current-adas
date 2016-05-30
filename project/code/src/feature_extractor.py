@@ -66,9 +66,8 @@ class FeatureExtractor(object):
         self.collectorThread = threading.Thread(target=self.collector.collectData)
         
         self.processor = ProcessingChain()
-        
         self.extract = True
-        
+
         
     def start(self):
         '''setting data handler and starts collecting'''

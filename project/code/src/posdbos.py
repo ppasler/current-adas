@@ -40,12 +40,20 @@ class PoSDBoS(object):
         self.running = False
 
     def run(self):
+        self.fe.start()
+        t = threading.Thread(target=self.dm.run)
+        t.start()
         while self.running:
-            n = random.randint(1, 10)
-            self.dm.setStatus(n%2)
-            sleep(0.1)
+            try:
+                n = random.randint(1, 10)
+                self.dm.setStatus(n%2)
+                sleep(0.1)
+            except (Exception, KeyboardInterrupt):
+                self.close()
+                break
         self.fe.close()
         self.dm.close()
+        t.join()
 
 if __name__ == '__main__':
     p = PoSDBoS()
