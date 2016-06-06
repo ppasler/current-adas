@@ -1,0 +1,80 @@
+\include{Header/Header}
+\graphicspath{{img/}{./}}
+
+\begin{document}
+\assignpagestyle{empty}{WissDokuNothing}
+\pagestyle{empty}
+
+\pagenumbering{gobble}
+%Seite 0 Deckblatt
+\include{Kapitel/Deckblatt}
+
+%Seite 1 - n
+\pagenumbering{arabic}
+\include{Kapitel/Inhalt}
+
+\cleardoublepage 
+\begingroup
+\let\clearpage\relax
+\include{Kapitel/Verzeichnisse}
+\chapter*{Abkürzungsverzeichnis}
+\input{sections/acronym}
+\chapter*{Glossar}
+\input{sections/glossaries}
+\endgroup
+
+
+\pagestyle{WissDokuNorm}
+
+\assignpagestyle{\chapter}{WissDokuChapter}
+\assignpagestyle{\section}{WissDokuNorm}
+\assignpagestyle{empty}{WissDokuNothing}
+\cleardoublepage
+
+
+%Kapitel 1 Einführung
+\cleardoublepage
+\chapter{Einleitung}
+\acl{EEG}
+\input{sections/intro}
+
+\chapter{Stand der Technik}
+\input{sections/state}
+
+\chapter{EEG Headset}
+\input{sections/eeg}
+
+\chapter{Testdatenbeschaffung}
+\input{sections/data}
+
+\chapter{Müdigkeitserkennung mit einem EEG-Headset}
+\input{sections/implementation}
+
+\section{Datensammlung}
+\input{sections/fetching}
+
+\section{Datenverarbeitung}
+\input{sections/processing}
+
+\section{Mermalsextraktion}
+\input{sections/extraction}
+
+\section{Klassifikator}
+\input{sections/classification}
+
+
+\chapter{Ergebnis}
+\input{sections/result}
+
+\chapter{Fazit und Ausblick}
+\input{sections/conclusion}
+
+
+\cleardoublepage 
+\include{Kapitel/Quellenverzeichnis}
+
+\cleardoublepage
+%Anhang (include rausnehmen, wenn es keinen Anhnag gibt)
+\include{Kapitel/Anhang}
+\include{Kapitel/Ehrenwort}
+\end{document}
