@@ -1,0 +1,38 @@
+\include{Header/Header}
+
+\begin{document}
+\assignpagestyle{empty}{WissDokuNothing}
+\pagestyle{empty}
+
+\pagenumbering{gobble}
+%Seite 0 Deckblatt
+\include{Kapitel/Deckblatt}
+
+%Seite 1 - n
+\pagenumbering{arabic}
+\include{Kapitel/Inhalt}
+
+\include{Kapitel/Verzeichnisse}
+
+
+\pagestyle{WissDokuNorm}
+
+\assignpagestyle{\chapter}{WissDokuChapter}
+\assignpagestyle{\section}{WissDokuNorm}
+\assignpagestyle{empty}{WissDokuNothing}
+\cleardoublepage
+
+
+%Kapitel 1 Einführung
+\cleardoublepage
+\include{Kapitel/Kap1}
+
+
+\cleardoublepage 
+\include{Kapitel/Quellenverzeichnis}
+
+\cleardoublepage
+%Anhang (include rausnehmen, wenn es keinen Anhnag gibt)
+\include{Kapitel/Anhang}
+\include{Kapitel/Ehrenwort}
+\end{document}

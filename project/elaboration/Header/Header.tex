@@ -1,0 +1,309 @@
+%Schriftgroesse, Layout, Papierformat, Art des Dokumentes
+\documentclass[12pt, oneside,	bibliography=totoc, a4paper, parskip=full+, final, headinclude=false, footinclude=false]{scrreprt} 
+
+%Einstellungen der Seitenraender, Zeilenabstand
+\usepackage[left=4cm,right=3cm,top=3cm,bottom=2cm,bindingoffset=0cm]{geometry}
+\usepackage{titlesec}                  % Ueberschriftenformatierungen 
+
+\titlelabel{\thetitle\quad}
+\titleformat{\chapter}[hang]{\Large}{\thechapter}{2pc}{}
+\titlespacing*{\chapter}{0pt}{1pt}{1pt}
+\titleformat*{\section}{\large}
+\titleformat*{\subsection}{\normalsize\bfseries}
+
+\usepackage{setspace} 
+\setlength{\footskip}{0.8cm}
+%bestimmt abstand zwischen footnotes und text
+\setlength{\skip\footins}{6mm}
+
+\usepackage{pdfpages}
+%anpassung des Abstandes zwischen zwei Footnotes
+\setlength {\footnotesep}{0mm} 
+%\enlargethispage{1.5cm}
+%für subusubsection Nummerierungen
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3} 
+
+\usepackage{trfsigns}
+%Für timing diagramme
+\usepackage{tikz-timing}[2009/05/15]
+\def\degr{${}^\circ$}
+
+%% Zeilenabstand
+\onehalfspacing                                     % Zeilenabstand 1,5 fach
+%\KOMAoptions{DIV=last}                  % Satzspiegel neu berechnen wegen 1,5 fach Zeilenabstand
+%\flushbottom 
+
+%Deutsche Rechtschreibung für Text und Lit.-verzeichnis
+\usepackage[ngerman]{babel}
+\usepackage[german]{babelbib} 
+%zur korrekten Schreiben vn Anführungszeichen
+\usepackage[babel,german=quotes]{csquotes}
+%Schriftart ändern 
+\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand*\rmdefault{pcr}
+\usepackage{mathptmx}
+%pacakge für mathematische Transormationszeichen
+\usepackage{trfsigns}
+%BiblatexStyle alphadin = name+Erscheinungsjahr
+\bibliographystyle{unsrt}
+
+%bibs als Section
+\makeatletter
+\renewcommand*\bib@heading{%
+	\section*{\bibname}%
+	\@mkboth{\leftmark}{\rightmark}%
+}
+\makeatother
+\usepackage{relsize}
+\usepackage{lipsum}
+
+\newcommand{\CSharp}{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\relsize{-2}{\textbf{\#}}}}
+
+% Verändert Bildunterschriften
+\addtokomafont{caption}{\small \textit} 
+
+%Kein Einrücken bei neuem Absatz
+\setlength\parindent{0pt} 
+
+%für Abkürzungsverzeichnis
+\usepackage{acronym}%[printonlyused]
+
+%Fuer die Bibliothek
+\usepackage{cite}
+
+\usepackage[center]{caption}
+
+% Für Symbole
+\usepackage{textcomp}
+
+% Damit einzelne Seiten im Querformat angezeigt werden können
+\usepackage{pdflscape}
+
+%Text in meheren Spalten
+\usepackage{multicol}
+%Um Tabellen in der tabular Umgebung zu nutzen
+\usepackage{tabularx}
+
+%Mathematische Zeichen wie Menge, Element usw
+\usepackage{dsfont}
+
+
+%for Tabulares
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+%Umlaute ermoeglichen
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+
+%Fuer Grafiken
+\usepackage{graphicx} 
+
+%Um mehrere Bilder nebeneinander darstellen zu koennen
+\usepackage{subfigure}
+
+%für umrandete Texte -> Sperrvermerk
+\usepackage{framed}
+
+%Um Grafiken neben dem Text einzufuegen
+\usepackage{wrapfig}
+
+%Fuer die eingabe mathematischer Formeln
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{mathtools}
+
+%Bildunterschriften manipulieren
+\captionsetup{format = plain}
+\addto\captionsngerman
+{
+	\renewcommand{\figurename}{Abb.} %Fuer die Bildunterschriften wird nun Abb. x verwendet
+	\renewcommand{\tablename}{Tab.} 
+	%\renewcommand{\listtablename}{List.}
+}
+
+
+%Kopf- und Fusszeile bzw eigene Designs, hier sind Änderungen einzutragen
+\usepackage[automark]{scrpage2}
+		
+\usepackage{lastpage}	
+
+\newpagestyle{WissDokuNorm}
+{ %
+	(0pt,0pt)
+	{\hfill\headmark}
+	{\headmark\hfill}
+	{\hfill Hochschule Reutlingen – Fakultät Informatik – Masterstudiengang huc \hfill}
+}
+{
+	{\pagemark\hfill}
+	{\hfill\pagemark}
+	{Max Muster\hfill HUC2.5:Masterprojekt IoT-SS16\hfill\thepage ~von~\pageref{LastPage}}
+	(0pt,0pt)
+}
+
+\newpagestyle{WissDokuChapter}
+{ %
+	(0pt,0pt)
+	{\hfill\headmark}
+	{\headmark\hfill}
+	{\hfill Hochschule Reutlingen – Fakultät Informatik – Masterstudiengang huc \hfill}
+}
+{
+	{\pagemark\hfill}
+	{\hfill\pagemark}
+	{Max Muster\hfill HUC2.5:Masterprojekt IoT-SS16\hfill\thepage ~von~\pageref{LastPage}}
+	(0pt,0pt)
+}
+
+\newpagestyle{WissDokuNothing}
+{ %
+	(0pt,0pt)
+	{\hfill}
+	{\hfill}
+	{\rlap{}\hfill%
+		\llap{\hfill}}
+	(0pt,.4pt)
+}{%
+(0pt,0pt)
+{\pagemark\hfill}
+{\hfill\pagemark}
+{\hfill\pagemark}
+(0pt,0pt)
+}
+
+%Zuweisungen der gewünschten styles
+\assignpagestyle{\chapter}{WissDokuChapter}
+\assignpagestyle{\section}{WissDokuNorm}
+\assignpagestyle{empty}{WissDokuNothing}
+
+
+\pagestyle{WissDokuNorm}
+
+%----------------------------------------------
+
+%Für korrektes anzeigen des Quellcodes
+
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\definecolor{darkblue}{rgb}{0,0,.6}
+\definecolor{darkred}{rgb}{.6,0,0}
+\definecolor{darkgreen}{rgb}{0,.6,0}
+\definecolor{lightblue}{rgb}{0.97,0.99,1}
+
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Codeauszug}
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr,morekeywords={get,set,DateTime,List<DataBundle>,List,Exception,try,catch,ExceptionLog,DataBundle,PointF,Graphics,Control}}
+\lstset
+{
+	style=sharpc,
+	basicstyle=\ttfamily,
+	commentstyle=\color{darkgreen},
+	keywordstyle=\bfseries\color{darkblue},
+	stringstyle=\color{darkred},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	columns=fixed,
+	frame=single,
+	frameround=ffff,
+	numbers=left,
+	numberstyle=\tiny,
+	numbersep=5pt,
+	breaklines=true,
+	backgroundcolor=\color{lightblue},
+	captionpos=b
+}
+%------------------------------------------------
+
+%für hochgestellte verweise
+%\usepackage{overcite} 
+%\renewcommand\citeform[1]{[#1]}
+
+
+
+
+%Abkuerzungs und Symbolverzeichnis
+\usepackage[german]{nomencl} %Fuer die Verzeichnisse, intoc damit es im Inhaltsverzeichnis erscheint
+\usepackage{ifthen} %If then Anweisungen nutzen
+\makenomenclature %Erstelle das Verzeichnis
+%Definiere 2 Verzeichnis
+\renewcommand{\nomname}{formeln}
+
+%\nomenclature{Dose}{Ein wunderbares Behältnis}   Eintrag ins Abkaerzungsverzeichnis
+%\nomenclature[s]{$\pi$}{Hat irgendwas mit Dosen zu tun} Eintrag ins Symbolverzeichnis
+%\printnomenclature um alles auszugeben :)
+
+
+%lädt das Paket zum erzwingen der Grafikposition
+\usepackage{here} 
+
+% ermöglich es, mit \ScaleIfNeeded Grafik nur dann skalieren zu lassen, wenn sie größer als eine seite sind
+
+\makeatletter
+\def\ScaleIfNeeded{%
+	\ifdim\Gin@nat@width>\linewidth
+	\linewidth
+	\else
+	\Gin@nat@width
+	\fi
+}
+\makeatother
+
+% Keine "Schusterjungen"
+\clubpenalty = 10000
+
+% Keine "Hurenkinder"
+\widowpenalty = 10000
+\displaywidowpenalty = 10000
+
+\raggedbottom
+
+\setlength{\parskip}{3ex plus 3ex minus 3ex}
+
+\renewcommand*\chapterheadstartvskip{\vspace{-\topskip}}
+\renewcommand*{\chapterheadendvskip}{\vspace*{0pt}}      % Abstand zwischen Chapter u. Fliesstext
+%\titlespacing{\section}{0pc}{5pt}{0pt}[0pt]
+%\titlespacing{\subsection}{0pc}{5pt}{0pt}[0pt]
+%\titlespacing{\subsubsection}{0pc}{5pt}{0pt}[0pt] 
+
+%Um Links im Dokument zu aktivieren, einfach auskommentieren wenn es stoert
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=false,
+	pdfborder={0 0 0},
+}
+
+%fürs Hintergrundbild
+\usepackage{eso-pic}
+\newcommand\BackgroundPic{%
+	\put(0,0){%
+		\parbox[b][\paperheight]{\paperwidth}{%
+			\vfill
+			\centering
+			\includegraphics[width=\paperwidth,height=\paperheight,%
+			keepaspectratio]{Bilder/Deckblatt/Background.JPG}%
+			\vfill
+		}}}
+		
+\makeatletter
+\renewenvironment{abstract}{%
+      %\titlepage
+      %\null\vfil
+        \textbf{\textit{\abstractname}}
+        \@endparpenalty\@M}%
+     {\par%\vfil\null\endtitlepage
+     }
+\makeatother
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
