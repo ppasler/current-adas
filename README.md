@@ -57,3 +57,12 @@ FFT
 [Sound Test files](http://mdf1.tripod.com/test-tones.zip)
 FFT Video [Pt I](https://www.youtube.com/watch?v=xiDzwiwTVW4] [Pt 2](https://www.youtube.com/watch?v=LNXVCBbSzkU)
 [FFT Script](https://www.tu-chemnitz.de/informatik/ThIS/downloads/courses/ws02/datkom/Fouriertransformation.pdf)
+
+SignalProcessing:
+https://archive.ics.uci.edu/ml/datasets/EEG+Database
+[1] Zoltan J. Koles. The quantitative extraction and topographic mapping
+of the abnormal components in the clinical EEG. Electroencephalography and Clinical Neurophysiology, 79(6):440–447, December 1991.
+[2] Schalk, G., McFarland, D.J., Hinterberger, T., Birbaumer, N.,
+Wolpaw, J.R. (2004) BCI2000: A General-Purpose Brain-Computer Interface (BCI) System. IEEE TBME 51(6):1034-1043
+[3] Goldberger AL, Amaral LAN, Glass L, Hausdorff JM, Ivanov PCh, Mark RG,
+Mietus JE, Moody GB, Peng C-K, Stanley HE. (2000) PhysioBank, PhysioToolkit, and PhysioNet: Components of a New Research Resource for Complex Physiologic Signals. Circulation 101(23):e215-e220

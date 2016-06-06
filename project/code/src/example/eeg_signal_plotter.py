@@ -36,7 +36,7 @@ class EEGSignalPlotter(object):
         axRaw, axNorm, axFFT, axLogFFT, axChan = ax[0], ax[1], ax[2], ax[3], ax[4:]
         
         samplingRate = eeg_data.getSamplingRate()
-        raw = eeg_data.getColumn(label, 0, 1024)
+        raw = eeg_data.getColumn(label, 0, 256)
         
         # plot raw and normalized signal
         self.plotRaw(axRaw, axNorm, samplingRate, raw)
@@ -105,19 +105,13 @@ class EEGSignalPlotter(object):
 
 if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))
-    eegPath = scriptPath + "/../../examples/example_4096.csv"
-    eegData = EEGTableReader().readFile(eegPath)
-    util = FFTUtil()
-    eutil = EEGUtil()
+    eegPath = scriptPath + "/../../examples/"
+    fileName = "example_4096.csv"
+    #fileName = "co2a0000364.rd.018.csv"
+    eegData = EEGTableReader().readFile(eegPath + fileName)
 
-    raw = eegData.getColumn("F7", 0, 32)
-    fft = util.fft(raw)
-    
     e = EEGSignalPlotter()
-    
-
-    #labels = eeg_data.header
     #e.plotRawSignal(eeg_data, ["F7", "F8"])
-    e.plotFFTSignals(eegData, ["F7"])
+    e.plotFFTSignals(eegData, ["F4"])
 
 
