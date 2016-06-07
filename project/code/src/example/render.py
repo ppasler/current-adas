@@ -46,8 +46,12 @@ def createQuality():
 createQuality()
 
 resolution = (1600, 900)
-
+screen = None
 emotiv = None
+recordings = []
+recording = False
+fullscreen = False
+
 
 class Grapher(object):
     """
@@ -105,52 +109,51 @@ class Grapher(object):
             pos = (self.x_offset + i, y)
         self.screen.blit(self.text, self.text_pos)
 
+def handleEvents():
+    global emotiv, screen, fullscreen, recording, recordings
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            emotiv.close()
+            return
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                emotiv.close()
+                return
+            elif event.key == pygame.K_f:
+                if fullscreen:
+                    screen = pygame.display.set_mode(resolution)
+                    fullscreen = False
+                else:
+                    screen = pygame.display.set_mode(resolution, FULLSCREEN, 16)
+                    fullscreen = True
+            elif event.key == pygame.K_r:
+                if not recording:
+                    record_packets = []
+                    recording = True
+                else:
+                    recording = False
+                    recordings.append(list(record_packets))
+                    record_packets = None
 
 def main():
     """
     Creates pygame window and graph drawing workers for each sensor.
     """
-    global gheight, emotiv, pygame
+    global gheight, emotiv, pygame, screen
     pygame.init()
     screen = pygame.display.set_mode(resolution)
     graphers = []
-    recordings = []
-    recording = False
     record_packets = []
     updated = False
     middle_x, middle_y = resolution[0]/2, resolution[1]/2
     cursor_x, cursor_y = middle_x, middle_y
     for name in 'AF3 F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 AF4'.split(' '):
         graphers.append(Grapher(screen, name, len(graphers)))
-    fullscreen = False
     emotiv = Emotiv(display_output=False)
     gevent.spawn(emotiv.setup)
     gevent.sleep(0)
     while emotiv.running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                emotiv.close()
-                pygame.quit()
-                return
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    emotiv.close()
-                    return
-                elif event.key == pygame.K_f:
-                    if fullscreen:
-                        screen = pygame.display.set_mode(resolution)
-                        fullscreen = False
-                    else:
-                        screen = pygame.display.set_mode(resolution, FULLSCREEN, 16)
-                        fullscreen = True
-                elif event.key == pygame.K_r:
-                    if not recording:
-                        record_packets = []
-                        recording = True
-                    else:
-                        recording = False
-                        recordings.append(list(record_packets))
-                        record_packets = None
+        handleEvents()
         packets_in_queue = 0
         try:
             cursor_x, cursor_y = middle_x, middle_y
@@ -165,10 +168,8 @@ def main():
                     record_packets.append(packet)
                 updated = True
                 packets_in_queue += 1
-        except (Exception, KeyboardInterrupt):
-            logging.exception()
-            emotiv.close()
-            pygame.quit()    
+        except (Exception, KeyboardInterrupt) as e:
+            raise e
 
         if updated:
             screen.fill((75, 75, 75))
@@ -188,6 +189,5 @@ if __name__ == "__main__":
     except (Exception, KeyboardInterrupt):
         logging.exception()
     finally:
-        emotiv.close()
         pygame.quit()
         sys.exit(0) 
