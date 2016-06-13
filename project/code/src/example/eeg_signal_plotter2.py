@@ -4,18 +4,21 @@ import sys, os
 import threading
 from time import sleep
 
+import gevent
+
 from data_collector import DataCollector
 from emokit.emotiv import Emotiv
 import matplotlib.pyplot as plt
 import numpy as np
-
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-
+def pressHandler(event):
+    print "asd"
+    #print('press', event.key)
 
 class EEGSignalPlotter(object):
 
@@ -41,6 +44,8 @@ class EEGSignalPlotter(object):
         mng.window.wm_geometry("+0+0")
         #http://stackoverflow.com/questions/6541123/improve-subplot-size-spacing-with-many-subplots-in-matplotlib
         plt.subplots_adjust(left=0.09, right=0.95, bottom=0.05, top=0.95, wspace=0.2, hspace=0.5)
+        #http://matplotlib.org/examples/event_handling/keypress_demo.html
+        plt.connect('key_press_event', pressHandler)
 
     def getTimeArray(self, n, samplingRate):
         timeArray = np.arange(0, n, 1)
@@ -67,8 +72,6 @@ class EEGSignalPlotter(object):
         return axRaw, axNorm, axAlpha, axTheta
 
     def plotSignal(self):
-        #self.fig.clf()
-        print "update data"
         raw = self.eeg_data
 
         norm = SignalUtil().normalize(raw)
@@ -99,19 +102,21 @@ class EEGSignalPlotter(object):
         self.axTheta.plot(self.timeArray, filtered)
 
 if __name__ == "__main__":
-    print "STARTING STUFF"
-    field = "F4"
+    try:
+        print "STARTING STUFF"
+        field = "F4"
+        
+        e = EEGSignalPlotter(field)
+        emotiv = Emotiv(display_output=False)
+        gevent.spawn(emotiv.setup)
+        gevent.sleep(0)
     
-    e = EEGSignalPlotter(field)
-    collector = DataCollector(fields=[field])
-    collector.setHandler(e.update)
-    t = threading.Thread(target=collector.collectData)
-    t.start()
-
-    sleep(3)
-    collector.close()
-    t.join()
-    print "ENDING STUFF" 
-    #e.plotFFTSignals(eegData, ["F4"])
-
+        collector = DataCollector(emotiv, fields=[field])
+        collector.setHandler(e.update)
+        t = threading.Thread(target=collector.collectData)
+        t.start()
+    except KeyboardInterrupt:
+        collector.close()
+        t.join()
+        print "ENDING STUFF" 
 

@@ -18,6 +18,7 @@ from emokit.emotiv import Emotiv
 
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (50,50)
+resolution = (1600, 900)
 
 '''Tested value for no movement'''
 GYRO_DEFAULT = 22*2
@@ -45,19 +46,11 @@ def createQuality():
 
 createQuality()
 
-resolution = (1600, 900)
-screen = None
-emotiv = None
-recordings = []
-recording = False
-fullscreen = False
-
-
 class Grapher(object):
     """
     Worker that draws a line for the sensor value.
     """
-    def __init__(self, screen, name, i):
+    def __init__(self, screen, gheight, name, i):
         """
         Initializes graph worker
         """
@@ -109,83 +102,94 @@ class Grapher(object):
             pos = (self.x_offset + i, y)
         self.screen.blit(self.text, self.text_pos)
 
-def handleEvents():
-    global emotiv, screen, fullscreen, recording, recordings
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            emotiv.close()
-            return
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                emotiv.close()
-                return
-            elif event.key == pygame.K_f:
-                if fullscreen:
-                    screen = pygame.display.set_mode(resolution)
-                    fullscreen = False
-                else:
-                    screen = pygame.display.set_mode(resolution, FULLSCREEN, 16)
-                    fullscreen = True
-            elif event.key == pygame.K_r:
-                if not recording:
-                    record_packets = []
-                    recording = True
-                else:
-                    recording = False
-                    recordings.append(list(record_packets))
-                    record_packets = None
+class EEGRenderer():
 
-def main():
-    """
-    Creates pygame window and graph drawing workers for each sensor.
-    """
-    global gheight, emotiv, pygame, screen
-    pygame.init()
-    screen = pygame.display.set_mode(resolution)
-    graphers = []
-    record_packets = []
-    updated = False
-    middle_x, middle_y = resolution[0]/2, resolution[1]/2
-    cursor_x, cursor_y = middle_x, middle_y
-    for name in 'AF3 F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 AF4'.split(' '):
-        graphers.append(Grapher(screen, name, len(graphers)))
-    emotiv = Emotiv(display_output=False)
-    gevent.spawn(emotiv.setup)
-    gevent.sleep(0)
-    while emotiv.running:
-        handleEvents()
-        packets_in_queue = 0
-        try:
-            cursor_x, cursor_y = middle_x, middle_y
-            while packets_in_queue < 8:
-                packet = emotiv.dequeue()
-                if abs(packet.gyro_x) > 1:
-                    cursor_x += packet.gyro_x-GYRO_DEFAULT
-                if abs(packet.gyro_y) > 1:
-                    cursor_y += packet.gyro_y-GYRO_DEFAULT
-                map(lambda x: x.update(packet), graphers)
-                if recording:
-                    record_packets.append(packet)
-                updated = True
-                packets_in_queue += 1
-        except (Exception, KeyboardInterrupt) as e:
-            raise e
+    def __init__(self, channels, gheight):
+        """
+        Creates pygame window and graph drawing workers for each sensor.
+        """
+        pygame.init()
+        self.screen = pygame.display.set_mode(resolution)
+        self.graphers = []
 
-        if updated:
-            screen.fill((75, 75, 75))
-            map(lambda x: x.draw(), graphers)
-            cursor_x = middle_x+cursor_x/8
-            cursor_y = middle_y+cursor_y/8
-            pygame.draw.rect(screen, (255, 0, 255), [cursor_x, cursor_y, 5, 5], 5)
-            pygame.display.flip()
-            updated = False
+        self.record_packets = []
+        self.fullscreen = False
+        self.recording = False
+        self.updated = False
+        self.middle_x, self.middle_y = resolution[0]/2, resolution[1]/2
+        for i, name in enumerate(channels):
+            self.graphers.append(Grapher(self.screen, gheight, name, i))
+
+        self.emotiv = Emotiv(display_output=False)
+        gevent.spawn(self.emotiv.setup)
         gevent.sleep(0)
 
-if __name__ == "__main__":
+    def handleEvents(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.emotiv.close()
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.emotiv.close()
+                    return
+                elif event.key == pygame.K_f:
+                    if self.fullscreen:
+                        self.screen = pygame.display.set_mode(resolution)
+                        self.fullscreen = False
+                    else:
+                        self.screen = pygame.display.set_mode(resolution, FULLSCREEN, 16)
+                        self.fullscreen = True
+                elif event.key == pygame.K_r:
+                    if not self.recording:
+                        self.record_packets = []
+                        self.recording = True
+                    else:
+                        self.recording = False
+                        self.recordings.append(list(self.record_packets))
+                        self.record_packets = None
+
+
+    def update(self, cursor_x, cursor_y):
+        if self.updated:
+            self.screen.fill((75, 75, 75))
+            map(lambda x:x.draw(), self.graphers)
+            pygame.draw.rect(self.screen, (255, 0, 255), [cursor_x, cursor_y, 5, 5], 5)
+            pygame.display.flip()
+            self.updated = False
+
+    def main(self):
+        while self.emotiv.running:
+            self.handleEvents()
+            packets_in_queue = 0
+            try:
+                cursor_x, cursor_y = self.middle_x, self.middle_y
+                while packets_in_queue < 8:
+                    packet = self.emotiv.dequeue()
+                    if abs(packet.gyro_x) > 1:
+                        cursor_x += packet.gyro_x-GYRO_DEFAULT
+                    if abs(packet.gyro_y) > 1:
+                        cursor_y += packet.gyro_y-GYRO_DEFAULT
+                    map(lambda x: x.update(packet), self.graphers)
+                    if self.recording:
+                        self.record_packets.append(packet)
+                    self.updated = True
+                    packets_in_queue += 1
+                cursor_x = self.middle_x + cursor_x / packets_in_queue
+                cursor_y = self.middle_y + cursor_y / packets_in_queue
+            except (Exception, KeyboardInterrupt) as e:
+                raise e
     
+            self.update(cursor_x, cursor_y)
+            gevent.sleep(0)
+
+if __name__ == "__main__":
+
     try:
-        gheight = (resolution[1]-resolution[1]*0.1) / 14
-        main()
+        channels = 'AF3 F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 AF4'.split(' ')
+        gheight = (resolution[1]-resolution[1]*0.1) / len(channels)
+        e = EEGRenderer(channels, gheight)
+        e.main()
     except (Exception, KeyboardInterrupt):
         logging.exception()
     finally:

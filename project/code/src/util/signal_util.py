@@ -9,7 +9,7 @@ Created on 10.05.2016
 '''
 
 from scipy.signal import butter, lfilter
-from numpy import count_nonzero
+from numpy import count_nonzero, mean
 
 class SignalUtil(object):
 
@@ -30,6 +30,36 @@ class SignalUtil(object):
         extreme = float(max(max(data), abs(min(data))))
 
         return data / extreme
+
+    def maximum(self, data):
+        '''calculates the signal max 
+
+        :param numpy.array data: list of values
+        
+        :return: signal maximum
+        :rtype: float
+        '''
+        return max(data)
+
+    def minimum(self, data):
+        '''calculates the signal min
+
+        :param numpy.array data: list of values
+        
+        :return: signal minimum
+        :rtype: float
+        '''
+        return min(data)
+
+    def mean(self, data):
+        '''calculates the signal mean
+
+        :param numpy.array data: list of values
+        
+        :return: signal mean
+        :rtype: float
+        '''
+        return mean(data)
 
     def energy(self, data):
         '''calculates signal energy 

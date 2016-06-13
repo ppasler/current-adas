@@ -21,7 +21,7 @@ class DataCollector(object):
     
     '''
 
-    def __init__(self, datasource=None, fields=[], windowSize=128, windowCount=2):
+    def __init__(self, datasource=None, fields=[], windowSize=128, windowCount=2, interval=0):
         '''
         :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
         :param list fields: list of key which are taken from the EmotivData
@@ -34,6 +34,7 @@ class DataCollector(object):
         self.fields = fields
         self._buildSignalWindows(windowSize, windowCount)
         self.collect = True;
+        self.interval = interval
         
     def _setDefaultDataSource(self): # pragma: no cover
         '''Set Emotiv as default source and starts it inside a gevent context'''
@@ -41,6 +42,7 @@ class DataCollector(object):
         gevent.spawn(emotiv.setup)
         gevent.sleep(0)
         self.datasource = emotiv
+        print "using default datasource: " + emotiv.__class__.__name__
     
     def _buildSignalWindows(self, windowSize, windowCount):
         #TODO windowCount
@@ -58,12 +60,13 @@ class DataCollector(object):
         self.dataHandler = dataHandler
       
     def collectData(self):
-        '''collect data and only take sensor data (ignoring timestamp, gyor_x, gyro_y properties)'''
+        '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
         print("%s: starting data collection" % self.__class__.__name__)     
         while self.collect:
             data = self.datasource.dequeue().sensors
             filteredData = self.filter(data)
             self._addData(filteredData)
+            sleep(self.interval)
         print("%s: closing data collection" % self.__class__.__name__)     
         self.datasource.close()
     

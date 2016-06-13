@@ -36,7 +36,7 @@ class EEGSignalPlotter(object):
         axRaw, axNorm, axFFT, axLogFFT, axChan = ax[0], ax[1], ax[2], ax[3], ax[4:]
         
         samplingRate = eeg_data.getSamplingRate()
-        raw = eeg_data.getColumn(label, 0, 256)
+        raw = eeg_data.getColumn(label)
         
         # plot raw and normalized signal
         self.plotRaw(axRaw, axNorm, samplingRate, raw)

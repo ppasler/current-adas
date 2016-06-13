@@ -9,11 +9,13 @@ from scipy.io import wavfile
 from scipy.signal.filter_design import freqz
 
 import numpy as np
+from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
 from util.eeg_table_util import EEGTableReader, EEGTableUtil
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
+from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
-from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
+
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -42,9 +44,32 @@ def sameEntries(list1, list2):
         return False
 
     return all([x in list1 for x in list2])
-    
-    
 
+def countOcc(a, x):
+    return len(np.where(a==x)[0])
+
+class TestQualityUtil(unittest.TestCase):
+
+    def setUp(self):
+        self.util = QualityUtil()
+
+    def test_removeOutliners(self):
+        value = -99
+        testList = np.array([-10, -4, -3, -2, 0, 4, 5, 6, 10])
+        self.assertEqual(countOcc(testList, value), 0)
+        self.util.removeOutliners(testList, -3, 5, value)
+        self.assertEqual(countOcc(testList, value), 4)
+
+    def test_removeOutliners_clip(self):
+        testList = np.array([-10, -4, -3, -2, 0, 4, 5, 6, 10])
+        self.assertEqual(countOcc(testList, -3), 1)
+        self.assertEqual(countOcc(testList, 5), 1)
+        
+        self.util.removeOutliners(testList, -3, 5)
+        print testList
+        self.assertEqual(countOcc(testList, -3), 3)
+        self.assertEqual(countOcc(testList, 5), 3)
+        
 class TestSignalUtil(unittest.TestCase):
 
     def setUp(self):
@@ -68,7 +93,22 @@ class TestSignalUtil(unittest.TestCase):
     def test_energie(self):
         testList = np.array([1, 2, 3, 4])
         energy = self.util.energy(testList)
-        self.assertTrue(energy == 30)
+        self.assertEqual(energy, 30)
+
+    def test_maximum(self):
+        testList = np.array([-5, 1, 2, 3, 4])
+        maximum = self.util.maximum(testList)
+        self.assertEqual(maximum, 4)
+
+    def test_minimum(self):
+        testList = np.array([-5, 1, 2, 3, 6])
+        minimum = self.util.minimum(testList)
+        self.assertEqual(minimum, -5)
+
+    def test_mean(self):
+        testList = np.array([0, 1, 2, 3, 4])
+        mean = self.util.mean(testList)
+        self.assertEqual(mean, 2)
 
 class TestFrequencyFilter(unittest.TestCase):
     
@@ -382,14 +422,11 @@ class TestEEGTableData(unittest.TestCase):
         # 9 values within 2 seconds = sampling rate 4.5
         self.assertTrue(self.eeg_data.getSamplingRate() == 4.5)
 
-    def countOcc(self, a, x):
-        return len(np.where(a==x)[0])
-
     def test_getColumn(self):
         for i, header in enumerate(self.header[1:3]):
             column = self.eeg_data.getColumn(header)
             # make sure data columns only contain X:1, Y:2
-            self.assertTrue(self.countOcc(column, i+1) == len(self.data))
+            self.assertTrue(countOcc(column, i+1) == len(self.data))
 
     def test_getColumn_withOffset(self):
         offset = 3

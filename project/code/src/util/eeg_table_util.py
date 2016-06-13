@@ -60,6 +60,9 @@ class EEGTableUtil(object):
             if time >= fromTime:
                 return i
 
+    def getQuality(self, columnName, offset=0, limit=-1, length=-1):
+        return self.getColumn("Q" + columnName, offset, limit, length)
+
     def getColumn(self, columnName, offset=0, limit=-1, length=-1):
         '''
         get dataset from a certain column, either from offset to limit or till length
