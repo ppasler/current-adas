@@ -12,7 +12,7 @@ import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from util.eeg_table_util import EEGTableReader
+from util.eeg_table_util import EEGTableFileUtil
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
 
@@ -31,7 +31,7 @@ class BandPassExample(object):
     
     def getEEGSignal(self):
         scriptPath = os.path.dirname(os.path.abspath(__file__))
-        return EEGTableReader().readFile(scriptPath + "/../../examples/example_1024.csv")
+        return EEGTableFileUtil().readFile(scriptPath + "/../../examples/example_1024.csv")
     
     def plotBBF(self, fs, lowcut, highcut):
         # Plot the frequency response for a few different orders.

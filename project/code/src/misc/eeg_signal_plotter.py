@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import numpy as np
 import matplotlib.pyplot as plt
 
-from util.eeg_table_util import EEGTableReader
+from util.eeg_table_util import EEGTableFileUtil
 from util.fft_util import FFTUtil
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     eegPath = scriptPath + "/../../examples/"
     fileName = "example_4096.csv"
     #fileName = "co2a0000364.rd.018.csv"
-    eegData = EEGTableReader().readFile(eegPath + fileName)
+    eegData = EEGTableFileUtil().readFile(eegPath + fileName)
 
     e = EEGSignalPlotter()
     #e.plotRawSignal(eeg_data, ["F7", "F8"])

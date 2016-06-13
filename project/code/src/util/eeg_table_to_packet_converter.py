@@ -11,7 +11,7 @@ Created on 10.05.2016
 import os
 import time
 
-from util.eeg_table_util import EEGTableReader
+from util.eeg_table_util import EEGTableFileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -37,12 +37,14 @@ class EEGTableToPacketUtil(object):
     | ``}``
     '''
     
-    def __init__(self):
+    def __init__(self, filePath=None):
         '''
         Reads data from ./../../examples/example_4096.csv and builds the data structure
         '''
-        self.reader = EEGTableReader()
-        self.filepath = scriptPath + "/../../examples/example_4096.csv"
+        self.reader = EEGTableFileUtil()
+        self.filepath = filePath
+        if filePath == None:
+            self.filepath = scriptPath + "/../../examples/example_4096.csv"
         self.index = 0
         self._buildDataStructure()
         print "Using %d dummy datasets" % self.len
@@ -95,6 +97,29 @@ class EEGTableToPacketUtil(object):
 
     def close(self):
         pass
+
+
+    # TODO extract me
+    def _buildFullDataStructure(self):
+        self._readHeader()
+        rawData = self._readRawData()
+
+        data = {}
+        for key in self.fields:
+            data[key] = {"value": [], "quality": []}
+        
+        for raw in rawData:
+            self._buildFullRow(raw, data)
+        
+        return data
+
+    # TODO extract me
+    def _buildFullRow(self, row, data):
+        for h in self.fields:
+            value = row[self.header.index(h)]
+            quality = row[self.header.index("Q" + h)]
+            data[h]["value"].append(value)
+            data[h]["quality"].append(quality)
 
 class EEGTablePacket(object):
     '''Object for EEG data :see: EmotivPacket

@@ -2,7 +2,6 @@
 
 import sys, os
 import threading
-from time import sleep
 
 import gevent
 

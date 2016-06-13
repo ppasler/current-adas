@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -27,7 +28,6 @@ class ProcessingChainTest(unittest.TestCase):
 
     def test_process(self):
         self.processor.process(TEST_DATA)
-        
 
     def test_splitData(self):
         eegData, gyroData = self.processor.splitData(TEST_DATA)

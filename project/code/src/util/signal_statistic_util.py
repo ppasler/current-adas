@@ -9,7 +9,7 @@ Created on 30.05.2016
 '''
 import os
 
-from util.eeg_table_util import EEGTableReader
+from util.eeg_table_util import EEGTableFileUtil
 from util.signal_util import SignalUtil
 
 class SignalStatisticUtil(object):
@@ -26,7 +26,7 @@ class SignalStatisticUtil(object):
         self.su = SignalUtil()
 
     def readData(self, filePath):
-        self.reader = EEGTableReader()
+        self.reader = EEGTableFileUtil()
         eeg_data = self.reader.readFile(filePath)
         self.raw = eeg_data.getColumn(self.name)
         self.quality = eeg_data.getQuality(self.name)

@@ -10,7 +10,7 @@ from scipy.signal.filter_design import freqz
 
 import numpy as np
 from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
-from util.eeg_table_util import EEGTableReader, EEGTableUtil
+from util.eeg_table_util import EEGTableFileUtil, EEGTableUtil
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
 from util.quality_util import QualityUtil
@@ -48,28 +48,43 @@ def sameEntries(list1, list2):
 def countOcc(a, x):
     return len(np.where(a==x)[0])
 
+def removeFile(filePath):
+    try:
+        os.remove(filePath)
+    except OSError as e:
+        print e.message
+
 class TestQualityUtil(unittest.TestCase):
 
     def setUp(self):
         self.util = QualityUtil()
 
-    def test_removeOutliners(self):
+    def test_replaceOutliners_withValue(self):
         value = -99
         testList = np.array([-10, -4, -3, -2, 0, 4, 5, 6, 10])
         self.assertEqual(countOcc(testList, value), 0)
-        self.util.removeOutliners(testList, -3, 5, value)
+        self.util.replaceOutliners(testList, -3, 5, value)
         self.assertEqual(countOcc(testList, value), 4)
 
-    def test_removeOutliners_clip(self):
+    def test_replaceOutliners_withoutValue(self):
         testList = np.array([-10, -4, -3, -2, 0, 4, 5, 6, 10])
         self.assertEqual(countOcc(testList, -3), 1)
         self.assertEqual(countOcc(testList, 5), 1)
         
-        self.util.removeOutliners(testList, -3, 5)
-        print testList
+        self.util.replaceOutliners(testList, -3, 5)
+
         self.assertEqual(countOcc(testList, -3), 3)
         self.assertEqual(countOcc(testList, 5), 3)
+
+    def test_replaceBadQuality(self):
+        value = 99
+        testList = np.array([-10, -4, -3, -2, 0, 2, 4, 5, 6, 10])
+        qualList = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         
+        self.util.replaceBadQuality(testList, qualList, 4, value)
+        self.assertEqual(len(qualList), len(testList))
+        self.assertEqual(countOcc(testList, value), 4)
+
 class TestSignalUtil(unittest.TestCase):
 
     def setUp(self):
@@ -338,7 +353,7 @@ class TestEEGUtil(unittest.TestCase):
         self.assertTrue(all([x in channels["gamma"] for x in gamma]))
 
     def test_getWaves(self):
-        eeg_data = EEGTableReader().readFile(PATH + "example_32.csv")
+        eeg_data = EEGTableFileUtil().readFile(PATH + "example_32.csv")
         eeg = eeg_data.getColumn("F3")
         nEeg = len(eeg)
         waves = self.util.getWaves(eeg, eeg_data.getSamplingRate())
@@ -348,7 +363,7 @@ class TestEEGUtil(unittest.TestCase):
             self.assertEqual(len(wave), nEeg)
 
     def test_getSingleWaves(self):
-        eeg_data = EEGTableReader().readFile(PATH + "example_32.csv")
+        eeg_data = EEGTableFileUtil().readFile(PATH + "example_32.csv")
         eeg = eeg_data.getColumn("F3")
         nEeg = len(eeg)
         samplingRate = eeg_data.getSamplingRate()
@@ -377,7 +392,7 @@ class TestEEGUtil(unittest.TestCase):
 class TestEEGTableReader(unittest.TestCase):
 
     def setUp(self):
-        self.reader = EEGTableReader()
+        self.reader = EEGTableFileUtil()
 
     def test_readData(self):
         file_path = PATH + "example_32.csv"
@@ -400,6 +415,44 @@ class TestEEGTableReader(unittest.TestCase):
         else:
             print "'%s' not found" % file_path
 
+    def test_writeFile(self):
+        filePath = PATH + "test.csv"
+        header= ["A", "B", "C"]
+        data = np.array([[1.123456789, 2, 3], [-4.123456789, 5, 6], [7.123456789, 8, 99.123]])
+        self.reader.writeFile(filePath, data, header)
+        
+        if os.path.isfile(filePath):
+            read = self.reader.readFile(filePath)
+
+            for i in range(len(data)):
+                for j in range(len(data[i])):
+                    self.assertAlmostEqual(data[i, j], read.data[i, j], delta= 0.001)
+
+        removeFile(filePath)
+
+    def test_writeStructredFile(self):
+        filePath = PATH + "test_structured.csv"
+        data = {
+            "A": {
+                "value": [1, 2, 3],
+                "quality": [-1, -1, -1]
+            },
+            "B": {
+                "value": [4, 5, 6],
+                "quality": [-2, -2, -2]
+            },
+            "C": {
+                "value": [7, 8, 9],
+                "quality": [-3, -3, -3]
+            }
+        }
+        self.reader.writeStructredFile(filePath, data)
+        
+        if os.path.isfile(filePath):
+            read = self.reader.readFile(filePath)
+            for key, values in data.iteritems():
+                self.assertTrue(sameEntries(values["value"], read.getColumn(key)))
+        removeFile(filePath)
 
 class TestEEGTableData(unittest.TestCase):
 

@@ -10,7 +10,7 @@ Created on 10.05.2016
 
 import os
 
-from numpy import genfromtxt, delete, shape
+from numpy import genfromtxt, delete, shape, savetxt, transpose
 
 
 DEFAULT_DELIMITER = ";" # default delimiter for CSV file
@@ -147,7 +147,7 @@ class EEGTableUtil(object):
     def __repr__(self):
         return "EEGTableUtil from '%s' shape %s\nheader %s" % (self.file_path, shape(self.data), self.header)
 
-class EEGTableReader(object):
+class EEGTableFileUtil(object):
     '''
     This class reads EEGTables created by emotiv.py
     '''
@@ -208,9 +208,25 @@ class EEGTableReader(object):
 
         return EEGTableUtil(header, data, filePath)
 
+    def writeFile(self, filePath, data, header, delimiter=DEFAULT_DELIMITER):
+        savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%1.3f", comments='')
+        
+    def writeStructredFile(self, filePath, data):
+        header = []
+        structData = []
+        for i, (key, val) in enumerate(data.iteritems()):
+            header.insert(i, key)
+            header.append("Q"+key)
+            
+            values = val["value"]
+            quality = val["quality"]
+            structData.insert(i, values)
+            structData.append(quality)
+
+        self.writeFile(filePath, transpose(structData), header)
 
 if __name__ == "__main__":  # pragma: no cover
-    e = EEGTableReader()
+    e = EEGTableFileUtil()
     #eeg_data = e.readFile("example_full.csv")
     scriptPath = os.path.dirname(os.path.abspath(__file__))
     eeg_data = e.readFile(scriptPath + "/../../examples/example_32.csv")
