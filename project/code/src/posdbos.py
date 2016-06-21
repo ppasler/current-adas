@@ -41,9 +41,9 @@ class PoSDBoS(object):
 
     def run(self):
         self.fe.start()
-        t = threading.Thread(target=self.dm.run)
-        t.start()
-        while self.running:
+        dmt = threading.Thread(target=self.dm.run)
+        dmt.start()
+        while self.running and dmt.is_alive():
             try:
                 n = random.randint(1, 10)
                 self.dm.setStatus(n%2)
@@ -53,14 +53,14 @@ class PoSDBoS(object):
                 break
         self.fe.close()
         self.dm.close()
-        t.join()
+        dmt.join()
 
 if __name__ == '__main__':
     p = PoSDBoS()
     print "START"
-    t = threading.Thread(target=p.run)
-    t.start()
-    sleep(3)
-    p.close()
-    t.join()
+    pt = threading.Thread(target=p.run)
+    pt.start()
+    #sleep(3)
+    #p.close()
+    pt.join()
     print "END"

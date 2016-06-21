@@ -15,7 +15,7 @@ import pygame
 
 resolution = (1600, 900)
 
-METAL_STAES = {
+MENTAL_STATES = {
     "drowsy": {
         "color": (127, 0, 0),
         "description": "Please stop for a break"
@@ -45,6 +45,7 @@ class DrowsinessMonitor(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
+                    pygame.quit()
                     return
 
     def _setText(self):
@@ -62,15 +63,14 @@ class DrowsinessMonitor(object):
         while self.running:
             try:
                 self._handleEvent()
-                self.curState = METAL_STAES[self.state]
+                self.curState = MENTAL_STATES[self.state]
                 self.screen.fill(self.curState["color"])
                 self._setText()
                 pygame.display.flip()
                 sleep(1)
             except (Exception, KeyboardInterrupt):
                 self.close()
-                break
-            
+
     def close(self):
         self.running = False
     
