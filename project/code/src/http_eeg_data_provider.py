@@ -11,7 +11,7 @@ from emokit.emotiv import Emotiv
 
 emotiv = None
 
-class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class HttpEEGDataHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     '''This Handles a request'''
 
     def _add_success(self):
@@ -58,7 +58,7 @@ class EpocHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.wfile.write("No data found")
 
 
-class EpocServer(object):
+class HttpEEGDataProvider(object):
     '''
     Serve EPOC data on localhost:9000 by default
     /           returns a map of EPOC vales
@@ -68,7 +68,7 @@ class EpocServer(object):
     def __init__(self, host="localhost", port=9000):      
         self.server_address = (host, port)
         self.run_server = True
-        self.handler_class = EpocHandler
+        self.handler_class = HttpEEGDataHandler
         self.server_class = BaseHTTPServer.HTTPServer
 
     def stop(self):
@@ -101,7 +101,7 @@ class EpocServer(object):
 
 if __name__ == "__main__":
     emotiv = Emotiv(display_output=False)
-    server = EpocServer()
+    server = HttpEEGDataProvider()
     try:
         print "starting server and emotiv"
         t = threading.Thread(target=server.run)

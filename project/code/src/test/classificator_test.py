@@ -59,7 +59,7 @@ class TestNeuralNetwork(unittest.TestCase):
     def test_xor(self):
         ds = self.createXORData()
 
-        self.nn.train(ds, 1000, self.config["learningrate"], self.config["momentum"])
+        self.nn.train(ds, self.config["maxEpochs"], self.config["learningrate"], self.config["momentum"])
 
         #TODO may fail with delta 0.2
         for inpt, target in ds:

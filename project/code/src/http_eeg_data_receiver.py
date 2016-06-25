@@ -10,7 +10,7 @@ import time
 from util.eeg_table_to_packet_converter import EEGTablePacket
 
 
-class EEGClient(object):
+class HttpEEGDataReceiver(object):
     '''
     Reads EEG raw data from Server
     '''
@@ -43,7 +43,7 @@ class EEGClient(object):
 if __name__ == "__main__":
     
     hostname, port = ("localhost", 9000)
-    client = EEGClient(hostname, port, True)
+    client = HttpEEGDataReceiver(hostname, port, True)
     
     print client.getHeader()
     time.sleep(3)

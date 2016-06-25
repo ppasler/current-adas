@@ -7,7 +7,7 @@ import gevent
 
 from emokit.emotiv import Emotiv
 from window.rectangular_signal_window import RectangularSignalWindow
-from client import EEGClient
+from http_eeg_data_receiver import HttpEEGDataReceiver
 
 
 class DataCollector(object):
@@ -96,7 +96,7 @@ if __name__ == "__main__": # pragma: no cover
     #gevent.spawn(emotiv.setup)
     #gevent.sleep(0)
 
-    client = EEGClient("localhost", 9000)
+    client = HttpEEGDataReceiver("localhost", 9000)
 
     dc = DataCollector(client, ["X", "F3"])
     handler = lambda x: x
