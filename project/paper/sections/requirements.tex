@@ -1,8 +1,4 @@
 \label{chap:requirements}
-Die betrachteten Ansätze mit Verhaltensanalyse oder CV-Technik, werden für die Arbeit nicht berücksichtigt und treten nur bei der Analyse / Klassifizierung der Testdaten in Erscheinung. Gähnen, häufiges blinzeln oder abkommen von der Fahrspur, können Hinweise auf Müdigkeit sein, sodass die entsprechenden EEG-Sequenzen gelabelt werden können. 
-Aufgrund seiner höheren Genauigkeit, gegenüber EKG oder EOG, wird für die Anwendung ein EEG genutzt. Ein multimodales System ist vorbereitet aber nicht umgesetzt. Die betrachteten Arbeiten zeigen in verschiedensten Ausführungen sehr gut Ergebnisse (\textasciitilde 90\% \cite{Lin05eeg-baseddrowsiness}, \cite{Subasi:2005:ARA:1707423.1707550}), sodass es sich beim EEG um eine aussichtsreiche Grundlage handelt. 
-Bei der Klassifizierung lässt nutzen viele Ansätze ein Künstliches Neuronales Netz (KNN)\cite{wilson_890161}\cite{khalifa_893852}\cite{Subasi:2005:ARA:1707423.1707550} \cite{Vuckovic2002349}. Weitere Ansätze nutzen die Lineare Diskriminanten Analyse\cite{Vicente_6164509}\cite{Khushaba_5580017} oder ein SVM\cite{Park:2009:DDD:1667780.1667798}\cite{zhang_6513058}. Aufgrund der Häufigkeit in den anderen Arbeiten und der guten Bibliotheksunterstützung (PyBrain) wurde der Ansatz mit einem KNN weiter verfolgt. Alle Ansätze wurden in einer Simulierten Umgebung entwickelt und nie unter realen Bedingungen getestet. Aus der Analyse der verwandten Forschungsarbeiten ergeben sich Anforderungen an eine Anwendung zur \acl{ME}. 
-
 Da es sich um ein sicherheitsrelevantes \acl{FAS} handelt, muss es in erster Linie präzise und korrekt funktionieren. Nicht ausgelöste Müdigkeitswarnungen wägen den Fahrer in Sicherheit, obwohl er evtl. nicht mehr in der Lage ist, sein Fahrzeug zu führen. Falsch ausgelöste Warnungen senken die Akzeptanz der Anwendung und führen im Extremfall zu deren   Abschaltung. Zudem muss es robust gegen Störungen und Falscheingaben sein, es muss zu jeder Zeit gewährleistet sein, dass das System läuft bzw. den Fahrer im Fehlerfall rechtzeitig über den Status der Anwendung informieren.
 
 Die Anwendung muss zudem nahezu in Echtzeit funktionieren und den Fahrer sofort über eine erkannte Müdigkeit informieren. Bei der der Implementierung muss auf die Performance der Erkennung geachtet werden. Eine zu späte Meldung an den Fahrer könnte zu einem Unfall führen. Um das System möglichst flexibel zu machen, sollte es auf verschiedenen Plattformen lauffähig sein, auch hier muss eine verringerte Rechenleistung beachtet werden (bspw. auf einem Smartphone).
@@ -16,7 +12,30 @@ Weiterhin soll das System unter realen Bedingungen getestet werden können und s
 
 Für ein Projekt an einer Hochschule, das auch für Folgeprojekte genutzt werden soll, ergeben sich ebenso Anforderungen an die Codequalität, insbesondere an Lesbarkeit und Wartbarkeit. Die Funktionalität und der Aufbau der Anwendung muss sauber dokumentiert werden, sodass der Einstieg für neue Entwickler möglichst reibungslos verläuft.
 
-Wichtigste Punkte sind die Korrektheit, Portabilität und Komfort des Systems (Abb. \ref{fig:emphasis}). Wobei vor allem Portabilität und Komfort in den betrachteten Arbeiten bisher kaum berücksichtigt wurden.
+Diese Anforderungen sind in Tabelle \ref{tab:requirements} zusammengefasst. Wichtigste Punkte sind die Korrektheit, Portabilität und Komfort des Systems (Abb. \ref{fig:emphasis}). Wobei vor allem Portabilität und Komfort in den betrachteten Arbeiten bisher kaum berücksichtigt wurden.
+
+\begin{table*}[t]
+ \caption{Anforderungen}
+ \renewcommand{\arraystretch}{2}
+ \begin{tabularx}{\textwidth}{lX}
+  1 & Die Anwendung muss Müdigkeit präzise und korrekt erkennen (wenige false positive und false negative) \\ \hline
+  2 & Die Anwendung muss robust gegen Fehler / Fehleingaben sein \\ \hline 
+  3 & Die Anwendung muss den Fahrer über Störungen informieren \\ \hline
+  4 & Die Anwendung muss den Fahrer so schnell wie möglich über eine erkannte Müdigkeit informieren \\ \hline
+  5 & Die Anwendung muss sich in andere Umgebungen (Simulator oder echtes Fahrzeug) portieren lassen \\ \hline 
+  6 & Das eingesetzte EEG soll sich gut handhaben lassen und den Fahrer möglichst wenig beeinträchtigen \\ \hline
+  \\
+  7 & Die Anwendung soll auf möglichst vielen Plattformen lauffähig sein (Verschiedene Betriebssysteme und Gerätetypen) \\ \hline
+  8 & Die Anwendung soll möglichst wenig Ressourcen verbrauchen (Siehe 5.) \\ \hline
+  9 & Die Anwendung soll sich nahtlos in die Fahrsimulator-Umgebung einfügen \\ \hline
+  10 & Datenakquise und Verarbeitung sollen auf getrennten Systemen durchgeführt werden können \\ \hline
+  11 & Die Meldung über erkannte Müdigkeit soll vom Fahrer bemerkt werden, ihn aber nicht ablenken oder erschrecken \\ \hline
+  \\
+  12 & Die Anwendung (Module, Klassen, Methoden) soll komplett dokumentiert sein \\ \hline 
+  13 & Die Anwendung (Module, Klassen, Methoden) soll komplett durch Tests (mind. Unit-Tests) abgesichert sein \\ \hline
+ \end{tabularx}
+ \label{tab:requirements}
+\end{table*}
 
 \begin{figure}[h] 
   \begin{center}
