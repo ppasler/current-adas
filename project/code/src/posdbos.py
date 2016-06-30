@@ -3,6 +3,7 @@ Created on 30.05.2016
 
 @author: Paul Pasler
 '''
+from Queue import Empty
 import random
 import threading
 from time import sleep
@@ -35,6 +36,7 @@ class PoSDBoS(object):
 
     def _initFeatureExtractor(self):
         self.fe = FeatureExtractor()
+        self.inputQueue = self.fe.outputQueue
 
     def close(self):
         self.running = False
@@ -45,12 +47,20 @@ class PoSDBoS(object):
         dmt.start()
         while self.running and dmt.is_alive():
             try:
+                data = self.inputQueue.get(timeout=1)
+                # TODO activate classification
+                #self.nn.activate(data)
+                
                 n = random.randint(1, 10)
                 self.dm.setStatus(n%2)
                 sleep(0.1)
-            except (Exception, KeyboardInterrupt):
+            except Empty:
+                pass
+            except KeyboardInterrupt:
                 self.close()
-                break
+            except Exception as e:
+                print e.message
+                self.close()
         self.fe.close()
         self.dm.close()
         dmt.join()

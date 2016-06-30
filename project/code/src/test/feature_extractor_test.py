@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 import unittest
+from Queue import Queue
+
 
 from feature_extractor import ProcessingChain
+
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+
 
 
 WINDOW_SIZE = 4
@@ -23,8 +28,11 @@ TEST_DATA = {
 
 class ProcessingChainTest(unittest.TestCase):
 
+    # TODO test queue and threading
     def setUp(self):
-        self.processor = ProcessingChain()
+        inputQueue = Queue()
+        outputQueue = Queue()
+        self.processor = ProcessingChain(inputQueue, outputQueue)
 
     def test_process(self):
         self.processor.process(TEST_DATA)
