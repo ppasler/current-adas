@@ -225,7 +225,7 @@ class EEGTableFileUtil(object):
 
         self.writeFile(filePath, transpose(structData), header)
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__": # pragma: no cover
     e = EEGTableFileUtil()
     #eeg_data = e.readFile("example_full.csv")
     scriptPath = os.path.dirname(os.path.abspath(__file__))

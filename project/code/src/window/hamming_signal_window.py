@@ -1,8 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on 05.04.2016
 
-@author: Paul Pasler
+:author: Paul Pasler
+:organization: Reutlingen University
 '''
+
 from copy import deepcopy
 
 from numpy import hamming

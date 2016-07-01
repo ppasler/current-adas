@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on 05.04.2016
 
-@author: Paul Pasler
+:author: Paul Pasler
+:organization: Reutlingen University
 '''
 from signal_window import SignalWindow
 from copy import deepcopy

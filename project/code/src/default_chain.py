@@ -5,6 +5,7 @@
 Created on 13.06.2016
 
 @author: Paul Pasler
+:organization: Reutlingen University
 '''
 from numpy import array
 

@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 30.05.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
 import threading
 from time import sleep
 
@@ -30,7 +40,6 @@ class FeatureExtractor(object):
 
         self.extract = True
 
-        
     def start(self):
         '''setting data handler and starts collecting'''
         print("%s: starting feature extractor" % self.__class__.__name__)   

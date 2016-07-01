@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on 11.04.2016
 
-@author: Paul Pasler
+:author: Paul Pasler
+:organization: Reutlingen University
 '''
 
 import abc

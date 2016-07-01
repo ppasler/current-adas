@@ -89,6 +89,11 @@ class TestNeuralNetwork(unittest.TestCase):
 
         self.removeFile()
 
+    def test_test(self):
+        ds = self.createORData()
+        self.nn.train(ds)
+        self.nn.test(ds, False)
+
     def test_testBeforeTrain(self):
         with self.assertRaises(ValueError):
             self.nn.test(None, False)

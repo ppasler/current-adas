@@ -18,7 +18,7 @@ resolution = (1600, 900)
 MENTAL_STATES = {
     "drowsy": {
         "color": (127, 0, 0),
-        "description": "Please stop for a break"
+        "description": "Please have a kitkat and a break"
     },
     "awake": {
         "color": (0, 127, 0),
@@ -28,13 +28,14 @@ MENTAL_STATES = {
 
 class DrowsinessMonitor(object):
     '''
-    Simple Monitor whoch shows red (drowsy) and green (awake)
+    Simple Monitor which shows red (drowsy) and green (awake)
     '''
 
 
     def __init__(self):
         self.running = True
         self.state = "awake";
+        self.info = ""
 
     def _handleEvent(self):
         for event in pygame.event.get():
@@ -56,6 +57,13 @@ class DrowsinessMonitor(object):
         text_pos.centerx = self.screen.get_rect().centerx
         self.screen.blit(text, text_pos)
 
+        if self.info != None:
+            info = font.render(self.info, 1, (255, 255, 255))
+            info_pos = info.get_rect()
+            info_pos.centery = self.screen.get_rect().centery+64
+            info_pos.centerx = self.screen.get_rect().centerx
+            self.screen.blit(info, info_pos)
+
     def run(self):
         pygame.init()
         self.screen = pygame.display.set_mode(resolution)
@@ -67,14 +75,17 @@ class DrowsinessMonitor(object):
                 self.screen.fill(self.curState["color"])
                 self._setText()
                 pygame.display.flip()
-                sleep(1)
-            except (Exception, KeyboardInterrupt):
+                sleep(0.5)
+            except KeyboardInterrupt:
+                self.close()
+            except Exception as e:
+                print e.message
                 self.close()
 
     def close(self):
         self.running = False
     
-    def setStatus(self, status):
+    def setStatus(self, status, info=None):
         '''
         Value > 0.5 means "drowsy", else "awake" 
         '''
@@ -82,6 +93,7 @@ class DrowsinessMonitor(object):
             self.state = "awake"
         else:
             self.state = "drowsy"
+        self.info = str(info)
 
 if __name__ == "__main__":
     d = DrowsinessMonitor()
@@ -89,7 +101,7 @@ if __name__ == "__main__":
     t.start()
     
     for i in range(10):
-        d.setStatus(i%2)
+        d.setStatus(i%2, i%2)
         sleep(2)
 
     d.close()

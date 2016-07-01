@@ -100,7 +100,7 @@ class EEGTableToPacketUtil(object):
 
 
     # TODO extract me
-    def _buildFullDataStructure(self):
+    def _buildFullDataStructure(self): # pragma: no cover
         self._readHeader()
         rawData = self._readRawData()
 
@@ -114,7 +114,7 @@ class EEGTableToPacketUtil(object):
         return data
 
     # TODO extract me
-    def _buildFullRow(self, row, data):
+    def _buildFullRow(self, row, data): # pragma: no cover
         for h in self.fields:
             value = row[self.header.index(h)]
             quality = row[self.header.index("Q" + h)]

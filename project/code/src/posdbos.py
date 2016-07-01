@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on 30.05.2016
 
-@author: Paul Pasler
+:author: Paul Pasler
+:organization: Reutlingen University
 '''
 from Queue import Empty
 import random
@@ -29,10 +33,11 @@ class PoSDBoS(object):
 
     def _initNeuralNetwork(self, networkFile):
         nn_conf = self.config.getNeuralNetworkConfig()
+        self.nn = NeuralNetwork()
         if networkFile == None:
-            self.nn = NeuralNetwork().createNew(nn_conf["nInputs"], nn_conf["nHiddenLayers"], nn_conf["nOutput"], nn_conf["bias"])
+            self.nn.createNew(nn_conf["nInputs"], nn_conf["nHiddenLayers"], nn_conf["nOutput"], nn_conf["bias"])
         else:
-            self.nn = NeuralNetwork().load(networkFile)
+            self.nn.load(networkFile)
 
     def _initFeatureExtractor(self):
         self.fe = FeatureExtractor()
@@ -48,12 +53,14 @@ class PoSDBoS(object):
         while self.running and dmt.is_alive():
             try:
                 data = self.inputQueue.get(timeout=1)
-                # TODO activate classification
-                #self.nn.activate(data)
-                
-                n = random.randint(1, 10)
-                self.dm.setStatus(n%2)
-                sleep(0.1)
+                x = random.randint(1, 10)%2
+                y = random.randint(1, 10)%2
+                data = (x, y) 
+
+                clazz = self.nn.activate(data)
+                info = "%d XOR %d is %d; queue: %d" % (x, y, clazz, self.inputQueue.qsize()) 
+                self.dm.setStatus(clazz, info)
+                sleep(1)
             except Empty:
                 pass
             except KeyboardInterrupt:
@@ -65,12 +72,11 @@ class PoSDBoS(object):
         self.dm.close()
         dmt.join()
 
-if __name__ == '__main__':
-    p = PoSDBoS()
+if __name__ == '__main__': # pragma: no cover
+    p = PoSDBoS("XOR_network")
     print "START"
     pt = threading.Thread(target=p.run)
     pt.start()
-    #sleep(3)
-    #p.close()
+
     pt.join()
     print "END"

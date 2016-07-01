@@ -1,5 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+'''
+Created on 09.05.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
 import BaseHTTPServer
 import threading
 import json

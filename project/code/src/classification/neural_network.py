@@ -7,9 +7,11 @@ Created on 10.05.2016
 import os
 import pickle
 
+from pybrain.datasets.supervised import SupervisedDataSet
 from pybrain.structure.modules.tanhlayer import TanhLayer
 from pybrain.supervised.trainers.backprop import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
+
 
 FILE_EXTENSION = ".nn"
 
@@ -78,3 +80,25 @@ class NeuralNetwork(object):
         
     def __repr__(self):
         return "%s\n%s" % (self.__class__.__name__, str(self.net))
+
+if __name__ == "__main__": # pragma: no cover
+    def _createData(nInput, nTarget, values):
+        ds = SupervisedDataSet(nInput, nTarget)
+        for inp, target in values:
+            ds.addSample(inp, target)
+        
+        return ds
+
+    def createXORData():
+        values = [((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (0,))]
+        return _createData(2, 1, values)
+
+    ds = createXORData()
+    nn = NeuralNetwork()
+    nn.createNew(2, 4, 1, bias=True)
+    nn.train(ds, 5000, 0.01, 0.99)
+    
+    for inpt, target in ds:
+        print "input %s: is %s; should be %s" % (inpt, nn.activate(inpt), target)
+    
+    nn.save("XOR_test")
