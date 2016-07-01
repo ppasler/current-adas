@@ -8,14 +8,13 @@ Created on 30.05.2016
 :organization: Reutlingen University
 '''
 
+from Queue import Queue, Empty
 import threading
 from time import sleep
 
 from config.config import ConfigProvider
 from data_collector import DataCollector
 from default_chain import ProcessingChain
-from Queue import Queue
-
 
 
 class FeatureExtractor(object):
@@ -31,6 +30,7 @@ class FeatureExtractor(object):
         
         self.inputQueue = Queue()
         self.outputQueue = Queue()
+        self.extractQueue = Queue()
         
         self.collector = DataCollector(None, **self.collectorConfig)
         self.collectorThread = threading.Thread(target=self.collector.collectData)
@@ -46,6 +46,17 @@ class FeatureExtractor(object):
         self.collector.setHandler(self.handleDataSet)  
         self.collectorThread.start()
         self.processingThread.start()
+        
+        while self.extract:
+            try:
+                procData = self.outputQueue.get(timeout=1)
+                self.extractFeatures(procData)
+            except Empty:
+                pass
+    
+    def extractFeatures(self, data):
+        #TODO fill with live
+        self.extractQueue.put(data)
     
     def handleDataSet(self, data):
         '''Add the given data to the processingQueue'''

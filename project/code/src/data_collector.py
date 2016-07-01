@@ -60,12 +60,12 @@ class DataCollector(object):
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
-        print("%s: starting data collection" % self.__class__.__name__)     
+        print("%s: starting data collection" % self.__class__.__name__)
         while self.collect:
             data = self.datasource.dequeue().sensors
             filteredData = self.filter(data)
             self._addData(filteredData)
-        print("%s: closing data collection" % self.__class__.__name__)     
+        print("%s: closing data collection" % self.__class__.__name__)
         self.datasource.close()
     
     def filter(self, data):

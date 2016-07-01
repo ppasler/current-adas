@@ -41,13 +41,14 @@ class PoSDBoS(object):
 
     def _initFeatureExtractor(self):
         self.fe = FeatureExtractor()
-        self.inputQueue = self.fe.outputQueue
+        self.inputQueue = self.fe.extractQueue
 
     def close(self):
         self.running = False
 
     def run(self):
-        self.fe.start()
+        fet = threading.Thread(target=self.fe.start)
+        fet.start()
         dmt = threading.Thread(target=self.dm.run)
         dmt.start()
         while self.running and dmt.is_alive():
