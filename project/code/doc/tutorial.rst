@@ -4,5 +4,5 @@ Tutorial
 Create documentation
 
 * cd doc
-* sphinx-apidoc -f -o . ../PoSDBoS/
+* sphinx-apidoc -f -o . ../src/
 * make html
