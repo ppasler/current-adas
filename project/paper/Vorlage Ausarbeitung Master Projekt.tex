@@ -1,14 +1,5 @@
 \include{Header/Header}
 \graphicspath{{img/}{./}}
-\newcommand{\threadingSequence}{
-Die Daten werden über mehrere Threads übertragen, an unkritischen Stellen passiert dies per direktem Zugriff oder einem Callback (Abb. \ref{fig:threading_sequence}). Derzeit sind 2 SignalWindows implementiert, diese Zahl lässt sich erweitern. Die Abarbeitung der ProcessingChain ist potentiell aufwändig und ist mit zwei Thread-sicheren Queues umgesetzt. Sollte die Verarbeitung zu lag dauern, könnten weitere ProcessingChains hinzugefügt werden. Der FeatureExtractor reicht diese Daten derzeit auf einer weiteren Queue zur Hauptanwendung, wo die Klassifizierung blockierend angestoßen wird und das Ergebnis zum Ausgabebildschirm geleitet wird. Der FeatureExtractor kann zu einem späteren Zeitpunkt eine Aggregation der Daten vornehmen oder sich um die Verwaltung der ProcessingChains kümmern.
-\begin{figure*}
-    \makebox[\textwidth][c]{
-    	\includegraphics[width=18cm]{threading_sequence}
-    }
-    \caption[Sequenzdiagramm der Anwendung]{Die Anwedung ist in mehrere Threads unterteilt. SignalWindow und Processing Chain können mehrere Instanzen haben. \label{fig:threading_sequence}}
-\end{figure*}
-}
 
 \newcommand{\docwidth}{12cm}
 
@@ -66,7 +57,7 @@ Die Daten werden über mehrere Threads übertragen, an unkritischen Stellen pass
 \section{Testdatenbeschaffung}
 \input{sections/data}
 
-
+\input{sections/thread}
 \chapter{Müdigkeitserkennung mit einem EEG-Headset}
 \input{sections/implementation}
 

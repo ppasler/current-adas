@@ -2,5 +2,7 @@ Tutorial
 ========
 
 Create documentation
-* sphinx-apidoc -f -o . ../src/
+
+* cd doc
+* sphinx-apidoc -f -o . ../PoSDBoS/
 * make html
