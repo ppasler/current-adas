@@ -8,8 +8,9 @@ Created on 10.05.2016
 :organization: Reutlingen University
 '''
 
+from numpy import count_nonzero, mean, var
 from scipy.signal import butter, lfilter
-from numpy import count_nonzero, mean
+
 
 class SignalUtil(object):
 
@@ -74,6 +75,26 @@ class SignalUtil(object):
         :rtype: float
         '''
         return sum(data ** 2)
+
+    def var(self, data):
+        '''calculates the signal varaince
+
+        :param numpy.array data: list of values
+        
+        :return: signal variance
+        :rtype: float
+        '''
+        return var(data)
+
+    def zeros(self, data):
+        '''calculates the number of zeros in data
+
+        :param numpy.array data: list of values
+        
+        :return: zero count
+        :rtype: int
+        '''
+        return len(data) - count_nonzero(data)
 
     def butterBandpass(self, lowcut, highcut, samplingRate, order=5):
         '''

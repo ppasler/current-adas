@@ -45,6 +45,7 @@ class EEGTableToPacketUtil(object):
         self.filepath = filePath
         if filePath == None:
             self.filepath = scriptPath + "/../../examples/example_4096.csv"
+            #self.filepath = scriptPath + "/../../../captured_data/janis/2016-07-12-11-15_EEG_1.csv"
         self.index = 0
         self._buildDataStructure()
         print "Using %d dummy datasets" % self.len

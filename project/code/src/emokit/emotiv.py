@@ -19,7 +19,7 @@ deviceConnected = False
 eegTableData = None
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
-fname = scriptPath + "/../../data/" + time.strftime("%Y-%M-%d-%H-%M", time.gmtime()) + '_EEG.csv'
+fname = scriptPath + "/../../data/" + time.strftime("%Y-%m-%d-%H-%M", time.gmtime()) + '_EEG.csv'
 
 # How long to gevent-sleep if there is no data on the EEG.
 # To be precise, this is not the frequency to poll on the input device
@@ -465,8 +465,8 @@ class Emotiv(object):
                     file_updater = gevent.spawn(self.update_file)
             else:
                 global eegTableData
-                eegTableData = EEGTableToPacketUtil()
-            
+                filePath = scriptPath + "/../../../captured_data/janis/2016-07-12-11-15_EEG_1.csv"
+                eegTableData = EEGTableToPacketUtil(filePath)
             while self.running:
                 try:
                     gevent.sleep(0)

@@ -42,6 +42,12 @@ class EEGTableUtil(object):
         self.data = data
         self.len = len(data)
 
+    def getHeader(self):  # pragma: no cover
+        return self.header
+
+    def getData(self):  # pragma: no cover
+        return self.data
+
     def getTimeIndex(self, fromTime):
         '''
         get the index for the given fromTime
@@ -59,6 +65,9 @@ class EEGTableUtil(object):
         for i, time in enumerate(data):
             if time >= fromTime:
                 return i
+
+    def getTime(self, offset=0, limit=-1, length=-1):
+        return self.getColumn(TIMESTAMP_STRING, offset, limit, length)
 
     def getQuality(self, columnName, offset=0, limit=-1, length=-1):
         return self.getColumn("Q" + columnName, offset, limit, length)
@@ -125,6 +134,19 @@ class EEGTableUtil(object):
 
         return self.getColumn(columnName, fromIndex, toIndex)
 
+
+    def getDuration(self):
+        '''
+        get the duration for the current data
+        
+        :return: duration
+        :rtype: long
+
+        '''
+        data = self.getTime()
+        duration = data[self.len - 1] - data[0]
+        return duration
+
     def getSamplingRate(self):
         '''
         calcs the samplerate for the whole dataset based on the timestamp column   
@@ -133,9 +155,28 @@ class EEGTableUtil(object):
         :rtype: int
 
         '''
-        data = self.getColumn(TIMESTAMP_STRING)
-        duration = data[self.len-1] - data[0]
+        duration = self.getDuration()
         return self.len / duration  
+
+    def getStartTime(self):
+        '''
+        get the first value from the timestamp column
+
+        :return: start time
+        :rtype: long
+
+        '''
+        return self.getTime()[0]
+
+    def getEndTime(self):
+        '''
+        get the last value from the timestamp column
+        
+        :return: end time
+        :rtype: long
+
+        '''
+        return self.getTime()[self.len-1]
 
     def _switchTime(self, time1, time2):
         return time2, time1
@@ -151,8 +192,11 @@ class EEGTableFileUtil(object):
     '''
     This class reads EEGTables created by emotiv.py
     '''
+    
+    def __init__(self):
+        self.delimiter = DEFAULT_DELIMITER 
 
-    def readHeader(self, filePath, delimiter=DEFAULT_DELIMITER):
+    def readHeader(self, filePath):
         '''
         Reads the first row of the table to create a list of header values
         by default the delimiter for the csv table is ";"
@@ -164,11 +208,14 @@ class EEGTableFileUtil(object):
         :rtype: list
         '''
         with open(filePath, 'rb') as f:
-            header = f.readline().strip().split(delimiter)
+            headerLine = f.readline().strip()
+            if self.delimiter not in headerLine:
+                self.delimiter = ","
+            header = headerLine.split(self.delimiter)
             
         return header
 
-    def readData(self, filePath, delimiter=DEFAULT_DELIMITER):
+    def readData(self, filePath):
         '''
         reads all rows of the table (except the first on) to create a 2D array of eeg values
         by default the delimiter for the csv table is ";"
@@ -186,7 +233,7 @@ class EEGTableFileUtil(object):
         :return: data columns
         :rtype: array
         '''
-        data = delete(genfromtxt(filePath, dtype=float, delimiter=delimiter), 0, 0)
+        data = delete(genfromtxt(filePath, dtype=float, delimiter=self.delimiter), 0, 0)
         return data
 
     def readFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
@@ -203,8 +250,8 @@ class EEGTableFileUtil(object):
         if filePath == "":
             return None
 
-        data = self.readData(filePath, delimiter)
-        header = self.readHeader(filePath, delimiter)
+        data = self.readData(filePath)
+        header = self.readHeader(filePath)
 
         return EEGTableUtil(header, data, filePath)
 
