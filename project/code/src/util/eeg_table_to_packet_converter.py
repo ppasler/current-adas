@@ -82,7 +82,7 @@ class EEGTableToPacketUtil(object):
             quality = row[self.header.index("Q" + h)]
             ret[h] = {
                 "value": value,
-                "quality": int(quality)   
+                "quality": int(quality)
             }
         return EEGTablePacket(ret)
 

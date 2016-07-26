@@ -152,21 +152,23 @@ class TestSignalUtil(unittest.TestCase):
         self.assertNotEqual(countNans, len(TEST_DATA_MIXED))
 
     def test_replaceZeroSequences(self):
-        zeros = np.array([0, -5.0, 0, 0, 2.0, 0, 0, 0, 3.5, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        zeros = np.array([0.0, -5.0, 0, 0, 2.0, 0, 0, 0, 3.5, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0])
         l = self.util.replaceZeroSequences(zeros)
         self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
         self.assertEquals(self.util.countZeros(l), 3)
         self.assertEquals(self.util.countNans(l), 8)
 
-        l = self.util.replaceAnySequence(zeros)
+    def test_replaceAnySequences(self):
+        zeros = np.array([0, 0.0, 0.0, 0, 2.0, 0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        l = self.util.replaceSequences(zeros)
         self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
-        self.assertEquals(self.util.countZeros(l), 3)
-        self.assertEquals(self.util.countNans(l), 8)
+        self.assertEquals(self.util.countZeros(l), 1)
+        self.assertEquals(self.util.countNans(l), 9)
 
-        l = self.util.polarise(zeros)
-        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
-        self.assertEquals(self.util.countZeros(l), 3)
-        self.assertEquals(self.util.countNans(l), 8)
+    def test_countAnySequences(self):
+        a = np.array([0, 0.0, 0.0, 0, 2.0, 0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        l = self.util.countSequences(a)
+        self.assertEquals(l, 2)
 
     def test_nans_onOtherFunctions(self):
         norm = self.util.normalize(TEST_DATA_EMPTY)

@@ -78,7 +78,8 @@ class SignalStatisticUtil(object):
             "min":self.su.minimum, 
             "mean":self.su.mean, 
             "var":self.su.var, 
-            "countZeros":self.su.countZeros}
+            "zeros":self.su.countZeros,
+            "seq":self.su.countSequences}
 
     def _initPlotter(self, person):
         self.ssp = SignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, True, self.plot, self.save)
@@ -252,5 +253,5 @@ if __name__ == "__main__":
     fileName = "2016-07-12-11-15_EEG.csv"
     filePath = scriptPath + "/../../../captured_data/" + person + "/" + fileName
 
-    s = SignalStatisticUtil(person, filePath, signals=["F3"], plot=False, save=False)
+    s = SignalStatisticUtil(person, filePath, plot=True, save=True)
     s.main()

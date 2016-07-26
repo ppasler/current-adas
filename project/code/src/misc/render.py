@@ -1,7 +1,16 @@
 #!/usr/bin/python
 # Renders a window with graph values for each sensor and a box for gyro values.
 
+import logging
 import sys, os
+
+import gevent
+from pygame import FULLSCREEN
+import pygame
+import numpy as np
+from emokit.emotiv import Emotiv
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 try:
@@ -10,11 +19,6 @@ try:
 except ImportError:
     print 'No psyco. Expect poor performance. Not really...'
 
-import logging
-import pygame
-from pygame import FULLSCREEN
-import gevent
-from emokit.emotiv import Emotiv
 
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (50,50)
@@ -73,7 +77,10 @@ class Grapher(object):
         """
         if len(self.buffer) == resolution[0] - self.x_offset:
             self.buffer = self.buffer[1:]
-        self.buffer.append([packet.sensors[self.name]['value'], packet.sensors[self.name]['quality'], packet.old_model])
+        value = packet.sensors[self.name]['value']
+        if np.isnan(value):
+            value = 0
+        self.buffer.append([value, packet.sensors[self.name]['quality'], packet.old_model])
 
     def calc_y(self, val):
         """

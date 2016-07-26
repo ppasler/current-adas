@@ -465,7 +465,7 @@ class Emotiv(object):
                     file_updater = gevent.spawn(self.update_file)
             else:
                 global eegTableData
-                filePath = scriptPath + "/../../../captured_data/janis/2016-07-12-11-15_EEG_1.csv"
+                filePath = scriptPath + "/../../../captured_data/janis/2016-07-12-11-15_EEG_11.csv"
                 eegTableData = EEGTableToPacketUtil(filePath)
             while self.running:
                 try:
