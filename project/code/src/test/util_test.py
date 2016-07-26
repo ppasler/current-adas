@@ -39,6 +39,12 @@ TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -2
          4883, -32766,   4190,  31605, -12943, -28021,  20702,  22287,
        -26875, -14845,  30986,   6263, -32721,   2797,  31945, -11645])
 
+TEST_DATA_EMPTY = np.array([ np.NAN, np.NAN, np.NAN ])
+
+TEST_DATA_ZERO = np.array([ 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ])
+
+TEST_DATA_MIXED = np.array([ np.NAN, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, np.NAN ])
+
 def sameEntries(list1, list2):
     if len(list1) != len(list2):
         return False
@@ -124,6 +130,73 @@ class TestSignalUtil(unittest.TestCase):
         testList = np.array([0, 1, 2, 3, 4])
         mean = self.util.mean(testList)
         self.assertEqual(mean, 2)
+    
+    def test_var(self):
+        testList = np.array([0, 1, 2, 3, 4])
+        var = self.util.var(testList)
+        self.assertEqual(var, 2)
+    
+    def test_zeros(self):
+        countZeros = self.util.countZeros(TEST_DATA_ZERO)
+        self.assertEqual(countZeros, 10)
+        self.assertNotEqual(countZeros, len(TEST_DATA_ZERO))
+    
+    def test_nans(self):
+        countNans = self.util.countNans(TEST_DATA_EMPTY)
+        self.assertEqual(countNans, 3)
+        self.assertEqual(countNans, len(TEST_DATA_EMPTY))
+
+    def test_nans_mixed(self):
+        countNans = self.util.countNans(TEST_DATA_MIXED)
+        self.assertEqual(countNans, 2)
+        self.assertNotEqual(countNans, len(TEST_DATA_MIXED))
+
+    def test_replaceZeroSequences(self):
+        zeros = np.array([0, -5.0, 0, 0, 2.0, 0, 0, 0, 3.5, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        l = self.util.replaceZeroSequences(zeros)
+        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
+        self.assertEquals(self.util.countZeros(l), 3)
+        self.assertEquals(self.util.countNans(l), 8)
+
+        l = self.util.replaceAnySequence(zeros)
+        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
+        self.assertEquals(self.util.countZeros(l), 3)
+        self.assertEquals(self.util.countNans(l), 8)
+
+        l = self.util.polarise(zeros)
+        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
+        self.assertEquals(self.util.countZeros(l), 3)
+        self.assertEquals(self.util.countNans(l), 8)
+
+    def test_nans_onOtherFunctions(self):
+        norm = self.util.normalize(TEST_DATA_EMPTY)
+        self.assertTrue(np.isnan(norm).all())
+        maxi = self.util.maximum(TEST_DATA_EMPTY)
+        self.assertTrue(np.isnan(maxi))
+        mini = self.util.minimum(TEST_DATA_EMPTY)
+        self.assertTrue(np.isnan(mini))
+        mean = self.util.mean(TEST_DATA_EMPTY)
+        self.assertTrue(np.isnan(mean))
+        var = self.util.var(TEST_DATA_EMPTY)
+        self.assertTrue(np.isnan(var))
+        
+        countZeros = self.util.countZeros(TEST_DATA_EMPTY)
+        self.assertEquals(countZeros, 0)
+
+    def test_mixed_onOtherFunctions(self):
+        norm = self.util.normalize(TEST_DATA_MIXED)
+        self.assertTrue(np.isnan(norm).all())
+        maxi = self.util.maximum(TEST_DATA_MIXED)
+        self.assertTrue(np.isnan(maxi))
+        mini = self.util.minimum(TEST_DATA_MIXED)
+        self.assertTrue(np.isnan(mini))
+        mean = self.util.mean(TEST_DATA_MIXED)
+        self.assertTrue(np.isnan(mean))
+        var = self.util.var(TEST_DATA_MIXED)
+        self.assertTrue(np.isnan(var))
+        
+        countZeros = self.util.countZeros(TEST_DATA_MIXED)
+        self.assertEquals(countZeros, 6)
 
 class TestFrequencyFilter(unittest.TestCase):
     
@@ -357,20 +430,20 @@ class TestEEGUtil(unittest.TestCase):
         self.assertTrue(all([x in channels["gamma"] for x in gamma]))
 
     def test_getWaves(self):
-        eeg_data = EEGTableFileUtil().readFile(PATH + "example_32.csv")
-        eeg = eeg_data.getColumn("F3")
+        eegData = EEGTableFileUtil().readFile(PATH + "example_32.csv")
+        eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
-        waves = self.util.getWaves(eeg, eeg_data.getSamplingRate())
+        waves = self.util.getWaves(eeg, eegData.getSamplingRate())
         
         self.assertEqual(len(waves), 5)
         for _, wave in waves.iteritems():
             self.assertEqual(len(wave), nEeg)
 
     def test_getSingleWaves(self):
-        eeg_data = EEGTableFileUtil().readFile(PATH + "example_32.csv")
-        eeg = eeg_data.getColumn("F3")
+        eegData = EEGTableFileUtil().readFile(PATH + "example_32.csv")
+        eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
-        samplingRate = eeg_data.getSamplingRate()
+        samplingRate = eegData.getSamplingRate()
         waves = self.util.getWaves(eeg, samplingRate)
 
         delta = self.util.getDeltaWaves(eeg, samplingRate)
@@ -393,7 +466,7 @@ class TestEEGUtil(unittest.TestCase):
         self.assertEqual(len(gamma), nEeg)
         self.assertTrue(all([x in waves["gamma"] for x in gamma]))
 
-class TestEEGTableReader(unittest.TestCase):
+class TestEEGTableFileUtil(unittest.TestCase):
 
     def setUp(self):
         self.reader = EEGTableFileUtil()
@@ -458,6 +531,24 @@ class TestEEGTableReader(unittest.TestCase):
                 self.assertTrue(sameEntries(values["value"], read.getColumn(key)))
         removeFile(filePath)
 
+    def test_readFile_NaNValues(self):
+        eegData = self.reader.readFile(PATH + "example_32_empty.csv")
+        emptyCol = eegData.getColumn("Y")
+        self.assertTrue(np.isnan(emptyCol).any())
+        
+        nonEmptyCol = eegData.getColumn("F3")
+        self.assertFalse(np.isnan(nonEmptyCol).any())
+
+    def test_readFile_SeparatorFallback(self):
+        eegData = self.reader.readFile(PATH + "example_32_empty.csv")
+        semicolonData = eegData.getColumn("F3")
+
+        eegData = self.reader.readFile(PATH + "example_32_comma.csv")
+        commaData = eegData.getColumn("F3")
+
+        self.assertTrue((semicolonData == commaData).all())
+
+
 class TestEEGTableData(unittest.TestCase):
 
     def setUp(self):
@@ -473,35 +564,35 @@ class TestEEGTableData(unittest.TestCase):
             [1456820380.75, 1, 2, 10],
             [1456820381.00, 1, 2, 11]
         ])
-        self.eeg_data = EEGTableUtil(self.header, self.data)
+        self.eegData = EEGTableUtil(self.header, self.data)
 
     def test_getSamplingRate(self):
         # 9 values within 2 seconds = sampling rate 4.5
-        self.assertTrue(self.eeg_data.getSamplingRate() == 4.5)
+        self.assertTrue(self.eegData.getSamplingRate() == 4.5)
 
     def test_getColumn(self):
         for i, header in enumerate(self.header[1:3]):
-            column = self.eeg_data.getColumn(header)
+            column = self.eegData.getColumn(header)
             # make sure data columns only contain X:1, Y:2
             self.assertTrue(countOcc(column, i+1) == len(self.data))
 
     def test_getColumn_withOffset(self):
         offset = 3
-        column = self.eeg_data.getColumn("Z", offset)
+        column = self.eegData.getColumn("Z", offset)
         self.assertTrue(len(column) == len(self.data)-offset)
         self.assertTrue(sameEntries(column, [6, 7, 8, 9, 10, 11]))
 
     def test_getColumn_withOffsetAndLimit(self):
         offset = 3
         limit = 7
-        column = self.eeg_data.getColumn("Z", offset, limit)
+        column = self.eegData.getColumn("Z", offset, limit)
         self.assertTrue(len(column) == limit-offset)
         self.assertTrue(sameEntries(column, [6, 7, 8, 9]))
 
     def test_getColumn_withOffsetAndLength(self):
         offset = 2
         length = 5
-        column = self.eeg_data.getColumn("Z", offset, length=length)
+        column = self.eegData.getColumn("Z", offset, length=length)
         self.assertTrue(len(column) == length)
         self.assertTrue(sameEntries(column, [5, 6, 7, 8, 9]))        
 
@@ -510,71 +601,71 @@ class TestEEGTableData(unittest.TestCase):
         limit = 7
         # length is ignored in this case
         length = 3
-        column = self.eeg_data.getColumn("Z", offset, limit, length=length)
+        column = self.eegData.getColumn("Z", offset, limit, length=length)
         self.assertTrue(len(column) == limit-offset)
         self.assertTrue(sameEntries(column, [4, 5, 6, 7, 8, 9]))     
 
     def test_getTimeIndex(self):
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.00) == 0)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.75) == 3)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820381) == 8)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.00) == 0)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.75) == 3)
+        self.assertTrue(self.eegData.getTimeIndex(1456820381) == 8)
 
     def test_getTimeIndex_notExactly(self):
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.00) == 0)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.01) == 1)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.5) == 2)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.51) == 3)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.74) == 3)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.75) == 3)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820379.76) == 4)
-        self.assertTrue(self.eeg_data.getTimeIndex(1456820381) == 8)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.00) == 0)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.01) == 1)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.5) == 2)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.51) == 3)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.74) == 3)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.75) == 3)
+        self.assertTrue(self.eegData.getTimeIndex(1456820379.76) == 4)
+        self.assertTrue(self.eegData.getTimeIndex(1456820381) == 8)
 
     def test_getTimeIndex_outOfRange(self):
         with self.assertRaises(ValueError):
-            self.eeg_data.getTimeIndex(1456820378.00)
+            self.eegData.getTimeIndex(1456820378.00)
 
         with self.assertRaises(ValueError):
-            self.eeg_data.getTimeIndex(1456820382.00)
+            self.eegData.getTimeIndex(1456820382.00)
 
     def test_getColumnByTime(self):
-        column = self.eeg_data.getColumnByTime("Z", 1456820379.00, 1456820379.75)
+        column = self.eegData.getColumnByTime("Z", 1456820379.00, 1456820379.75)
         self.assertTrue(sameEntries(column, [3, 4, 5]))
 
-        column2 = self.eeg_data.getColumnByTime("Z", 1456820379.00, 1456820381)
+        column2 = self.eegData.getColumnByTime("Z", 1456820379.00, 1456820381)
         self.assertTrue(sameEntries(column2, [3, 4, 5, 6, 8, 8, 9, 10]))
 
     def test_getColumnByTime_notExactly(self):
-        column = self.eeg_data.getColumnByTime("Z", 1456820379.00, 1456820379.75)
+        column = self.eegData.getColumnByTime("Z", 1456820379.00, 1456820379.75)
         self.assertTrue(sameEntries(column, [3, 4, 5]))
         
-        column2 = self.eeg_data.getColumnByTime("Z", 1456820379.01, 1456820379.75)
+        column2 = self.eegData.getColumnByTime("Z", 1456820379.01, 1456820379.75)
         self.assertTrue(sameEntries(column2, [4, 5]))
 
-        column3 = self.eeg_data.getColumnByTime("Z", 1456820379.00, 1456820379.74)
+        column3 = self.eegData.getColumnByTime("Z", 1456820379.00, 1456820379.74)
         self.assertTrue(sameEntries(column3, [3, 4, 5]))
 
-        column4 = self.eeg_data.getColumnByTime("Z", 1456820379.00, 1456820379.76)
+        column4 = self.eegData.getColumnByTime("Z", 1456820379.00, 1456820379.76)
         self.assertTrue(sameEntries(column4, [3, 4, 5, 6])) 
 
 
     def test_getColumnByTime_outOfRange(self):
         with self.assertRaises(ValueError):
-            self.eeg_data.getColumnByTime("Z", 1456820378.00, 1456820379.75)
+            self.eegData.getColumnByTime("Z", 1456820378.00, 1456820379.75)
 
         with self.assertRaises(ValueError):
-            self.eeg_data.getColumnByTime("Z", 1456820379.00, 1456820382.0)
+            self.eegData.getColumnByTime("Z", 1456820379.00, 1456820382.0)
 
     def test__switchTime(self):
         x, y = 1, 2
-        a, b = self.eeg_data._switchTime(x, y)
+        a, b = self.eegData._switchTime(x, y)
         self.assertEqual(x, b)
         self.assertEqual(y, a)
 
     def test__timeInData(self):
-        data = self.eeg_data.getColumn("Timestamp")
-        self.assertTrue(self.eeg_data._timeInData(data, 1456820379.75))
-        self.assertFalse(self.eeg_data._timeInData(data, 1456820378))
-        self.assertFalse(self.eeg_data._timeInData(data, 1456820382))
+        data = self.eegData.getColumn("Timestamp")
+        self.assertTrue(self.eegData._timeInData(data, 1456820379.75))
+        self.assertFalse(self.eegData._timeInData(data, 1456820378))
+        self.assertFalse(self.eegData._timeInData(data, 1456820382))
 
 
 class TestEEGTableToPacketUtil(unittest.TestCase):

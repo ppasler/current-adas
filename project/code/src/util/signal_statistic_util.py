@@ -11,6 +11,7 @@ from collections import OrderedDict
 from datetime import datetime
 import multiprocessing
 import os
+import time
 
 from config.config import ConfigProvider
 import matplotlib.pyplot as plt
@@ -77,18 +78,20 @@ class SignalStatisticUtil(object):
             "min":self.su.minimum, 
             "mean":self.su.mean, 
             "var":self.su.var, 
-            "zeros":self.su.zeros}
+            "countZeros":self.su.countZeros}
 
     def _initPlotter(self, person):
-        self.ssp = SignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, self.plot, self.save)
+        self.ssp = SignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, True, self.plot, self.save)
 
 
     def main(self):
         self.plotDistribution()
         
+        start = time.time()
         self.collect_stats()
         s = self.getSignalStatsString()
         print s
+        print "calculation took %s" % (self._buildFormattedTime(time.time()-start, DURATION_FORMAT_STRING),)
         self.saveStats(s)
 
     def plotDistribution(self):
@@ -112,8 +115,12 @@ class SignalStatisticUtil(object):
 
     def _addGeneralTimeStat(self, name, method, formatString):
         time = getattr(self.eegData, method)()
-        value = datetime.fromtimestamp(time).strftime(formatString)
+        value = self._buildFormattedTime(time, formatString)
         self._addGeneralStatValue(name, value)
+
+    def _buildFormattedTime(self, time, formatString):
+        value = datetime.fromtimestamp(time).strftime(formatString)
+        return value
     
     def _addGeneralStatValue(self, name, value):
         self.stats[GENERAL_KEY][name] = value
@@ -171,10 +178,11 @@ class SignalStatisticUtil(object):
 
 class SignalStatisticPlotter(object):
 
-    def __init__(self, person, eegData, signals, filePath, plot=True, save=True):
+    def __init__(self, person, eegData, signals, filePath, logScale=False, plot=True, save=True):
         self.title = TITLE % person
         self.eegData = eegData
         self.signals = signals
+        self.logScale = logScale
         self.plot = plot
         self.save = save
         self.figsize = (24, 12)
@@ -212,12 +220,16 @@ class SignalStatisticPlotter(object):
     def _plotSignal(self, signal, axes, x):
         raw = self.eegData.getColumn(signal)
         quality = self.eegData.getQuality(signal)
-        
+
         rawAx = axes[0, x]
         rawAx.xaxis.set_label_position("top")
+        if self.logScale:
+            rawAx.set_yscale("log")
         # rug=True causes serious performance issues
         sns.distplot(raw, color="b", axlabel=signal, ax=rawAx, bins=30, kde=False)
-        sns.distplot(quality, color="g", ax=axes[1, x], bins=15, kde=False)
+
+        qualAx = axes[1, x]
+        sns.distplot(quality, color="g", ax=qualAx, bins=15, kde=False)
 
     def _configurePlot(self):
         mng = plt.get_current_fig_manager()
@@ -237,8 +249,8 @@ class SignalStatisticPlotter(object):
 if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))
     person = "janis"
-    fileName = "2016-07-12-11-15_EEG_1.csv"
+    fileName = "2016-07-12-11-15_EEG.csv"
     filePath = scriptPath + "/../../../captured_data/" + person + "/" + fileName
 
-    s = SignalStatisticUtil(person, filePath, plot=False, save=True)
+    s = SignalStatisticUtil(person, filePath, signals=["F3"], plot=False, save=False)
     s.main()

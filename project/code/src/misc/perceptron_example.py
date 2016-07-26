@@ -74,7 +74,7 @@ class pcn(object):
 			outputs = np.argmax(outputs,1)
 			targets = np.argmax(targets,1)
 
-		cm = np.zeros((nClasses,nClasses))
+		cm = np.countZeros((nClasses,nClasses))
 		for i in range(nClasses):
 			for j in range(nClasses):
 				cm[i,j] = np.sum(np.where(outputs==i,1,0)*np.where(targets==j,1,0))

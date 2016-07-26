@@ -8,9 +8,22 @@ Created on 10.05.2016
 :organization: Reutlingen University
 '''
 
-from numpy import count_nonzero, mean, var
+from itertools import groupby
+
+from numpy import array, count_nonzero, mean, var, isnan, where, hstack, ones, NAN
+from scipy.ndimage.morphology import binary_closing
 from scipy.signal import butter, lfilter
 
+
+def _ret_list( k, it ):
+    # length of grouped list
+    l = sum( 1 for _ in it )
+
+    if k==0 and l>2:
+        # sublist is has mroe than two items
+        return [ NAN ]*l
+    else:
+        return [ k ]*l
 
 class SignalUtil(object):
 
@@ -86,8 +99,8 @@ class SignalUtil(object):
         '''
         return var(data)
 
-    def zeros(self, data):
-        '''calculates the number of zeros in data
+    def countZeros(self, data):
+        '''calculates the number of countZeros in data
 
         :param numpy.array data: list of values
         
@@ -95,6 +108,41 @@ class SignalUtil(object):
         :rtype: int
         '''
         return len(data) - count_nonzero(data)
+
+    def countNans(self, data):
+        '''calculates the number of NaNs in data
+
+        :param numpy.array data: list of values
+        
+        :return: NaN count
+        :rtype: int
+        '''
+        return count_nonzero(isnan(data))
+
+    def replaceZeroSequences(self, data):
+        '''replaces zero sequences, which is an unwanted artefact, with NaN 
+        see http://stackoverflow.com/questions/38584956/replace-a-zero-sequence-with-other-value
+        Divakar
+        :param numpy.array data: list of values
+        '''
+        # Pad with ones so as to make binary closing work around the boundaries too
+        a_extm = hstack((True,data!=0,True))
+        
+        # Perform binary closing and look for the ones that have not changed indiicating
+        # the gaps in those cases were above the threshold requirement for closing
+        mask = a_extm == binary_closing(a_extm,structure=ones(3))
+        
+        # Out of those avoid the 1s from the original array and set rest as NaNs
+        return where(~a_extm[1:-1] & mask[1:-1],NAN, data)
+
+    def replaceAnySequence(self, data):
+        '''replaces any sequences of more than 2 same numbers in a row with NaN 
+        see http://stackoverflow.com/questions/38584956/replace-a-zero-sequence-with-other-value
+        Divakar
+        :param numpy.array data: list of values
+        '''
+        procesed_l = [_ret_list(k,g) for k,g in groupby(data)]
+        return array( [ item for l in procesed_l for item in l ] )
 
     def butterBandpass(self, lowcut, highcut, samplingRate, order=5):
         '''

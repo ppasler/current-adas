@@ -200,6 +200,7 @@ class EEGTableFileUtil(object):
         '''
         Reads the first row of the table to create a list of header values
         by default the delimiter for the csv table is ";"
+        if ";" is not found the delimiter is set to ",", which ist needed to readData the right way
         
         :param string:   filePath
         :param string:   delimiter   
@@ -250,8 +251,8 @@ class EEGTableFileUtil(object):
         if filePath == "":
             return None
 
-        data = self.readData(filePath)
         header = self.readHeader(filePath)
+        data = self.readData(filePath)
 
         return EEGTableUtil(header, data, filePath)
 
