@@ -91,6 +91,40 @@ class TestQualityUtil(unittest.TestCase):
         self.assertEqual(len(qualList), len(testList))
         self.assertEqual(countOcc(testList, value), 4)
 
+    def test_zeros(self):
+        countZeros = self.util.countZeros(TEST_DATA_ZERO)
+        self.assertEqual(countZeros, 10)
+        self.assertNotEqual(countZeros, len(TEST_DATA_ZERO))
+    
+    def test_nans(self):
+        countNans = self.util.countNans(TEST_DATA_EMPTY)
+        self.assertEqual(countNans, 3)
+        self.assertEqual(countNans, len(TEST_DATA_EMPTY))
+
+    def test_nans_mixed(self):
+        countNans = self.util.countNans(TEST_DATA_MIXED)
+        self.assertEqual(countNans, 2)
+        self.assertNotEqual(countNans, len(TEST_DATA_MIXED))
+
+    def test_replaceZeroSequences(self):
+        zeros = np.array([0.0, -5.0, 0, 0, 2.0, 0, 0, 0, 3.5, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        l = self.util.replaceZeroSequences(zeros)
+        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
+        self.assertEquals(self.util.countZeros(l), 3)
+        self.assertEquals(self.util.countNans(l), 8)
+
+    def test_replaceAnySequences(self):
+        zeros = np.array([0, 0.0, 0.0, 0, 2.0, 0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        l = self.util.replaceSequences(zeros)
+        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
+        self.assertEquals(self.util.countZeros(l), 1)
+        self.assertEquals(self.util.countNans(l), 9)
+
+    def test_countAnySequences(self):
+        a = np.array([0, 0.0, 0.0, 0, 2.0, 0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        l = self.util.countSequences(a)
+        self.assertEquals(l, 2)
+
 class TestSignalUtil(unittest.TestCase):
 
     def setUp(self):
@@ -136,39 +170,7 @@ class TestSignalUtil(unittest.TestCase):
         var = self.util.var(testList)
         self.assertEqual(var, 2)
     
-    def test_zeros(self):
-        countZeros = self.util.countZeros(TEST_DATA_ZERO)
-        self.assertEqual(countZeros, 10)
-        self.assertNotEqual(countZeros, len(TEST_DATA_ZERO))
-    
-    def test_nans(self):
-        countNans = self.util.countNans(TEST_DATA_EMPTY)
-        self.assertEqual(countNans, 3)
-        self.assertEqual(countNans, len(TEST_DATA_EMPTY))
 
-    def test_nans_mixed(self):
-        countNans = self.util.countNans(TEST_DATA_MIXED)
-        self.assertEqual(countNans, 2)
-        self.assertNotEqual(countNans, len(TEST_DATA_MIXED))
-
-    def test_replaceZeroSequences(self):
-        zeros = np.array([0.0, -5.0, 0, 0, 2.0, 0, 0, 0, 3.5, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0])
-        l = self.util.replaceZeroSequences(zeros)
-        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
-        self.assertEquals(self.util.countZeros(l), 3)
-        self.assertEquals(self.util.countNans(l), 8)
-
-    def test_replaceAnySequences(self):
-        zeros = np.array([0, 0.0, 0.0, 0, 2.0, 0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0])
-        l = self.util.replaceSequences(zeros)
-        self.assertNotEquals(self.util.countZeros(zeros), self.util.countZeros(l))
-        self.assertEquals(self.util.countZeros(l), 1)
-        self.assertEquals(self.util.countNans(l), 9)
-
-    def test_countAnySequences(self):
-        a = np.array([0, 0.0, 0.0, 0, 2.0, 0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0])
-        l = self.util.countSequences(a)
-        self.assertEquals(l, 2)
 
     def test_nans_onOtherFunctions(self):
         norm = self.util.normalize(TEST_DATA_EMPTY)
@@ -181,9 +183,6 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(np.isnan(mean))
         var = self.util.var(TEST_DATA_EMPTY)
         self.assertTrue(np.isnan(var))
-        
-        countZeros = self.util.countZeros(TEST_DATA_EMPTY)
-        self.assertEquals(countZeros, 0)
 
     def test_mixed_onOtherFunctions(self):
         norm = self.util.normalize(TEST_DATA_MIXED)
@@ -196,9 +195,6 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(np.isnan(mean))
         var = self.util.var(TEST_DATA_MIXED)
         self.assertTrue(np.isnan(var))
-        
-        countZeros = self.util.countZeros(TEST_DATA_MIXED)
-        self.assertEquals(countZeros, 6)
 
 class TestFrequencyFilter(unittest.TestCase):
     

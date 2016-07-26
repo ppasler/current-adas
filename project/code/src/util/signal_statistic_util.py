@@ -17,6 +17,7 @@ from config.config import ConfigProvider
 import matplotlib.pyplot as plt
 import seaborn as sns
 from util.eeg_table_util import EEGTableFileUtil
+from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
 
 
@@ -46,17 +47,17 @@ class SignalStatisticUtil(object):
     class to show some statistical values for a channel
     '''
 
-    def __init__(self, person, filePath, signals=None, plot=True, save=True):
+    def __init__(self, person, filePath, signals=None, save=True, plot=True, logScale=False):
         self.person = person
         self.filePath = filePath
         self._initStatsDict()
         self._readData()
         self._initSignals(signals)
         self.su = SignalUtil()
+        self.qu = QualityUtil()
         self._initFields()
-        self.plot = plot
         self.save = save
-        self._initPlotter(person)
+        self._initPlotter(person, plot, logScale)
 
     def _initStatsDict(self):
         self.stats = OrderedDict()
@@ -78,11 +79,11 @@ class SignalStatisticUtil(object):
             "min":self.su.minimum, 
             "mean":self.su.mean, 
             "var":self.su.var, 
-            "zeros":self.su.countZeros,
-            "seq":self.su.countSequences}
+            "zeros":self.qu.countZeros,
+            "seq":self.qu.countSequences}
 
-    def _initPlotter(self, person):
-        self.ssp = SignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, True, self.plot, self.save)
+    def _initPlotter(self, person, plot, logScale):
+        self.ssp = SignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
 
 
     def main(self):
@@ -179,7 +180,7 @@ class SignalStatisticUtil(object):
 
 class SignalStatisticPlotter(object):
 
-    def __init__(self, person, eegData, signals, filePath, logScale=False, plot=True, save=True):
+    def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         self.title = TITLE % person
         self.eegData = eegData
         self.signals = signals
@@ -241,7 +242,7 @@ class SignalStatisticPlotter(object):
     def showPlot(self):
         if self.plot:
             plt.show()
-        
+
     def savePlot(self):
         if self.save:
             filePath = getNewFileName(self.filePath, "png", "_stats")
@@ -253,5 +254,5 @@ if __name__ == "__main__":
     fileName = "2016-07-12-11-15_EEG.csv"
     filePath = scriptPath + "/../../../captured_data/" + person + "/" + fileName
 
-    s = SignalStatisticUtil(person, filePath, plot=True, save=True)
+    s = SignalStatisticUtil(person, filePath, save=True, plot=True, logScale=False)
     s.main()
