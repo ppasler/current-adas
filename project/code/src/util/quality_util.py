@@ -9,8 +9,10 @@ Created on 13.06.2016
 '''
 from itertools import groupby
 
-from numpy import array, count_nonzero, isnan, where, hstack, ones, NAN
+from numpy import array, count_nonzero, isnan, where, hstack, ones, NAN, \
+    errstate
 from scipy.ndimage.morphology import binary_closing
+
 
 MAX_ZERO_SEQUENCE_LENGTH = 3
 MAX_SEQUENCE_LENGTH = 3
@@ -33,12 +35,13 @@ class QualityUtil(object):
         """
         #TODO could be nicer / faster?
         # http://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
-        if value == None:
-            data[data > upperBound] = upperBound
-            data[data < lowerBound] = lowerBound
-        else:
-            data[data > upperBound] = value
-            data[data < lowerBound] = value
+        with errstate(invalid='ignore'):
+            if value == None:
+                data[data > upperBound] = upperBound
+                data[data < lowerBound] = lowerBound
+            else:
+                data[data > upperBound] = value
+                data[data < lowerBound] = value
         return data
 
     def replaceBadQuality(self, data, quality, threshold, value):
@@ -121,7 +124,6 @@ class QualityUtil(object):
             return [ NAN ]*itLen
         else:
             return [ value ]*itLen
-
 
 if __name__ == '__main__':
     pass

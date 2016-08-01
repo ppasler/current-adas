@@ -65,6 +65,13 @@ class TestQualityUtil(unittest.TestCase):
     def setUp(self):
         self.util = QualityUtil()
 
+    def test_replaceOutliners_withNaN(self):
+        value = np.NaN
+        testList = np.array([-10.0, -4, -3, -2, 0, 4, 5, 6, 10])
+        self.assertEqual(countOcc(testList, value), 0)
+        self.util.replaceOutliners(testList, -3, 5, value)
+        self.assertEqual(np.count_nonzero(np.isnan(testList)), 4)
+
     def test_replaceOutliners_withValue(self):
         value = -99
         testList = np.array([-10, -4, -3, -2, 0, 4, 5, 6, 10])
@@ -90,6 +97,15 @@ class TestQualityUtil(unittest.TestCase):
         self.util.replaceBadQuality(testList, qualList, 4, value)
         self.assertEqual(len(qualList), len(testList))
         self.assertEqual(countOcc(testList, value), 4)
+
+    def test_replaceBadQuality_withNaN(self):
+        value = np.NaN
+        testList = np.array([-10.0, -4, -3, -2, 0, 2, 4, 5, 6, 10])
+        qualList = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        
+        self.util.replaceBadQuality(testList, qualList, 4, value)
+        self.assertEqual(len(qualList), len(testList))
+        self.assertEqual(np.count_nonzero(np.isnan(testList)), 4)
 
     def test_zeros(self):
         countZeros = self.util.countZeros(TEST_DATA_ZERO)
