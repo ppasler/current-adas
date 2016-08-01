@@ -32,6 +32,11 @@ QUALITY_KEY = "quality"
 TIME_FORMAT_STRING = "%Y-%m-%d %H:%M:%S"
 DURATION_FORMAT_STRING = "%M:%S"
 
+MAX_TYPE = "max"
+MIN_TYPE = "min"
+MEAN_TYPE = "mean"
+AGGREGATION_TYPE = "aggregation"
+
 def getNewFileName(filePath, fileExtension, suffix=None):
     fileName, _ = os.path.splitext(filePath)
     if suffix:
@@ -75,12 +80,17 @@ class SignalStatisticUtil(object):
 
     def _initFields(self):
         self.statFields = {
-            "max":self.su.maximum, 
-            "min":self.su.minimum, 
-            "mean":self.su.mean, 
-            "var":self.su.var, 
-            "zeros":self.qu.countZeros,
-            "seq":self.qu.countSequences}
+            "max": self._initField(self.su.maximum, MAX_TYPE), 
+            "min": self._initField(self.su.minimum, MIN_TYPE), 
+            "mean": self._initField(self.su.mean, MEAN_TYPE),
+            "var": self._initField(self.su.var, MEAN_TYPE),
+            "zeros": self._initField(self.qu.countZeros, AGGREGATION_TYPE),
+            "seq": self._initField(self.qu.countSequences, AGGREGATION_TYPE)
+        }
+
+    def _initField(self, method, typ):
+        return {"type": typ,
+                 "method": method}
 
     def _initPlotter(self, person, plot, logScale):
         self.ssp = SignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
@@ -137,8 +147,8 @@ class SignalStatisticUtil(object):
 
     def _collectSignalStat(self, signal, category, data):
         self.stats[SIGNALS_KEY][signal][category] = OrderedDict()
-        for field, method in self.statFields.iteritems():
-            self._addSignalStat(signal, category, field, method, data, 0)
+        for field, attributes in self.statFields.iteritems():
+            self._addSignalStat(signal, category, field, attributes["method"], data, 0)
 
     def _addSignalStat(self, signal, category, name, method, raw, decPlace=2):
         value = ("%." + str(decPlace) + "f") % method(raw)
@@ -146,6 +156,9 @@ class SignalStatisticUtil(object):
 
     def _addSignalStatValue(self, signal, category, name, value):
         self.stats[SIGNALS_KEY][signal][category][name] = value
+
+    def setStats(self, stats):
+        self.stats = stats
 
     def getSignalStatsString(self):
         s = TITLE % (self.person)
@@ -248,11 +261,90 @@ class SignalStatisticPlotter(object):
             filePath = getNewFileName(self.filePath, "png", "_stats")
             plt.savefig(filePath, bbox_inches='tight')
 
+class SignalStatisticCollector(object):
+    
+    def __init__(self, experimentDir, experiments=None):
+        self.experimentDir = experimentDir
+        if experiments is None:
+            self.experiments = ConfigProvider().getExperimentConfig()
+        else:
+            self.experiments = experiments
+        self.stats = []
+        self.merge = {}
+        self.statUtil = SignalStatisticUtil("MERGE", "")
+    
+    def main(self):
+        for person, fileNames in self.experiments.iteritems():
+            for fileName in fileNames:
+                filePath =  "%s%s/%s" % (self.experimentDir, person, fileName)
+                s = SignalStatisticUtil(person, filePath, save=False, plot=False, logScale=False)
+                s.main()
+                self.stats.append(s.stats)
+        self._addCollections()
+
+    def _addCollections(self):
+        '''[signals][channel][signal][type]'''
+        self.merge = self.stats[0][SIGNALS_KEY]
+        for stat in self.stats[1:]:
+            self._addChannels(stat[SIGNALS_KEY])
+            
+        self._mergeChannels(len(self.stats), self.merge)
+        self.printCollection()
+
+    def _addChannels(self, channels):
+        for channel, value in channels.iteritems():
+            self._addValues(channel, value)
+
+    def _addValues(self, channel, dic):
+        for key, field in self.statUtil.statFields.iteritems():
+            typ = field["type"]
+            self._addValue(dic, typ, channel, RAW_KEY, key)
+            self._addValue(dic, typ, channel, QUALITY_KEY, key)
+
+    def _addValue(self, dic, typ, channel, signal, key):
+        old = float(self.merge[channel][signal][key])
+        new = float(dic[signal][key])
+        self.merge[channel][signal][key] = self._getByType(typ, old, new)
+
+    def _getByType(self, typ, old, new):
+        if typ == MAX_TYPE:
+            return new if new > old else old
+        if typ == MIN_TYPE:
+            return new if new < old else old
+        if typ in [AGGREGATION_TYPE, MEAN_TYPE]:
+            return new + old
+
+    def _mergeChannels(self, count, channels):
+        for channel, value in channels.iteritems():
+            self._mergeValues(count, channel, value)
+
+    def _mergeValues(self, count, channel, dic):
+        for key, field in self.statUtil.statFields.iteritems():
+            typ = field["type"]
+            self._mergeValue(dic, typ, count, channel, RAW_KEY, key)
+            self._mergeValue(dic, typ, count, channel, QUALITY_KEY, key)
+
+    def _mergeValue(self, dic, typ, count, channel, signal, key):
+        self.merge[channel][signal][key] = self._mergeByType(typ, self.merge[channel][signal][key], count)
+
+    def _mergeByType(self, typ, value, count):
+        if typ in [MAX_TYPE, MIN_TYPE, AGGREGATION_TYPE]:
+            return str(value)
+        if typ == MEAN_TYPE:
+            return str(value / float(count))
+
+    def printCollection(self):
+        self.statUtil.setStats({"signals": self.merge, "general":{}})
+        s = self.statUtil.getSignalStatsString()
+        print s
+        saveAs(self.experimentDir + "merged_signal.txt", s)
+
 if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))
-    person = "janis"
-    fileName = "2016-07-12-11-15_EEG.csv"
-    filePath = scriptPath + "/../../../captured_data/" + person + "/" + fileName
-
-    s = SignalStatisticUtil(person, filePath, save=True, plot=True, logScale=False)
+    experimentDir = scriptPath + "/../../../captured_data/"
+    smallData = {
+        "janis": ["2016-07-12-11-15_EEG_1.csv", "2016-07-12-11-15_EEG_2.csv"]
+    }
+    s = SignalStatisticCollector(experimentDir)
     s.main()
+

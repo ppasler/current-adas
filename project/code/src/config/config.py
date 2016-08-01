@@ -33,6 +33,10 @@ class ConfigProvider(object):
         '''get config for ProcessingChain '''
         return self.getConfig("nn")
 
+    def getExperimentConfig(self):
+        '''get config for experimental data '''
+        return self.getConfig("experiment")
+
     def getConfig(self, section):
         '''get config for section '''
         try:
