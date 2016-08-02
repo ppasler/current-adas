@@ -11,16 +11,20 @@ from datetime import datetime
 import multiprocessing
 import sys
 
-from signal_statistic_plotter import DistributionSignalStatisticPlotter
-from signal_statistic_printer import SignalStatisticPrinter
-from statistic.signal_statistic_contants import *  # @UnusedWildImport
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 from config.config import ConfigProvider
+from signal_statistic_plotter import DistributionSignalPlotter
+from signal_statistic_printer import SignalStatisticPrinter
+from statistic.signal_statistic_constants import *  # @UnusedWildImport
+from statistic.signal_statistic_plotter import RawSignalPlotter, \
+    AlphaSignalPlotter, ProcessedSignalPlotter
 from util.eeg_table_util import EEGTableFileUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
+
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+
 
 class SignalStatisticUtil(object):
     '''
@@ -66,19 +70,22 @@ class SignalStatisticUtil(object):
         self.statFields["out"][METHOD] = self.qu.countOutliners
 
     def _initPlotter(self, person, plot, logScale):
-        self.ssPlot = DistributionSignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
+        self.plotter = []
+        for clazz in [DistributionSignalPlotter, RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter]:
+            plotter = clazz(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
+            thread = multiprocessing.Process(target=plotter.doPlot)
+            self.plotter.append(thread)
 
 
     def main(self):
-        self.plot()
+        self.doPlot()
 
         self.collect_stats()
         self.printStats()
 
-    def plot(self):
-        target = self.ssPlot.plot
-        plotThread = multiprocessing.Process(target=target)
-        plotThread.start()
+    def doPlot(self):
+        for thread in self.plotter:
+            thread.start()
 
     def collect_stats(self):
         self.collectGeneralStats()
@@ -142,7 +149,12 @@ class SignalStatisticUtil(object):
 
 class SignalStatisticCollector(object):
     
-    def __init__(self, experimentDir, experiments=None):
+    def __init__(self, experimentDir, experiments=None, save=False, plot=False, logScale=False):
+        self.experimentDir = experimentDir
+        self.experiments = experiments
+        self.save = save
+        self.plot = plot
+        self.logScale = logScale
         self.experimentDir = experimentDir
         if experiments is None:
             self.experiments = ConfigProvider().getExperimentConfig()
@@ -157,19 +169,22 @@ class SignalStatisticCollector(object):
         for person, fileNames in self.experiments.iteritems():
             for fileName in fileNames:
                 filePath =  "%s%s/%s" % (self.experimentDir, person, fileName)
-                s = SignalStatisticUtil(person, filePath, save=False, plot=False, logScale=False)
+                s = SignalStatisticUtil(person, filePath, save=self.save, plot=self.plot, logScale=self.logScale)
                 self.dataLen += s.eegData.len
                 s.main()
                 self.stats.append(s.stats)
-        self._addCollections()
-        self.printCollection()
+        if len(self.stats) > 1:
+            self._addCollections()
+            self.printCollection()
+        else:
+            print "did not merge 1 stat"
 
     def _addCollections(self):
         '''[signals][channel][signal][type]'''
         self.merge = self.stats[0][SIGNALS_KEY]
         for stat in self.stats[1:]:
             self._addChannels(stat[SIGNALS_KEY])
-            
+
         self._mergeChannels(len(self.stats), self.merge)
 
     def _addChannels(self, channels):
@@ -225,9 +240,10 @@ class SignalStatisticCollector(object):
 if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))
     experimentDir = scriptPath + "/../../../captured_data/"
-    smallData = {
-        "janis": ["2016-07-12-11-15_EEG_1.csv", "2016-07-12-11-15_EEG_2.csv"]
+    experiments = {
+        "janis": ["parts/2016-07-12-11-15_EEG_1.csv"]
     }
-    s = SignalStatisticCollector(experimentDir, smallData)
+    #experiments = None
+    s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=False)
     s.main()
 

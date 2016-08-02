@@ -82,23 +82,23 @@ class EEGSignalPlotter(object):
 
     def plotRaw(self, raw, norm):
         self.axRaw.cla()
-        self.axRaw.plot(self.timeArray, raw)
+        self.axRaw.doPlot(self.timeArray, raw)
         self.axNorm.cla()
-        self.axNorm.plot(self.timeArray, norm)
+        self.axNorm.doPlot(self.timeArray, norm)
 
     def plotAlphaChannel(self, raw):
         chanName = "alpha"
         freqRange = EEGUtil().channel_ranges[chanName]
         filtered = SignalUtil().butterBandpassFilter(raw, freqRange[0], freqRange[1],  self.samplingRate)
         self.axAlpha.cla()
-        self.axAlpha.plot(self.timeArray, filtered)
+        self.axAlpha.doPlot(self.timeArray, filtered)
 
     def plotThetaChannel(self, raw):
         chanName = "theta"
         freqRange = EEGUtil().channel_ranges[chanName]
         filtered = SignalUtil().butterBandpassFilter(raw, freqRange[0], freqRange[1],  self.samplingRate)
         self.axTheta.cla()
-        self.axTheta.plot(self.timeArray, filtered)
+        self.axTheta.doPlot(self.timeArray, filtered)
 
 if __name__ == "__main__":
     try:

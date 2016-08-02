@@ -8,10 +8,11 @@ Created on 02.08.2016
 :organization: Reutlingen University
 '''
 from collections import OrderedDict
+import ntpath
 import os
 
 
-TITLE = "Statistics for %s's EEG Signal"
+TITLE = "%s for %s's EEG Signal"
 
 SIGNALS_KEY = "signals"
 GENERAL_KEY = "general"
@@ -46,6 +47,8 @@ def _initField(typ, method=None):
 
 STAT_FIELDS = initFields()
 
+def getFileName(filePath):
+    return ntpath.basename(filePath)
 
 def getNewFileName(filePath, fileExtension, suffix=None):
     fileName, _ = os.path.splitext(filePath)

@@ -17,7 +17,7 @@ from config.config import ConfigProvider
 MAX_ZERO_SEQUENCE_LENGTH = 3
 MAX_SEQUENCE_LENGTH = 3
 
-DEFAUL_REPLACE_VALUE = NaN
+DEFAULT_REPLACE_VALUE = NaN
 
 class QualityUtil(object):
     """removes signal data with low quality"""
@@ -28,7 +28,7 @@ class QualityUtil(object):
         self.lowerBound = self.config.get("lowerBound")
         self.minQuality = self.config.get("minQual")
 
-    def replaceOutliners(self, data, lowerBound, upperBound, value=None):
+    def replaceOutliners(self, data, value=None, lowerBound=None, upperBound=None):
         """outliner values beyond 'lowerBound' and above 'upperBound' will be set to 'value'
         if value is not set, the values will be set to upper and lower bound
           
@@ -41,9 +41,13 @@ class QualityUtil(object):
         :return: data without outliners 
         :rtype: numpy.array
         """
+        if lowerBound == None:
+            lowerBound=self.lowerBound
+        if upperBound == None:
+            upperBound=self.upperBound
         #TODO could be nicer / faster?
         # http://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
-        with errstate(invalid='ignore'): #avoid warning because of DEFAUL_REPLACE_VALUE value
+        with errstate(invalid='ignore'): #avoid warning because of DEFAULT_REPLACE_VALUE value
             if value == None:
                 data[data > upperBound] = upperBound
                 data[data < lowerBound] = lowerBound
@@ -69,11 +73,11 @@ class QualityUtil(object):
         
         cdata = copy(data[:])
         with errstate(invalid='ignore'): 
-            cdata[cdata > upperBound] = DEFAUL_REPLACE_VALUE
-            cdata[cdata < lowerBound] = DEFAUL_REPLACE_VALUE
+            cdata[cdata > upperBound] = DEFAULT_REPLACE_VALUE
+            cdata[cdata < lowerBound] = DEFAULT_REPLACE_VALUE
         return count_nonzero(isnan(cdata))
 
-    def replaceBadQuality(self, data, quality, threshold, value):
+    def replaceBadQuality(self, data, quality, value, threshold=None):
         """replaces values from data with value where quality < threshold
         
         inplace method
@@ -87,6 +91,9 @@ class QualityUtil(object):
         """
         if len(data) != len(quality):
             raise ValueError("data and quality must have the same length")
+        
+        if threshold == None:
+            threshold = self.minQuality
         #TODO make me nice
         for i, qual in enumerate(quality):
             if qual < threshold:
@@ -136,7 +143,7 @@ class QualityUtil(object):
         return count_nonzero(isnan(data))
 
     def replaceZeroSequences(self, data):
-        '''replaces zero sequences, which is an unwanted artefact, with DEFAUL_REPLACE_VALUE 
+        '''replaces zero sequences, which is an unwanted artefact, with DEFAULT_REPLACE_VALUE 
         see http://stackoverflow.com/questions/38584956/replace-a-zero-sequence-with-other-value
 
         :param numpy.array data: list of values
@@ -146,14 +153,14 @@ class QualityUtil(object):
         '''
         a_extm = hstack((True,data!=0,True))
         mask = a_extm == binary_closing(a_extm,structure=ones(MAX_ZERO_SEQUENCE_LENGTH))
-        return where(~a_extm[1:-1] & mask[1:-1],DEFAUL_REPLACE_VALUE, data)
+        return where(~a_extm[1:-1] & mask[1:-1],DEFAULT_REPLACE_VALUE, data)
 
     def countSequences(self, data):
         seqList = self._getSequenceList(data)
         return len([s for s in seqList if len(s) >= MAX_SEQUENCE_LENGTH])
 
     def replaceSequences(self, data):
-        '''replaces any sequences of more than MAX_SEQUENCE_LENGTH same numbers in a row with DEFAUL_REPLACE_VALUE 
+        '''replaces any sequences of more than MAX_SEQUENCE_LENGTH same numbers in a row with DEFAULT_REPLACE_VALUE 
         see http://stackoverflow.com/questions/38584956/replace-a-zero-sequence-with-other-value
 
         :param numpy.array data: list of values
@@ -171,7 +178,7 @@ class QualityUtil(object):
         itLen = sum(1 for _ in it) # length of iterator
     
         if itLen>=MAX_SEQUENCE_LENGTH:
-            return [ DEFAUL_REPLACE_VALUE ]*itLen
+            return [ DEFAULT_REPLACE_VALUE ]*itLen
         else:
             return [ value ]*itLen
 

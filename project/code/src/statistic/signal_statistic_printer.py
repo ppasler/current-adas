@@ -7,7 +7,7 @@ Created on 02.08.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from statistic.signal_statistic_contants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY, QUALITY_KEY
+from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY, QUALITY_KEY
 
 
 DIVIDER = "******************************\n\n"
@@ -19,7 +19,7 @@ class SignalStatisticPrinter(object):
         self.person = person
 
     def getSignalStatsString(self, stats):
-        s = TITLE % (self.person)
+        s = TITLE % ("Statistics", self.person)
         s += "\n"
         s += DIVIDER
         for key, value in stats[GENERAL_KEY].iteritems():

@@ -63,7 +63,7 @@ def main():
     timeArray = timeArray * 1000  #scale to milliseconds
     
     _, (axTone, axFreq, axLogFreq) = subplots(3)
-    axTone.plot(timeArray, s1, color='k')
+    axTone.doPlot(timeArray, s1, color='k')
     ylabel('Amplitude')
     xlabel('Time (ms)')
     
@@ -76,8 +76,8 @@ def main():
     
     print "FreqMax %fHz" % freqArray[np.argmax(p)]
     
-    axFreq.plot(freqArray/1000, p, color='k')
-    axLogFreq.plot(freqArray/1000, 10*log10(p), color='k')
+    axFreq.doPlot(freqArray/1000, p, color='k')
+    axLogFreq.doPlot(freqArray/1000, 10*log10(p), color='k')
     
     
     xlabel('Frequency (kHz)')

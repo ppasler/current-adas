@@ -178,9 +178,11 @@ class EEGTableUtil(object):
         '''
         return self.getTime()[self.len-1]
 
+    def getValueCount(self):
+        return len(self.getColumn(self.header[0]))
+
     def _switchTime(self, time1, time2):
         return time2, time1
-        
 
     def _timeInData(self, data, time):
         return (min(data) <= time <= max(data))

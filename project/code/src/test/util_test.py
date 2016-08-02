@@ -70,14 +70,14 @@ class TestQualityUtil(unittest.TestCase):
         value = np.NaN
         testList = np.array([-10.0, -4, -3, -2, 0, 4, 5, 6, 10])
         self.assertEqual(countOcc(testList, value), 0)
-        self.util.replaceOutliners(testList, -3, 5, value)
+        self.util.replaceOutliners(testList, value, -3, 5)
         self.assertEqual(np.count_nonzero(np.isnan(testList)), 4)
 
     def test_replaceOutliners_withValue(self):
         value = -99
         testList = np.array([-10, -4, -3, -2, 0, 4, 5, 6, 10])
         self.assertEqual(countOcc(testList, value), 0)
-        self.util.replaceOutliners(testList, -3, 5, value)
+        self.util.replaceOutliners(testList, value, -3, 5)
         self.assertEqual(countOcc(testList, value), 4)
 
     def test_replaceOutliners_withoutValue(self):
@@ -85,7 +85,7 @@ class TestQualityUtil(unittest.TestCase):
         self.assertEqual(countOcc(testList, -3), 1)
         self.assertEqual(countOcc(testList, 5), 1)
         
-        self.util.replaceOutliners(testList, -3, 5)
+        self.util.replaceOutliners(testList, None, -3, 5)
 
         self.assertEqual(countOcc(testList, -3), 3)
         self.assertEqual(countOcc(testList, 5), 3)
@@ -109,7 +109,7 @@ class TestQualityUtil(unittest.TestCase):
         testList = np.array([-10, -4, -3, -2, 0, 2, 4, 5, 6, 10])
         qualList = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         
-        self.util.replaceBadQuality(testList, qualList, 4, value)
+        self.util.replaceBadQuality(testList, qualList, value, 4)
         self.assertEqual(len(qualList), len(testList))
         self.assertEqual(countOcc(testList, value), 4)
 
@@ -118,7 +118,7 @@ class TestQualityUtil(unittest.TestCase):
         testList = np.array([-10.0, -4, -3, -2, 0, 2, 4, 5, 6, 10])
         qualList = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         
-        self.util.replaceBadQuality(testList, qualList, 4, value)
+        self.util.replaceBadQuality(testList, qualList, value, 4)
         self.assertEqual(len(qualList), len(testList))
         self.assertEqual(np.count_nonzero(np.isnan(testList)), 4)
 
@@ -128,7 +128,7 @@ class TestQualityUtil(unittest.TestCase):
         qualList = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
         
         with self.assertRaises(ValueError):
-            _ = self.util.replaceBadQuality(testList, qualList, 4, value)
+            _ = self.util.replaceBadQuality(testList, qualList, value, 4)
 
     def test_countBadQuality(self):
         testList = np.array([-10.0, -4, -3, -2, 0, 2, 4, 5, 6, 10])
@@ -199,6 +199,13 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(max(normList) <= 1)
         self.assertTrue(min(normList) >= -1)
         self.assertTrue(sameEntries(testList, normList))
+
+    def test_normalize_NaN(self):
+        testList = np.array([-2, -1, 0, np.NaN, 1, 2])
+        normList = self.util.normalize(testList)
+        self.assertEqual(len(testList), len(normList))
+        self.assertTrue(max(normList) <= 1)
+        self.assertTrue(min(normList) >= -1)
 
     def test_energie(self):
         testList = np.array([1, 2, 3, 4])
@@ -722,6 +729,10 @@ class TestEEGTableData(unittest.TestCase):
         self.assertTrue(self.eegData._timeInData(data, 1456820379.75))
         self.assertFalse(self.eegData._timeInData(data, 1456820378))
         self.assertFalse(self.eegData._timeInData(data, 1456820382))
+
+    def test_getValueCount(self):
+        count = self.eegData.getValueCount()
+        self.assertEquals(count, 9)
 
 
 class TestEEGTableToPacketUtil(unittest.TestCase):

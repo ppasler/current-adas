@@ -72,7 +72,7 @@ class ProcessingChain(object):
         for pin, signal in eegData.iteritems():
             raw = array(signal["value"])
             
-            self.qualityUtil.replaceOutliners(raw, -300, 300)
+            self.qualityUtil.replaceOutliners(raw, None, -300, 300)
             d = {"value": raw, 
                  "quality": array(signal["quality"])
             }
