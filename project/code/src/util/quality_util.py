@@ -9,16 +9,24 @@ Created on 13.06.2016
 '''
 from itertools import groupby
 
-from numpy import array, count_nonzero, isnan, where, hstack, ones, NAN, \
-    errstate
+from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstate, copy
 from scipy.ndimage.morphology import binary_closing
+from config.config import ConfigProvider
 
 
 MAX_ZERO_SEQUENCE_LENGTH = 3
 MAX_SEQUENCE_LENGTH = 3
 
+DEFAUL_REPLACE_VALUE = NaN
+
 class QualityUtil(object):
     """removes signal data with low quality"""
+    
+    def __init__(self):
+        self.config = ConfigProvider().getProcessingConfig()
+        self.upperBound = self.config.get("upperBound")
+        self.lowerBound = self.config.get("lowerBound")
+        self.minQuality = self.config.get("minQual")
 
     def replaceOutliners(self, data, lowerBound, upperBound, value=None):
         """outliner values beyond 'lowerBound' and above 'upperBound' will be set to 'value'
@@ -35,7 +43,7 @@ class QualityUtil(object):
         """
         #TODO could be nicer / faster?
         # http://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
-        with errstate(invalid='ignore'):
+        with errstate(invalid='ignore'): #avoid warning because of DEFAUL_REPLACE_VALUE value
             if value == None:
                 data[data > upperBound] = upperBound
                 data[data < lowerBound] = lowerBound
@@ -43,6 +51,27 @@ class QualityUtil(object):
                 data[data > upperBound] = value
                 data[data < lowerBound] = value
         return data
+
+    def countOutliners(self, data, lowerBound=None, upperBound=None):
+        """counts the outliner values beyond 'lowerBound' and above 'upperBound'
+     
+        :param numpy.array data: list of values
+        :param float lowerBound: values < this param will be set to 'value'
+        :param float upperBound: values > this param will be set to 'value'
+        
+        :return: number of outliners in data 
+        :rtype: int
+        """
+        if lowerBound == None:
+            lowerBound=self.lowerBound
+        if upperBound == None:
+            upperBound=self.upperBound
+        
+        cdata = copy(data[:])
+        with errstate(invalid='ignore'): 
+            cdata[cdata > upperBound] = DEFAUL_REPLACE_VALUE
+            cdata[cdata < lowerBound] = DEFAUL_REPLACE_VALUE
+        return count_nonzero(isnan(cdata))
 
     def replaceBadQuality(self, data, quality, threshold, value):
         """replaces values from data with value where quality < threshold
@@ -56,14 +85,35 @@ class QualityUtil(object):
         :return: data without bad quality values
         :rtype: numpy.array
         """
-        #TODO is this the right way?
         if len(data) != len(quality):
             raise ValueError("data and quality must have the same length")
-        
+        #TODO make me nice
         for i, qual in enumerate(quality):
             if qual < threshold:
                 data[i] = value
         return data
+
+    def countBadQuality(self, data, quality, threshold=None):
+        """counts values from data with value where quality < threshold
+        
+        inplace method
+        :param numpy.array data: list of values
+        :param numpy.array quality: list of quality
+        :param float threshold: param to compare quality with
+        
+        :return: number of data with bad quality values
+        :rtype: int
+        """
+        if len(data) != len(quality):
+            raise ValueError("data and quality must have the same length")
+        if threshold == None:
+            threshold = self.minQuality
+        
+        count = 0
+        for _, qual in enumerate(quality):
+            if qual < threshold:
+                count += 1
+        return count
 
     def countZeros(self, data):
         '''calculates the number of countZeros in data
@@ -86,7 +136,7 @@ class QualityUtil(object):
         return count_nonzero(isnan(data))
 
     def replaceZeroSequences(self, data):
-        '''replaces zero sequences, which is an unwanted artefact, with NaN 
+        '''replaces zero sequences, which is an unwanted artefact, with DEFAUL_REPLACE_VALUE 
         see http://stackoverflow.com/questions/38584956/replace-a-zero-sequence-with-other-value
 
         :param numpy.array data: list of values
@@ -96,14 +146,14 @@ class QualityUtil(object):
         '''
         a_extm = hstack((True,data!=0,True))
         mask = a_extm == binary_closing(a_extm,structure=ones(MAX_ZERO_SEQUENCE_LENGTH))
-        return where(~a_extm[1:-1] & mask[1:-1],NAN, data)
+        return where(~a_extm[1:-1] & mask[1:-1],DEFAUL_REPLACE_VALUE, data)
 
     def countSequences(self, data):
         seqList = self._getSequenceList(data)
         return len([s for s in seqList if len(s) >= MAX_SEQUENCE_LENGTH])
 
     def replaceSequences(self, data):
-        '''replaces any sequences of more than MAX_SEQUENCE_LENGTH same numbers in a row with NaN 
+        '''replaces any sequences of more than MAX_SEQUENCE_LENGTH same numbers in a row with DEFAUL_REPLACE_VALUE 
         see http://stackoverflow.com/questions/38584956/replace-a-zero-sequence-with-other-value
 
         :param numpy.array data: list of values
@@ -121,7 +171,7 @@ class QualityUtil(object):
         itLen = sum(1 for _ in it) # length of iterator
     
         if itLen>=MAX_SEQUENCE_LENGTH:
-            return [ NAN ]*itLen
+            return [ DEFAUL_REPLACE_VALUE ]*itLen
         else:
             return [ value ]*itLen
 

@@ -7,45 +7,20 @@ Created on 30.05.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from collections import OrderedDict
 from datetime import datetime
 import multiprocessing
-import os
-import time
+import sys
+
+from signal_statistic_plotter import DistributionSignalStatisticPlotter
+from signal_statistic_printer import SignalStatisticPrinter
+from statistic.signal_statistic_contants import *  # @UnusedWildImport
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from config.config import ConfigProvider
-import matplotlib.pyplot as plt
-import seaborn as sns
 from util.eeg_table_util import EEGTableFileUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
-
-
-DIVIDER = "******************************\n\n"
-TITLE = "Statistics for %s's EEG Signal"
-
-SIGNALS_KEY = "signals"
-GENERAL_KEY = "general"
-RAW_KEY = "raw"
-QUALITY_KEY = "quality"
-
-TIME_FORMAT_STRING = "%Y-%m-%d %H:%M:%S"
-DURATION_FORMAT_STRING = "%M:%S"
-
-MAX_TYPE = "max"
-MIN_TYPE = "min"
-MEAN_TYPE = "mean"
-AGGREGATION_TYPE = "aggregation"
-
-def getNewFileName(filePath, fileExtension, suffix=None):
-    fileName, _ = os.path.splitext(filePath)
-    if suffix:
-        fileName += suffix
-    return "%s.%s" % (fileName, fileExtension)
-
-def saveAs(filePath, content):
-    with open(filePath, 'w') as fileObj:
-        fileObj.write(content)
 
 class SignalStatisticUtil(object):
     '''
@@ -63,6 +38,7 @@ class SignalStatisticUtil(object):
         self._initFields()
         self.save = save
         self._initPlotter(person, plot, logScale)
+        self.ssPrint = SignalStatisticPrinter(person)
 
     def _initStatsDict(self):
         self.stats = OrderedDict()
@@ -79,35 +55,28 @@ class SignalStatisticUtil(object):
         self.signals = signals
 
     def _initFields(self):
-        self.statFields = {
-            "max": self._initField(self.su.maximum, MAX_TYPE), 
-            "min": self._initField(self.su.minimum, MIN_TYPE), 
-            "mean": self._initField(self.su.mean, MEAN_TYPE),
-            "var": self._initField(self.su.var, MEAN_TYPE),
-            "zeros": self._initField(self.qu.countZeros, AGGREGATION_TYPE),
-            "seq": self._initField(self.qu.countSequences, AGGREGATION_TYPE)
-        }
-
-    def _initField(self, method, typ):
-        return {"type": typ,
-                 "method": method}
+        self.statFields = STAT_FIELDS
+        self.statFields["max"][METHOD] = self.su.maximum 
+        self.statFields["min"][METHOD] = self.su.minimum
+        self.statFields["mean"][METHOD] = self.su.mean
+        self.statFields["std"][METHOD] = self.su.std
+        self.statFields["var"][METHOD] = self.su.var
+        self.statFields["zeros"][METHOD] = self.qu.countZeros
+        self.statFields["seq"][METHOD] = self.qu.countSequences
+        self.statFields["out"][METHOD] = self.qu.countOutliners
 
     def _initPlotter(self, person, plot, logScale):
-        self.ssp = SignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
+        self.ssPlot = DistributionSignalStatisticPlotter(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
 
 
     def main(self):
-        self.plotDistribution()
-        
-        start = time.time()
-        self.collect_stats()
-        s = self.getSignalStatsString()
-        print s
-        print "calculation took %s" % (self._buildFormattedTime(time.time()-start, DURATION_FORMAT_STRING),)
-        self.saveStats(s)
+        self.plot()
 
-    def plotDistribution(self):
-        target = self.ssp.plotDistribution
+        self.collect_stats()
+        self.printStats()
+
+    def plot(self):
+        target = self.ssPlot.plot
         plotThread = multiprocessing.Process(target=target)
         plotThread.start()
 
@@ -121,6 +90,9 @@ class SignalStatisticUtil(object):
     def collectGeneralStats(self):
         self._addGeneralStatValue("file path", self.filePath)
         self._addGeneralStatValue("sampleRate", ("%f.2" % self.eegData.getSamplingRate()))
+        self._addGeneralStatValue("dataLength", ("%d" % self.eegData.len))
+        self._addGeneralStatValue("bound", ("%d - %d" % (self.qu.lowerBound, self.qu.upperBound)))
+
         self._addGeneralTimeStat("start time", "getStartTime", TIME_FORMAT_STRING)
         self._addGeneralTimeStat("end time", "getEndTime", TIME_FORMAT_STRING)
         self._addGeneralTimeStat("duration", "getDuration", DURATION_FORMAT_STRING)
@@ -160,106 +132,13 @@ class SignalStatisticUtil(object):
     def setStats(self, stats):
         self.stats = stats
 
-    def getSignalStatsString(self):
-        s = TITLE % (self.person)
-        s += "\n"
-        s += DIVIDER
-        for key, value in self.stats[GENERAL_KEY].iteritems():
-            s += "%s:\t%s\n" % (key, value)
-        s += DIVIDER
-        s += self._getSignalStatString()
-        s += DIVIDER
-        return s
-
-    def _getSignalStatString(self):
-        header = [SIGNALS_KEY] + self.statFields.keys() + [s + "_Q" for s in self.statFields.keys()]
-        s = "\t".join(header) + "\n"
-        for signal, values in self.stats[SIGNALS_KEY].iteritems():
-            l = [signal]
-            l.extend(self._printSignalStat(RAW_KEY, signal, values))
-            l.extend(self._printSignalStat(QUALITY_KEY, signal, values))
-            s += "\t".join([x for x in l]) + "\n"
-        return s
-
-    def _printSignalStat(self, category, signal, values):
-        l = []
-        for _, value in values[category].iteritems():
-            l.append(value)
-        return l
-    
-    def saveStats(self, content):
-        filePath = getNewFileName(self.filePath, "txt", "_stats")
-        saveAs(filePath, content)
-
-class SignalStatisticPlotter(object):
-
-    def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
-        self.title = TITLE % person
-        self.eegData = eegData
-        self.signals = signals
-        self.logScale = logScale
-        self.plot = plot
-        self.save = save
-        self.figsize = (24, 12)
-        if not self.plot:
-            self.figsize = (96, 48)
-        self.filePath = filePath
-
-    def plotDistribution(self):
-        if not self.plot and not self.save:
-            return
-
-        _, axes = self._initPlot()
-
-        for x, signal in enumerate(self.signals):
-            self._plotSignal(signal, axes, x)
-
-        self._configurePlot()
-
-        self.savePlot()
-        self.showPlot()
-        print "plotting done"
-
-    def _initPlot(self):
-        signalCount = self._calcSignalCount()
-
-        fig, axes = plt.subplots(2, signalCount, figsize=self.figsize, dpi=80, sharex=False, sharey=True)
-        return fig, axes
-
-    def _calcSignalCount(self):
-        signalCount = len(self.signals)
-        if signalCount < 2:
-            return 2
-        return signalCount
-
-    def _plotSignal(self, signal, axes, x):
-        raw = self.eegData.getColumn(signal)
-        quality = self.eegData.getQuality(signal)
-
-        rawAx = axes[0, x]
-        rawAx.xaxis.set_label_position("top")
-        if self.logScale:
-            rawAx.set_yscale("log")
-        # rug=True causes serious performance issues
-        sns.distplot(raw, color="b", axlabel=signal, ax=rawAx, bins=30, kde=False)
-
-        qualAx = axes[1, x]
-        sns.distplot(quality, color="g", ax=qualAx, bins=15, kde=False)
-
-    def _configurePlot(self):
-        mng = plt.get_current_fig_manager()
-        mng.window.wm_geometry("+0+0")
-        plt.tight_layout()
-        plt.subplots_adjust(wspace=0.1, hspace=0.1)
-
-    def showPlot(self):
-        if self.plot:
-            plt.show()
-
-    def savePlot(self):
+    def printStats(self):
+        content = self.ssPrint.getSignalStatsString(self.stats)
+        print content
         if self.save:
-            filePath = getNewFileName(self.filePath, "png", "_stats")
-            plt.savefig(filePath, bbox_inches='tight')
+            filePath = getNewFileName(self.filePath, "txt", "_stats")
+            self.ssPrint.saveStats(filePath, content)
+
 
 class SignalStatisticCollector(object):
     
@@ -271,16 +150,19 @@ class SignalStatisticCollector(object):
             self.experiments = experiments
         self.stats = []
         self.merge = {}
-        self.statUtil = SignalStatisticUtil("MERGE", "")
+        self.ssPrint = SignalStatisticPrinter("merge")
+        self.dataLen = 0
     
     def main(self):
         for person, fileNames in self.experiments.iteritems():
             for fileName in fileNames:
                 filePath =  "%s%s/%s" % (self.experimentDir, person, fileName)
                 s = SignalStatisticUtil(person, filePath, save=False, plot=False, logScale=False)
+                self.dataLen += s.eegData.len
                 s.main()
                 self.stats.append(s.stats)
         self._addCollections()
+        self.printCollection()
 
     def _addCollections(self):
         '''[signals][channel][signal][type]'''
@@ -289,14 +171,13 @@ class SignalStatisticCollector(object):
             self._addChannels(stat[SIGNALS_KEY])
             
         self._mergeChannels(len(self.stats), self.merge)
-        self.printCollection()
 
     def _addChannels(self, channels):
         for channel, value in channels.iteritems():
             self._addValues(channel, value)
 
     def _addValues(self, channel, dic):
-        for key, field in self.statUtil.statFields.iteritems():
+        for key, field in STAT_FIELDS.iteritems():
             typ = field["type"]
             self._addValue(dic, typ, channel, RAW_KEY, key)
             self._addValue(dic, typ, channel, QUALITY_KEY, key)
@@ -319,7 +200,7 @@ class SignalStatisticCollector(object):
             self._mergeValues(count, channel, value)
 
     def _mergeValues(self, count, channel, dic):
-        for key, field in self.statUtil.statFields.iteritems():
+        for key, field in STAT_FIELDS.iteritems():
             typ = field["type"]
             self._mergeValue(dic, typ, count, channel, RAW_KEY, key)
             self._mergeValue(dic, typ, count, channel, QUALITY_KEY, key)
@@ -334,10 +215,12 @@ class SignalStatisticCollector(object):
             return str(value / float(count))
 
     def printCollection(self):
-        self.statUtil.setStats({"signals": self.merge, "general":{}})
-        s = self.statUtil.getSignalStatsString()
-        print s
-        saveAs(self.experimentDir + "merged_signal.txt", s)
+        general = {"dataLength": str(self.dataLen)}
+        stats = {SIGNALS_KEY: self.merge, GENERAL_KEY: general}
+        content = self.ssPrint.getSignalStatsString(stats)
+        print content
+        filePath = experimentDir + "merge.txt"
+        self.ssPrint.saveStats(filePath, content) 
 
 if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -345,6 +228,6 @@ if __name__ == "__main__":
     smallData = {
         "janis": ["2016-07-12-11-15_EEG_1.csv", "2016-07-12-11-15_EEG_2.csv"]
     }
-    s = SignalStatisticCollector(experimentDir)
+    s = SignalStatisticCollector(experimentDir, smallData)
     s.main()
 

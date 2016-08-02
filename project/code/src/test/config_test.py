@@ -22,7 +22,9 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(type(cfg["bool"]), bool)
         self.assertEqual(type(cfg["str"]), str)
         self.assertEqual(type(cfg["list"]), list)
-        self.assertEqual(type(cfg["dict"]), dict)      
+        self.assertEqual(type(cfg["dict"]), dict)
+        self.assertEqual(type(cfg["comp"]), int)
+        self.assertEqual(type(cfg["comp2"]), int)
 
     def test_getUnknownConfig(self):
         with self.assertRaises(ConfigParser.NoSectionError):

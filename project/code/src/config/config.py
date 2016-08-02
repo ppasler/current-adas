@@ -23,7 +23,7 @@ class ConfigProvider(object):
     
     def getProcessingConfig(self):
         '''get config for ProcessingChain '''
-        return self.getConfig("collector")
+        return self.getConfig("processing")
     
     def getEmotivConfig(self):
         '''get config for ProcessingChain '''

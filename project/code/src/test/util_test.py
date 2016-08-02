@@ -15,6 +15,7 @@ from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
+from math import sqrt
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -89,6 +90,20 @@ class TestQualityUtil(unittest.TestCase):
         self.assertEqual(countOcc(testList, -3), 3)
         self.assertEqual(countOcc(testList, 5), 3)
 
+    def test_countOutliners(self):
+        testList = np.array([-10.0, -4, -3, -2, 0, 4, 5, 6, 10])
+        self.assertEqual(self.util.countOutliners(testList, -3, 5), 4)
+
+    def test_countOutliners_defaultThreshold(self):
+        lb = self.util.lowerBound
+        ub = self.util.upperBound
+        testList = np.array([lb-1, lb, lb+1, -2, 0, 4, ub-1, ub, ub+1])
+        self.assertEqual(self.util.countOutliners(testList), 2)
+
+    def test_countOutliners_noOccurence(self):
+        testList = np.array([-10.0, -4, -3, -2, 0, 4, 5, 6, 10])
+        self.assertEqual(self.util.countOutliners(testList, -11, 11), 0)
+
     def test_replaceBadQuality(self):
         value = 99
         testList = np.array([-10, -4, -3, -2, 0, 2, 4, 5, 6, 10])
@@ -106,6 +121,30 @@ class TestQualityUtil(unittest.TestCase):
         self.util.replaceBadQuality(testList, qualList, 4, value)
         self.assertEqual(len(qualList), len(testList))
         self.assertEqual(np.count_nonzero(np.isnan(testList)), 4)
+
+    def test_replaceBadQuality_differentLengthError(self):
+        value = np.NaN
+        testList = np.array([-10.0, -4, -3, -2, 0, 2, 4, 5, 6, 10])
+        qualList = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
+        
+        with self.assertRaises(ValueError):
+            _ = self.util.replaceBadQuality(testList, qualList, 4, value)
+
+    def test_countBadQuality(self):
+        testList = np.array([-10.0, -4, -3, -2, 0, 2, 4, 5, 6, 10])
+        qualList = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        
+        count = self.util.countBadQuality(testList, qualList, 4)
+        self.assertEqual(len(qualList), len(testList))
+        self.assertEqual(count, 4)
+
+    def test_countBadQuality_defaultThreshold(self):
+        testList = np.array([-10.0, -4, -3, -2, 0, 2, 4, 5, 6, 10])
+        qualList = np.array([0, 1, 2, 4, 6, 8, 10, 12, 14, 15])
+        
+        count = self.util.countBadQuality(testList, qualList)
+        self.assertEqual(len(qualList), len(testList))
+        self.assertEqual(count, 5)
 
     def test_zeros(self):
         countZeros = self.util.countZeros(TEST_DATA_ZERO)
@@ -185,8 +224,11 @@ class TestSignalUtil(unittest.TestCase):
         testList = np.array([0, 1, 2, 3, 4])
         var = self.util.var(testList)
         self.assertEqual(var, 2)
-    
 
+    def test_std(self):
+        testList = np.array([0, 1, 2, 3, 4])
+        std = self.util.std(testList)
+        self.assertEqual(std, sqrt(self.util.var(testList)))
 
     def test_nans_onOtherFunctions(self):
         norm = self.util.normalize(TEST_DATA_EMPTY)

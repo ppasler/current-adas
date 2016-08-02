@@ -8,7 +8,7 @@ Created on 10.05.2016
 :organization: Reutlingen University
 '''
 
-from numpy import mean, var, count_nonzero
+from numpy import mean, var, count_nonzero, std
 from scipy.signal import butter, lfilter
 
 
@@ -75,8 +75,18 @@ class SignalUtil(object):
         '''
         return sum(data ** 2)
 
+    def std(self, data):
+        '''calculates the signal' standard deviation
+
+        :param numpy.array data: list of values
+        
+        :return: standard deviation
+        :rtype: float
+        '''
+        return std(data)
+
     def var(self, data):
-        '''calculates the signal varaince
+        '''calculates the signals' variance
 
         :param numpy.array data: list of values
         
