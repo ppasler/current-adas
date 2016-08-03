@@ -201,11 +201,11 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(sameEntries(testList, normList))
 
     def test_normalize_NaN(self):
-        testList = np.array([-2, -1, 0, np.NaN, 1, 2])
+        testList = np.array([np.NaN, -2, -1, 0, np.NaN, 1, 2, np.NaN])
         normList = self.util.normalize(testList)
         self.assertEqual(len(testList), len(normList))
-        self.assertTrue(max(normList) <= 1)
-        self.assertTrue(min(normList) >= -1)
+        self.assertTrue(np.nanmax(normList) <= 1)
+        self.assertTrue(np.nanmin(normList) >= -1)
 
     def test_energie(self):
         testList = np.array([1, 2, 3, 4])
@@ -251,7 +251,7 @@ class TestSignalUtil(unittest.TestCase):
 
     def test_mixed_onOtherFunctions(self):
         norm = self.util.normalize(TEST_DATA_MIXED)
-        self.assertTrue(np.isnan(norm).all())
+        self.assertItemsEqual(np.isnan(norm), np.isnan(TEST_DATA_MIXED))
         maxi = self.util.maximum(TEST_DATA_MIXED)
         self.assertTrue(np.isnan(maxi))
         mini = self.util.minimum(TEST_DATA_MIXED)

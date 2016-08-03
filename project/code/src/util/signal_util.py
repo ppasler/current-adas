@@ -8,10 +8,10 @@ Created on 10.05.2016
 :organization: Reutlingen University
 '''
 
-from numpy import mean, var, count_nonzero, std
+from numpy import mean, var, count_nonzero, std, nanmax, nanmin, isnan
 from scipy.signal import butter, lfilter
 
-
+#TODO handle NaN values
 class SignalUtil(object):
 
     def __init__(self):
@@ -25,9 +25,10 @@ class SignalUtil(object):
         :return: normalized data
         :rtype: numpy.array
         '''
-        if count_nonzero(data) == 0:
+        #TODO check condition
+        if count_nonzero(data) == 0 or isnan(data).all():
             return data
-        extreme = float(max(max(data), abs(min(data))))
+        extreme = float(max(nanmax(data), abs(nanmin(data))))
 
         return data / extreme
 

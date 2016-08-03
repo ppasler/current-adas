@@ -6,8 +6,8 @@ Created on 10.05.2016
 import sys, os
 import unittest
 
-from numpy import NaN, array, arccos, cos
-from numpy.testing.utils import assert_almost_equal, assert_allclose
+from numpy import NaN, nanmax, nanmin, isnan, count_nonzero
+from numpy.testing.utils import assert_allclose
 
 from config.config import ConfigProvider
 from statistic.simple_chain import SimpleChain
@@ -45,16 +45,19 @@ class TestSimpleChain(unittest.TestCase):
         assert_allclose(proc, [-1.0, NaN, NaN, 0.5, 1])
 
     def test_process_replaceSequences(self):
-        data = [1.0, 1, 1, 2, 3]
+        data = [1.0, 1.0, 1.0, 2.0, 4.0]
         qual = [15, 15, 15, 15, 15]
         proc = self.chain.process(data, qual)
-        assert_allclose(proc, [NaN, NaN, NaN, 2, 3])
+        assert_allclose(proc, [NaN, NaN, NaN, 0.5, 1.0])
 
     def test_process_replaceOutliners(self):
         data = [self.lowerBound-1, self.lowerBound, self.lowerBound+1, self.upperBound-1, self.upperBound, self.upperBound+1]
         qual = [15, 15, 15, 15, 15, 15]
+        
         proc = self.chain.process(data, qual)
-        assert_allclose(proc, [NaN, self.lowerBound, self.lowerBound+1, self.upperBound-1, self.upperBound, NaN])
+        self.assertTrue(nanmax(proc) <= 1)
+        self.assertTrue(nanmin(proc) >= -1)
+        self.assertEquals(count_nonzero(isnan(proc)), 2)
 
 if __name__ == "__main__":
     unittest.main()
