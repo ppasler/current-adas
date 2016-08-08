@@ -14,17 +14,19 @@ from time import sleep
 
 from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
+from data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
 
 
 class PoSDBoS(object):
     
-    def __init__(self, networkFile=None):
+    def __init__(self, networkFile=None, demo=False):
         '''Main class for drowsiness detection
         
         :param string networkFile: file name of the saved neural network (path: "/../../data/<networkFile>.nn")
         '''
+        self.demo = demo
         self.running = True
         self.config = ConfigProvider()
         self._initNeuralNetwork(networkFile)
@@ -40,8 +42,16 @@ class PoSDBoS(object):
             self.nn.load(networkFile)
 
     def _initFeatureExtractor(self):
-        self.fe = FeatureExtractor()
+        collector = self._initDataCollector()
+        self.fe = FeatureExtractor(collector)
         self.inputQueue = self.fe.extractQueue
+
+    def _initDataCollector(self):
+        if self.demo:
+            return DummyDataCollector()
+        else:
+            collectorConfig = self.config.getCollectorConfig()
+            return EEGDataCollector(None, **collectorConfig)
 
     def close(self):
         self.running = False

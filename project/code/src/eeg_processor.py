@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-Created on 30.05.2016
+Created on 02.08.2016
 
 :author: Paul Pasler
 :organization: Reutlingen University
@@ -12,7 +12,7 @@ from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
 from numpy import NaN
 
-class SimpleChain(object):
+class EEGProcessor(object):
     def __init__(self, verbose=False):
         self.eegUtil = EEGUtil()
         self.qualUtil = QualityUtil()

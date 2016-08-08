@@ -12,9 +12,7 @@ from Queue import Queue, Empty
 import threading
 from time import sleep
 
-from config.config import ConfigProvider
-from data_collector import DataCollector
-from default_chain import ProcessingChain
+from data_processor import DataProcessor
 
 
 class FeatureExtractor(object):
@@ -22,20 +20,19 @@ class FeatureExtractor(object):
     Controls the processing chain and fetches the values needed for the classificator
     '''
 
-    def __init__(self):
+    def __init__(self, dataCollector=None):
         '''
         Constructor
         '''
-        self.collectorConfig = ConfigProvider().getCollectorConfig()
-        
+
         self.inputQueue = Queue()
         self.outputQueue = Queue()
         self.extractQueue = Queue()
         
-        self.collector = DataCollector(None, **self.collectorConfig)
+        self.collector = dataCollector
         self.collectorThread = threading.Thread(target=self.collector.collectData)
         
-        self.processor = ProcessingChain(self.inputQueue, self.outputQueue)
+        self.processor = DataProcessor(self.inputQueue, self.outputQueue)
         self.processingThread = threading.Thread(target=self.processor.processData)
 
         self.extract = True

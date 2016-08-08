@@ -37,13 +37,7 @@ class RectangularSignalWindow(SignalWindow):
         self.initWindow = {}
         for key in fields:
             self.initWindow[key] = {"value": [], "quality": []}
-    
-    def _addDataToWindow(self, data):   
-        for key, date in data.iteritems():
-            field = self.window[key]
-            field["value"].append(date["value"])
-            field["quality"].append(date["quality"])
-            
+
     def addData(self, data):
         #TODO potential bottleneck
         self._addDataToWindow(data)
@@ -53,4 +47,9 @@ class RectangularSignalWindow(SignalWindow):
             data = self.window.copy()
             self._resetWindow()
             self.notifyObserver(data)
-            
+
+    def _addDataToWindow(self, data):   
+        for key, date in data.iteritems():
+            field = self.window[key]
+            field["value"].append(date["value"])
+            field["quality"].append(date["quality"])

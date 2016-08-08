@@ -7,8 +7,8 @@ import unittest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from data_collector import DataCollector
-from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
+from data_collector import EEGDataCollector
+from util.eeg_data_converter import EEGTableToPacketConverter
 
 
 
@@ -20,8 +20,9 @@ FIELDS = ["F3", "F4", "X", "Y"]
 class DataCollectorTest(unittest.TestCase):
 
     def setUp(self):
-        source = EEGTableToPacketUtil()
-        self.collector = DataCollector(source, FIELDS, WINDOW_SIZE)
+        source = EEGTableToPacketConverter()
+        source.convert()
+        self.collector = EEGDataCollector(source, FIELDS, WINDOW_SIZE)
         dataHandler = lambda x: x
         self.collector.setHandler(dataHandler)
         self.notifyCalled = 0
@@ -90,7 +91,7 @@ class DataCollectorTest(unittest.TestCase):
         
         data = self.collector.datasource.data;
         
-        filteredData = self.collector.filter(data[0].sensors)
+        filteredData = self.collector._filter(data[0].sensors)
         
         self.assertEqual(len(filteredData), len(fields))
         self.assertTrue(set(filteredData.keys()).issubset(set(fields)))

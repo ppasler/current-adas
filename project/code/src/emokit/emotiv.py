@@ -8,7 +8,7 @@ from Crypto.Cipher import AES
 import gevent
 from gevent.queue import Queue
 
-from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
+from util.eeg_data_converter import EEGTableToPacketConverter
 
 
 system_platform = platform.system()
@@ -465,8 +465,9 @@ class Emotiv(object):
                     file_updater = gevent.spawn(self.update_file)
             else:
                 global eegTableData
-                filePath = scriptPath + "/../../../captured_data/janis/2016-07-12-11-15_EEG_11.csv"
-                eegTableData = EEGTableToPacketUtil(filePath)
+                filePath = scriptPath + "/../../../captured_data/janis/parts/2016-07-12-11-15_EEG_4096.csv"
+                eegTableData = EEGTableToPacketConverter(filePath)
+                eegTableData.convert()
             while self.running:
                 try:
                     gevent.sleep(0)

@@ -10,7 +10,7 @@ from numpy import NaN, isnan, count_nonzero, copy
 from numpy.testing.utils import assert_allclose
 
 from config.config import ConfigProvider
-from statistic.simple_chain import SimpleChain
+from eeg_processor import EEGProcessor
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -27,7 +27,7 @@ def sameEntries(list1, list2):
 class TestSimpleChain(unittest.TestCase):
 
     def setUp(self):
-        self.chain = SimpleChain()
+        self.chain = EEGProcessor()
         config = ConfigProvider().getProcessingConfig()
         self.upperBound = config.get("upperBound")
         self.lowerBound = config.get("lowerBound")

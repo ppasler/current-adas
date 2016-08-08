@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from statistic.signal_statistic_constants import TITLE, getNewFileName, getFileName
-from statistic.simple_chain import SimpleChain
+from eeg_processor import EEGProcessor
 from util.eeg_util import EEGUtil
 
 
@@ -23,7 +23,7 @@ FILE_TITLE = "(%s)"
 PNG_EXTENSION = "png"
 
 
-
+# TODO right extend syntax
 class AbstractSignalPlotter(object):
     
     def __init__(self, name, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
@@ -171,7 +171,7 @@ class AlphaSignalPlotter(RawSignalPlotter):
 class ProcessedSignalPlotter(RawSignalPlotter):
     def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processed")
-        self.chain = SimpleChain()
+        self.chain = EEGProcessor()
 
     def _getData(self, signal):
         raw = self.eegData.getColumn(signal)

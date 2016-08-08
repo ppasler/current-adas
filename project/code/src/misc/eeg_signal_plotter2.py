@@ -5,7 +5,7 @@ import threading
 
 import gevent
 
-from data_collector import DataCollector
+from data_collector import EEGDataCollector
 from emokit.emotiv import Emotiv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         gevent.spawn(emotiv.setup)
         gevent.sleep(0)
     
-        collector = DataCollector(emotiv, fields=[field])
+        collector = EEGDataCollector(emotiv, fields=[field])
         collector.setHandler(e.update)
         t = threading.Thread(target=collector.collectData)
         t.start()

@@ -9,7 +9,7 @@ from scipy.io import wavfile
 from scipy.signal.filter_design import freqz
 
 import numpy as np
-from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
+from util.eeg_data_converter import EEGTableToPacketConverter
 from util.eeg_table_util import EEGTableFileUtil, EEGTableUtil
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
@@ -778,7 +778,8 @@ class TestEEGTableData(unittest.TestCase):
 class TestEEGTableToPacketUtil(unittest.TestCase):
 
     def setUp(self):
-        self.util = EEGTableToPacketUtil()
+        self.util = EEGTableToPacketConverter()
+        self.util.convert()
 
     def test_dequeue(self):
         data = self.util.dequeue() 

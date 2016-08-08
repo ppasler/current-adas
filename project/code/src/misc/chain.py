@@ -7,8 +7,8 @@ import os
 import sys
 from time import strftime, localtime
 
-from default_chain import ProcessingChain
-from util.eeg_table_to_packet_converter import EEGTableToPacketUtil
+from data_processor import DataProcessor
+from util.eeg_data_converter import EEGTableToWindowUtil
 from util.eeg_table_util import EEGTableFileUtil
 
 
@@ -16,15 +16,15 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../data/"
 
-
+#FIXME fix me
 class Chain(object):
 
     def __init__(self): 
-        self.chain = ProcessingChain()
+        self.chain = DataProcessor()
         self.readData()
     
     def readData(self):
-        self.data = EEGTableToPacketUtil()._buildFullDataStructure()
+        self.data = EEGTableToWindowUtil().convert()
     
     def main(self, filePath):
         eeg, gyro = self.chain.process(self.data)
