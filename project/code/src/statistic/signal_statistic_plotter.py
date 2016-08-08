@@ -9,11 +9,11 @@ Created on 02.08.2016
 '''
 
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
-from numpy import arange
 from statistic.signal_statistic_constants import TITLE, getNewFileName, getFileName
-from util.eeg_util import EEGUtil
 from statistic.simple_chain import SimpleChain
+from util.eeg_util import EEGUtil
 
 
 SCREEN_SIZE = (24, 12)
@@ -146,13 +146,15 @@ class RawSignalPlotter(AbstractSignalPlotter):
     def _plotSignal(self, signal, axis, timeArray):
         raw = self._getData(signal)
 
-        axis.xaxis.set_label_position("top")
+        axis.yaxis.set_label_position("right")
+        axis.set_ylabel(signal)
+
         if self.logScale:
             axis.set_yscale("log")
         axis.plot(timeArray, raw)
 
     def _getTimeArray(self, n, samplingRate):
-        timeArray = arange(0, n, 1)
+        timeArray = np.arange(0, n, 1)
         timeArray = (timeArray / samplingRate) * 1000
         return timeArray
 
@@ -174,5 +176,5 @@ class ProcessedSignalPlotter(RawSignalPlotter):
     def _getData(self, signal):
         raw = self.eegData.getColumn(signal)
         qual = self.eegData.getQuality(signal)
-        self.chain.process(raw, qual)
+        raw = self.chain.process(raw, qual)
         return raw

@@ -8,10 +8,13 @@ Created on 10.05.2016
 :organization: Reutlingen University
 '''
 
-from numpy import mean, var, count_nonzero, std, nanmax, nanmin, isnan
+import warnings
+
+from numpy import count_nonzero, nanmax, nanmin, isnan, nanmean, \
+    nanstd, nanvar, NaN
 from scipy.signal import butter, lfilter
 
-#TODO handle NaN values
+
 class SignalUtil(object):
 
     def __init__(self):
@@ -19,6 +22,7 @@ class SignalUtil(object):
 
     def normalize(self, data):
         '''normalizes data between -1 and 1
+        Ignores NaN values
 
         :param numpy.array data: list of values
         
@@ -34,37 +38,47 @@ class SignalUtil(object):
 
     def maximum(self, data):
         '''calculates the signal max 
+        Ignores NaN values
 
         :param numpy.array data: list of values
         
         :return: signal maximum
         :rtype: float
         '''
-        return max(data)
+        with warnings.catch_warnings(): #avoid warning because of NaN values
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            return nanmax(data)
 
     def minimum(self, data):
         '''calculates the signal min
+        Ignores NaN values
 
         :param numpy.array data: list of values
         
         :return: signal minimum
         :rtype: float
         '''
-        return min(data)
+        with warnings.catch_warnings(): #avoid warning because of NaN values
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            return nanmin(data)
 
     def mean(self, data):
         '''calculates the signal mean
+        Ignores NaN values
 
         :param numpy.array data: list of values
         
         :return: signal mean
         :rtype: float
         '''
-        return mean(data)
+        with warnings.catch_warnings(): #avoid warning because of NaN values
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            return nanmean(data)
 
     def energy(self, data):
         '''calculates signal energy 
-        
+        Ignores NaN values
+
         :math:`E = \sum(data^2)`
         
         * `Energy_(signal_processing) <https://en.wikipedia.org/wiki/Energy_(signal_processing)>`_
@@ -74,27 +88,38 @@ class SignalUtil(object):
         :return: signal energy
         :rtype: float
         '''
-        return sum(data ** 2)
+        if isnan(data).all():
+            return NaN
+        return sum(self._removeNaN(data) ** 2)
+
+    def _removeNaN(self, data):
+        return data[~isnan(data)]
 
     def std(self, data):
         '''calculates the signal' standard deviation
+        Ignores NaN values
 
         :param numpy.array data: list of values
         
         :return: standard deviation
         :rtype: float
         '''
-        return std(data)
+        with warnings.catch_warnings(): #avoid warning because of NaN values
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            return nanstd(data)
 
     def var(self, data):
         '''calculates the signals' variance
+        Ignores NaN values
 
         :param numpy.array data: list of values
         
         :return: signal variance
         :rtype: float
         '''
-        return var(data)
+        with warnings.catch_warnings(): #avoid warning because of NaN values
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            return nanvar(data)
 
     def butterBandpass(self, lowcut, highcut, samplingRate, order=5):
         '''

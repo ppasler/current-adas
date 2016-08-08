@@ -12,11 +12,9 @@ import multiprocessing
 import sys
 
 from config.config import ConfigProvider
-from signal_statistic_plotter import DistributionSignalPlotter
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
-from statistic.signal_statistic_plotter import RawSignalPlotter, \
-    AlphaSignalPlotter, ProcessedSignalPlotter
+from statistic.signal_statistic_plotter import RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
 from util.eeg_table_util import EEGTableFileUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
@@ -149,9 +147,10 @@ class SignalStatisticUtil(object):
 
 class SignalStatisticCollector(object):
     
-    def __init__(self, experimentDir, experiments=None, save=False, plot=False, logScale=False):
+    def __init__(self, experimentDir, experiments=None, signals=None, save=False, plot=False, logScale=False):
         self.experimentDir = experimentDir
         self.experiments = experiments
+        self.signals = signals
         self.save = save
         self.plot = plot
         self.logScale = logScale
@@ -169,7 +168,7 @@ class SignalStatisticCollector(object):
         for person, fileNames in self.experiments.iteritems():
             for fileName in fileNames:
                 filePath =  "%s%s/%s" % (self.experimentDir, person, fileName)
-                s = SignalStatisticUtil(person, filePath, save=self.save, plot=self.plot, logScale=self.logScale)
+                s = SignalStatisticUtil(person, filePath, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale)
                 self.dataLen += s.eegData.len
                 s.main()
                 self.stats.append(s.stats)
@@ -241,7 +240,7 @@ if __name__ == "__main__":
     scriptPath = os.path.dirname(os.path.abspath(__file__))
     experimentDir = scriptPath + "/../../../captured_data/"
     experiments = {
-        "janis": ["parts/2016-07-12-11-15_EEG_1.csv"]
+        "janis": ["2016-07-12-11-15_EEG.csv"]
     }
     #experiments = None
     s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=False)

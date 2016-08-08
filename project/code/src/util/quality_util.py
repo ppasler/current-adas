@@ -13,10 +13,6 @@ from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstat
 from scipy.ndimage.morphology import binary_closing
 from config.config import ConfigProvider
 
-
-MAX_ZERO_SEQUENCE_LENGTH = 3
-MAX_SEQUENCE_LENGTH = 3
-
 DEFAULT_REPLACE_VALUE = NaN
 
 class QualityUtil(object):
@@ -27,6 +23,11 @@ class QualityUtil(object):
         self.upperBound = self.config.get("upperBound")
         self.lowerBound = self.config.get("lowerBound")
         self.minQuality = self.config.get("minQual")
+        self.maxSeqLength = self.config.get("maxSeqLength")
+        self.maxNaNValues = self.config.get("maxNaNValues")
+
+    def _copyArray(self, data):
+        return copy(data[:])
 
     def replaceOutliners(self, data, value=None, lowerBound=None, upperBound=None):
         """outliner values beyond 'lowerBound' and above 'upperBound' will be set to 'value'
@@ -48,13 +49,14 @@ class QualityUtil(object):
         #TODO could be nicer / faster?
         # http://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
         with errstate(invalid='ignore'): #avoid warning because of DEFAULT_REPLACE_VALUE value
+            ret = self._copyArray(data)
             if value == None:
-                data[data > upperBound] = upperBound
-                data[data < lowerBound] = lowerBound
+                ret[ret > upperBound] = upperBound
+                ret[ret < lowerBound] = lowerBound
             else:
-                data[data > upperBound] = value
-                data[data < lowerBound] = value
-        return data
+                ret[ret > upperBound] = value
+                ret[ret < lowerBound] = value
+        return ret
 
     def countOutliners(self, data, lowerBound=None, upperBound=None):
         """counts the outliner values beyond 'lowerBound' and above 'upperBound'
@@ -95,10 +97,11 @@ class QualityUtil(object):
         if threshold == None:
             threshold = self.minQuality
         #TODO make me nice
+        ret = self._copyArray(data)
         for i, qual in enumerate(quality):
             if qual < threshold:
-                data[i] = value
-        return data
+                ret[i] = value
+        return ret
 
     def countBadQuality(self, data, quality, threshold=None):
         """counts values from data with value where quality < threshold
@@ -142,6 +145,16 @@ class QualityUtil(object):
         '''
         return count_nonzero(isnan(data))
 
+    def isInvalidData(self, data):
+        '''considers a data set invalid,if there are more NaNs than maxNaNValues in the set
+
+        :param numpy.array data: list of values
+        
+        :return: invalid
+        :rtype: boolean
+        '''
+        return (count_nonzero(isnan(data)) > self.maxNaNValues)
+
     def replaceZeroSequences(self, data):
         '''replaces zero sequences, which is an unwanted artefact, with DEFAULT_REPLACE_VALUE 
         see http://stackoverflow.com/questions/38584956/replace-a-zero-sequence-with-other-value
@@ -152,12 +165,12 @@ class QualityUtil(object):
         :rtype: numpy.array
         '''
         a_extm = hstack((True,data!=0,True))
-        mask = a_extm == binary_closing(a_extm,structure=ones(MAX_ZERO_SEQUENCE_LENGTH))
+        mask = a_extm == binary_closing(a_extm,structure=ones(self.maxSeqLength))
         return where(~a_extm[1:-1] & mask[1:-1],DEFAULT_REPLACE_VALUE, data)
 
     def countSequences(self, data):
         seqList = self._getSequenceList(data)
-        return len([s for s in seqList if len(s) >= MAX_SEQUENCE_LENGTH])
+        return len([s for s in seqList if len(s) >= self.maxSeqLength])
 
     def replaceSequences(self, data):
         '''replaces any sequences of more than MAX_SEQUENCE_LENGTH same numbers in a row with DEFAULT_REPLACE_VALUE 
@@ -168,7 +181,8 @@ class QualityUtil(object):
         :return: sequences replaced data
         :rtype: numpy.array
         '''
-        seqList = self._getSequenceList(data)
+        ret = self._copyArray(data)
+        seqList = self._getSequenceList(ret)
         return array( [ item for l in seqList for item in l ] )
 
     def _getSequenceList(self, data):
@@ -177,7 +191,7 @@ class QualityUtil(object):
     def _getSequence(self, value, it):
         itLen = sum(1 for _ in it) # length of iterator
     
-        if itLen>=MAX_SEQUENCE_LENGTH:
+        if itLen>=self.maxSeqLength:
             return [ DEFAULT_REPLACE_VALUE ]*itLen
         else:
             return [ value ]*itLen

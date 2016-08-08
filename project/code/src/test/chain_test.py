@@ -6,7 +6,7 @@ Created on 10.05.2016
 import sys, os
 import unittest
 
-from numpy import NaN, nanmax, nanmin, isnan, count_nonzero
+from numpy import NaN, isnan, count_nonzero, copy
 from numpy.testing.utils import assert_allclose
 
 from config.config import ConfigProvider
@@ -23,6 +23,7 @@ def sameEntries(list1, list2):
 
     return all([x in list1 for x in list2])
 
+#TODO make this flexible to config values change
 class TestSimpleChain(unittest.TestCase):
 
     def setUp(self):
@@ -45,19 +46,26 @@ class TestSimpleChain(unittest.TestCase):
         assert_allclose(proc, [-1.0, NaN, NaN, 0.5, 1])
 
     def test_process_replaceSequences(self):
-        data = [1.0, 1.0, 1.0, 2.0, 4.0]
-        qual = [15, 15, 15, 15, 15]
+        data = [1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 4.0]
+        qual = [15, 15,15, 15, 15, 15, 15]
         proc = self.chain.process(data, qual)
-        assert_allclose(proc, [NaN, NaN, NaN, 0.5, 1.0])
+        assert_allclose(proc, [NaN, NaN, NaN, NaN, NaN, 0.5, 1.0])
 
     def test_process_replaceOutliners(self):
-        data = [self.lowerBound-1, self.lowerBound, self.lowerBound+1, self.upperBound-1, self.upperBound, self.upperBound+1]
-        qual = [15, 15, 15, 15, 15, 15]
+        data = [-5000, self.lowerBound-1, self.lowerBound, self.lowerBound+1, self.upperBound-1, self.upperBound, self.upperBound+1, 5000]
+        qual = [15, 15, 15, 15, 15, 15, 15, 15]
         
         proc = self.chain.process(data, qual)
-        self.assertTrue(nanmax(proc) <= 1)
-        self.assertTrue(nanmin(proc) >= -1)
-        self.assertEquals(count_nonzero(isnan(proc)), 2)
+        self.assertEquals(count_nonzero(isnan(proc)), 4)
+
+    def test_process_allTogether(self):
+        data = [3.0, 1.0, 1.0, 1.0, 1.0, 1.0, self.lowerBound-1, self.upperBound+1, -8, -4.0, 2.0, 4.0]
+        cp = copy(data[:])
+        qual = [self.minQuality-1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
+        proc = self.chain.process(data, qual)
+        #make sure we work on copies only
+        assert_allclose(cp, data)
+        assert_allclose(proc, [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, -1.0, -0.5, 0.25, 0.5])
 
 if __name__ == "__main__":
     unittest.main()
