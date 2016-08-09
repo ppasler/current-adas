@@ -12,7 +12,8 @@ from Queue import Empty
 from numpy import array
 
 from config.config import ConfigProvider
-from eeg_processor import SignalProcessor, EEGProcessor
+from eeg_processor import SignalProcessor, EEGProcessor, FFTProcessor,\
+    SignalPreProcessor
 
 
 class DataProcessor(object):
@@ -24,8 +25,10 @@ class DataProcessor(object):
         self.samplingRate = config.getEmotivConfig()["samplingRate"]
         
         self.processingConfig = config.getProcessingConfig()
+        self.preProcessor = SignalPreProcessor()
         self.signalProcessor = SignalProcessor()
         self.eegProcessor = EEGProcessor()
+        self.fftProcessor = FFTProcessor()
 
         self.inputQueue = inputQueue
         self.outputQueue = outputQueue
@@ -45,8 +48,8 @@ class DataProcessor(object):
                     self.outputQueue.put(procData)
             except Empty:
                 pass
-        print self.totalInvalid
-        print self.totalCount
+        print "invalid: ", self.totalInvalid
+        print "total", self.totalCount
 
     def process(self, data):
         #TODO make me fast and nice
@@ -75,14 +78,18 @@ class DataProcessor(object):
         invalidCount = 0
         for _, signal in eegData.iteritems():
             raw = array(signal["value"])
+            proc = self.preProcessor.process(raw)
+            signal["value"] = proc
             quality = array(signal["quality"])
 
-            proc, invalid = self.signalProcessor.process(raw, quality)
+            proc, sInvalid = self.signalProcessor.process(proc, quality)
             signal["proc"] = proc
-            signal["alpha"] = self.eegProcessor.process(proc)
-
-            if invalid:
-                invalidCount += 1
+            alpha, aInvalid = self.eegProcessor.process(proc)
+            signal["alpha"] = alpha
+            fft, fInvalid = self.fftProcessor.process(proc)
+            signal["fft"] = fft
+            if sInvalid or aInvalid or fInvalid:
+                invalidCount += sum([sInvalid, aInvalid, fInvalid])
         if invalidCount > 0:
             self.totalInvalid += 1
         self.totalCount += 1

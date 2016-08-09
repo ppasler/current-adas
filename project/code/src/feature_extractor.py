@@ -14,7 +14,8 @@ from time import sleep
 
 from data_processor import DataProcessor
 from util.signal_util import SignalUtil
-
+from numpy import array
+from util.eeg_util import EEGUtil
 
 class FeatureExtractor(object):
     '''
@@ -28,6 +29,7 @@ class FeatureExtractor(object):
         self.extractQueue = Queue()
         
         self.sigUtil = SignalUtil()
+        self.eegUtil = EEGUtil()
         
         self.collector = dataCollector
         self.collectorThread = threading.Thread(target=self.collector.collectData)
@@ -54,11 +56,9 @@ class FeatureExtractor(object):
     def extractFeatures(self, data):
         features = []
         for _, sigData in data.iteritems():
-            raw = self.sigUtil.energy(sigData["proc"])
-            features.append(raw)
-            alpha = self.sigUtil.energy(sigData["alpha"])
-            features.append(alpha)
-        self.extractQueue.put(features)
+            theta = self.eegUtil.getThetaChannel(sigData["fft"])
+            features.extend(theta)
+        self.extractQueue.put(array(features))
     
     def handleDataSet(self, data):
         '''Add the given data to the processingQueue'''

@@ -8,12 +8,13 @@ Created on 02.08.2016
 :organization: Reutlingen University
 '''
 
+from eeg_processor import SignalProcessor, SignalPreProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from statistic.signal_statistic_constants import TITLE, getNewFileName, getFileName
-from eeg_processor import SignalProcessor
 from util.eeg_util import EEGUtil
+from util.signal_util import SignalUtil
 
 
 SCREEN_SIZE = (24, 12)
@@ -71,6 +72,7 @@ class DistributionSignalPlotter(AbstractSignalPlotter):
 
     def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         AbstractSignalPlotter.__init__(self, "distribution", person, eegData, signals, filePath, save, plot, logScale)
+        self.preProcessor = SignalPreProcessor()
 
     def doPlot(self):
         if self._shouldNotPlot():
@@ -96,6 +98,7 @@ class DistributionSignalPlotter(AbstractSignalPlotter):
 
     def _plotSignal(self, signal, axes, x):
         raw = self.eegData.getColumn(signal)
+        proc = self.preProcessor.process(raw)
         quality = self.eegData.getQuality(signal)
 
         rawAx = axes[0, x]
@@ -103,7 +106,7 @@ class DistributionSignalPlotter(AbstractSignalPlotter):
         if self.logScale:
             rawAx.set_yscale("log")
         # rug=True causes serious performance issues
-        sns.distplot(raw, color="b", axlabel=signal, ax=rawAx, bins=30, kde=False)
+        sns.distplot(proc, color="b", axlabel=signal, ax=rawAx, bins=30, kde=False)
 
         qualAx = axes[1, x]
         sns.distplot(quality, color="g", ax=qualAx, bins=15, kde=False)
@@ -178,3 +181,14 @@ class ProcessedSignalPlotter(RawSignalPlotter):
         qual = self.eegData.getQuality(signal)
         raw, _ = self.chain.process(raw, qual)
         return raw
+
+class BandpassFilteredSignalPlotter(RawSignalPlotter):
+    def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
+        RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processedAlpha")
+        self.chain = SignalProcessor()
+        self.sigUtil = SignalUtil()
+
+    def _getData(self, signal):
+        raw = self.eegData.getColumn(signal)
+        qual = self.eegData.getQuality(signal)
+        return self.sigUtil.butterBandpassFilter(raw, 0.5, 50, 128)

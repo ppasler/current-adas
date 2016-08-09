@@ -227,7 +227,7 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(np.nanmax(normList) <= 1)
         self.assertTrue(np.nanmin(normList) >= -1)
 
-    def test_energie(self):
+    def test_energy(self):
         testList = np.array([1, 2, 3, 4])
         energy = self.util.energy(testList)
         self.assertEqual(energy, 30)

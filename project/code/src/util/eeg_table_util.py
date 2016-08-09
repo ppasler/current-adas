@@ -259,8 +259,8 @@ class EEGTableFileUtil(object):
         return EEGTableUtil(header, data, filePath)
 
     def writeFile(self, filePath, data, header, delimiter=DEFAULT_DELIMITER):
-        savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%1.3f", comments='')
-        
+        savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%0.3f", comments="")
+
     def writeStructredFile(self, filePath, data):
         header = []
         structData = []

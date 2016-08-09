@@ -12,10 +12,26 @@ from util.signal_util import SignalUtil
 from numpy import NaN
 from config.config import ConfigProvider
 from util.eeg_util import EEGUtil
+from util.fft_util import FFTUtil
+
+class SignalPreProcessor(object):
+    def __init__(self):
+        config = ConfigProvider().getProcessingConfig()
+        self.lowerFreq = config.get("lowerFreq")
+        self.upperFreq = config.get("upperFreq")
+        self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
+        self.sigUtil = SignalUtil()
+
+    def process(self, raw):
+        return self.sigUtil.butterBandpassFilter(raw, self.lowerFreq, self.upperFreq, self.samplingRate)
 
 class SignalProcessor(object):
     def __init__(self, verbose=False):
-        self.maxNaNValues = ConfigProvider().getProcessingConfig().get("maxNaNValues")
+        config = ConfigProvider().getProcessingConfig()
+        self.maxNaNValues = config.get("maxNaNValues")
+        self.lowerFreq = config.get("lowerFreq")
+        self.upperFreq = config.get("upperFreq")
+        self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
         self.qualUtil = QualityUtil()
         self.sigUtil = SignalUtil()
         self.verbose = verbose
@@ -70,4 +86,18 @@ class EEGProcessor(object):
         self.verbose = verbose
 
     def process(self, proc):
-        return self.eegUtil.getAlphaWaves(proc, self.samplingRate)
+        alpha = self.eegUtil.getAlphaWaves(proc, self.samplingRate)
+        invalid = self.qualUtil.isInvalidData(alpha)
+        return alpha, invalid
+
+class FFTProcessor(object):
+    def __init__(self, verbose=False):
+        self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
+        self.qualUtil = QualityUtil()
+        self.fftUtil = FFTUtil()
+        self.verbose = verbose
+
+    def process(self, proc):
+        fft = self.fftUtil.fft(proc)
+        invalid = self.qualUtil.isInvalidData(fft)
+        return fft, invalid

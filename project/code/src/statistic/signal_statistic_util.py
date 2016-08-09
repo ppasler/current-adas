@@ -12,17 +12,19 @@ import multiprocessing
 import sys
 
 from config.config import ConfigProvider
+from eeg_processor import EEGProcessor, SignalPreProcessor
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
-from statistic.signal_statistic_plotter import RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
+from statistic.signal_statistic_plotter import RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter, BandpassFilteredSignalPlotter
 from util.eeg_table_util import EEGTableFileUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-
+PLOTTER = [ProcessedSignalPlotter, DistributionSignalPlotter]
 
 class SignalStatisticUtil(object):
     '''
@@ -41,6 +43,7 @@ class SignalStatisticUtil(object):
         self.save = save
         self._initPlotter(person, plot, logScale)
         self.ssPrint = SignalStatisticPrinter(person)
+        self.preProcessor = SignalPreProcessor()
 
     def _initStatsDict(self):
         self.stats = OrderedDict()
@@ -69,7 +72,7 @@ class SignalStatisticUtil(object):
 
     def _initPlotter(self, person, plot, logScale):
         self.plotter = []
-        for clazz in [ProcessedSignalPlotter]:
+        for clazz in PLOTTER:
             plotter = clazz(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
             thread = multiprocessing.Process(target=plotter.doPlot)
             self.plotter.append(thread)
@@ -116,7 +119,8 @@ class SignalStatisticUtil(object):
 
     def collectRawStats(self, signal):
         data = self.eegData.getColumn(signal)
-        self._collectSignalStat(signal, RAW_KEY, data)
+        proc = self.preProcessor.process(data)
+        self._collectSignalStat(signal, RAW_KEY, proc)
 
     def collectQualityStats(self, signal):
         data = self.eegData.getQuality(signal)
@@ -236,13 +240,20 @@ class SignalStatisticCollector(object):
         filePath = experimentDir + "merge.txt"
         self.ssPrint.saveStats(filePath, content) 
 
-if __name__ == "__main__":
-    scriptPath = os.path.dirname(os.path.abspath(__file__))
+def rawDataStatisticSingle():
     experimentDir = scriptPath + "/../../../captured_data/"
     experiments = {
         "janis": ["2016-07-12-11-15_EEG.csv"]
     }
+    return experimentDir, experiments
+
+def rawDataStatisticAll():
+    experimentDir = scriptPath + "/../../../captured_data/"
     experiments = None
-    s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=False)
+    return experimentDir, experiments
+
+if __name__ == "__main__":
+    experimentDir, experiments = rawDataStatisticAll()
+    s = SignalStatisticCollector(experimentDir, experiments, plot=False, save=True)
     s.main()
 

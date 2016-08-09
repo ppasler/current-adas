@@ -18,7 +18,9 @@ from config.config import ConfigProvider
 from data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
+from util.eeg_table_util import EEGTableFileUtil
 
+scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 class PoSDBoS(object):
     
@@ -33,6 +35,7 @@ class PoSDBoS(object):
         self._initNeuralNetwork(networkFile)
         self._initFeatureExtractor(demoFile)
         self.dm = DrowsinessMonitor()
+        self.fileUtil = EEGTableFileUtil()
 
     def _initNeuralNetwork(self, networkFile):
         nn_conf = self.config.getNeuralNetworkConfig()
@@ -48,11 +51,10 @@ class PoSDBoS(object):
         self.inputQueue = self.fe.extractQueue
 
     def _initDataCollector(self, demoFile):
+        collectorConfig = self.config.getCollectorConfig()
         if self.demo:
-            fields = self.config.getProcessingConfig().get("fields")
-            return DummyDataCollector(demoFile, fields=fields)
+            return DummyDataCollector(demoFile, **collectorConfig)
         else:
-            collectorConfig = self.config.getCollectorConfig()
             return EEGDataCollector(None, **collectorConfig)
 
     def close(self):
@@ -77,26 +79,34 @@ class PoSDBoS(object):
                 self.dm.setStatus(clazz, info)
                 #sleep(1)
             except Empty:
-                if self.demo:
-                    self.close()
+                pass
+                #if self.demo:
+                #    self.close()
             except KeyboardInterrupt:
                 self.close()
             except Exception as e:
                 print e.message
                 self.close()
-        #save here
-        # features
+        self.writeFeature(features)
         self.fe.close()
         self.dm.close()
         dmt.join()
 
+    def writeFeature(self, data):
+        filePath = scriptPath + "/../data/" + "test.csv"
+        header = []
+        for field in ["F3", "F4", "F7", "F8"]:
+            for i in range(1, 5):
+                header.append("%s_%s" % (field ,str(i)))
+        self.fileUtil.writeFile(filePath, data, header)
+
 if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()
-    scriptPath = os.path.dirname(os.path.abspath(__file__))
     experimentDir = scriptPath + "/../../captured_data/"
     person = "janis"
-    #filePath = "%s%s/%s" % (experimentDir, person, experiments[person][0])
-    filePath = "%s%s/%s" % (experimentDir, person+"/parts", "2016-07-12-11-15_EEG_8.csv")
+    filePath = "%s%s/%s" % (experimentDir, person, experiments[person][0])
+    print filePath
+    #filePath = "%s%s/%s" % (experimentDir, person+"/parts", "2016-07-12-11-15_EEG_8.csv")
 
     p = PoSDBoS("XOR_network", True, filePath)
     print "START"
