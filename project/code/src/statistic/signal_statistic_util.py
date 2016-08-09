@@ -69,7 +69,7 @@ class SignalStatisticUtil(object):
 
     def _initPlotter(self, person, plot, logScale):
         self.plotter = []
-        for clazz in [DistributionSignalPlotter, RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter]:
+        for clazz in [ProcessedSignalPlotter]:
             plotter = clazz(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
             thread = multiprocessing.Process(target=plotter.doPlot)
             self.plotter.append(thread)
@@ -242,7 +242,7 @@ if __name__ == "__main__":
     experiments = {
         "janis": ["2016-07-12-11-15_EEG.csv"]
     }
-    #experiments = None
+    experiments = None
     s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=False)
     s.main()
 

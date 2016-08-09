@@ -18,8 +18,8 @@ THETA_RANGE = (4, 8)
 ALPHA_RANGE = (8, 13)
 BETA_RANGE  = (13, 30)
 
-config = ConfigProvider().getConfig("eeg")
-gammaMax = min(config.get("samplingRate") / 2, 99)
+samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
+gammaMax = min(samplingRate / 2, 99)
 GAMMA_RANGE = (30, gammaMax)
 
 

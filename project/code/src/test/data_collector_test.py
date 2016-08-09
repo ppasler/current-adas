@@ -62,7 +62,7 @@ class DataCollectorTest(unittest.TestCase):
         self.assertEquals(win1.window, initWindow)
         self.assertEquals(win1.index, 0) 
         self.assertEquals(win2.index, WINDOW_SIZE / 2)
-        self.assertEquals(win2.window["X"], {'quality': [0, 0], 'value': [22.0, 22.0]})
+        self.assertEquals(win2.window["X"], {'quality': [0, 0], 'value': [24.0, 24.0]})
 
         self._fillValues(WINDOW_SIZE / 2)
         self.assertEquals(win1.index, 2) 

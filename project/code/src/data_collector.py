@@ -129,22 +129,21 @@ class DummyDataCollector(DataCollector):
         self.fields = fields
         self.collect = True;
 
-
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
         print("%s: starting data collection" % self.__class__.__name__)
         while self.collect:
-            data = self._getData()
-            filteredData = self._filter(data)
-            self.notify(filteredData)
+            if self.datasource.hasMore:
+                data = self._getData()
+                filteredData = self._filter(data)
+                self.notify(filteredData)
+            else:
+                self.collect = False
         print("%s: closing data collection" % self.__class__.__name__)
         self.datasource.close()
 
     def _getData(self):
-        if self.datasource.hasMore:
-            self.datasource.dequeue()
-        else:
-            self.collect = False
+        return self.datasource.dequeue()
 
 
 if __name__ == "__main__": # pragma: no cover

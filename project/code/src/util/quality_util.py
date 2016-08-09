@@ -146,14 +146,14 @@ class QualityUtil(object):
         return count_nonzero(isnan(data))
 
     def isInvalidData(self, data):
-        '''considers a data set invalid,if there are more NaNs than maxNaNValues in the set
+        '''considers a data set invalid, if there are more NaNs than maxNaNValues in the set
 
         :param numpy.array data: list of values
         
         :return: invalid
         :rtype: boolean
         '''
-        return (count_nonzero(isnan(data)) > self.maxNaNValues)
+        return self.maxNaNValues < count_nonzero(isnan(data))
 
     def replaceZeroSequences(self, data):
         '''replaces zero sequences, which is an unwanted artefact, with DEFAULT_REPLACE_VALUE 

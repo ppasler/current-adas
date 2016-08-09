@@ -7,14 +7,12 @@ Created on 13.06.2016
 @author: Paul Pasler
 :organization: Reutlingen University
 '''
+from Queue import Empty
+
 from numpy import array
 
 from config.config import ConfigProvider
-from util.eeg_util import EEGUtil
-from util.quality_util import QualityUtil
-from util.signal_util import SignalUtil
-from Queue import Empty
-from eeg_processor import EEGProcessor
+from eeg_processor import SignalProcessor, EEGProcessor
 
 
 class DataProcessor(object):
@@ -23,17 +21,17 @@ class DataProcessor(object):
         config = ConfigProvider()
         self.eegFields = config.getEmotivConfig()["eegFields"]
         self.gyroFields = config.getEmotivConfig()["gyroFields"]
-        self.samplingRate = config.getConfig("eeg")["samplingRate"]
+        self.samplingRate = config.getEmotivConfig()["samplingRate"]
         
         self.processingConfig = config.getProcessingConfig()
-        self.qualityUtil = QualityUtil()
-        self.signalUtil = SignalUtil()
-        self.eegUtil = EEGUtil()
+        self.signalProcessor = SignalProcessor()
         self.eegProcessor = EEGProcessor()
-        
+
         self.inputQueue = inputQueue
         self.outputQueue = outputQueue
         self.runProcess = True
+        self.totalInvalid = 0
+        self.totalCount = 0
 
     def close(self):
         self.runProcess = False
@@ -42,15 +40,21 @@ class DataProcessor(object):
         while self.runProcess:
             try:
                 data = self.inputQueue.get(timeout=1)
-                procData = self.process(data)
-                self.outputQueue.put(procData)
+                procData, procInvalid = self.process(data)
+                if not procInvalid:
+                    self.outputQueue.put(procData)
             except Empty:
                 pass
+        print self.totalInvalid
+        print self.totalCount
 
     def process(self, data):
         #TODO make me fast and nice
         eegRaw, gyroRaw = self.splitData(data)
-        return self.processEEGData(eegRaw), gyroRaw
+        eegProc, eegInvalid = self.processEEGData(eegRaw)
+        gyroProc, gyroIvalid = self.processGyroData(gyroRaw)
+        eegProc.update(gyroProc)
+        return eegProc, (eegInvalid or gyroIvalid)
 
     def splitData(self, data):
         '''split eeg and gyro data
@@ -67,13 +71,22 @@ class DataProcessor(object):
         return eegData, gyroData
 
     def processEEGData(self, eegData):
-        ret = {}
-        for field, signal in eegData.iteritems():
+
+        invalidCount = 0
+        for _, signal in eegData.iteritems():
             raw = array(signal["value"])
             quality = array(signal["quality"])
 
-            ret[field] = self.eegProcessor.process(raw, quality) 
-        return ret
+            proc, invalid = self.signalProcessor.process(raw, quality)
+            signal["proc"] = proc
+            signal["alpha"] = self.eegProcessor.process(proc)
+
+            if invalid:
+                invalidCount += 1
+        if invalidCount > 0:
+            self.totalInvalid += 1
+        self.totalCount += 1
+        return eegData, (invalidCount > 0)
 
     def processGyroData(self, gyroData):
-        pass#print gyroData
+        return gyroData, False

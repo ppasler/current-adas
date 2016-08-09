@@ -67,9 +67,10 @@ class EEGTableConverter(object):
         pass
 
     def _getNextIndex(self):
-        if (self.index + 1) >= len(self.data) and not self.infinite:
+        self.index += 1
+        if self.index >= len(self.data) and not self.infinite:
             self.hasMore = False
-        self.index = (self.index + 1) % self.len
+        self.index %= self.len
 
     def close(self):
         pass
@@ -126,8 +127,8 @@ class EEGTableToPacketConverter(EEGTableConverter):
         :rtype: EEGTablePacket 
         '''
         row = self.data[self.index]
-        row.sensors["Timestamp"] = time.time()
         self._getNextIndex()
+        row.sensors["Timestamp"] = time.time()
         return row
 
     def close(self):

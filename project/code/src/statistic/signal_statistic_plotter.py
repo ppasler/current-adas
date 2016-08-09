@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from statistic.signal_statistic_constants import TITLE, getNewFileName, getFileName
-from eeg_processor import EEGProcessor
+from eeg_processor import SignalProcessor
 from util.eeg_util import EEGUtil
 
 
@@ -171,10 +171,10 @@ class AlphaSignalPlotter(RawSignalPlotter):
 class ProcessedSignalPlotter(RawSignalPlotter):
     def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processed")
-        self.chain = EEGProcessor()
+        self.chain = SignalProcessor()
 
     def _getData(self, signal):
         raw = self.eegData.getColumn(signal)
         qual = self.eegData.getQuality(signal)
-        raw = self.chain.process(raw, qual)
+        raw, _ = self.chain.process(raw, qual)
         return raw

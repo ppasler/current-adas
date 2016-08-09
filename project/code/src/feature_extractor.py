@@ -13,6 +13,7 @@ import threading
 from time import sleep
 
 from data_processor import DataProcessor
+from util.signal_util import SignalUtil
 
 
 class FeatureExtractor(object):
@@ -20,14 +21,13 @@ class FeatureExtractor(object):
     Controls the processing chain and fetches the values needed for the classificator
     '''
 
-    def __init__(self, dataCollector=None):
-        '''
-        Constructor
-        '''
+    def __init__(self, dataCollector):
 
         self.inputQueue = Queue()
         self.outputQueue = Queue()
         self.extractQueue = Queue()
+        
+        self.sigUtil = SignalUtil()
         
         self.collector = dataCollector
         self.collectorThread = threading.Thread(target=self.collector.collectData)
@@ -52,8 +52,13 @@ class FeatureExtractor(object):
                 pass
     
     def extractFeatures(self, data):
-        #TODO fill with live
-        self.extractQueue.put(data)
+        features = []
+        for _, sigData in data.iteritems():
+            raw = self.sigUtil.energy(sigData["proc"])
+            features.append(raw)
+            alpha = self.sigUtil.energy(sigData["alpha"])
+            features.append(alpha)
+        self.extractQueue.put(features)
     
     def handleDataSet(self, data):
         '''Add the given data to the processingQueue'''
