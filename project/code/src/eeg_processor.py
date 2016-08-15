@@ -83,10 +83,12 @@ class EEGProcessor(object):
         self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
         self.qualUtil = QualityUtil()
         self.eegUtil = EEGUtil()
+        self.fftUtil = FFTUtil()
         self.verbose = verbose
 
     def process(self, proc):
         alpha = self.eegUtil.getAlphaWaves(proc, self.samplingRate)
+        alpha = self.fftUtil.fft(alpha)
         invalid = self.qualUtil.isInvalidData(alpha)
         return alpha, invalid
 

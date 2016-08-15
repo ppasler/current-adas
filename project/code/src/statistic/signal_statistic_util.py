@@ -24,7 +24,7 @@ from util.signal_util import SignalUtil
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-PLOTTER = [ProcessedSignalPlotter, DistributionSignalPlotter]
+PLOTTER = [RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter]
 
 class SignalStatisticUtil(object):
     '''
@@ -69,6 +69,7 @@ class SignalStatisticUtil(object):
         self.statFields["zeros"][METHOD] = self.qu.countZeros
         self.statFields["seq"][METHOD] = self.qu.countSequences
         self.statFields["out"][METHOD] = self.qu.countOutliners
+        self.statFields["nrgy"][METHOD] = self.su.energy
 
     def _initPlotter(self, person, plot, logScale):
         self.plotter = []
@@ -243,7 +244,7 @@ class SignalStatisticCollector(object):
 def rawDataStatisticSingle():
     experimentDir = scriptPath + "/../../../captured_data/"
     experiments = {
-        "janis": ["2016-07-12-11-15_EEG.csv"]
+        "janis/parts": ["2016-07-12-11-15_EEG_1.csv", "2016-07-12-11-15_EEG_7.csv"]
     }
     return experimentDir, experiments
 
@@ -253,7 +254,7 @@ def rawDataStatisticAll():
     return experimentDir, experiments
 
 if __name__ == "__main__":
-    experimentDir, experiments = rawDataStatisticAll()
-    s = SignalStatisticCollector(experimentDir, experiments, plot=False, save=True)
+    experimentDir, experiments = rawDataStatisticSingle()
+    s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=True)
     s.main()
 

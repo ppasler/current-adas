@@ -40,8 +40,6 @@ TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -2
          4883, -32766,   4190,  31605, -12943, -28021,  20702,  22287,
        -26875, -14845,  30986,   6263, -32721,   2797,  31945, -11645])
 
-TEST_DATA_EMPTY = np.array([ np.NAN, np.NAN, np.NAN ])
-
 TEST_DATA_ZERO = np.array([ 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ])
 
 TEST_DATA_MIXED = np.array([ np.NAN, 1.0, 0.0, 1.0, 0.0, np.NAN ])
@@ -169,9 +167,9 @@ class TestQualityUtil(unittest.TestCase):
         self.assertNotEqual(countZeros, len(TEST_DATA_ZERO))
     
     def test_nans(self):
-        countNans = self.util.countNans(TEST_DATA_EMPTY)
-        self.assertEqual(countNans, 3)
-        self.assertEqual(countNans, len(TEST_DATA_EMPTY))
+        countNans = self.util.countNans(TEST_DATA_NAN)
+        self.assertEqual(countNans, 4)
+        self.assertEqual(countNans, len(TEST_DATA_NAN))
 
     def test_nans_mixed(self):
         countNans = self.util.countNans(TEST_DATA_MIXED)
@@ -257,33 +255,28 @@ class TestSignalUtil(unittest.TestCase):
         std = self.util.std(testList)
         self.assertEqual(std, sqrt(self.util.var(testList)))
 
-    def test_nans_onOtherFunctions(self):
-        norm = self.util.normalize(TEST_DATA_EMPTY)
-        self.assertTrue(np.isnan(norm).all())
-        maxi = self.util.maximum(TEST_DATA_EMPTY)
-        self.assertTrue(np.isnan(maxi))
-        mini = self.util.minimum(TEST_DATA_EMPTY)
-        self.assertTrue(np.isnan(mini))
-        mean = self.util.mean(TEST_DATA_EMPTY)
-        self.assertTrue(np.isnan(mean))
-        var = self.util.var(TEST_DATA_EMPTY)
-        self.assertTrue(np.isnan(var))
+    def test_zcr(self):
+        testList = np.array([1, -1, 1, -1, 1])
+        zcr = self.util.zcr(testList)
+        self.assertEqual(zcr, 4)
 
-    def test_mixed_onOtherFunctions(self):
-        norm = self.util.normalize(TEST_DATA_MIXED)
-        self.assertItemsEqual(np.isnan(norm), np.isnan(TEST_DATA_MIXED))
-        maxi = self.util.maximum(TEST_DATA_MIXED)
-        self.assertEquals(maxi, 1.0)
-        mini = self.util.minimum(TEST_DATA_MIXED)
-        self.assertEquals(mini, 0.0)
-        mean = self.util.mean(TEST_DATA_MIXED)
-        self.assertEquals(mean, 0.5)
-        var = self.util.var(TEST_DATA_MIXED)
-        self.assertEquals(var, 0.25)
-        std = self.util.std(TEST_DATA_MIXED)
-        self.assertEquals(std, 0.5)
-        energy = self.util.energy(TEST_DATA_MIXED)
-        self.assertEquals(energy, 2.0)
+    def test_zcr_zeros(self):
+        testList = np.array([0, 0, 0, 0, 0])
+        zcr = self.util.zcr(testList)
+        self.assertEqual(zcr, 0)
+
+        testList = np.array([1, 0, -1, 0, 1, 0, -1])
+        zcr = self.util.zcr(testList)
+        self.assertEqual(zcr, 3)
+
+    def test_zcr_zeroChanges(self):
+        testList = np.array([1, 1, 1, 1, 1])
+        zcr = self.util.zcr(testList)
+        self.assertEqual(zcr, 0)
+
+        testList = np.array([-1, -1, -1, -1, -1])
+        zcr = self.util.zcr(testList)
+        self.assertEqual(zcr, 0)
 
     def test_nan_onOtherFunctions(self):
         norm = self.util.normalize(TEST_DATA_NAN)
@@ -300,6 +293,26 @@ class TestSignalUtil(unittest.TestCase):
         self.assertTrue(np.isnan(std))
         energy = self.util.energy(TEST_DATA_NAN)
         self.assertTrue(np.isnan(energy))
+        zcr = self.util.zcr(TEST_DATA_NAN)
+        self.assertTrue(np.isnan(zcr))
+
+    def test_mixed_onOtherFunctions(self):
+        norm = self.util.normalize(TEST_DATA_MIXED)
+        self.assertItemsEqual(np.isnan(norm), np.isnan(TEST_DATA_MIXED))
+        maxi = self.util.maximum(TEST_DATA_MIXED)
+        self.assertEquals(maxi, 1.0)
+        mini = self.util.minimum(TEST_DATA_MIXED)
+        self.assertEquals(mini, 0.0)
+        mean = self.util.mean(TEST_DATA_MIXED)
+        self.assertEquals(mean, 0.5)
+        var = self.util.var(TEST_DATA_MIXED)
+        self.assertEquals(var, 0.25)
+        std = self.util.std(TEST_DATA_MIXED)
+        self.assertEquals(std, 0.5)
+        energy = self.util.energy(TEST_DATA_MIXED)
+        self.assertEquals(energy, 2.0)
+        zcr = self.util.zcr(TEST_DATA_MIXED)
+        self.assertEquals(zcr, 0)
 
 class TestFrequencyFilter(unittest.TestCase):
     

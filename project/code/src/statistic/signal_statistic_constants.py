@@ -38,7 +38,8 @@ def initFields():
         "var": _initField(MEAN_TYPE),
         "zeros": _initField(AGGREGATION_TYPE),
         "seq": _initField(AGGREGATION_TYPE),
-        "out": _initField(AGGREGATION_TYPE)
+        "out": _initField(AGGREGATION_TYPE),
+        "nrgy": _initField(MEAN_TYPE),
     })
 
 def _initField(typ, method=None):

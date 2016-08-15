@@ -94,10 +94,9 @@ class PoSDBoS(object):
 
     def writeFeature(self, data):
         filePath = scriptPath + "/../data/" + "test.csv"
-        header = []
-        for field in ["F3", "F4", "F7", "F8"]:
-            for i in range(1, 5):
-                header.append("%s_%s" % (field ,str(i)))
+        header = ["R","P", "A"]
+        #for field in ConfigProvider().getProcessingConfig().get("fields"):
+        #    header.append("R;P;A")
         self.fileUtil.writeFile(filePath, data, header)
 
 if __name__ == '__main__': # pragma: no cover

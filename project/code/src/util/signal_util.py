@@ -8,6 +8,7 @@ Created on 10.05.2016
 :organization: Reutlingen University
 '''
 
+from itertools import groupby
 import warnings
 
 from numpy import count_nonzero, nanmax, nanmin, isnan, nanmean, \
@@ -79,7 +80,7 @@ class SignalUtil(object):
         '''calculates signal energy 
         Ignores NaN values
 
-        :math:`E = \sum(data^2)`
+        :math:`zcr = \frac{1}{T-1} \sum_{t=1}^{T-1} \mathbb{1}_{ \mathbb{R}_{< 0} } (s_t s_{t-1}) `
         
         * `Energy_(signal_processing) <https://en.wikipedia.org/wiki/Energy_(signal_processing)>`_
         
@@ -88,9 +89,29 @@ class SignalUtil(object):
         :return: signal energy
         :rtype: float
         '''
-        if isnan(data).all():
+        if self._isAllNaN(data):
             return NaN
         return sum(self._removeNaN(data) ** 2)
+
+    def zcr(self, data):
+        '''calculates signal zero crossing rate
+        Ignores NaN values
+
+        :math:`E = \sum(data^2)`
+        
+        * `Zero-crossing rate <https://en.wikipedia.org/wiki/Zero-crossing_rate>`_
+        
+        :param numpy.array data: list of values
+        
+        :return: signal zero crossing rate
+        :rtype: float
+        '''
+        if self._isAllNaN(data):
+            return NaN
+        return len(list(groupby(self._removeNaN(data), lambda x: x >= 0)))-1
+
+    def _isAllNaN(self, data):
+        return isnan(data).all()
 
     def _removeNaN(self, data):
         return data[~isnan(data)]
