@@ -6,11 +6,16 @@ Created on 10.05.2016
 import sys, os
 import unittest
 
+from numpy import array
 from pybrain.datasets.supervised import SupervisedDataSet
+
+from classification.network_util import NetworkDataUtil, NetworkUtil
+from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
+from numpy.testing.utils import assert_array_equal
+
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from classification.neural_network import NeuralNetwork
 
 
 
@@ -25,10 +30,9 @@ def sameEntries(list1, list2):
 
 class TestNeuralNetwork(unittest.TestCase):
 
-
     def setUp(self):
         self.nn = NeuralNetwork()
-        self.config = ConfigProvider().getNeuralNetworkConfig()
+        self.config = ConfigProvider().getNNTrainConfig()
         self.nn.createNew(2, 4, 1, bias=True)
 
     def _createData(self, nInput, nTarget, values):
@@ -59,7 +63,7 @@ class TestNeuralNetwork(unittest.TestCase):
     def test_xor(self):
         ds = self.createXORData()
 
-        self.nn.train(ds, self.config["maxEpochs"], self.config["learningrate"], self.config["momentum"])
+        self.nn.train(ds, **self.config)
 
         #TODO may fail with delta 0.2
         for inpt, target in ds:
@@ -67,7 +71,7 @@ class TestNeuralNetwork(unittest.TestCase):
 
     def test_and(self):
         ds = self.createANDData()
-        self.nn.train(ds, self.config["maxEpochs"], self.config["learningrate"], self.config["momentum"])
+        self.nn.train(ds, **self.config)
 
         #TODO may fail with delta 0.2
         for inpt, target in ds:
@@ -97,6 +101,35 @@ class TestNeuralNetwork(unittest.TestCase):
     def test_testBeforeTrain(self):
         with self.assertRaises(ValueError):
             self.nn.test(None, False)
+
+class TestNetworkUtil(unittest.TestCase):
+
+    def setUp(self):
+        self.nu = NetworkUtil(2, 4)
+
+    def _buildXORData(self):
+        ndu = NetworkDataUtil()
+        return ndu.createXORData()
+
+    def test_XOR(self):
+        ds = self._buildXORData()
+        self.nu.train(ds)
+    
+        results = self.nu.activate(ds)
+    
+        assert_array_equal(results, [[2, 0], [0, 2]])
+
+class TestNetworkDataUtil(unittest.TestCase):
+
+    def setUp(self):
+        self.n = NetworkDataUtil()
+
+    def test_buildTestSet(self):
+        classOne = array([[1., 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])
+        classTwo = array([[4., 5, 6], [4, 6, 5], [5, 4, 6], [5, 6, 4], [6, 4, 5], [6, 5, 4]])
+        
+        n = NetworkDataUtil()
+        print n.buildTestSet(classOne, classTwo)
 
 if __name__ == "__main__":
     unittest.main()

@@ -78,18 +78,14 @@ class DataProcessor(object):
         invalidCount = 0
         for _, signal in eegData.iteritems():
             raw = array(signal["value"])
-            proc = self.preProcessor.process(raw)
-            signal["value"] = proc
             quality = array(signal["quality"])
 
-            proc, sInvalid = self.signalProcessor.process(proc, quality)
-            signal["proc"] = proc
-            alpha, aInvalid = self.eegProcessor.process(proc)
-            signal["alpha"] = alpha
-            fft, fInvalid = self.fftProcessor.process(proc)
-            signal["fft"] = fft
-            if sInvalid or aInvalid or fInvalid:
-                invalidCount += sum([sInvalid, aInvalid, fInvalid])
+            proc = self.preProcessor.process(raw)
+            #proc, _ = self.signalProcessor.process(raw, quality)
+
+            chan, fInvalid = self.fftProcessor.process(proc)
+            signal["theta"] = chan["theta"]
+            invalidCount += sum([fInvalid])
         if invalidCount > 0:
             self.totalInvalid += 1
         self.totalCount += 1

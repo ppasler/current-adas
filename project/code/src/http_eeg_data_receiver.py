@@ -10,7 +10,7 @@ Created on 09.05.2016
 import httplib
 import json
 import time
-from util.eeg_data_converter import EEGTablePacket
+from util.eeg_data_source import EEGTablePacket
 
 
 class HttpEEGDataReceiver(object):

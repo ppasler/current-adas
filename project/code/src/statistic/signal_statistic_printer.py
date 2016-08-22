@@ -7,7 +7,7 @@ Created on 02.08.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY, QUALITY_KEY
+from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY
 
 
 DIVIDER = "******************************\n\n"
@@ -30,13 +30,12 @@ class SignalStatisticPrinter(object):
         return s
 
     def _getSignalStatString(self, stats):
-        header = [SIGNALS_KEY] + STAT_FIELDS.keys() + [s + "_Q" for s in STAT_FIELDS]
+        header = [SIGNALS_KEY] + STAT_FIELDS.keys() #+ [s + "_Q" for s in STAT_FIELDS]
         s = "\t".join(header) + "\n"
         for signal, values in stats[SIGNALS_KEY].iteritems():
             l = [signal]
             l.extend(self._printSignalStat(RAW_KEY, signal, values))
-            l.extend(self._printSignalStat(QUALITY_KEY, signal, values))
-            s += "\t".join([x for x in l]) + "\n"
+            s += "\t".join([str(x) for x in l]) + "\n"
         return s
 
     def _printSignalStat(self, category, signal, values):

@@ -15,7 +15,7 @@ import gevent
 from emokit.emotiv import Emotiv
 from window.rectangular_signal_window import RectangularSignalWindow
 from http_eeg_data_receiver import HttpEEGDataReceiver
-from util.eeg_data_converter import EEGTableToWindowConverter
+from util.eeg_data_source import EEGTableWindowSource
 
 class DataCollector(object):
     '''
@@ -123,7 +123,7 @@ class EEGDataCollector(DataCollector):
 class DummyDataCollector(DataCollector):
 
     def __init__(self, filePath=None, fields=[], windowSize=128, windowCount=2):
-        datasource = EEGTableToWindowConverter(filePath, False, windowSize, windowCount)
+        datasource = EEGTableWindowSource(filePath, False, windowSize, windowCount)
         datasource.convert()
         DataCollector.__init__(self, datasource, fields, windowSize, windowCount)
         self.fields = fields

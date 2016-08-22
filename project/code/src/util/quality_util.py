@@ -9,7 +9,8 @@ Created on 13.06.2016
 '''
 from itertools import groupby
 
-from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstate, copy
+from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstate, copy,\
+    nan_to_num
 from scipy.ndimage.morphology import binary_closing
 from config.config import ConfigProvider
 
@@ -134,6 +135,16 @@ class QualityUtil(object):
         :rtype: int
         '''
         return len(data) - count_nonzero(data)
+
+    def replaceNans(self, data):
+        '''replaces NaNs in data with zero
+
+        :param numpy.array data: list of values
+        
+        :return: data without Nan
+        :rtype: numpy.array
+        '''
+        return nan_to_num(self._copyArray(data))
 
     def countNans(self, data):
         '''calculates the number of NaNs in data

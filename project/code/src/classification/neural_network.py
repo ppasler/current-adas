@@ -38,7 +38,7 @@ class NeuralNetwork(object):
         self.net = buildNetwork(nInputs, nHiddenLayers, nOutput, bias=bias, hiddenclass=TanhLayer)
         return self
 
-    def train(self, dataset, maxEpochs = 10, learningrate = 0.01, momentum = 0.99):
+    def train(self, dataset, maxEpochs = 10, learningrate = 0.01, momentum = 0.99, continueEpochs=10, validationProportion=0.25):
         '''trains a network with the given dataset
         
         :param SupervisedDataSet dataset: the training dataset
@@ -47,8 +47,9 @@ class NeuralNetwork(object):
         :param float momentum: helps out of local minima while training, to get better results
         '''
         self.trainer = BackpropTrainer(self.net, learningrate = learningrate, momentum = momentum)
-        return self.trainer.trainOnDataset(dataset, maxEpochs)
-    
+        self.trainer.trainUntilConvergence(dataset, maxEpochs, True, continueEpochs, validationProportion)
+        #self.trainer.trainOnDataset(dataset, maxEpochs)
+
     def test(self, data=None, verbose=False):
         if not self.trainer:
             raise ValueError("call train() first, to create a valid trainer object") 

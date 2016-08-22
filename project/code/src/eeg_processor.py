@@ -31,75 +31,53 @@ class SignalProcessor(object):
         self.maxNaNValues = config.get("maxNaNValues")
         self.lowerFreq = config.get("lowerFreq")
         self.upperFreq = config.get("upperFreq")
+        self.normalize = config.get("normalize")
         self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
         self.qualUtil = QualityUtil()
         self.sigUtil = SignalUtil()
         self.verbose = verbose
 
     def process(self, raw, quality):
-        raw = self._replaceBadQuality(raw, quality)
-        raw = self._replaceSequences(raw)
-        raw = self._replaceOutliners(raw)
-        raw = self._normalize(raw)
+        raw = self.sigUtil.normalize(raw, self.normalize)
+
         invalid = self.qualUtil.isInvalidData(raw)
         return raw, invalid
-
-    def _replaceBadQuality(self, raw, quality):
-        if self.verbose:
-            print "badQuality: %d" % self.qualUtil.countBadQuality(raw, quality)
-        raw = self.qualUtil.replaceBadQuality(raw, quality, NaN)
-        self._printNaNCount(raw)
-        return raw
-
-    def _replaceSequences(self, raw):
-        if self.verbose:
-            print "sequences: %d" % self.qualUtil.countSequences(raw)
-        raw = self.qualUtil.replaceSequences(raw)
-        self._printNaNCount(raw)
-        return raw
-
-    def _replaceOutliners(self, raw):
-        if self.verbose:
-            print "outliners: %d" % self.qualUtil.countOutliners(raw)
-        raw = self.qualUtil.replaceOutliners(raw, NaN)
-        self._printNaNCount(raw)
-        return raw
-
-    def _normalize(self, raw):
-        if self.verbose:
-            print "normalize: min %.2f max %.2f" % (self.sigUtil.minimum(raw),self.sigUtil.maximum(raw)) 
-        raw = self.sigUtil.normalize(raw)
-        if self.verbose:
-            print "normalize: min %.2f max %.2f" % (self.sigUtil.minimum(raw),self.sigUtil.maximum(raw)) 
-        self._printNaNCount(raw)
-        return raw
-
-    def _printNaNCount(self, raw):
-        if self.verbose:
-            print "NaN count: %s" % self.qualUtil.countNans(raw)
 
 class EEGProcessor(object):
     def __init__(self, verbose=False):
         self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
         self.qualUtil = QualityUtil()
         self.eegUtil = EEGUtil()
-        self.fftUtil = FFTUtil()
-        self.verbose = verbose
 
-    def process(self, proc):
+    def processAlpha(self, proc):
+        proc = self.qualUtil.replaceNans(proc)
         alpha = self.eegUtil.getAlphaWaves(proc, self.samplingRate)
-        alpha = self.fftUtil.fft(alpha)
         invalid = self.qualUtil.isInvalidData(alpha)
         return alpha, invalid
+
+    def processTheta(self, proc):
+        proc = self.qualUtil.replaceNans(proc)
+        theta = self.eegUtil.getThetaWaves(proc, self.samplingRate)
+        invalid = self.qualUtil.isInvalidData(theta)
+        return theta, invalid
+
+    def processDelta(self, proc):
+        proc = self.qualUtil.replaceNans(proc)
+        delta = self.eegUtil.getDeltaWaves(proc, self.samplingRate)
+        invalid = self.qualUtil.isInvalidData(delta)
+        return delta, invalid
 
 class FFTProcessor(object):
     def __init__(self, verbose=False):
         self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
         self.qualUtil = QualityUtil()
         self.fftUtil = FFTUtil()
+        self.eegUtil = EEGUtil()
         self.verbose = verbose
 
     def process(self, proc):
+        proc = self.qualUtil.replaceNans(proc)
         fft = self.fftUtil.fft(proc)
+        chan = self.eegUtil.getChannels(fft)
         invalid = self.qualUtil.isInvalidData(fft)
-        return fft, invalid
+        return chan, invalid

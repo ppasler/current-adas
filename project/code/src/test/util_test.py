@@ -9,13 +9,14 @@ from scipy.io import wavfile
 from scipy.signal.filter_design import freqz
 
 import numpy as np
-from util.eeg_data_converter import EEGTableToPacketConverter
+from util.eeg_data_source import EEGTablePacketSource
 from util.eeg_table_util import EEGTableFileUtil, EEGTableUtil
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
 from math import sqrt
+from config.config import ConfigProvider
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -159,7 +160,7 @@ class TestQualityUtil(unittest.TestCase):
         
         count = self.util.countBadQuality(testList, qualList)
         self.assertEqual(len(qualList), len(testList))
-        self.assertEqual(count, 2)
+        self.assertEqual(count, 1)
 
     def test_zeros(self):
         countZeros = self.util.countZeros(TEST_DATA_ZERO)
@@ -209,6 +210,13 @@ class TestSignalUtil(unittest.TestCase):
         self.assertEqual(len(testList), len(normList))
         self.assertTrue(max(normList) <= 1)
         self.assertTrue(min(normList) >= -1)
+
+    def test_normalize_value(self):
+        norm = ConfigProvider().getProcessingConfig().get("normalize")
+        testList = np.array([0, -5, 1, 10])
+        normList = self.util.normalize(testList, norm)
+        self.assertEqual(len(testList), len(normList))
+        self.assertItemsEqual(normList, testList / norm)
 
     def test_normalize_zero(self):
         testList = np.array([0, 0, 0, 0])
@@ -791,7 +799,7 @@ class TestEEGTableData(unittest.TestCase):
 class TestEEGTableToPacketUtil(unittest.TestCase):
 
     def setUp(self):
-        self.util = EEGTableToPacketConverter()
+        self.util = EEGTablePacketSource()
         self.util.convert()
 
     def test_dequeue(self):

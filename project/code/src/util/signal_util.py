@@ -14,6 +14,8 @@ import warnings
 from numpy import count_nonzero, nanmax, nanmin, isnan, nanmean, \
     nanstd, nanvar, NaN
 from scipy.signal import butter, lfilter
+from util.quality_util import QualityUtil
+from config.config import ConfigProvider
 
 
 class SignalUtil(object):
@@ -21,7 +23,7 @@ class SignalUtil(object):
     def __init__(self):
         """This class does signal processing with raw signals"""
 
-    def normalize(self, data):
+    def normalize(self, data, extreme=None):
         '''normalizes data between -1 and 1
         Ignores NaN values
 
@@ -33,7 +35,9 @@ class SignalUtil(object):
         #TODO check condition
         if count_nonzero(data) == 0 or isnan(data).all():
             return data
-        extreme = float(max(nanmax(data), abs(nanmin(data))))
+
+        if extreme == None:
+            extreme = float(max(nanmax(data), abs(nanmin(data))))
 
         return data / extreme
 

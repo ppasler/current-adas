@@ -6,7 +6,6 @@ Created on 09.08.2016
 
 import os
 
-from config.config import ConfigProvider
 import matplotlib.pyplot as plt
 import numpy as np
 from statistic.signal_statistic_plotter import AbstractSignalPlotter
@@ -57,9 +56,14 @@ class FeaturePlotter(AbstractSignalPlotter):
         axis.set_ylabel(header)
 
         axis.plot(data)
+        mean = np.nanmean(data)
+        print header, mean
+        axis.plot([mean]*len(data))
 
 if __name__ == '__main__': # pragma: no cover
-    filePath = scriptPath + "/../../data/test.csv"
+    filePath = scriptPath + "/../../data/awake_full.csv"
+    #filePath = scriptPath + "/../../data/drowsy_full.csv"
+
     fileUtil = EEGTableFileUtil()
     fp = FeaturePlotter(fileUtil.readData(filePath), fileUtil.readHeader(filePath), filePath)
     fp.doPlot()

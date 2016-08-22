@@ -88,7 +88,7 @@ def shuffle(inputs, targets):
 	np.random.shuffle(change)
 	return inputs[change,:], targets[change,:]
 
-def separateData(data):
+def buildTestSet(data):
 	return data[:,0:2],data[:,2:]
 
 def printInfo(funcName, inputs, targets):
@@ -100,7 +100,7 @@ def printResult(confmat, rights):
 def xorFunction():
 	""" Run AND and XOR logic functions"""
 	data = np.array([[0,0,0],[0,1,1],[1,0,1],[1,1,0]])
-	inputs, targets = separateData(data)
+	inputs, targets = buildTestSet(data)
 	
 	printInfo("XOR", inputs, targets)
 	
@@ -113,7 +113,7 @@ def xorFunction():
 
 def andFunction():
 	data = np.array([[0,0,0],[0,1,0],[1,0,0],[1,1,1]])
-	inputs, targets = separateData(data)
+	inputs, targets = buildTestSet(data)
 	
 	printInfo("AND", inputs, targets)
 	
@@ -126,7 +126,7 @@ def andFunction():
 
 def orFunction():
 	data = np.array([[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
-	inputs, targets = separateData(data)
+	inputs, targets = buildTestSet(data)
 	
 	printInfo("AND", inputs, targets)
 	

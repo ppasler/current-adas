@@ -8,7 +8,7 @@ import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from data_collector import EEGDataCollector
-from util.eeg_data_converter import EEGTableToPacketConverter
+from util.eeg_data_source import EEGTablePacketSource
 
 
 
@@ -20,7 +20,7 @@ FIELDS = ["F3", "F4", "X", "Y"]
 class DataCollectorTest(unittest.TestCase):
 
     def setUp(self):
-        source = EEGTableToPacketConverter()
+        source = EEGTablePacketSource()
         source.convert()
         self.collector = EEGDataCollector(source, FIELDS, WINDOW_SIZE)
         dataHandler = lambda x: x

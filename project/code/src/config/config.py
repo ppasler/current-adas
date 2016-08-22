@@ -29,9 +29,13 @@ class ConfigProvider(object):
         '''get config for ProcessingChain '''
         return self.getConfig("emotiv")
 
-    def getNeuralNetworkConfig(self):
+    def getNNInitConfig(self):
         '''get config for ProcessingChain '''
-        return self.getConfig("nn")
+        return self.getConfig("nnInit")
+
+    def getNNTrainConfig(self):
+        '''get config for ProcessingChain '''
+        return self.getConfig("nnTrain")
 
     def getExperimentConfig(self):
         '''get config for experimental data '''

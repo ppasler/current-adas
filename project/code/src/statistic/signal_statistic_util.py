@@ -11,12 +11,15 @@ from datetime import datetime
 import multiprocessing
 import sys
 
+from numpy import nanmax, nanmin, nansum, nanmean
+
 from config.config import ConfigProvider
-from eeg_processor import EEGProcessor, SignalPreProcessor
+from eeg_processor import EEGProcessor, SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
-from statistic.signal_statistic_plotter import RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter, BandpassFilteredSignalPlotter
+from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
 from util.eeg_table_util import EEGTableFileUtil
+from util.eeg_util import EEGUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
 
@@ -24,7 +27,7 @@ from util.signal_util import SignalUtil
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-PLOTTER = [RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter]
+PLOTTER = [ProcessedSignalPlotter]
 
 class SignalStatisticUtil(object):
     '''
@@ -39,11 +42,14 @@ class SignalStatisticUtil(object):
         self._initSignals(signals)
         self.su = SignalUtil()
         self.qu = QualityUtil()
+        self.eu = EEGUtil()
         self._initFields()
         self.save = save
         self._initPlotter(person, plot, logScale)
         self.ssPrint = SignalStatisticPrinter(person)
         self.preProcessor = SignalPreProcessor()
+        self.processor = SignalProcessor()
+        self.windowSize = ConfigProvider().getCollectorConfig().get("windowSize")
 
     def _initStatsDict(self):
         self.stats = OrderedDict()
@@ -70,6 +76,7 @@ class SignalStatisticUtil(object):
         self.statFields["seq"][METHOD] = self.qu.countSequences
         self.statFields["out"][METHOD] = self.qu.countOutliners
         self.statFields["nrgy"][METHOD] = self.su.energy
+        self.statFields["zcr"][METHOD] = self.su.zcr
 
     def _initPlotter(self, person, plot, logScale):
         self.plotter = []
@@ -94,7 +101,6 @@ class SignalStatisticUtil(object):
         for signal in self.signals:
             self.stats[SIGNALS_KEY][signal] = {}
             self.collectRawStats(signal)
-            self.collectQualityStats(signal)
 
     def collectGeneralStats(self):
         self._addGeneralStatValue("file path", self.filePath)
@@ -120,24 +126,46 @@ class SignalStatisticUtil(object):
 
     def collectRawStats(self, signal):
         data = self.eegData.getColumn(signal)
+        qual = self.eegData.getQuality(signal)
         proc = self.preProcessor.process(data)
         self._collectSignalStat(signal, RAW_KEY, proc)
-
-    def collectQualityStats(self, signal):
-        data = self.eegData.getQuality(signal)
-        self._collectSignalStat(signal, QUALITY_KEY, data)
 
     def _collectSignalStat(self, signal, category, data):
         self.stats[SIGNALS_KEY][signal][category] = OrderedDict()
         for field, attributes in self.statFields.iteritems():
-            self._addSignalStat(signal, category, field, attributes["method"], data, 0)
+            fieldValues = []
+            for window in self.getWindows(data):
+                fieldValues.append(self._getSignalStat(signal, category, field, attributes["method"], window, 0))
+            merged = self._mergeValues(fieldValues, field)
+            self._addSignalStatValue(signal, category, field, merged)
 
-    def _addSignalStat(self, signal, category, name, method, raw, decPlace=2):
-        value = ("%." + str(decPlace) + "f") % method(raw)
-        self._addSignalStatValue(signal, category, name, value)
+    def getWindows(self, raw):
+        windows = []
+        for start in range(0, len(raw), self.windowSize / 2):
+            end = start + self.windowSize
+            if end <= len(raw):
+                windows.append(raw[start:end])
+        return windows
+
+    def _getSignalStat(self, signal, category, name, method, raw, decPlace=2):
+        return method(raw)
 
     def _addSignalStatValue(self, signal, category, name, value):
         self.stats[SIGNALS_KEY][signal][category][name] = value
+
+    def _mergeValues(self, values, field):
+        typ = self.statFields[field][TYPE]
+
+        if typ == MAX_TYPE:
+            return nanmax(values)
+        if typ == MIN_TYPE:
+            return nanmin(values)
+        if typ == AGGREGATION_TYPE:
+            return nansum(values)
+        if typ == MEAN_TYPE:
+            return nanmean(values)
+        if typ == DIFF_TYPE:
+            return nanmean(values)
 
     def setStats(self, stats):
         self.stats = stats
@@ -199,7 +227,6 @@ class SignalStatisticCollector(object):
         for key, field in STAT_FIELDS.iteritems():
             typ = field["type"]
             self._addValue(dic, typ, channel, RAW_KEY, key)
-            self._addValue(dic, typ, channel, QUALITY_KEY, key)
 
     def _addValue(self, dic, typ, channel, signal, key):
         old = float(self.merge[channel][signal][key])
@@ -213,6 +240,8 @@ class SignalStatisticCollector(object):
             return new if new < old else old
         if typ in [AGGREGATION_TYPE, MEAN_TYPE]:
             return new + old
+        if typ == DIFF_TYPE:
+            return old-new
 
     def _mergeChannels(self, count, channels):
         for channel, value in channels.iteritems():
@@ -222,13 +251,12 @@ class SignalStatisticCollector(object):
         for key, field in STAT_FIELDS.iteritems():
             typ = field["type"]
             self._mergeValue(dic, typ, count, channel, RAW_KEY, key)
-            self._mergeValue(dic, typ, count, channel, QUALITY_KEY, key)
 
     def _mergeValue(self, dic, typ, count, channel, signal, key):
         self.merge[channel][signal][key] = self._mergeByType(typ, self.merge[channel][signal][key], count)
 
     def _mergeByType(self, typ, value, count):
-        if typ in [MAX_TYPE, MIN_TYPE, AGGREGATION_TYPE]:
+        if typ in [MAX_TYPE, MIN_TYPE, AGGREGATION_TYPE, DIFF_TYPE]:
             return str(value)
         if typ == MEAN_TYPE:
             return str(value / float(count))
@@ -244,7 +272,21 @@ class SignalStatisticCollector(object):
 def rawDataStatisticSingle():
     experimentDir = scriptPath + "/../../../captured_data/"
     experiments = {
-        "janis/parts": ["2016-07-12-11-15_EEG_1.csv", "2016-07-12-11-15_EEG_7.csv"]
+        #"janis/parts": ["2016-07-12-11-15_EEG_2.csv", "2016-07-12-11-15_EEG_7.csv"]
+        #"nati/parts": ["2016-07-13-14-38_EEG_2.csv", "2016-07-13-14-38_EEG_7.csv"]
+        #"gregor/parts": ["2016-07-12-13-45_EEG_2.csv", "2016-07-12-13-45_EEG_5.csv"]
+        #"gerald/parts": ["2016-07-12-10-00_EEG_2.csv", "2016-07-12-10-00_EEG_5.csv"]
+        #"test_data": ["awake_1.csv", "awake_2.csv", "awake_3.csv"]
+        #"test_data": ["drowsy_1.csv", "drowsy_2.csv", "drowsy_3.csv"]
+        #"test_data": ["awake_4_bad.csv", "drowsy_4_bad.csv"]
+        "test_data": ["drowsy_full.csv", "awake_full.csv"]
+    }
+    return experimentDir, experiments
+
+def featureDataStatisticSingle():
+    experimentDir = scriptPath + "/../../"
+    experiments = {
+        "data": ["drowsy_full_.csv", "awake_full_.csv"]
     }
     return experimentDir, experiments
 
@@ -254,7 +296,7 @@ def rawDataStatisticAll():
     return experimentDir, experiments
 
 if __name__ == "__main__":
-    experimentDir, experiments = rawDataStatisticSingle()
-    s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=True)
+    experimentDir, experiments = featureDataStatisticSingle()
+    s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=False)
     s.main()
 

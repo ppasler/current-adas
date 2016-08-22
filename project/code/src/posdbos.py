@@ -11,7 +11,6 @@ from Queue import Empty
 import os
 import random
 import threading
-from time import sleep
 
 from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
@@ -38,10 +37,10 @@ class PoSDBoS(object):
         self.fileUtil = EEGTableFileUtil()
 
     def _initNeuralNetwork(self, networkFile):
-        nn_conf = self.config.getNeuralNetworkConfig()
+        nnCreate = self.config.getNNInitConfig()
         self.nn = NeuralNetwork()
         if networkFile == None:
-            self.nn.createNew(nn_conf["nInputs"], nn_conf["nHiddenLayers"], nn_conf["nOutput"], nn_conf["bias"])
+            self.nn.createNew(**nnCreate)
         else:
             self.nn.load(networkFile)
 
@@ -93,19 +92,22 @@ class PoSDBoS(object):
         dmt.join()
 
     def writeFeature(self, data):
-        filePath = scriptPath + "/../data/" + "test.csv"
-        header = ["R","P", "A"]
-        #for field in ConfigProvider().getProcessingConfig().get("fields"):
-        #    header.append("R;P;A")
+        #filePath = scriptPath + "/../data/" + "awake_full_.csv"
+        filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
+
+        header = []
+        start = 4
+        end = start + len(data[0])/6
+        for field in self.config.getCollectorConfig().get("fields"):
+            header.extend([str(x) + "Hz" + field for x in range(start, end)])
         self.fileUtil.writeFile(filePath, data, header)
 
 if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = scriptPath + "/../../captured_data/"
-    person = "janis"
-    filePath = "%s%s/%s" % (experimentDir, person, experiments[person][0])
-    print filePath
-    #filePath = "%s%s/%s" % (experimentDir, person+"/parts", "2016-07-12-11-15_EEG_8.csv")
+    dire = "test_data"
+    #filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
+    filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
 
     p = PoSDBoS("XOR_network", True, filePath)
     print "START"

@@ -17,7 +17,6 @@ TITLE = "%s for %s's EEG Signal"
 SIGNALS_KEY = "signals"
 GENERAL_KEY = "general"
 RAW_KEY = "raw"
-QUALITY_KEY = "quality"
 
 TIME_FORMAT_STRING = "%Y-%m-%d %H:%M:%S"
 DURATION_FORMAT_STRING = "%M:%S"
@@ -26,8 +25,10 @@ MAX_TYPE = "max"
 MIN_TYPE = "min"
 MEAN_TYPE = "mean"
 AGGREGATION_TYPE = "aggregation"
+DIFF_TYPE = "diff"
 
 METHOD = "method"
+TYPE = "type"
 
 def initFields():
     return OrderedDict({
@@ -40,11 +41,12 @@ def initFields():
         "seq": _initField(AGGREGATION_TYPE),
         "out": _initField(AGGREGATION_TYPE),
         "nrgy": _initField(MEAN_TYPE),
+        "zcr": _initField(AGGREGATION_TYPE),
     })
 
 def _initField(typ, method=None):
-    return {"type": typ,
-             "method": method}
+    return {TYPE: typ,
+             METHOD: method}
 
 STAT_FIELDS = initFields()
 

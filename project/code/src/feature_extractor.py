@@ -56,10 +56,8 @@ class FeatureExtractor(object):
     def extractFeatures(self, data):
         features = []
         for _, sigData in data.iteritems():
-            r_energy = self.sigUtil.energy(sigData["value"])
-            p_energy = self.sigUtil.energy(sigData["proc"])
-            a_energy = self.sigUtil.energy(sigData["alpha"])
-            features.extend([r_energy, p_energy, a_energy])
+            theta = sigData["theta"]
+            features.extend(theta)
         self.extractQueue.put(array(features))
     
     def handleDataSet(self, data):

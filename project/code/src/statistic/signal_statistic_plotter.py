@@ -14,6 +14,7 @@ import numpy as np
 import seaborn as sns
 from statistic.signal_statistic_constants import TITLE, getNewFileName, getFileName
 from util.eeg_util import EEGUtil
+from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
 
 
@@ -164,12 +165,47 @@ class RawSignalPlotter(AbstractSignalPlotter):
 class AlphaSignalPlotter(RawSignalPlotter):
     def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="alpha")
+        self.chain = SignalProcessor()
         self.eegUtil = EEGUtil()
 
     def _getData(self, signal):
-        column = self.eegData.getColumn(signal)
+        raw = self.eegData.getColumn(signal)
+        qual = self.eegData.getQuality(signal)
         samplingRate = self.eegData.getSamplingRate()
-        return self.eegUtil.getAlphaWaves(column, samplingRate)
+
+        proc, _ = self.chain.process(raw, qual)
+        proc = QualityUtil().replaceNans(proc)
+        return self.eegUtil.getAlphaWaves(proc, samplingRate)
+
+class ThetaSignalPlotter(RawSignalPlotter):
+    def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
+        RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="theta")
+        self.chain = SignalProcessor()
+        self.eegUtil = EEGUtil()
+
+    def _getData(self, signal):
+        raw = self.eegData.getColumn(signal)
+        qual = self.eegData.getQuality(signal)
+        samplingRate = self.eegData.getSamplingRate()
+
+        proc, _ = self.chain.process(raw, qual)
+        proc = QualityUtil().replaceNans(proc)
+        return self.eegUtil.getThetaWaves(proc, samplingRate)
+
+class DeltaSignalPlotter(RawSignalPlotter):
+    def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
+        RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="delta")
+        self.chain = SignalProcessor()
+        self.eegUtil = EEGUtil()
+
+    def _getData(self, signal):
+        raw = self.eegData.getColumn(signal)
+        qual = self.eegData.getQuality(signal)
+        samplingRate = self.eegData.getSamplingRate()
+
+        proc, _ = self.chain.process(raw, qual)
+        proc = QualityUtil().replaceNans(proc)
+        return self.eegUtil.getDeltaWaves(proc, samplingRate)
 
 class ProcessedSignalPlotter(RawSignalPlotter):
     def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
@@ -181,14 +217,3 @@ class ProcessedSignalPlotter(RawSignalPlotter):
         qual = self.eegData.getQuality(signal)
         raw, _ = self.chain.process(raw, qual)
         return raw
-
-class BandpassFilteredSignalPlotter(RawSignalPlotter):
-    def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
-        RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processedAlpha")
-        self.chain = SignalProcessor()
-        self.sigUtil = SignalUtil()
-
-    def _getData(self, signal):
-        raw = self.eegData.getColumn(signal)
-        qual = self.eegData.getQuality(signal)
-        return self.sigUtil.butterBandpassFilter(raw, 0.5, 50, 128)
