@@ -12,8 +12,7 @@ from Queue import Empty
 from numpy import array
 
 from config.config import ConfigProvider
-from eeg_processor import SignalProcessor, EEGProcessor, FFTProcessor,\
-    SignalPreProcessor
+from eeg_processor import SignalProcessor, FFTProcessor, SignalPreProcessor
 
 
 class DataProcessor(object):
@@ -27,7 +26,6 @@ class DataProcessor(object):
         self.processingConfig = config.getProcessingConfig()
         self.preProcessor = SignalPreProcessor()
         self.signalProcessor = SignalProcessor()
-        self.eegProcessor = EEGProcessor()
         self.fftProcessor = FFTProcessor()
 
         self.inputQueue = inputQueue
@@ -81,7 +79,7 @@ class DataProcessor(object):
             quality = array(signal["quality"])
 
             proc = self.preProcessor.process(raw)
-            #proc, _ = self.signalProcessor.process(raw, quality)
+            proc, _ = self.signalProcessor.process(raw, quality)
 
             chan, fInvalid = self.fftProcessor.process(proc)
             signal["theta"] = chan["theta"]

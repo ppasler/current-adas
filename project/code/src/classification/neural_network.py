@@ -55,8 +55,19 @@ class NeuralNetwork(object):
             raise ValueError("call train() first, to create a valid trainer object") 
         return self.trainer.testOnData(data, verbose)
 
-    def activate(self, value):
-        return self.net.activate(value)
+    def activate(self, value, rnd=False):
+        inpt = self.net.activate(value)[0]
+        if rnd:
+            return self._clazz(inpt)
+        return inpt
+
+    def _clazz(self, inpt):
+        clazz = round(inpt)
+        if (clazz < 0):
+            return 0
+        if (clazz > 1):
+            return 1
+        return int(clazz)
 
     def save(self, name):
         '''saves the neural network
@@ -78,7 +89,8 @@ class NeuralNetwork(object):
         f = open(self.path + name + FILE_EXTENSION, 'r')
         self.net = pickle.load(f)
         f.close()
-        
+        return self
+
     def __repr__(self):
         return "%s\n%s" % (self.__class__.__name__, str(self.net))
 

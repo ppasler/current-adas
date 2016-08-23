@@ -45,7 +45,8 @@ class PoSDBoS(object):
             self.nn.load(networkFile)
 
     def _initFeatureExtractor(self, demoFile):
-        collector = self._initDataCollector(demoFile)
+        self.demoFile = demoFile
+        collector = self._initDataCollector(self.demoFile)
         self.fe = FeatureExtractor(collector)
         self.inputQueue = self.fe.extractQueue
 
@@ -65,16 +66,14 @@ class PoSDBoS(object):
         dmt = threading.Thread(target=self.dm.run)
         dmt.start()
         features = []
+        classified = [0, 0]
         while self.running and dmt.is_alive():
             try:
                 data = self.inputQueue.get(timeout=1)
                 features.append(data)
-                x = random.randint(1, 10)%2
-                y = random.randint(1, 10)%2
-                data = (x, y)
-                
-                clazz = self.nn.activate(data)
-                info = "%d XOR %d is %d; queue: %d" % (x, y, clazz, self.inputQueue.qsize()) 
+                clazz = self.nn.activate(data, True)
+                classified[clazz] += 1
+                info = "class %d (%s); queue: %d" % (clazz, str(classified), self.inputQueue.qsize()) 
                 self.dm.setStatus(clazz, info)
                 #sleep(1)
             except Empty:
@@ -86,7 +85,9 @@ class PoSDBoS(object):
             except Exception as e:
                 print e.message
                 self.close()
-        self.writeFeature(features)
+        print classified
+        print features
+        #self.writeFeature(features)
         self.fe.close()
         self.dm.close()
         dmt.join()
@@ -109,7 +110,7 @@ if __name__ == '__main__': # pragma: no cover
     #filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
     filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
 
-    p = PoSDBoS("XOR_network", True, filePath)
+    p = PoSDBoS("ann_1", True, filePath)
     print "START"
     pt = threading.Thread(target=p.run)
     pt.start()

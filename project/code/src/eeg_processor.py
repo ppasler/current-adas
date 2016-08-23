@@ -29,8 +29,8 @@ class SignalProcessor(object):
     def __init__(self, verbose=False):
         config = ConfigProvider().getProcessingConfig()
         self.maxNaNValues = config.get("maxNaNValues")
-        self.lowerFreq = config.get("lowerFreq")
-        self.upperFreq = config.get("upperFreq")
+        self.lowerBound = config.get("lowerBound")
+        self.upperBound = config.get("upperBound")
         self.normalize = config.get("normalize")
         self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
         self.qualUtil = QualityUtil()
@@ -38,34 +38,11 @@ class SignalProcessor(object):
         self.verbose = verbose
 
     def process(self, raw, quality):
-        raw = self.sigUtil.normalize(raw, self.normalize)
+        proc = self.qualUtil.replaceOutliners(raw, NaN, self.lowerBound, self.upperBound)
+        proc = self.sigUtil.normalize(proc, self.normalize)
 
-        invalid = self.qualUtil.isInvalidData(raw)
-        return raw, invalid
-
-class EEGProcessor(object):
-    def __init__(self, verbose=False):
-        self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
-        self.qualUtil = QualityUtil()
-        self.eegUtil = EEGUtil()
-
-    def processAlpha(self, proc):
-        proc = self.qualUtil.replaceNans(proc)
-        alpha = self.eegUtil.getAlphaWaves(proc, self.samplingRate)
-        invalid = self.qualUtil.isInvalidData(alpha)
-        return alpha, invalid
-
-    def processTheta(self, proc):
-        proc = self.qualUtil.replaceNans(proc)
-        theta = self.eegUtil.getThetaWaves(proc, self.samplingRate)
-        invalid = self.qualUtil.isInvalidData(theta)
-        return theta, invalid
-
-    def processDelta(self, proc):
-        proc = self.qualUtil.replaceNans(proc)
-        delta = self.eegUtil.getDeltaWaves(proc, self.samplingRate)
-        invalid = self.qualUtil.isInvalidData(delta)
-        return delta, invalid
+        invalid = self.qualUtil.isInvalidData(proc)
+        return proc, invalid
 
 class FFTProcessor(object):
     def __init__(self, verbose=False):

@@ -30,19 +30,20 @@ class NetworkUtil(object):
     Class to train and test a neural network 
     '''
 
-    def __init__(self, nInputs, nHiddenLayers, bias=True, new=True):
+    def __init__(self, nInputs=None, nHiddenLayers=None, bias=True, new=True, fileName=""):
         self.params = {}
-        self.params["nInputs"] = nInputs
-        self.params["nHiddenLayers"] = nHiddenLayers
-        self.params["bias"] = bias
-
+        self.config = ConfigProvider().getNNTrainConfig()
         if new:
+            self.params["nInputs"] = nInputs
+            self.params["nHiddenLayers"] = nHiddenLayers
+            self.params["bias"] = bias
             self.nn = NeuralNetwork().createNew(nInputs, nHiddenLayers, N_OUTPUT, bias)
+        else:
+            self.nn = NeuralNetwork().load(fileName)
 
     def train(self, trainData):
         start = time.time()
         print "start Training at " + str(datetime.fromtimestamp(start))
-        self.config = ConfigProvider().getNNTrainConfig()
         self.nn.train(trainData, **self.config)
         print "Training Done in %.2fs" % (time.time() - start)
     
@@ -50,21 +51,13 @@ class NetworkUtil(object):
         self.nn.test(testData)
         print "Testing Done"
 
-    def _clazz(self, inpt):
-        clazz = round(inpt)
-        if (clazz < 0):
-            return 0
-        if (clazz > 1):
-            return 1
-        return clazz
-
     def activate(self, testData):
         total = (len(testData) / 2) / 100.0
         matrix = np.array([[0, 0, 0], [0, 0, 0]])
         resArr = []
         for inpt, target in testData:
             res = self.nn.activate(inpt)
-            clazz = self._clazz(res[0])
+            clazz = self.nn._clazz(res[0])
             resArr.append([res, clazz, target])
             matrix[target[0]][clazz] += 1
         matrix[0, 2] = matrix[0, 0] / total
@@ -87,15 +80,26 @@ class NetworkDataUtil(object):
         self.files = files
         self.fileUtil = EEGTableFileUtil()
 
-    def get(self):
+    def get(self, separate=True):
         values0, values1 = self.readFiles(self.files)
-        return self.buildTestSet(values0, values1)
+        if separate:
+            return self.buildTestSet(values0, values1)
+        else:
+            return self.buildFullTestSet(values0, values1)
 
     def getNInput(self):
         return self.nInputs
 
     def readFiles(self, files):
         return self.fileUtil.readData(files[0]), self.fileUtil.readData(files[1])
+
+    def buildFullTestSet(self, values0, values1):
+        values0 = self._addClass(values0, 0.)
+        values1 = self._addClass(values1, 1.)
+        rawData = self._postprocData(values0, values1)
+        self.nInputs = len(rawData[0])-1
+
+        return self.createData(self.nInputs, rawData)
 
     def buildTestSet(self, values0, values1):
         train0, test0 = self._preprocData(values0, 0.)
@@ -114,16 +118,16 @@ class NetworkDataUtil(object):
         values0 = self._addClass(values, clazz)
         return self._separateData(values0) 
 
-    def _separateData(self, values):
-        l = len(values)
-        d = (2 * l / 3)
-        return values[0:d], values[d:]
-
     def _addClass(self, values, clazz):
         shape = values.shape
         clazzArray = np.full((shape[0], shape[1]+1), clazz)
         clazzArray[:,:-1] = values
         return clazzArray
+
+    def _separateData(self, values):
+        l = len(values)
+        d = (2 * l / 3)
+        return values[0:d], values[d:]
 
     def _postprocData(self, values0, values1):
         values = np.concatenate((values0, values1), axis=0)
@@ -174,6 +178,23 @@ def testSingle(h, name):
         f.write("%.2f;%.2f;%.2f\n" % tuple(line))
     f.close()
 
+def loadSingle(fileName):
+    files = [scriptPath + "/../../data/awake_full.csv", scriptPath + "/../../data/drowsy_full.csv"]
+    ndu = NetworkDataUtil(files)
+    data = ndu.get(False)
+    
+    nu = NetworkUtil(new=False, fileName=fileName)
+    results, resArr = nu.activate(data)
+    f = open(os.path.dirname(os.path.abspath(__file__)) + "/../../data/" + fileName +  ".nns", 'w')
+
+    f.write(nu.__str__() + "\n\n")
+    f.write("  awk drsy res(%)\n")
+    f.write(str(results))
+    f.write("\n\nres;clazz;target\n")
+    for line in resArr:
+        f.write("%.2f;%.2f;%.2f\n" % tuple(line))
+    f.close()
+
 if __name__ == "__main__": # pragma: no cover
     name = time.strftime("%Y-%m-%d-%H-%M", time.gmtime())
-    testSeveral(2, 6, name)
+    loadSingle("ann_2")
