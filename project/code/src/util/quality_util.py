@@ -9,8 +9,7 @@ Created on 13.06.2016
 '''
 from itertools import groupby
 
-from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstate, copy,\
-    nan_to_num
+from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstate, copy, nan_to_num
 from scipy.ndimage.morphology import binary_closing
 from config.config import ConfigProvider
 

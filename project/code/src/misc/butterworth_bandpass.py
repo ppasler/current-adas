@@ -40,9 +40,9 @@ class BandPassExample(object):
         for order in [2, 4, 8]:
             b, a = self.su.butterBandpass(lowcut, highcut, fs, order=order)
             w, h = freqz(b, a, worN=2000)
-            plt.doPlot((fs * 0.5 / np.pi) * w, abs(h), label="order = %d" % order)
+            plt.plot((fs * 0.5 / np.pi) * w, abs(h), label="order = %d" % order)
         
-        plt.doPlot([0, 0.5 * fs], [np.sqrt(0.5), np.sqrt(0.5)], '--', label='sqrt(0.5)')
+        plt.plot([0, 0.5 * fs], [np.sqrt(0.5), np.sqrt(0.5)], '--', label='sqrt(0.5)')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Gain')
         plt.grid(True)
@@ -67,12 +67,12 @@ class BandPassExample(object):
     
         plt.figure(2)
         plt.clf()
-        plt.doPlot(t, x, label='normalized signal')
+        plt.plot(t, x, label='normalized signal')
         
         for label, (lowcut, highcut) in EEGUtil().channel_ranges.iteritems():
             if label == "alpha":
                 y = self.su.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
-                plt.doPlot(t, y, label='%s (%d - %dHz)' % (label, lowcut, highcut))
+                plt.plot(t, y, label='%s (%d - %dHz)' % (label, lowcut, highcut))
     
         plt.xlabel('time (seconds)')
         plt.grid(True)
@@ -95,12 +95,12 @@ class BandPassExample(object):
     
         plt.figure(2)
         plt.clf()
-        plt.doPlot(t, s1, label='sound signal')
+        plt.plot(t, s1, label='sound signal')
         
         y = self.su.butterBandpassFilter(s1, 11000, 13000, fs, order=6)
         #wavfile.write(path + '12000hz_cut.wav', fs, y)
     
-        plt.doPlot(t, y, label='%s (%d - %dHz)' % ("12000Hz", 11000, 13000))
+        plt.plot(t, y, label='%s (%d - %dHz)' % ("12000Hz", 11000, 13000))
     
         plt.xlabel('time (seconds)')
         plt.grid(True)
@@ -119,9 +119,9 @@ class BandPassExample(object):
         
         plt.figure(2)
         plt.clf()
-        plt.doPlot(t, x, label='Noisy signal')
+        plt.plot(t, x, label='Noisy signal')
         y = self.butterBandpassFilter(x, lowcut, highcut, fs, order=6)
-        plt.doPlot(t, y, label='Filtered signal (%g Hz)' % f0)
+        plt.plot(t, y, label='Filtered signal (%g Hz)' % f0)
         plt.xlabel('time (seconds)')
         plt.hlines([-a, a], 0, T, linestyles='--')
         plt.grid(True)

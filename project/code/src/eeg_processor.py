@@ -38,7 +38,7 @@ class SignalProcessor(object):
         self.verbose = verbose
 
     def process(self, raw, quality):
-        proc = self.qualUtil.replaceOutliners(raw, NaN)
+        proc = self.qualUtil.replaceOutliners(raw, 0)
         proc = self.sigUtil.normalize(proc, self.normalize)
 
         invalid = self.qualUtil.isInvalidData(proc)
@@ -53,7 +53,6 @@ class FFTProcessor(object):
         self.verbose = verbose
 
     def process(self, proc):
-        proc = self.qualUtil.replaceNans(proc)
         fft = self.fftUtil.fft(proc)
         chan = self.eegUtil.getChannels(fft)
         invalid = self.qualUtil.isInvalidData(fft)

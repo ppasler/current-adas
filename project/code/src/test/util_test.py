@@ -366,19 +366,6 @@ class TestFrequencyFilter(unittest.TestCase):
         _, h = freqz(b, a, worN=16)
         self.assertAlmostEqual(sum(abs(h)), len(h)-1, delta = 1)
 
-
-    @unittest.skip("demonstrating skipping")
-    def test_butterBandpass_error(self):
-        self.util.butterBandpass(0, 4, 8)
-
-        with self.assertRaises(ValueError):
-            _ = self.util.butterBandpass(2, 4, 4)
-        with self.assertRaises(ValueError):
-            _ = self.util.butterBandpass(2, 4, 7)
-
-        with self.assertRaises(ValueError):
-            _ = self.util.butterBandpass(-1, 4, 8)
-
     def test_butterBandpassFilter(self):
         x = [1, -1, 1, -1]
         _ = self.util.butterBandpassFilter(x, 1, 2, 10)

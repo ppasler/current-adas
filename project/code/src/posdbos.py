@@ -68,23 +68,21 @@ class PoSDBoS(object):
         classified = [0, 0]
         while self.running and dmt.is_alive():
             try:
+                #awake = 0, drowsy = 1
                 data = self.inputQueue.get(timeout=1)
                 features.append(data)
                 clazz = self.nn.activate(data, True)
                 classified[clazz] += 1
                 info = "class %d (%s); queue: %d" % (clazz, str(classified), self.inputQueue.qsize()) 
                 self.dm.setStatus(clazz, info)
-                #sleep(1)
             except Empty:
                 pass
-                #if self.demo:
-                #    self.close()
             except KeyboardInterrupt:
                 self.close()
             except Exception as e:
                 print e.message
                 self.close()
-        self.writeFeature(features)
+        #self.writeFeature(features)
         self.fe.close()
         self.dm.close()
         dmt.join()
@@ -107,7 +105,7 @@ if __name__ == '__main__': # pragma: no cover
     filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
     #filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
 
-    p = PoSDBoS("ann_1", True, filePath)
+    p = PoSDBoS("knn_1", True, filePath)
     print "START"
     pt = threading.Thread(target=p.run)
     pt.start()

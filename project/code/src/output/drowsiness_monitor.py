@@ -11,6 +11,7 @@ import threading
 from time import sleep
 
 import pygame
+from config.config import ConfigProvider
 
 
 resolution = (1600, 900)
@@ -36,6 +37,7 @@ class DrowsinessMonitor(object):
         self.running = True
         self.state = "awake";
         self.info = ""
+        self.classes = ConfigProvider().getConfig("class")
 
     def _handleEvent(self):
         for event in pygame.event.get():
@@ -86,13 +88,7 @@ class DrowsinessMonitor(object):
         self.running = False
     
     def setStatus(self, status, info=None):
-        '''
-        Value > 0.5 means "drowsy", else "awake" 
-        '''
-        if status > 0.5:
-            self.state = "awake"
-        else:
-            self.state = "drowsy"
+        self.state = self.classes[str(status)]
         self.info = str(info)
 
 if __name__ == "__main__":

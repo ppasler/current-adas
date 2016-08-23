@@ -46,8 +46,6 @@ class DataProcessor(object):
                     self.outputQueue.put(procData)
             except Empty:
                 pass
-        print "invalid: ", self.totalInvalid
-        print "total", self.totalCount
 
     def process(self, data):
         #TODO make me fast and nice
@@ -79,7 +77,7 @@ class DataProcessor(object):
             quality = array(signal["quality"])
 
             proc = self.preProcessor.process(raw)
-            proc, _ = self.signalProcessor.process(raw, quality)
+            proc, _ = self.signalProcessor.process(proc, quality)
 
             chan, fInvalid = self.fftProcessor.process(proc)
             signal["theta"] = chan["theta"]

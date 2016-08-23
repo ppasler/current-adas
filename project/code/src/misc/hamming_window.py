@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 window = np.hamming(128)
-plt.doPlot(window)
+plt.plot(window)
 plt.title("Hamming window")
 plt.ylabel("Amplitude")
 plt.xlabel("Sample")
@@ -21,7 +21,7 @@ mag = np.abs(np.fft.fftshift(A))
 freq = np.linspace(-0.5, 0.5, len(A))
 response = 20 * np.log10(mag)
 response = np.clip(response, -100, 100)
-plt.doPlot(freq, response)
+plt.plot(freq, response)
 plt.title("Frequency response of Hamming window")
 plt.ylabel("Magnitude [dB]")
 plt.xlabel("Normalized frequency [cycles per sample]")

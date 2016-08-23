@@ -1,9 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on 10.05.2016
 
-@author: Paul Pasler
+:author: Paul Pasler
+:organization: Reutlingen University
+
 @see: https://github.com/thedanschmidt/PyBrain-Examples/blob/master/xor.py
 '''
+
 import os
 import pickle
 
@@ -47,8 +53,8 @@ class NeuralNetwork(object):
         :param float momentum: helps out of local minima while training, to get better results
         '''
         self.trainer = BackpropTrainer(self.net, learningrate = learningrate, momentum = momentum)
-        self.trainer.trainUntilConvergence(dataset, maxEpochs, True, continueEpochs, validationProportion)
-        #self.trainer.trainOnDataset(dataset, maxEpochs)
+        #self.trainer.trainUntilConvergence(dataset, maxEpochs, True, continueEpochs, validationProportion)
+        self.trainer.trainOnDataset(dataset, maxEpochs)
 
     def test(self, data=None, verbose=False):
         if not self.trainer:

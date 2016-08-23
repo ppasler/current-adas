@@ -14,8 +14,6 @@ import warnings
 from numpy import count_nonzero, nanmax, nanmin, isnan, nanmean, \
     nanstd, nanvar, NaN
 from scipy.signal import butter, lfilter
-from util.quality_util import QualityUtil
-from config.config import ConfigProvider
 
 
 class SignalUtil(object):

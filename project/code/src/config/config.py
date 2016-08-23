@@ -30,16 +30,20 @@ class ConfigProvider(object):
         return self.getConfig("emotiv")
 
     def getNNInitConfig(self):
-        '''get config for ProcessingChain '''
+        '''get config for Neural Network Initialization '''
         return self.getConfig("nnInit")
 
     def getNNTrainConfig(self):
-        '''get config for ProcessingChain '''
+        '''get config for Neural Network Training '''
         return self.getConfig("nnTrain")
 
     def getExperimentConfig(self):
         '''get config for experimental data '''
         return self.getConfig("experiment")
+
+    def getClassConfig(self):
+        '''get config for classes'''
+        return self.getConfig("class")
 
     def getConfig(self, section):
         '''get config for section '''

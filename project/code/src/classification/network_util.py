@@ -179,7 +179,7 @@ def testSingle(h, name):
     f.close()
 
 def loadSingle(fileName):
-    files = [scriptPath + "/../../data/awake_full.csv", scriptPath + "/../../data/drowsy_full.csv"]
+    files = [scriptPath + "/../../data/awake_full_2.csv", scriptPath + "/../../data/drowsy_full_2.csv"]
     ndu = NetworkDataUtil(files)
     data = ndu.get(False)
     
@@ -197,4 +197,4 @@ def loadSingle(fileName):
 
 if __name__ == "__main__": # pragma: no cover
     name = time.strftime("%Y-%m-%d-%H-%M", time.gmtime())
-    loadSingle("2016-08-23-05-47_3")
+    testSeveral(0, 4, name)

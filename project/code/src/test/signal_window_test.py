@@ -3,7 +3,6 @@
 import sys, os
 import unittest
 
-from window.hamming_signal_window import HammingSignalWindow
 from window.rectangular_signal_window import RectangularSignalWindow
 
 
@@ -55,54 +54,5 @@ class RectanglarSignalWindowTest(unittest.TestCase):
         _fillWindowFull(win)
         self.assertEqual(self.notifyCalled, 1) 
 
-
-class HammingSignalWindowTest(unittest.TestCase):
-
-    def setUp(self):
-        self.window = HammingSignalWindow(WINDOW_SIZE, ["X"])
-
-    def notify(self, data):
-        self.notifyCalled += 1
-
-    def test_windowsFilled(self):        
-        self.assertEquals(self.window.window, INIT_WINDOW)
-        
-        _fillValues(self.window, WINDOW_SIZE / 2)
-        self.assertEquals(self.window.window, {"X": {'quality': [0, 1], 'value': [0, 1]}}) 
-        
-        _fillValues(self.window, WINDOW_SIZE, WINDOW_SIZE / 2)
-        self.assertEquals(self.window.window, INIT_WINDOW) 
-
-    def test__register(self):
-        self.notifyCalled = 0
-        win = self.window
-        win.registerObserver(self)
-        _fillWindowFull(win)
-        self.assertEqual(self.notifyCalled, 1)
-
-    def test__unregister(self):
-        self.notifyCalled = 0
-        win = self.window
-        win.registerObserver(self)
-        _fillWindowFull(win)
-        self.assertEqual(self.notifyCalled, 1)
-                
-        win.unregisterObserver(self)
-        _fillWindowFull(win)
-        self.assertEqual(self.notifyCalled, 1) 
-        
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-
-
-
-
-
-
-
-    
