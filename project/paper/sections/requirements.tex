@@ -3,7 +3,7 @@ Da es sich um ein sicherheitsrelevantes \acl{FAS} handelt, muss es in erster Lin
 
 Die Anwendung muss zudem nahezu in Echtzeit funktionieren und den Fahrer sofort über eine erkannte Müdigkeit informieren. Bei der der Implementierung muss auf die Performance der Erkennung geachtet werden. Eine zu späte Meldung an den Fahrer könnte zu einem Unfall führen. Um das System möglichst flexibel zu machen, sollte es auf verschiedenen Plattformen lauffähig sein, auch hier muss eine verringerte Rechenleistung beachtet werden (bspw. auf einem Smartphone).
 
-Um die Software möglichst flexibel bzw. unabhängig von der Hardware zu machen, sollen Datenquelle und Datenverarbeitung möglichst lose gekoppelt sein und sich leicht auf verschiedenen Systemen ausführen lassen. Das hinzufügen von weiteren Quellen (bspw. EKG oder EOG) soll vorbereitet werden.
+Um die Software möglichst flexibel bzw. unabhängig von der Hardware zu machen, sollen Datenquelle und Datenverarbeitung möglichst lose gekoppelt sein und sich leicht auf verschiedenen Systemen ausführen lassen. Das Hinzufügen von weiteren Quellen (bspw. EKG oder EOG) soll vorbereitet werden.
 
 Die Rückmeldung der Anwendung soll den Fahrer warnen, sodass er diese auf jeden Fall wahrnimmt, jedoch nicht in die Fahrsituation eingreift. Es ist mehr als Hinweis zu verstehen und nicht als Maßregelung, da dies die Akzeptanz wiederum mindern könnte. Die Anwendung soll ohne lange Einrichtung oder Interaktion des Fahrers funktionieren.
 
@@ -21,7 +21,7 @@ Diese Anforderungen sind in Tabelle \ref{tab:requirements} zusammengefasst. Wich
   1 & Die Anwendung muss Müdigkeit präzise und korrekt erkennen (> 90\%) \\ \hline
   2 & Die Anwendung muss robust gegen Fehler / Fehleingaben sein \\ \hline 
   3 & Die Anwendung muss den Fahrer über Störungen informieren \\ \hline
-  4 & Die Anwendung muss den Fahrer so schnell wie möglich über eine erkannte Müdigkeit informieren \\ \hline
+  4 & Die Anwendung muss den Fahrer so schnell wie möglich über eine erkannte Müdigkeit informieren (nahezu Echtzeit)\\ \hline
   5 & Die Anwendung muss sich in andere Umgebungen (Simulator oder echtes Fahrzeug) portieren lassen \\ \hline 
   6 & Das eingesetzte EEG soll sich gut handhaben lassen und den Fahrer möglichst wenig beeinträchtigen \\ \hline
   \\

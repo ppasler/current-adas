@@ -62,8 +62,8 @@ class FeaturePlotter(AbstractSignalPlotter):
 
 if __name__ == '__main__': # pragma: no cover
     #filePath = scriptPath + "/../../data/awake_full_.csv"
-    filePath = scriptPath + "/../../data/drowsy_full_.csv"
+    filePath = scriptPath + "/../../data/classes.csv"
 
     fileUtil = EEGTableFileUtil()
     fp = FeaturePlotter(fileUtil.readData(filePath), fileUtil.readHeader(filePath), filePath)
-    fp.plot()
+    fp.doPlot()

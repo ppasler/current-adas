@@ -189,7 +189,7 @@ def loadSingle(fileName):
     
     nu = NetworkUtil(new=False, fileName=fileName)
     results, resArr = nu.activate(data)
-    f = open(os.path.dirname(os.path.abspath(__file__)) + "/../../data/" + fileName +  ".nns", 'w')
+    f = open(os.path.dirname(os.path.abspath(__file__)) + "/../../data/" + fileName +  "_.nns", 'w')
 
     f.write(nu.__str__() + "\n\n")
     f.write("  awk drsy res(%)\n")
@@ -202,3 +202,4 @@ def loadSingle(fileName):
 if __name__ == "__main__": # pragma: no cover
     name = time.strftime("%Y-%m-%d-%H-%M", time.gmtime())
     testSeveral(0, 4, name, False)
+    #loadSingle("2016-08-23-15-05_2")

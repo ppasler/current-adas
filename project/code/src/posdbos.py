@@ -10,6 +10,7 @@ Created on 30.05.2016
 from Queue import Empty
 import os
 import threading
+import time
 
 from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
@@ -17,6 +18,7 @@ from data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
 from util.eeg_table_util import EEGTableFileUtil
+
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -76,23 +78,26 @@ class PoSDBoS(object):
         dmt.start()
         features = []
         total = 0
+        start = time.time()
+        c = []
         while self.running and dmt.is_alive():
             try:
                 #awake = 0, drowsy = 1
                 data = self.inputQueue.get(timeout=1)
                 features.append(data)
                 clazz = self.nn.activate(data, True)
+                c.append([clazz, clazz])
                 self.setStatus(clazz)
                 total += 1
             except Empty:
+                print "needed %sms for %d windows" % (time.time() - start, total) 
                 pass
             except KeyboardInterrupt:
                 self.close()
             except Exception as e:
                 print e.message
                 self.close()
-        print "Total Features: " + str(total)
-        #self.writeFeature(features)
+        self.writeFeature(c)
         self.fe.close()
         self.dm.close()
         dmt.join()
@@ -113,26 +118,27 @@ class PoSDBoS(object):
             self.dm.setStatus(clazz, info)
 
     def writeFeature(self, data):
-        filePath = scriptPath + "/../data/" + "awake_full_.csv"
+        filePath = scriptPath + "/../data/" + "classes.csv"
         #filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
 
-        header = []
-        start = 4
-        end = start + len(data[0])/6
-        for field in self.config.getCollectorConfig().get("fields"):
-            header.extend([str(x) + "Hz" + field for x in range(start, end)])
+        header = ["clazz", "clazz2"]
+        #start = 4
+        #end = start + len(data[0])/6
+        #for field in self.config.getCollectorConfig().get("fields"):
+        #    header.extend([str(x) + "Hz" + field for x in range(start, end)])
         self.fileUtil.writeFile(filePath, data, header)
 
 if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = scriptPath + "/../../captured_data/"
-    dire = "janis"
-    filePath = "%s%s/%s" % (experimentDir, dire, "2016-07-12-11-15_EEG.csv")
-#    dire = "test_data"
-#    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
-#    filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
+#    dire = "janis"
+#    filePath = "%s%s/%s" % (experimentDir, dire, "2016-07-12-11-15_EEG.csv")
 
-    p = PoSDBoS("knn_1", True, filePath)
+    dire = "test_data"
+#    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
+    filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
+
+    p = PoSDBoS("knn_2", True, filePath)
     print "START"
     pt = threading.Thread(target=p.run)
     pt.start()
