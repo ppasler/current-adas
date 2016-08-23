@@ -53,8 +53,18 @@ class NeuralNetwork(object):
         :param float momentum: helps out of local minima while training, to get better results
         '''
         self.trainer = BackpropTrainer(self.net, learningrate = learningrate, momentum = momentum)
-        #self.trainer.trainUntilConvergence(dataset, maxEpochs, True, continueEpochs, validationProportion)
         self.trainer.trainOnDataset(dataset, maxEpochs)
+
+    def trainConvergence(self, dataset, maxEpochs = 10, learningrate = 0.01, momentum = 0.99, continueEpochs=10, validationProportion=0.25):
+        '''trains a network with the given dataset nutil it converges
+        
+        :param SupervisedDataSet dataset: the training dataset
+        :param int maxEpochs: max number of iterations to train the network
+        :parma float learningrate: helps to 
+        :param float momentum: helps out of local minima while training, to get better results
+        '''
+        self.trainer = BackpropTrainer(self.net, learningrate = learningrate, momentum = momentum)
+        self.trainer.trainUntilConvergence(dataset, maxEpochs, False, continueEpochs, validationProportion)
 
     def test(self, data=None, verbose=False):
         if not self.trainer:

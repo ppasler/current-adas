@@ -45,6 +45,10 @@ class ConfigProvider(object):
         '''get config for classes'''
         return self.getConfig("class")
 
+    def getPoSDBoSConfig(self):
+        '''get config for PoSDBoS'''
+        return self.getConfig("posdbos")
+
     def getConfig(self, section):
         '''get config for section '''
         try:

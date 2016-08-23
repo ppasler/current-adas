@@ -21,7 +21,7 @@ from util.eeg_table_util import EEGTableFileUtil
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 class PoSDBoS(object):
-    
+
     def __init__(self, networkFile=None, demo=False, demoFile=None):
         '''Main class for drowsiness detection
         
@@ -30,10 +30,20 @@ class PoSDBoS(object):
         self.demo = demo
         self.running = True
         self.config = ConfigProvider()
+        self._initPoSDBoS()
         self._initNeuralNetwork(networkFile)
         self._initFeatureExtractor(demoFile)
         self.dm = DrowsinessMonitor()
         self.fileUtil = EEGTableFileUtil()
+
+    def _initPoSDBoS(self):
+        posdbosConfig = self.config.getPoSDBoSConfig()
+        self.drowsyMinCount = posdbosConfig.get("drowsyMinCount")
+        self.awakeMinCount = posdbosConfig.get("awakeMinCount")
+        self.classified = [0, 0]
+        self.curClass = 0
+        self.classCount = 0
+        self.found = 0
 
     def _initNeuralNetwork(self, networkFile):
         nnCreate = self.config.getNNInitConfig()
@@ -65,16 +75,15 @@ class PoSDBoS(object):
         dmt = threading.Thread(target=self.dm.run)
         dmt.start()
         features = []
-        classified = [0, 0]
+        total = 0
         while self.running and dmt.is_alive():
             try:
                 #awake = 0, drowsy = 1
                 data = self.inputQueue.get(timeout=1)
                 features.append(data)
                 clazz = self.nn.activate(data, True)
-                classified[clazz] += 1
-                info = "class %d (%s); queue: %d" % (clazz, str(classified), self.inputQueue.qsize()) 
-                self.dm.setStatus(clazz, info)
+                self.setStatus(clazz)
+                total += 1
             except Empty:
                 pass
             except KeyboardInterrupt:
@@ -82,10 +91,26 @@ class PoSDBoS(object):
             except Exception as e:
                 print e.message
                 self.close()
+        print "Total Features: " + str(total)
         #self.writeFeature(features)
         self.fe.close()
         self.dm.close()
         dmt.join()
+
+    def setStatus(self, clazz):
+        self.classified[clazz] += 1
+        if self.curClass == clazz:
+            self.classCount += 1
+        else:
+            self.curClass = clazz
+            self.classCount = 0
+
+        info = "class %d row (%s)" % (clazz, str(self.classCount))
+        if clazz == 1 and self.classCount >= self.drowsyMinCount:
+            self.dm.setStatus(clazz, info)
+            self.found += 1
+        elif clazz == 0 and self.classCount >= self.awakeMinCount:
+            self.dm.setStatus(clazz, info)
 
     def writeFeature(self, data):
         filePath = scriptPath + "/../data/" + "awake_full_.csv"
@@ -101,9 +126,11 @@ class PoSDBoS(object):
 if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = scriptPath + "/../../captured_data/"
-    dire = "test_data"
-    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
-    #filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
+    dire = "janis"
+    filePath = "%s%s/%s" % (experimentDir, dire, "2016-07-12-11-15_EEG.csv")
+#    dire = "test_data"
+#    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
+#    filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
 
     p = PoSDBoS("knn_1", True, filePath)
     print "START"

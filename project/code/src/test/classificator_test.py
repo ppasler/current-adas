@@ -32,7 +32,13 @@ class TestNeuralNetwork(unittest.TestCase):
 
     def setUp(self):
         self.nn = NeuralNetwork()
-        self.config = ConfigProvider().getNNTrainConfig()
+        self.config = {
+            "learningrate": 0.01,
+            "momentum": 0.1,
+            "maxEpochs": 2000,
+            "continueEpochs": 15,
+            "validationProportion": 0.25
+        }
         self.nn.createNew(2, 4, 1, bias=True)
 
     def _createData(self, nInput, nTarget, values):
@@ -43,15 +49,15 @@ class TestNeuralNetwork(unittest.TestCase):
         return ds
 
     def createORData(self):
-        values = [((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (1,))]
+        values = [((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (1,))]*2
         return self._createData(2, 1, values)
 
     def createXORData(self):
-        values = [((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (0,))]
+        values = [((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (0,))]*2
         return self._createData(2, 1, values)
 
     def createANDData(self):
-        values = [((0, 0), (0,)), ((0, 1), (0,)), ((1, 0), (0,)), ((1, 1), (1,))]
+        values = [((0, 0), (0,)), ((0, 1), (0,)), ((1, 0), (0,)), ((1, 1), (1,))]*2
         return self._createData(2, 1, values)
 
     def removeFile(self):
@@ -75,7 +81,7 @@ class TestNeuralNetwork(unittest.TestCase):
 
         #TODO may fail with delta 0.2
         for inpt, target in ds:
-            self.assertAlmostEqual(self.nn.activate(inpt), target, delta=0.2)
+            self.assertEqual(self.nn._clazz(self.nn.activate(inpt)), target)
 
     def test_saveAndLoad(self):
         ds = self.createORData()
@@ -115,9 +121,9 @@ class TestNetworkUtil(unittest.TestCase):
         ds = self._buildXORData()
         self.nu.train(ds)
     
-        results = self.nu.activate(ds)
+        results, _ = self.nu.activate(ds)
     
-        assert_array_equal(results, [[2, 0], [0, 2]])
+        assert_array_equal(results, [[2, 0, 100], [0, 2, 100]])
 
 class TestNetworkDataUtil(unittest.TestCase):
 

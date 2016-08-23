@@ -41,10 +41,13 @@ class NetworkUtil(object):
         else:
             self.nn = NeuralNetwork().load(fileName)
 
-    def train(self, trainData):
+    def train(self, trainData, convergence):
         start = time.time()
         print "start Training at " + str(datetime.fromtimestamp(start))
-        self.nn.train(trainData, **self.config)
+        if convergence:
+            self.nn.trainConvergence(trainData, **self.config)
+        else:
+            self.nn.train(trainData, **self.config)
         print "Training Done in %.2fs" % (time.time() - start)
     
     def test(self, testData=None):
@@ -144,10 +147,10 @@ class NetworkDataUtil(object):
             ds.addSample(value[:nInput], value[nInput])
         return ds
 
-def testSeveral(start, end, name):
+def testSeveral(start, end, name, convergence):
     threads = []
     for h in range(start, end):
-        threads.append(multiprocessing.Process(target=testSingle, args=(h,name)))
+        threads.append(multiprocessing.Process(target=testSingle, args=(h,name, convergence)))
 
     for thread in threads:
         thread.start()
@@ -157,19 +160,20 @@ def testSeveral(start, end, name):
 
     print "Done"
 
-def testSingle(h, name):
+def testSingle(h, name, convergence):
     files = [scriptPath + "/../../data/awake_full_.csv", scriptPath + "/../../data/drowsy_full_.csv"]
     ndu = NetworkDataUtil(files)
     train, test = ndu.get()
 
     nu = NetworkUtil(ndu.getNInput(), 4)
-    nu.train(train)
+    nu.train(train, convergence)
     nu.test()
     filename = name + "_" + str(h)
     nu.save(filename)
     f = open(os.path.dirname(os.path.abspath(__file__)) + "/../../data/" + filename +  ".nns", 'w')
 
     results, resArr = nu.activate(test)
+    f.write("convergence: " + str(convergence) + "\n\n")
     f.write(nu.__str__() + "\n\n")
     f.write("  awk drsy res(%)\n")
     f.write(str(results))
@@ -197,4 +201,4 @@ def loadSingle(fileName):
 
 if __name__ == "__main__": # pragma: no cover
     name = time.strftime("%Y-%m-%d-%H-%M", time.gmtime())
-    testSeveral(0, 4, name)
+    testSeveral(0, 4, name, False)

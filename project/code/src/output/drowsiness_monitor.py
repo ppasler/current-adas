@@ -38,6 +38,7 @@ class DrowsinessMonitor(object):
         self.state = "awake";
         self.info = ""
         self.classes = ConfigProvider().getConfig("class")
+        self.drowsyCount = 0
 
     def _handleEvent(self):
         for event in pygame.event.get():
@@ -65,6 +66,12 @@ class DrowsinessMonitor(object):
             info_pos.centery = self.screen.get_rect().centery+64
             info_pos.centerx = self.screen.get_rect().centerx
             self.screen.blit(info, info_pos)
+        
+        drowsyAlert = font.render("drowsyCount: " + str(self.drowsyCount), 1, (255, 255, 255))
+        drowsyAlert_pos = drowsyAlert.get_rect()
+        drowsyAlert_pos.centery = self.screen.get_rect().centery-200
+        drowsyAlert_pos.centerx = self.screen.get_rect().centerx
+        self.screen.blit(drowsyAlert, drowsyAlert_pos)
 
     def run(self):
         pygame.init()
@@ -89,6 +96,8 @@ class DrowsinessMonitor(object):
     
     def setStatus(self, status, info=None):
         self.state = self.classes[str(status)]
+        if self.state == "drowsy":
+            self.drowsyCount += 1
         self.info = str(info)
 
 if __name__ == "__main__":
