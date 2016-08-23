@@ -38,7 +38,7 @@ class SignalProcessor(object):
         self.verbose = verbose
 
     def process(self, raw, quality):
-        proc = self.qualUtil.replaceOutliners(raw, NaN, self.lowerBound, self.upperBound)
+        proc = self.qualUtil.replaceOutliners(raw, NaN)
         proc = self.sigUtil.normalize(proc, self.normalize)
 
         invalid = self.qualUtil.isInvalidData(proc)

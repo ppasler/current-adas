@@ -210,10 +210,12 @@ class DeltaSignalPlotter(RawSignalPlotter):
 class ProcessedSignalPlotter(RawSignalPlotter):
     def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processed")
+        self.pre = SignalPreProcessor()
         self.chain = SignalProcessor()
 
     def _getData(self, signal):
         raw = self.eegData.getColumn(signal)
         qual = self.eegData.getQuality(signal)
-        raw, _ = self.chain.process(raw, qual)
-        return raw
+        proc = self.pre.process(raw)
+        proc, _ = self.chain.process(proc, qual)
+        return proc

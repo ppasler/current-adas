@@ -57,7 +57,7 @@ class NetworkUtil(object):
         resArr = []
         for inpt, target in testData:
             res = self.nn.activate(inpt)
-            clazz = self.nn._clazz(res[0])
+            clazz = self.nn._clazz(res)
             resArr.append([res, clazz, target])
             matrix[target[0]][clazz] += 1
         matrix[0, 2] = matrix[0, 0] / total
@@ -158,7 +158,7 @@ def testSeveral(start, end, name):
     print "Done"
 
 def testSingle(h, name):
-    files = [scriptPath + "/../../data/awake_full.csv", scriptPath + "/../../data/drowsy_full.csv"]
+    files = [scriptPath + "/../../data/awake_full_.csv", scriptPath + "/../../data/drowsy_full_.csv"]
     ndu = NetworkDataUtil(files)
     train, test = ndu.get()
 
@@ -197,4 +197,4 @@ def loadSingle(fileName):
 
 if __name__ == "__main__": # pragma: no cover
     name = time.strftime("%Y-%m-%d-%H-%M", time.gmtime())
-    loadSingle("ann_2")
+    loadSingle("2016-08-23-05-47_3")

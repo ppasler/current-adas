@@ -14,7 +14,7 @@ import sys
 from numpy import nanmax, nanmin, nansum, nanmean
 
 from config.config import ConfigProvider
-from eeg_processor import EEGProcessor, SignalPreProcessor, SignalProcessor
+from eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
 from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
@@ -126,9 +126,7 @@ class SignalStatisticUtil(object):
 
     def collectRawStats(self, signal):
         data = self.eegData.getColumn(signal)
-        qual = self.eegData.getQuality(signal)
-        proc = self.preProcessor.process(data)
-        self._collectSignalStat(signal, RAW_KEY, proc)
+        self._collectSignalStat(signal, RAW_KEY, data)
 
     def _collectSignalStat(self, signal, category, data):
         self.stats[SIGNALS_KEY][signal][category] = OrderedDict()
@@ -283,20 +281,13 @@ def rawDataStatisticSingle():
     }
     return experimentDir, experiments
 
-def featureDataStatisticSingle():
-    experimentDir = scriptPath + "/../../"
-    experiments = {
-        "data": ["drowsy_full_.csv", "awake_full_.csv"]
-    }
-    return experimentDir, experiments
-
 def rawDataStatisticAll():
     experimentDir = scriptPath + "/../../../captured_data/"
     experiments = None
     return experimentDir, experiments
 
 if __name__ == "__main__":
-    experimentDir, experiments = featureDataStatisticSingle()
+    experimentDir, experiments = rawDataStatisticSingle()
     s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=False)
     s.main()
 

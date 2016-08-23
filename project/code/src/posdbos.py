@@ -9,7 +9,6 @@ Created on 30.05.2016
 '''
 from Queue import Empty
 import os
-import random
 import threading
 
 from classification.neural_network import NeuralNetwork
@@ -85,16 +84,14 @@ class PoSDBoS(object):
             except Exception as e:
                 print e.message
                 self.close()
-        print classified
-        print features
-        #self.writeFeature(features)
+        self.writeFeature(features)
         self.fe.close()
         self.dm.close()
         dmt.join()
 
     def writeFeature(self, data):
-        #filePath = scriptPath + "/../data/" + "awake_full_.csv"
-        filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
+        filePath = scriptPath + "/../data/" + "awake_full_.csv"
+        #filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
 
         header = []
         start = 4
@@ -107,8 +104,8 @@ if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = scriptPath + "/../../captured_data/"
     dire = "test_data"
-    #filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
-    filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
+    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
+    #filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
 
     p = PoSDBoS("ann_1", True, filePath)
     print "START"
