@@ -97,7 +97,7 @@ class PoSDBoS(object):
             except Exception as e:
                 print e.message
                 self.close()
-        self.writeFeature(c)
+        #self.writeFeature(c)
         self.fe.close()
         self.dm.close()
         dmt.join()
@@ -138,7 +138,7 @@ if __name__ == '__main__': # pragma: no cover
 #    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
     filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
 
-    p = PoSDBoS("knn_2", True, filePath)
+    p = PoSDBoS("knn_1", True, filePath)
     print "START"
     pt = threading.Thread(target=p.run)
     pt.start()

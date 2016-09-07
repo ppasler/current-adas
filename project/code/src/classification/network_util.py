@@ -183,7 +183,7 @@ def testSingle(h, name, convergence):
     f.close()
 
 def loadSingle(fileName):
-    files = [scriptPath + "/../../data/awake_full_2.csv", scriptPath + "/../../data/drowsy_full_2.csv"]
+    files = [scriptPath + "/../../data/awake_full.csv", scriptPath + "/../../data/drowsy_full.csv"]
     ndu = NetworkDataUtil(files)
     data = ndu.get(False)
     

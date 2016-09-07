@@ -3,7 +3,7 @@ In der vorgestellten Arbeit wurde eine Anwendung zur Müdigkeitserkennung entwic
 Die Datenerhebung ist lose gekoppelt und kann die EEG-Daten über mehrere Wege übertragen. Für die Verarbeitung der Daten stehen mehrere Klassen zur Verfügung, die zu einer Verarbeitungskette verbunden werden. Für die Klassifizierung wurde ein KNN eingesetzt, welches performant die EEG-Sequenzen einteilt. Die Anwendung fügt sich in die bestehende Simulationsumgebung der Reutlingen University ein.
 Vier Testfahrten für Trainingsdaten wurden im Fahrsimulator der Hochschule Reutlingen samt Videobild aufgenommen.
 
-Präzision und Genauigkeit (1, vgl. Tab \ref{tab:requirements}) konnten nicht wie Erwartet umgesetzt werden. Die Erkennungsrate liegt derzeit bei ca. 66\%, das ist für ein sicherheitsrelevantes System deutlich zu niedrig. 
+Präzision und Genauigkeit (1) konnten nicht wie Erwartet umgesetzt werden. Die Erkennungsrate liegt derzeit bei ca. 66\%, das ist für ein sicherheitsrelevantes System deutlich zu niedrig. 
 Fehlertoleranz (2) und Fehlerbehandlung (3) wurden umgesetzt und durch Unit- und Integrationstests abgesichert. 
 
 Die Verarbeitungsgeschwindigkeit (4) der empfangen Daten beträgt  während eines Benchmarktests im Schnitt 200ms pro Sequenz und liegt damit deutlich unter der Liefergeschwindigkeit des EEGs (Sequenz $\equiv$ 128 Werte $\equiv$ 1000ms). 

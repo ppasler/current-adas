@@ -1,25 +1,5 @@
 \label{sec:classification}
-Nachdem in vorherigen Abschnitt eine passende Merkmalsmenge erstellt wurde, geht es nun um die Entscheidung, ob der Fahrer Müde oder Wach ist bzw. ob das System eine Müdigkeitsmeldung erscheinen lässt. Für diese Klassifizierung werden im allgemeinen Machine-Learning-Algorithmen verwendet. Anhand von markierten Datensätzen wird versucht den Algorithmus zu Trainieren (Überwachtes Lernen). Dies dient dem Ziel, dass er auch unbekannte Daten klassifizieren kann. Dieser Vorgang wird Generalisierung bezeichnet und ist auch im menschlichen Lernen ein wichtiger Schritt.
-
-Für die Anwendung wurde zur Klassifizierung ein künstliches Neuronales Netz (KNN) ausgewählt. Es basiert auf einem erweiterten Perceptron / McCulloch-Pitts-Neuron \cite{ann} und ist der Funktionsweise des menschlichen Gehirns bzw. seinen Neuronen nachempfunden\cite{marsland_opac-b1129336}. Ein KNN lässt sich im einfachste Fall durch eine Merkmalsmenge $X = x_1, x_2 ... x_n$, dazugehörige Gewichte $W = w_1, w_2 ... w_n$, eine Übertragungsfunktion $\sum$ und eine Schwellwertfunktion $\theta$ beschreiben (Abb. \ref{fig:perceptron}).
-
-\begin{figure}[h] 
-  \begin{center}
-    \includegraphics[width=5.5cm]{perceptron}
-    \caption[Schema eines Perceptrons / McCulloch-Pitts-Neurons]{Darstellung eines McCulloch-Pitts-Neurons. Die Merkmale $X$ werden mit den Gewichten $W$ multiplziert und in $\sum$ summiert. Wenn $h > \theta$ "`feuert"' das Neuron ($o = 1$) \cite{marsland_opac-b1129336}. \label{fig:perceptron}}
-  \end{center}
-\end{figure}
-
-Dieser Aufbau kann schon einfach Aufgaben, wie bspw. ein logisches "`UND"', lösen. Jedoch lässt sich schon ein logisches "`XOR"' nicht mehr abbilden. Dafür müssen weitere Schichten von Neuronen (Hidden Layers) hintereinander geschaltet werden - das sog. Multi Layer Perceptron (MPL, Abb. \ref{fig:mlp}).
-
-\begin{figure}[h] 
-  \begin{center}
-    \includegraphics[width=5.5cm]{mlp}
-    \caption[Schema eines Multi-Layer-Perceptrons]{Darstellung eines Neuronalen Netzes mit mehreren Schichten (Multi Layer Perceptron, MLP)\cite{marsland_opac-b1129336}. \label{fig:mlp}}
-  \end{center}
-\end{figure}
-
-Es exisitiert kein bekannter Algorithmus für die Wahl der optimalen initialen Parameter eines KNNs (Gewichte, Anzahl der Hidden Layers). Diese werden initial entweder Zufällig gesetzt oder durch ausprobieren gefunden. Vuckovic et al. \cite{Vuckovic2002349} hatten sich mit diesem Thema genauer beschäftigt.
+Nachdem in vorherigen Abschnitt eine passende Merkmalsmenge erstellt wurde, geht es nun um die Entscheidung, ob der Fahrer Müde oder Wach ist bzw. ob das System eine Müdigkeitsmeldung erscheinen lässt. Für diese Klassifizierung werden im allgemeinen Machine-Learning-Algorithmen verwendet. Anhand von markierten Datensätzen wird versucht den Algorithmus zu Trainieren (Überwachtes Lernen). Dies dient dem Ziel, dass er auch unbekannte Daten klassifizieren kann. Dieser Vorgang wird Generalisierung bezeichnet und ist auch im menschlichen Lernen ein wichtiger Schritt. Für die Anwendung wurde zur Klassifizierung ein künstliches Neuronales Netz (KNN) ausgewählt. Es basiert auf einem erweiterten Perceptron / McCulloch-Pitts-Neuron \cite{ann} und ist der Funktionsweise des menschlichen Gehirns bzw. seinen Neuronen nachempfunden\cite{marsland_opac-b1129336}. \ann
 
 Die Merkmalsvektoren kommen zu gleichen Teilen aus der Wach und Müde-Menge und sind mit den jeweiligen Klassen 0 und 1 versehen. Insgesamt wurden 1170 Datensätze mit jeweils 24 Werten pro Vektor eingesetzt. Vor dem Training wurde die Merkmalsmenge in Trainings- und Testmenge (2:1) aufgeteilt. Intern wird beim Training noch einmal ein Teil der Daten zum validieren genutzt (15\%). So wird sicher gestellt, dass die Tests nie mit Daten durchgeführt werden, die schon beim Training genutzt wurden. Sonst kann es zum sog. Overfitting kommen, das bedeutet, dass das Netz zu genau auf die Trainingsdaten eingestellt ist und nicht mehr generalisiert.
 
@@ -29,12 +9,11 @@ Die Testmenge wird nun in das KNN eingegeben und überprüft, ob die richtige Kl
 
 \begin{table}[t]
  \centering
- \caption[KNN Ergebnis-Matrix]{Die Tabelle zeigt das Testergebnis mit den Testdaten ($\frac{1}{3}$ der Gesamtmenge)}
+ \caption[KNN Ergebnis-Matrix]{Die Tabelle zeigt das Klassifizierungsergebnis Test- und Trainingsdaten \label{tab:ann_results}}
  \begin{tabular}{l|lll}
    & Wach & Müde & Erkannt \\ \hline
-  Wach & 75 & 25 & 75\%\\  
-  Müde & 75 & 75 & 25\%\\ 
-  Gesamt & - & - & 50\%\\ 
+  Wach & 357 & 227 & 61\%\\  
+  Müde & 217 & 367 & 62\%\\ 
+  Gesamt & - & - & 61.5\%\\ 
  \end{tabular}
- \label{tab:ann_results}
 \end{table}

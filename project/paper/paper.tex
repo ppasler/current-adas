@@ -2,6 +2,14 @@
 
 \graphicspath{{img/}{./}}
 \usepackage{graphicx}
+
+\addtolength{\itemsep}{-0.05in}
+\addtolength{\topsep}{-0.07in}
+\addtolength{\textfloatsep}{-0.05in}
+\addtolength{\intextsep}{-0.1in}
+\addtolength{\partopsep}{-0.03in}
+\addtolength{\parskip}{-0.02in}
+
 \title{PoSDBoS - Portable System to Detect Driver Drowsiness with
 Body Sensors. \titlenote{ \scriptsize 
   \flushleft Betreuer Hochschule:  \ \ Prof. Dr. Martinez\\ 
@@ -24,6 +32,18 @@ Body Sensors. \titlenote{ \scriptsize
 }
 
 \newcommand{\threadingSequence}{}
+\newcommand{\rawHisto}{.}
+\newcommand{\butterworth}{}
+\newcommand{\fftExample}{.}
+\newcommand{\perceptron}{.}
+\newcommand{\ann}{}
+\newcommand{\problemDetail}{}
+\newcommand{\epocSensors}{}
+\newcommand{\drivingTask}{.}
+\newcommand{\tofc}{}
+\newcommand{\comp}{Im folgenden werden Arbeiten mit Körpersensoren näher beleuchtet. }
+\newcommand{\wavelet}{}
+
 \newcommand{\docwidth}{11cm}
 
 \begin{document}
@@ -47,10 +67,6 @@ Experimentation
 
 \section{Einleitung}
 \input{sections/intro}
-
-
-\section{EEG Headset}
-\input{sections/eeg}
 
 \section{Stand der Technik}
 \input{sections/state}
@@ -87,7 +103,8 @@ Experimentation
 
 \balance
 \bibliographystyle{unsrt} % abbrv, alpha, plain, unsrt, apalike
-\bibliography{Kapitel/Literatur}
-
+\small{
+	\bibliography{Kapitel/Literatur}
+}
 
 \end{document}
