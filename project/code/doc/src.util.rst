@@ -4,10 +4,10 @@ src.util package
 Submodules
 ----------
 
-src.util.eeg_table_to_packet_converter module
----------------------------------------------
+src.util.eeg_data_source module
+-------------------------------
 
-.. automodule:: src.util.eeg_table_to_packet_converter
+.. automodule:: src.util.eeg_data_source
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,6 +32,14 @@ src.util.fft_util module
 ------------------------
 
 .. automodule:: src.util.fft_util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.util.quality_util module
+----------------------------
+
+.. automodule:: src.util.quality_util
     :members:
     :undoc-members:
     :show-inheritance:

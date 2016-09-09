@@ -41,7 +41,7 @@ class NetworkUtil(object):
         else:
             self.nn = NeuralNetwork().load(fileName)
 
-    def train(self, trainData, convergence):
+    def train(self, trainData, convergence=False):
         start = time.time()
         print "start Training at " + str(datetime.fromtimestamp(start))
         if convergence:

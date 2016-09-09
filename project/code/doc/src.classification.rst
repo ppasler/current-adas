@@ -4,6 +4,14 @@ src.classification package
 Submodules
 ----------
 
+src.classification.network_util module
+--------------------------------------
+
+.. automodule:: src.classification.network_util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 src.classification.neural_network module
 ----------------------------------------
 

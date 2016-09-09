@@ -11,13 +11,9 @@ from pybrain.datasets.supervised import SupervisedDataSet
 
 from classification.network_util import NetworkDataUtil, NetworkUtil
 from classification.neural_network import NeuralNetwork
-from config.config import ConfigProvider
 from numpy.testing.utils import assert_array_equal
 
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-
 
 
 name = "zzz_test"
@@ -35,7 +31,7 @@ class TestNeuralNetwork(unittest.TestCase):
         self.config = {
             "learningrate": 0.01,
             "momentum": 0.1,
-            "maxEpochs": 2000,
+            "maxEpochs": 500,
             "continueEpochs": 15,
             "validationProportion": 0.25
         }

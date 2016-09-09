@@ -4,6 +4,14 @@ src.test package
 Submodules
 ----------
 
+src.test.chain_test module
+--------------------------
+
+.. automodule:: src.test.chain_test
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 src.test.classificator_test module
 ----------------------------------
 
@@ -16,6 +24,14 @@ src.test.config_test module
 ---------------------------
 
 .. automodule:: src.test.config_test
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.test.converter_test module
+------------------------------
+
+.. automodule:: src.test.converter_test
     :members:
     :undoc-members:
     :show-inheritance:

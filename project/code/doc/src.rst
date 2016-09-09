@@ -9,7 +9,9 @@ Subpackages
     src.classification
     src.config
     src.emokit
-    src.example
+    src.misc
+    src.output
+    src.statistic
     src.test
     src.util
     src.window
@@ -17,18 +19,26 @@ Subpackages
 Submodules
 ----------
 
-src.client module
------------------
-
-.. automodule:: src.client
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 src.data_collector module
 -------------------------
 
 .. automodule:: src.data_collector
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.data_processor module
+-------------------------
+
+.. automodule:: src.data_processor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.eeg_processor module
+------------------------
+
+.. automodule:: src.eeg_processor
     :members:
     :undoc-members:
     :show-inheritance:
@@ -41,18 +51,26 @@ src.feature_extractor module
     :undoc-members:
     :show-inheritance:
 
-src.posdbos module
-------------------
+src.http_eeg_data_provider module
+---------------------------------
 
-.. automodule:: src.posdbos
+.. automodule:: src.http_eeg_data_provider
     :members:
     :undoc-members:
     :show-inheritance:
 
-src.server module
------------------
+src.http_eeg_data_receiver module
+---------------------------------
 
-.. automodule:: src.server
+.. automodule:: src.http_eeg_data_receiver
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.posdbos module
+------------------
+
+.. automodule:: src.posdbos
     :members:
     :undoc-members:
     :show-inheritance:
