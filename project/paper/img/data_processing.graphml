@@ -18,7 +18,7 @@
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="74.07999999999996" width="128.76" x="409.8044186046511" y="228.11761097908027"/>
-          <y:Fill color="#84FF84" transparent="false"/>
+          <y:Fill color="#93FF0099" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="custom" textColor="#000000" visible="true" width="4.0" x="62.379999999999995" y="35.039999999999964">
             <y:LabelModel>
@@ -36,7 +36,7 @@
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="37.039999999999964" width="142.61627906976742" x="468.3837209302326" y="228.11761097908027"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="custom" textColor="#000000" visible="true" width="138.0859375" x="2.2651707848837077" y="1.8188281249999818">Filtered Signal Sequence
 128 decoded raw data<y:LabelModel>
@@ -53,7 +53,7 @@
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="142.61627906976742" x="309.8837209302326" y="292.1626540279389"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="102.02734375" x="20.294467659883708" y="4.0">ProcessingChain<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -69,9 +69,9 @@
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="67.61598388671877" width="130.4481395348837" x="408.1162790697674" y="316.5508053302765"/>
-          <y:Fill color="#84FF84" transparent="false"/>
+          <y:Fill color="#93FF0099" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="custom" textColor="#000000" visible="true" width="4.0" x="63.22406976744185" y="31.807991943359355">
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="custom" textColor="#000000" visible="true" width="4.0" x="63.22406976744185" y="31.80799194335941">
             <y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
@@ -87,9 +87,9 @@
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="67.61598388671877" width="145.80813953488365" x="465.1918604651163" y="315.7037212467193"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="62.8046875" modelName="custom" textColor="#000000" visible="true" width="117.396484375" x="14.205827579941797" y="2.4056481933593545">EEG Signal
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="62.8046875" modelName="custom" textColor="#000000" visible="true" width="117.396484375" x="14.205827579941797" y="2.4056481933594114">EEG Signal
 filtered channels
 splitted by frequency 
 (δ, θ, α, β, γ)<y:LabelModel>
@@ -106,7 +106,7 @@ splitted by frequency
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="49.69598388671875" width="167.7525581395348" x="393.3081395348837" y="163.11547654151923"/>
-          <y:Fill color="#84FF84" transparent="false"/>
+          <y:Fill color="#93FF0099" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="custom" textColor="#000000" visible="true" width="4.0" x="81.8762790697674" y="22.847991943359375">
             <y:LabelModel>
@@ -124,7 +124,7 @@ splitted by frequency
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="30.0" width="121.80813953488371" x="320.28779069767444" y="334.5117131900788"/>
-          <y:Fill color="#00BC00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="110.06640625" x="5.870866642441854" y="5.6494140625">Bands by frequency<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -140,7 +140,7 @@ splitted by frequency
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="30.0" width="118.61627906976742" x="321.6918604651163" y="163.11547654151923"/>
-          <y:Fill color="#00BC00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="101.39453125" x="8.610873909883708" y="5.6494140625">Decoded raw data<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -156,7 +156,7 @@ splitted by frequency
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="49.69598388671875" width="142.61627906976742" x="468.3837209302326" y="163.11547654151923"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" modelName="custom" textColor="#000000" visible="true" width="94.064453125" x="24.275912972383708" y="0.796234130859375">EEG Signal
 14 channels with
@@ -174,7 +174,7 @@ value and quality<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="125.0" x="318.5" y="206.46453570365912"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="82.017578125" x="21.4912109375" y="5.1494140625">DataCollector<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -190,7 +190,7 @@ value and quality<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="30.0" width="118.61627906976742" x="321.6918604651163" y="248.81359486579902"/>
-          <y:Fill color="#00BC00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="110.072265625" x="4.272006722383708" y="5.6494140625">Raw data sequence<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -206,7 +206,7 @@ value and quality<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="37.039999999999964" width="142.61627906976742" x="468.3837209302326" y="265.15761097908023"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="custom" textColor="#000000" visible="true" width="138.0859375" x="2.2651707848837077" y="1.8188281249999818">Filtered Signal Sequence
 128 decoded raw data<y:LabelModel>
@@ -223,7 +223,7 @@ value and quality<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="142.61627906976742" x="309.8837209302326" y="377.8607723522187"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="100.03515625" x="21.290561409883708" y="4.0">FeatureExtractor<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -239,7 +239,7 @@ value and quality<y:LabelModel>
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="67.61598388671877" width="108.80813953488371" x="416.7562790697674" y="394.5117131900788"/>
-          <y:Fill color="#84FF84" transparent="false"/>
+          <y:Fill color="#93FF0099" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="custom" textColor="#000000" visible="true" width="4.0" x="52.404069767441854" y="31.80799194335941">
             <y:LabelModel>
@@ -257,7 +257,7 @@ value and quality<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="67.61598388671877" width="145.80813953488365" x="465.1918604651163" y="394.5117131900788"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="62.8046875" modelName="custom" textColor="#000000" visible="true" width="107.58203125" x="19.113054142441797" y="2.4056481933594114">θ frequencies 
 from Channels
@@ -276,7 +276,7 @@ from Channels
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="30.0" width="121.80813953488371" x="320.28779069767444" y="420.2098315143586"/>
-          <y:Fill color="#00BC00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="83.37109375" x="19.218522892441854" y="5.6494140625">Feature Vector<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>

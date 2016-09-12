@@ -3,7 +3,7 @@ Die Signalsequenzen durchlaufen eine Verarbeitungskette (Abb. \ref{fig:data_proc
 
 \begin{figure}[h] 
   \begin{center}
-    \includegraphics[width=5cm]{data_processing_chain}
+    \includegraphics[width=\columnwidth]{data_processing_chain}
     \caption[Verarbeitungskette]{Die Signalsequenzen durchlaufen eine Verarbeitungskette \label{fig:data_processing_chain}}
   \end{center}
 \end{figure}
@@ -18,9 +18,9 @@ Für die Anwendung wurde hierfür ein Buttworth-Filter\cite{Butterworth30} einge
 
 Bei der Analyse der Histogramme der Signalwerte, zeigte sich eine Häufung der Amplituden im Bereich von -100 bis 100. Werte außerhalb dieses Bereichs wurden als Artefakte angesehen und herausgefiltert bzw. als ungültig markiert\rawHisto
 
-Die gefilterten Signale werden dann auf einen Bereich von -1 bis 1 normalisiert, dazu werden sie durch den jeweiligen Maximalwert bzw. Betrag des Minimalwertes geteilt (In diesem Fall 100). Dieses Vorgehen stellt sicher, dass die absolute Amplitude keinen Einfluss auf die Gewichtung im Klassifikator hat. Zudem wird die Datenmenge wiederum reduziert. 
+Die gefilterten Signale werden dann auf einen Bereich von -1 bis 1 normalisiert, dazu werden sie durch den jeweiligen Maximalwert bzw. Betrag des Minimalwertes geteilt (in diesem Fall 100). Dieses Vorgehen stellt sicher, dass die absolute Amplitude keinen Einfluss auf die Gewichtung im Klassifikator hat. Zudem wird die Datenmenge wiederum reduziert. 
 
-Im letzten Schritt werden die Signale in ihre Frequenzbänder (EEG-Bänder) unterteilt. Hierzu werden die Signale in ihr Frequenzspektrum zerlegt und bestimmte Frequenzbereiche extrahiert. Diese EEG-Bänder gliedern sich in folgende Frequenzbereiche und werden nach griechischen Buchstaben benannt: $\delta$ : 0,5 - 4Hz, $\theta$ : 4 - 8Hz, $\alpha$ : 8 - 13Hz, $\beta$ : 13 - 30Hz, $\gamma$ : ab 30Hz. Die Frequenzbereiche sind nicht einheitlich definiert und variieren unter Umständen, sie sind aus Empfehlungen der IFCN entnommen \cite{ifcn}. Den Frequenzbändern werden verschiedene Eigenschaften zugesprochen \cite{lei2011,Lv2010,Gundel1992}. Delta Wellen treten bei Erwachsenen häufig in der traumlosen Tiefschlafphase auf. Theta-Wellen zeigen sich bei Schläfrigkeit und leichtem Schlaf. Mit leichter Entspannung und entspannter Wachheit (mit geschlossenen Augen) werden Alpha-Wellen assoziiert. Beta Wellen treten während der REM-Schlafphase oder unter Einwirkung von Psychopharmaka auf. Gamma-Wellen gehen häufig mit starker Konzentration oder Meditation einher.
+Im letzten Schritt wird das Signal in seine Frequenzbänder (EEG-Bänder) unterteilt. Dazu wird es aus dem Zeitbereich in das Frequenzspektrum  überführt und bestimmte Frequenzbereiche extrahiert. Diese EEG-Bänder gliedern sich in folgende Bereiche und werden nach griechischen Buchstaben benannt: $\delta$ : 0,5 - 4Hz, $\theta$ : 4 - 8Hz, $\alpha$ : 8 - 13Hz, $\beta$ : 13 - 30Hz, $\gamma$ : ab 30Hz. Die Frequenzbereiche sind nicht einheitlich definiert und variieren unter Umständen, sie sind aus Empfehlungen der IFCN entnommen \cite{ifcn}. Den Frequenzbändern werden verschiedene Eigenschaften zugesprochen \cite{lei2011,Lv2010,Gundel1992}. Delta-Wellen treten bei Erwachsenen häufig in der traumlosen Tiefschlafphase auf. Theta-Wellen zeigen sich bei Schläfrigkeit und leichtem Schlaf. Mit leichter Entspannung und entspannter Wachheit (mit geschlossenen Augen) werden Alpha-Wellen assoziiert. Beta-Wellen treten während der REM-Schlafphase oder unter Einwirkung von Psychopharmaka auf. Gamma-Wellen gehen häufig mit starker Konzentration oder Meditation einher.
 
 Um die einzelnen Frequenzbänder zu erhalten wird eine Fast-Fourier-Transformation \cite{Bochner_1} durchgeführt. \wavelet
-Die Fourier-Transformation bildet ein zeitdiskretes endliches Signal, auf ein diskretes, periodisches Frequenzspektrum ab. Um die Frequenzbänder zu erhalten, wird das Ergebnis auf die gewünschten Frequenzen reduziert\fftExample
+ Die Fourier-Transformation bildet ein aperiodische, kontinuierliches Signal auf ein diskretes, periodisches Frequenzspektrum ab. Um die Frequenzbänder zu erhalten, wird das Ergebnis auf die gewünschten Frequenzen reduziert\fftExample

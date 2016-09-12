@@ -18,7 +18,7 @@
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="67.875" width="168.0" x="710.7731056213379" y="409.2966480255127"/>
-          <y:Fill color="#FFB2D8" transparent="false"/>
+          <y:Fill color="#FFD1E8" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="custom" textColor="#000000" visible="true" width="100.6796875" x="33.66015625" y="17.236328125">DrivingSimulator
 Environment<y:LabelModel>
@@ -35,7 +35,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="99.0" x="444.5581395348837" y="199.48550033569336"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="44.0078125" x="27.49609375" y="5.1494140625">Emokit<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -62,7 +62,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="168.0" x="698.0812451562216" y="146.63949966430664"/>
-          <y:Fill color="#C0C0C0" transparent="false"/>
+          <y:Fill color="#D8D8D8" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="148.046875" x="9.9765625" y="5.1494140625">Emotiv premium libraries<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -112,7 +112,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="118.61627906976742" x="434.75" y="402.10134802551266"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="102.02734375" x="8.294467659883708" y="5.1494140625">ProcessingChain<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -128,7 +128,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="142.61627906976742" x="723.4649660864542" y="265.0901470184326"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="128.025390625" x="7.295444222383708" y="5.1494140625">HttpEEGDataProvider<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -144,7 +144,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="99.0" x="745.2731056213379" y="390.88364601135254"/>
-          <y:Fill color="#FF99CC" transparent="false"/>
+          <y:Fill color="#FFD1E8" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="66.666015625" x="16.1669921875" y="5.1494140625">SimToCAN<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -171,7 +171,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="125.0" x="431.5581395348837" y="461.10134802551266"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="100.03515625" x="12.482421875" y="5.1494140625">FeatureExtractor<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -187,9 +187,9 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="125.0" x="431.5581395348837" y="510.3920985290527"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="76.029296875" x="24.4853515625" y="5.1494140625">Classificator<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="76.029296875" x="24.4853515625" y="5.149414062499943">Classificator<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -203,7 +203,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="30.0" width="118.61627906976742" x="299.3837209302326" y="228.20684934277347"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="101.39453125" x="8.610873909883708" y="5.6494140625">Decoded raw data<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -219,7 +219,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="30.0" width="142.61627906976742" x="288.8255813953489" y="162.49275016784668"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="132.765625" x="4.925327034883708" y="5.6494140625">Encoded byte sequence<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -235,7 +235,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="125.0" x="431.5581395348837" y="350.30784903259274"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="82.017578125" x="21.4912109375" y="5.1494140625">DataCollector<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -251,7 +251,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNode2">
           <y:Geometry height="30.0" width="115.17441860465112" x="296.75" y="428.2341480255127"/>
-          <y:Fill color="#00FF00" transparent="false"/>
+          <y:Fill color="#94FF00" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="87.384765625" x="13.894826489825562" y="5.6494140625">Processed data<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -269,7 +269,7 @@ Environment<y:LabelModel>
           <y:Geometry height="38.0" width="23.0" x="353.8662790697674" y="505.8920985290527"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="78.044921875" x="-27.5224609375" y="42.0">Output device<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="78.044921875" x="-27.5224609375" y="41.99999999999994">Output device<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -287,7 +287,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="142.61627906976742" x="565.8486870166868" y="324.0901470184326"/>
-          <y:Fill color="#33CCCC" transparent="false"/>
+          <y:Fill color="#50E5E5" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="129.37890625" x="6.618686409883708" y="5.1494140625">HttpEEGDataReceiver<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -303,7 +303,7 @@ Environment<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="BevelNodeWithShadow">
           <y:Geometry height="29.0" width="99.0" x="745.2731056213379" y="466.7789993286133"/>
-          <y:Fill color="#FF99CC" transparent="false"/>
+          <y:Fill color="#FFD1E8" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="74.03125" x="12.484375" y="5.1494140625">CarInterface<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
@@ -589,7 +589,6 @@ connection?<y:LabelModel>
       </data>
     </edge>
     <edge id="e16" source="n15" target="n10">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -602,7 +601,6 @@ connection?<y:LabelModel>
       </data>
     </edge>
     <edge id="e17" source="n13" target="n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
