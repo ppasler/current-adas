@@ -10,26 +10,27 @@ Created on 10.05.2016
 
 import os
 
-from numpy import genfromtxt, delete, shape, savetxt, transpose
+from numpy import genfromtxt, delete, shape, savetxt, transpose, array
+from config.config import ConfigProvider
 
 
 DEFAULT_DELIMITER = ";" # default delimiter for CSV file
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
 
-class EEGTableUtil(object):
+class EEGTableDto(object):
     '''
     Representation of EEG table data
     '''
 
-    def __init__(self, header=None, data=None, file_path=""):
+    def __init__(self, header=None, data=None, filePath=""):
         '''
         table data with header, data and the filepath
         
         :param header:
         :param data:
-        :param file_path:
+        :param filePath:
         '''
-        self.file_path = file_path
+        self.filePath = filePath
         self.header = header
         self.data = data
         if data is not None:
@@ -47,6 +48,18 @@ class EEGTableUtil(object):
 
     def getData(self):  # pragma: no cover
         return self.data
+
+    def getEEGHeader(self):
+        eegFields = ConfigProvider().getEmotivConfig().get("eegFields")
+        return [head for head in self.header if head in eegFields]
+
+    def getEEGData(self):
+        eegFields = self.getEEGHeader()
+        # TODO make me nice
+        eegData = []
+        for eegField in eegFields:
+            eegData.append(self.getColumn(eegField))
+        return array(eegData)
 
     def getTimeIndex(self, fromTime):
         '''
@@ -188,7 +201,7 @@ class EEGTableUtil(object):
         return (min(data) <= time <= max(data))
 
     def __repr__(self):
-        return "EEGTableUtil from '%s' shape %s\nheader %s" % (self.file_path, shape(self.data), self.header)
+        return "EEGTableDto from '%s' shape %s\nheader %s" % (self.file_path, shape(self.data), self.header)
 
 class EEGTableFileUtil(object):
     '''
@@ -256,7 +269,7 @@ class EEGTableFileUtil(object):
         header = self.readHeader(filePath)
         data = self.readData(filePath)
 
-        return EEGTableUtil(header, data, filePath)
+        return EEGTableDto(header, data, filePath)
 
     def writeFile(self, filePath, data, header, delimiter=DEFAULT_DELIMITER):
         savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%0.3f", comments="")
