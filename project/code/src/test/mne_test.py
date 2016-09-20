@@ -34,19 +34,23 @@ class MNEUtilTest(unittest.TestCase):
         channels = self.config.get("eegFields")
         samplingRate = self.config.get("samplingRate")
 
-        info = self.mne.createInfo(channels, "testFile")
+        info = self.mne._createInfo(channels, "testFile")
         self.assertEquals(info["sfreq"], samplingRate)
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)
 
     def test_rawCreation(self):
-        self.eegData.getEEGData()
         self.mne.createRawObject(self.eegData)
-    
+
     def test_getChannels(self):
         channels = ["AF3", "F3"]
         raw = self.mne.createRawObject(self.eegData)
         print raw.pick_channels(channels)
+
+    def test_removeArtifacts(self):
+        mneObj = self.mne.createRawObject(self.eegData)
+        print mneObj.info
+        self.mne.removeArtifacts(mneObj)
 
 def testRawObject():
     # http://martinos.org/mne/stable/auto_tutorials/plot_creating_data_structures.html#creating-raw-objects
@@ -60,7 +64,7 @@ def testRawObject():
     )
     
     custom_raw = mne.io.RawArray(data, info)
+    print custom_raw
 
 if __name__ == '__main__':
-    testRawObject()
     unittest.main()
