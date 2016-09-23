@@ -14,7 +14,7 @@ import xmlrpclib
 import time
 
 
-from emokit.emotiv import Emotiv
+from emokit.emotiv_connector import EmotivConnector
 
 emotiv = None
 
@@ -107,7 +107,7 @@ class HttpEEGDataProvider(object):
 
 
 if __name__ == "__main__":
-    emotiv = Emotiv(display_output=False)
+    emotiv = EmotivConnector(display_output=False)
     server = HttpEEGDataProvider()
     try:
         print "starting server and emotiv"

@@ -1,0 +1,7 @@
+# Show current timestamp
+"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe" --sub-filter "marq{marquee=%y-%m-%d %H:%M:%S,position=6}" test.mp4
+
+"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe" -vvv dshow:// –dshow-vdev=screen-capture-recorder –dshow-adev=virtual-audio-capturer --sout "#transcode{vcodec=h264,acodec=mpga,ab=128,channels=2,samplerate=44100}:file{dst=C:\\Users\\Paul Pasler\\Desktop\\test.mp4,no-overwrite}"
+
+ :dshow-vdev=Integrated Camera :dshow-adev=Mikrofon (2- High Definition Au  :live-caching=300
+ 
