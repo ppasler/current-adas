@@ -57,7 +57,6 @@ class MNEUtilTest(unittest.TestCase):
     
     def test_ICA(self):
         raw = self.mne.createMNEObject(self.eegData)
-
         self.mne.ICA(raw)
 
 def testRawObject():

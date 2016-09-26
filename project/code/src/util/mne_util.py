@@ -12,11 +12,13 @@ import os
 
 from matplotlib import pyplot as plt
 import mne
+from mne.preprocessing.ica import ICA
+from mne.time_frequency.psd import psd_multitaper
 
 from config.config import ConfigProvider
 from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
-from mne.preprocessing.ica import ICA
 
+import numpy as np
 
 class MNEUtil():
 
@@ -26,7 +28,8 @@ class MNEUtil():
     def _createInfo(self, channelNames, filename):
         channelTypes = ["eeg"] * len(channelNames)
         samplingRate = self.config.getEmotivConfig().get("samplingRate")
-        info = mne.create_info(channelNames, samplingRate, channelTypes)
+        montage = mne.channels.read_montage("standard_1020")
+        info = mne.create_info(channelNames, samplingRate, channelTypes, montage)
         info["description"] = "PoSDBoS"
         info["filename"] = filename
         return info
@@ -46,6 +49,9 @@ class MNEUtil():
         mneObj.plot_psd_topo(tmax=30., fmin=5., fmax=60., n_fft=128, layout=layout)
         layout.plot()
 
+    def plotSensors(self, mneObj):
+        mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
+
     def bandpassFilterData(self, mneObj):
         upperFreq = self.config.getProcessingConfig().get("upperFreq")
         lowerFreq = self.config.getProcessingConfig().get("lowerFreq")
@@ -64,10 +70,11 @@ class MNEUtil():
         return mneObj.copy().drop_channels(channels)
 
     def ICA(self, mneObj):
+        #TODO what to do with this?
         picks = mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
         ica = ICA(n_components=0.95, method='fastica', max_iter=500)
         ica.fit(mneObj, picks=picks) # eeg=40e-6 V (EEG channels)
-        print ica
+        return ica
 
     def getChannel(self, mneObj):
         channels = ["AF3", "AF4", "F3", "F4"]
@@ -86,5 +93,5 @@ if __name__ == '__main__':
     eegData = EEGTableFileUtil().readFile(path + "2016-07-12-11-15_EEG_4096.csv")
     mneObj = util.createMNEObject(eegData)
 
-    util.getEEGCannels(mneObj)
+    util.plotTopomap(mneObj)
     
