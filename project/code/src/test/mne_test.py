@@ -17,6 +17,7 @@ import numpy as np
 from config.config import ConfigProvider
 from util.eeg_table_util import EEGTableFileUtil
 from util.mne_util import MNEUtil
+from numpy import array_equal
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -40,17 +41,24 @@ class MNEUtilTest(unittest.TestCase):
         self.assertItemsEqual(info["ch_names"], channels)
 
     def test_rawCreation(self):
-        self.mne.createRawObject(self.eegData)
+        self.mne.createMNEObject(self.eegData)
+
+    def test_convertMNEToEEGTableDto(self):
+        mneObj = self.mne.createMNEObject(self.eegData)
+        eegData2 = self.mne.convertMNEToEEGTableDto(mneObj)
+        self.assertListEqual(self.eegData.getEEGHeader(), eegData2.getHeader())
+        array_equal(self.eegData.getEEGData(), eegData2.getData())
+        self.assertEqual(self.eegData.filePath, eegData2.filePath)
 
     def test_getChannels(self):
         channels = ["AF3", "F3"]
-        raw = self.mne.createRawObject(self.eegData)
+        raw = self.mne.createMNEObject(self.eegData)
         print raw.pick_channels(channels)
+    
+    def test_ICA(self):
+        raw = self.mne.createMNEObject(self.eegData)
 
-    def test_removeArtifacts(self):
-        mneObj = self.mne.createRawObject(self.eegData)
-        print mneObj.info
-        self.mne.removeArtifacts(mneObj)
+        self.mne.ICA(raw)
 
 def testRawObject():
     # http://martinos.org/mne/stable/auto_tutorials/plot_creating_data_structures.html#creating-raw-objects

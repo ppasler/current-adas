@@ -201,7 +201,7 @@ class EEGTableDto(object):
         return (min(data) <= time <= max(data))
 
     def __repr__(self):
-        return "EEGTableDto from '%s' shape %s\nheader %s" % (self.file_path, shape(self.data), self.header)
+        return "EEGTableDto from '%s' shape %s\nheader %s" % (self.filePath, shape(self.data), self.header)
 
 class EEGTableFileUtil(object):
     '''
