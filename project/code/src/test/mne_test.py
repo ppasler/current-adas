@@ -50,6 +50,9 @@ class MNEUtilTest(unittest.TestCase):
         array_equal(self.eegData.getEEGData(), eegData2.getData())
         self.assertEqual(self.eegData.filePath, eegData2.filePath)
 
+    def test__createMNEEpochsObject(self):
+        self.mne._createMNEEpochsObject(self.eegData, self.eegData.getEEGHeader())
+
     def test_getChannels(self):
         channels = ["AF3", "F3"]
         raw = self.mne.createMNEObject(self.eegData)

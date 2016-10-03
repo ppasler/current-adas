@@ -34,15 +34,42 @@ class MNEUtil():
         info["filename"] = filename
         return info
 
-    def createMNEObject(self, data):
-        info = self._createInfo(data.getEEGHeader(), data.filePath)
-        return mne.io.RawArray(data.getEEGData(), info)
+    def createMNEObject(self, eegData):
+        info = self._createInfo(eegData.getEEGHeader(), eegData.filePath)
+        return mne.io.RawArray(eegData.getEEGData(), info)
 
     def convertMNEToEEGTableDto(self, mneObj):
         header = mneObj.ch_names
         data = mneObj._data
         filePath = mneObj.info["filename"]
         return EEGTableDto(header, data, filePath)
+
+    def createMNEEpochsObject(self, awakeData, drowsyData):
+        filePath = awakeData.filePath
+        eegData = np.concatenate((awakeData.getEEGData(), drowsyData.getEEGData()), axis=1)
+        return self._createMNEEpochsObject(eegData, awakeData.getEEGHeader(), filePath)
+
+    def _createMNEEpochsObject(self, raw, header, filePath):
+        info = self._createInfo(header, filePath)
+        data = self._createEpochDataArray(raw)
+        events = self._createEventsArray(len(data), 0)
+        event_id = dict(awake=0)
+
+        tmin = 0.0
+        return mne.EpochsArray(data, info, events, tmin, event_id)
+
+    def _createEpochDataArray(self, raw):
+        length = len(raw[0])
+        winSize = self.config.getCollectorConfig().get("windowSize")
+        epochArray = []
+        for start in range(0, length-winSize, winSize / 2):
+            end = start + winSize
+            epoch = raw[:, start: end]
+            epochArray.append(epoch)
+        return np.array(epochArray)
+
+    def _createEventsArray(self, size, clazz):
+        return np.array([[i, 1, clazz] for i in range(size)])
 
     def plotPSDTopo(self, mneObj):
         layout = mne.channels.read_layout('EEG1005')
@@ -86,12 +113,12 @@ class MNEUtil():
         _ = plt.plot(raw._data[1, :])
         plt.show()
 
-
 if __name__ == '__main__':
-    path = os.path.dirname(os.path.abspath(__file__)) +  "/../../../captured_data/janis/parts/"
+    path = os.path.dirname(os.path.abspath(__file__)) +  "/../../../captured_data/test_data/"
     util = MNEUtil()
-    eegData = EEGTableFileUtil().readFile(path + "2016-07-12-11-15_EEG_4096.csv")
-    mneObj = util.createMNEObject(eegData)
+    awakeData = EEGTableFileUtil().readFile(path + "awake_full.csv")
+    drowsyData = EEGTableFileUtil().readFile(path + "drowsy_full.csv")
+    custom_epochs = util.createMNEEpochsObject(awakeData, drowsyData)
 
-    util.plotTopomap(mneObj)
+    _ = custom_epochs['awake'].average().plot()
     
