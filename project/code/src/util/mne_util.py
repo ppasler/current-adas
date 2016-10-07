@@ -20,6 +20,8 @@ from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
 
 import numpy as np
 
+DEFAULT_SAMPLE_LENGTH = 1
+
 class MNEUtil():
 
     def __init__(self):
@@ -47,16 +49,36 @@ class MNEUtil():
     def createMNEEpochsObject(self, awakeData, drowsyData):
         filePath = awakeData.filePath
         eegData = np.concatenate((awakeData.getEEGData(), drowsyData.getEEGData()), axis=1)
-        return self._createMNEEpochsObject(eegData, awakeData.getEEGHeader(), filePath)
+        a = self._createMNEEpochsObject(eegData, awakeData.getEEGHeader(), filePath)
+        a.drop_bad()
+        b = self._createMNEEpochsArrayObject(eegData, awakeData.getEEGHeader(), filePath)
+        print(a.get_data()[0,0] / max(a.get_data()[0,0]))
+        print(b.get_data()[0,0] / max(b.get_data()[0,0]))
+        return b
 
     def _createMNEEpochsObject(self, raw, header, filePath):
         info = self._createInfo(header, filePath)
+        data = mne.io.RawArray(raw, info)
+        events = self._createEventsArray(self.getSampleCount(raw))
+        event_id = dict(awake=0, drowsy=1)
+
+        return mne.Epochs(data, events=events, event_id=event_id, tmin=0.0, tmax=1.0, add_eeg_ref=True)
+
+    def getSampleCount(self, raw):
+        length = len(raw[0])
+        winSize = self.config.getCollectorConfig().get("windowSize")
+
+        return len(range(0, length-winSize, winSize / 2))
+        
+    def _createMNEEpochsArrayObject(self, raw, header, filePath):
+        info = self._createInfo(header, filePath)
         data = self._createEpochDataArray(raw)
-        events = self._createEventsArray(len(data), 0)
-        event_id = dict(awake=0)
+        events = self._createEventsArray(len(data))
+        event_id = dict(awake=0, drowsy=1)
 
         tmin = 0.0
-        return mne.EpochsArray(data, info, events, tmin, event_id)
+        return mne.EpochsArray(data, info, events, tmin, event_id, 
+                               baseline=(None, 0))
 
     def _createEpochDataArray(self, raw):
         length = len(raw[0])
@@ -68,8 +90,12 @@ class MNEUtil():
             epochArray.append(epoch)
         return np.array(epochArray)
 
-    def _createEventsArray(self, size, clazz):
-        return np.array([[i, 1, clazz] for i in range(size)])
+    def _createEventsArray(self, size):
+        awakeClass = self.config.getClassConfig().get("awake")
+        drowsyClass = self.config.getClassConfig().get("drowsy")
+        awakeList = [[i, DEFAULT_SAMPLE_LENGTH, awakeClass] for i in range(0, size / 2)]
+        drowsyList = [[i, DEFAULT_SAMPLE_LENGTH, drowsyClass] for i in range(size / 2, size)]
+        return np.array(awakeList + drowsyList)
 
     def plotPSDTopo(self, mneObj):
         layout = mne.channels.read_layout('EEG1005')
@@ -118,7 +144,6 @@ if __name__ == '__main__':
     util = MNEUtil()
     awakeData = EEGTableFileUtil().readFile(path + "awake_full.csv")
     drowsyData = EEGTableFileUtil().readFile(path + "drowsy_full.csv")
-    custom_epochs = util.createMNEEpochsObject(awakeData, drowsyData)
+    epochs = util.createMNEEpochsObject(awakeData, drowsyData)
 
-    _ = custom_epochs['awake'].average().plot()
-    
+    #epochs.plot(block=True)

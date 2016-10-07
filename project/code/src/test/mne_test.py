@@ -24,12 +24,16 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
 
+def readData():
+    return EEGTableFileUtil().readFile(PATH + "example_1024.csv")
+
+
 class MNEUtilTest(unittest.TestCase):
 
     def setUp(self):
         self.mne = MNEUtil()
         self.config = ConfigProvider().getEmotivConfig()
-        self.eegData = EEGTableFileUtil().readFile(PATH + "example_1024.csv")
+        self.eegData = readData()
 
     def test_createInfo(self):
         channels = self.config.get("eegFields")
@@ -51,12 +55,21 @@ class MNEUtilTest(unittest.TestCase):
         self.assertEqual(self.eegData.filePath, eegData2.filePath)
 
     def test__createMNEEpochsObject(self):
-        self.mne._createMNEEpochsObject(self.eegData, self.eegData.getEEGHeader())
+        self.mne._createMNEEpochsObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), "../test.csv")
+
+    def test_createMNEEpochsObject(self):
+        awakeData = self.eegData
+        drowsyData = readData()
+
+        epochData = self.mne.createMNEEpochsObject(awakeData, drowsyData)
+        self.assertEqual(len(epochData["awake"]), 15)
+        self.assertEqual(len(epochData["drowsy"]), 15)
 
     def test_getChannels(self):
         channels = ["AF3", "F3"]
         raw = self.mne.createMNEObject(self.eegData)
-        print raw.pick_channels(channels)
+        chanObj = self.mne.getChannels(raw, channels)
+        self.assertEqual(chanObj.info["nchan"], len(channels))
     
     def test_ICA(self):
         raw = self.mne.createMNEObject(self.eegData)
