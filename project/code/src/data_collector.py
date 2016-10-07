@@ -10,7 +10,7 @@ Created on 30.05.2016
 
 from time import sleep
 
-from emokit.emotiv_connector import EmotivConnector
+from emotiv_connector import EmotivConnector
 from window.rectangular_signal_window import RectangularSignalWindow
 from http_eeg_data_receiver import HttpEEGDataReceiver
 from util.eeg_data_source import EEGTableWindowSource
