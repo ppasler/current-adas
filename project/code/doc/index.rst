@@ -13,7 +13,7 @@ Contents:
    
    tutorial
    links
-   modules
+   .. modules
 
 Indices and tables
 ==================

@@ -1,13 +1,13 @@
-src.emokit package
-==================
+output package
+==============
 
 Submodules
 ----------
 
-src.emokit.emotiv module
-------------------------
+output.drowsiness_monitor module
+--------------------------------
 
-.. automodule:: src.emokit.emotiv
+.. automodule:: output.drowsiness_monitor
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ src.emokit.emotiv module
 Module contents
 ---------------
 
-.. automodule:: src.emokit
+.. automodule:: output
     :members:
     :undoc-members:
     :show-inheritance:
