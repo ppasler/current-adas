@@ -1,13 +1,13 @@
-src.config package
-==================
+emokit package
+==============
 
 Submodules
 ----------
 
-src.config.config module
-------------------------
+emokit.emotiv module
+--------------------
 
-.. automodule:: src.config.config
+.. automodule:: emokit.emotiv
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ src.config.config module
 Module contents
 ---------------
 
-.. automodule:: src.config
+.. automodule:: emokit
     :members:
     :undoc-members:
     :show-inheritance:
