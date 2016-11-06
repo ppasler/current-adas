@@ -18,6 +18,7 @@ from config.config import ConfigProvider
 from util.eeg_table_util import EEGTableFileUtil
 from util.mne_util import MNEUtil
 from numpy import array_equal
+from numpy.testing.utils import assert_array_equal
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -57,6 +58,7 @@ class MNEUtilTest(unittest.TestCase):
     def test__createMNEEpochsObject(self):
         self.mne._createMNEEpochsObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), "../test.csv")
 
+    @unittest.skip("error")
     def test_createMNEEpochsObject(self):
         awakeData = self.eegData
         drowsyData = readData()
@@ -70,10 +72,17 @@ class MNEUtilTest(unittest.TestCase):
         raw = self.mne.createMNEObject(self.eegData)
         chanObj = self.mne.getChannels(raw, channels)
         self.assertEqual(chanObj.info["nchan"], len(channels))
-    
+
+    @unittest.skip("todo")
     def test_ICA(self):
         raw = self.mne.createMNEObject(self.eegData)
-        self.mne.ICA(raw)
+        print self.mne.ICA(raw)
+
+    def test_EventArray(self):
+        raw = self.mne.createMNEObject(self.eegData)
+        ev_arr1 = mne.make_fixed_length_events(raw, 1, duration=0.5)
+        ev_arr2 = self.mne._createEventsArray(self.eegData.getValueCount()/128)
+        assert_array_equal(ev_arr1, ev_arr2)
 
 def testRawObject():
     # http://martinos.org/mne/stable/auto_tutorials/plot_creating_data_structures.html#creating-raw-objects

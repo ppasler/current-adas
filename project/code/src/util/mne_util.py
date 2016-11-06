@@ -13,12 +13,12 @@ import os
 from matplotlib import pyplot as plt
 import mne
 from mne.preprocessing.ica import ICA
-from mne.time_frequency.psd import psd_multitaper
+from mne.viz._3d import plot_trans
 
 from config.config import ConfigProvider
+import numpy as np
 from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
 
-import numpy as np
 
 DEFAULT_SAMPLE_LENGTH = 1
 
@@ -50,33 +50,27 @@ class MNEUtil():
         filePath = awakeData.filePath
         eegData = np.concatenate((awakeData.getEEGData(), drowsyData.getEEGData()), axis=1)
         a = self._createMNEEpochsObject(eegData, awakeData.getEEGHeader(), filePath)
-        a.drop_bad()
+        #a.plot(block=True)
         b = self._createMNEEpochsArrayObject(eegData, awakeData.getEEGHeader(), filePath)
-        print(a.get_data()[0,0] / max(a.get_data()[0,0]))
-        print(b.get_data()[0,0] / max(b.get_data()[0,0]))
-        return b
+        #b.plot(block=True)
+        print a
+        print b
 
     def _createMNEEpochsObject(self, raw, header, filePath):
         info = self._createInfo(header, filePath)
         data = mne.io.RawArray(raw, info)
-        events = self._createEventsArray(self.getSampleCount(raw))
+        events = self._createEventsArray(len(raw[0])/128)
         event_id = dict(awake=0, drowsy=1)
 
         return mne.Epochs(data, events=events, event_id=event_id, tmin=0.0, tmax=1.0, add_eeg_ref=True)
-
-    def getSampleCount(self, raw):
-        length = len(raw[0])
-        winSize = self.config.getCollectorConfig().get("windowSize")
-
-        return len(range(0, length-winSize, winSize / 2))
         
     def _createMNEEpochsArrayObject(self, raw, header, filePath):
         info = self._createInfo(header, filePath)
         data = self._createEpochDataArray(raw)
         events = self._createEventsArray(len(data))
         event_id = dict(awake=0, drowsy=1)
-
         tmin = 0.0
+
         return mne.EpochsArray(data, info, events, tmin, event_id, 
                                baseline=(None, 0))
 
@@ -84,7 +78,7 @@ class MNEUtil():
         length = len(raw[0])
         winSize = self.config.getCollectorConfig().get("windowSize")
         epochArray = []
-        for start in range(0, length-winSize, winSize / 2):
+        for start in range(0, length-winSize, winSize):
             end = start + winSize
             epoch = raw[:, start: end]
             epochArray.append(epoch)
@@ -93,8 +87,8 @@ class MNEUtil():
     def _createEventsArray(self, size):
         awakeClass = self.config.getClassConfig().get("awake")
         drowsyClass = self.config.getClassConfig().get("drowsy")
-        awakeList = [[i, DEFAULT_SAMPLE_LENGTH, awakeClass] for i in range(0, size / 2)]
-        drowsyList = [[i, DEFAULT_SAMPLE_LENGTH, drowsyClass] for i in range(size / 2, size)]
+        awakeList = [[i*128, DEFAULT_SAMPLE_LENGTH, awakeClass] for i in range(0, size / 2)]
+        drowsyList = [[i*128, DEFAULT_SAMPLE_LENGTH, drowsyClass] for i in range(size / 2, size)]
         return np.array(awakeList + drowsyList)
 
     def plotPSDTopo(self, mneObj):
@@ -124,9 +118,12 @@ class MNEUtil():
 
     def ICA(self, mneObj):
         #TODO what to do with this?
-        picks = mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
         ica = ICA(n_components=0.95, method='fastica', max_iter=500)
-        ica.fit(mneObj, picks=picks) # eeg=40e-6 V (EEG channels)
+
+        picks = mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
+        reject = dict()#dict(grad=4000e-13, mag=4e-12, eog=150e-6, eeg=40e-6)
+        ica.fit(mneObj, picks=picks, decim=3, reject=reject)#, reject=dict())
+        ica.plot_components()
         return ica
 
     def getChannel(self, mneObj):
@@ -144,6 +141,8 @@ if __name__ == '__main__':
     util = MNEUtil()
     awakeData = EEGTableFileUtil().readFile(path + "awake_full.csv")
     drowsyData = EEGTableFileUtil().readFile(path + "drowsy_full.csv")
-    epochs = util.createMNEEpochsObject(awakeData, drowsyData)
-
+    #epochs = util.createMNEEpochsObject(awakeData, drowsyData)
     #epochs.plot(block=True)
+    raw = util.createMNEObject(awakeData)
+    util.plotScalp(raw)
+#    util.ICA(raw)
