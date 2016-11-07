@@ -36,9 +36,12 @@ class MNEUtil():
         info["filename"] = filename
         return info
 
-    def createMNEObject(self, eegData):
-        info = self._createInfo(eegData.getEEGHeader(), eegData.filePath)
-        return mne.io.RawArray(eegData.getEEGData(), info)
+    def createMNEObjectFromDto(self, eegDto):
+        return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath)
+
+    def createMNEObject(self, data, header, filePath):
+        info = self._createInfo(header, filePath)
+        return mne.io.RawArray(data, info)
 
     def convertMNEToEEGTableDto(self, mneObj):
         header = mneObj.ch_names
@@ -46,50 +49,16 @@ class MNEUtil():
         filePath = mneObj.info["filename"]
         return EEGTableDto(header, data, filePath)
 
-    def createMNEEpochsObject(self, awakeData, drowsyData):
-        filePath = awakeData.filePath
-        eegData = np.concatenate((awakeData.getEEGData(), drowsyData.getEEGData()), axis=1)
-        a = self._createMNEEpochsObject(eegData, awakeData.getEEGHeader(), filePath)
-        #a.plot(block=True)
-        b = self._createMNEEpochsArrayObject(eegData, awakeData.getEEGHeader(), filePath)
-        #b.plot(block=True)
-        print a
-        print b
+    def createMNEEpochsObject(self, eegData, clazz):
+        raw = self.createMNEObjectFromDto(eegData)
+        events = self._createEventsArray(raw, clazz)
+        return mne.Epochs(raw, events=events, tmin=0.0, tmax=0.99, add_eeg_ref=True)
 
-    def _createMNEEpochsObject(self, raw, header, filePath):
-        info = self._createInfo(header, filePath)
-        data = mne.io.RawArray(raw, info)
-        events = self._createEventsArray(len(raw[0])/128)
-        event_id = dict(awake=0, drowsy=1)
-
-        return mne.Epochs(data, events=events, event_id=event_id, tmin=0.0, tmax=1.0, add_eeg_ref=True)
-        
-    def _createMNEEpochsArrayObject(self, raw, header, filePath):
-        info = self._createInfo(header, filePath)
-        data = self._createEpochDataArray(raw)
-        events = self._createEventsArray(len(data))
-        event_id = dict(awake=0, drowsy=1)
-        tmin = 0.0
-
-        return mne.EpochsArray(data, info, events, tmin, event_id, 
-                               baseline=(None, 0))
-
-    def _createEpochDataArray(self, raw):
-        length = len(raw[0])
-        winSize = self.config.getCollectorConfig().get("windowSize")
-        epochArray = []
-        for start in range(0, length-winSize, winSize):
-            end = start + winSize
-            epoch = raw[:, start: end]
-            epochArray.append(epoch)
-        return np.array(epochArray)
-
-    def _createEventsArray(self, size):
-        awakeClass = self.config.getClassConfig().get("awake")
-        drowsyClass = self.config.getClassConfig().get("drowsy")
-        awakeList = [[i*128, DEFAULT_SAMPLE_LENGTH, awakeClass] for i in range(0, size / 2)]
-        drowsyList = [[i*128, DEFAULT_SAMPLE_LENGTH, drowsyClass] for i in range(size / 2, size)]
-        return np.array(awakeList + drowsyList)
+    def _createEventsArray(self, raw, clazz, overlapping=True):
+        duration = 1
+        if overlapping:
+            duration=0.5
+        return mne.make_fixed_length_events(raw, clazz, duration=duration)
 
     def plotPSDTopo(self, mneObj):
         layout = mne.channels.read_layout('EEG1005')
@@ -143,6 +112,5 @@ if __name__ == '__main__':
     drowsyData = EEGTableFileUtil().readFile(path + "drowsy_full.csv")
     #epochs = util.createMNEEpochsObject(awakeData, drowsyData)
     #epochs.plot(block=True)
-    raw = util.createMNEObject(awakeData)
-    util.plotScalp(raw)
+    raw = util.createMNEObjectFromDto(awakeData)
 #    util.ICA(raw)

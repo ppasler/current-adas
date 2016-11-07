@@ -15,7 +15,7 @@ import mne
 import numpy as np
 
 from config.config import ConfigProvider
-from util.eeg_table_util import EEGTableFileUtil
+from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
 from util.mne_util import MNEUtil
 from numpy import array_equal
 from numpy.testing.utils import assert_array_equal
@@ -46,43 +46,49 @@ class MNEUtilTest(unittest.TestCase):
         self.assertItemsEqual(info["ch_names"], channels)
 
     def test_rawCreation(self):
-        self.mne.createMNEObject(self.eegData)
+        self.mne.createMNEObjectFromDto(self.eegData)
 
     def test_convertMNEToEEGTableDto(self):
-        mneObj = self.mne.createMNEObject(self.eegData)
+        mneObj = self.mne.createMNEObjectFromDto(self.eegData)
         eegData2 = self.mne.convertMNEToEEGTableDto(mneObj)
         self.assertListEqual(self.eegData.getEEGHeader(), eegData2.getHeader())
         array_equal(self.eegData.getEEGData(), eegData2.getData())
         self.assertEqual(self.eegData.filePath, eegData2.filePath)
 
-    def test__createMNEEpochsObject(self):
-        self.mne._createMNEEpochsObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), "../test.csv")
-
-    @unittest.skip("error")
-    def test_createMNEEpochsObject(self):
-        awakeData = self.eegData
-        drowsyData = readData()
-
-        epochData = self.mne.createMNEEpochsObject(awakeData, drowsyData)
-        self.assertEqual(len(epochData["awake"]), 15)
-        self.assertEqual(len(epochData["drowsy"]), 15)
-
     def test_getChannels(self):
         channels = ["AF3", "F3"]
-        raw = self.mne.createMNEObject(self.eegData)
+        raw = self.mne.createMNEObjectFromDto(self.eegData)
         chanObj = self.mne.getChannels(raw, channels)
         self.assertEqual(chanObj.info["nchan"], len(channels))
 
+    def test_createMNEEpochsObject(self):
+        epochs = self.mne.createMNEEpochsObject(self.eegData, 1)
+        self.assertEqual(len(epochs.get_data()), 15)
+
+    def createTestData(self):
+        header = ["F3", "F4", "AF3", "AF4"]
+        data = np.random.rand(4,512)
+        filePath = "test"
+        return self.mne.createMNEObject(data, header, filePath)
+
+    def test__createEventsArray_overlapping(self):
+        raw = self.createTestData()
+        event_id = dict(drowsy=1)
+        events1 = self.mne._createEventsArray(raw, 1, False)
+        epochs1 = mne.Epochs(raw, events=events1, event_id=event_id, tmin=0.0, tmax=0.99, add_eeg_ref=True)
+        
+        events2 = self.mne._createEventsArray(raw, 1)
+        epochs2 = mne.Epochs(raw, events=events2, event_id=event_id, tmin=0.0, tmax=0.99, add_eeg_ref=True)
+
+        for i in range(0, len(events1)):
+            data1 = epochs1[i].get_data()
+            data2 = epochs2[i*2].get_data()
+            self.assertTrue((data1 == data2).all())
+
     @unittest.skip("todo")
     def test_ICA(self):
-        raw = self.mne.createMNEObject(self.eegData)
+        raw = self.mne.createMNEObjectFromDto(self.eegData)
         print self.mne.ICA(raw)
-
-    def test_EventArray(self):
-        raw = self.mne.createMNEObject(self.eegData)
-        ev_arr1 = mne.make_fixed_length_events(raw, 1, duration=0.5)
-        ev_arr2 = self.mne._createEventsArray(self.eegData.getValueCount()/128)
-        assert_array_equal(ev_arr1, ev_arr2)
 
 def testRawObject():
     # http://martinos.org/mne/stable/auto_tutorials/plot_creating_data_structures.html#creating-raw-objects
