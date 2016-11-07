@@ -1,13 +1,13 @@
 import os
-import gevent
 
-
+import emokit
 from emokit.emotiv import Emotiv
+
 from util.eeg_data_source import EEGTablePacketSource
+
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-import emokit
 emokit.emotiv.DEVICE_POLL_INTERVAL = 0.001
 
 class EmotivConnector(object):
@@ -17,10 +17,8 @@ class EmotivConnector(object):
 
     def _initEmotiv(self, display_output, write_to_file):
         self.emotiv = Emotiv(display_output, write_to_file)
-        gevent.spawn(self.emotiv.setup)
-        gevent.sleep(0)
         if not self._isEmotivConnected():
-            self.emotiv.close()
+            self.close()
             self._loadDummyData()
 
     def _isEmotivConnected(self):
@@ -35,7 +33,10 @@ class EmotivConnector(object):
         return self.emotiv.dequeue()
 
     def close(self):
-        self.emotiv.close()
+        try:
+            self.emotiv.stop()
+        except Exception as e:
+            print "Error while shutting down", e
 
 if __name__ == "__main__":
     a = EmotivConnector(display_output=True, write_to_file=False)
