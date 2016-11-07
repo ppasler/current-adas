@@ -28,7 +28,6 @@ PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
 def readData():
     return EEGTableFileUtil().readFile(PATH + "example_1024.csv")
 
-
 class MNEUtilTest(unittest.TestCase):
 
     def setUp(self):
@@ -36,7 +35,26 @@ class MNEUtilTest(unittest.TestCase):
         self.config = ConfigProvider().getEmotivConfig()
         self.eegData = readData()
 
-    def test_createInfo(self):
+    def createTestData(self):
+        header = ["F3", "F4", "AF3", "AF4"]
+        data = np.random.rand(4,512)
+        filePath = "test"
+        return self.mne.createMNEObject(data, header, filePath)
+
+
+    def test_createMNEObjectFromDto_creation(self):
+        self.mne.createMNEObjectFromDto(self.eegData)
+
+    def test_createMNEObject_creation(self):
+        self.mne.createMNEObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), self.eegData.filePath)
+
+    def test_createMNEObjectFromDto_getChannels(self):
+        channels = ["AF3", "F3"]
+        raw = self.mne.createMNEObjectFromDto(self.eegData)
+        chanObj = self.mne.getChannels(raw, channels)
+        self.assertEqual(chanObj.info["nchan"], len(channels))
+
+    def test__createInfo_creation(self):
         channels = self.config.get("eegFields")
         samplingRate = self.config.get("samplingRate")
 
@@ -45,9 +63,6 @@ class MNEUtilTest(unittest.TestCase):
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)
 
-    def test_rawCreation(self):
-        self.mne.createMNEObjectFromDto(self.eegData)
-
     def test_convertMNEToEEGTableDto(self):
         mneObj = self.mne.createMNEObjectFromDto(self.eegData)
         eegData2 = self.mne.convertMNEToEEGTableDto(mneObj)
@@ -55,21 +70,9 @@ class MNEUtilTest(unittest.TestCase):
         array_equal(self.eegData.getEEGData(), eegData2.getData())
         self.assertEqual(self.eegData.filePath, eegData2.filePath)
 
-    def test_getChannels(self):
-        channels = ["AF3", "F3"]
-        raw = self.mne.createMNEObjectFromDto(self.eegData)
-        chanObj = self.mne.getChannels(raw, channels)
-        self.assertEqual(chanObj.info["nchan"], len(channels))
-
     def test_createMNEEpochsObject(self):
         epochs = self.mne.createMNEEpochsObject(self.eegData, 1)
         self.assertEqual(len(epochs.get_data()), 15)
-
-    def createTestData(self):
-        header = ["F3", "F4", "AF3", "AF4"]
-        data = np.random.rand(4,512)
-        filePath = "test"
-        return self.mne.createMNEObject(data, header, filePath)
 
     def test__createEventsArray_overlapping(self):
         raw = self.createTestData()
@@ -89,20 +92,6 @@ class MNEUtilTest(unittest.TestCase):
     def test_ICA(self):
         raw = self.mne.createMNEObjectFromDto(self.eegData)
         print self.mne.ICA(raw)
-
-def testRawObject():
-    # http://martinos.org/mne/stable/auto_tutorials/plot_creating_data_structures.html#creating-raw-objects
-    # Generate some random data
-    data = np.random.randn(5, 1000)
-    # Initialize an info structure
-    info = mne.create_info(
-        ch_names=['MEG1', 'MEG2', 'EEG1', 'EEG2', 'EOG'],
-        ch_types=['grad', 'grad', 'eeg', 'eeg', 'eog'],
-        sfreq=100
-    )
-    
-    custom_raw = mne.io.RawArray(data, info)
-    print custom_raw
 
 if __name__ == '__main__':
     unittest.main()

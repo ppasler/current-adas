@@ -13,10 +13,8 @@ import os
 from matplotlib import pyplot as plt
 import mne
 from mne.preprocessing.ica import ICA
-from mne.viz._3d import plot_trans
 
 from config.config import ConfigProvider
-import numpy as np
 from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
 
 
@@ -27,6 +25,13 @@ class MNEUtil():
     def __init__(self):
         self.config = ConfigProvider()
 
+    def createMNEObjectFromDto(self, eegDto):
+        return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath)
+
+    def createMNEObject(self, data, header, filePath):
+        info = self._createInfo(header, filePath)
+        return mne.io.RawArray(data, info)
+
     def _createInfo(self, channelNames, filename):
         channelTypes = ["eeg"] * len(channelNames)
         samplingRate = self.config.getEmotivConfig().get("samplingRate")
@@ -35,13 +40,6 @@ class MNEUtil():
         info["description"] = "PoSDBoS"
         info["filename"] = filename
         return info
-
-    def createMNEObjectFromDto(self, eegDto):
-        return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath)
-
-    def createMNEObject(self, data, header, filePath):
-        info = self._createInfo(header, filePath)
-        return mne.io.RawArray(data, info)
 
     def convertMNEToEEGTableDto(self, mneObj):
         header = mneObj.ch_names
@@ -59,14 +57,6 @@ class MNEUtil():
         if overlapping:
             duration=0.5
         return mne.make_fixed_length_events(raw, clazz, duration=duration)
-
-    def plotPSDTopo(self, mneObj):
-        layout = mne.channels.read_layout('EEG1005')
-        mneObj.plot_psd_topo(tmax=30., fmin=5., fmax=60., n_fft=128, layout=layout)
-        layout.plot()
-
-    def plotSensors(self, mneObj):
-        mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
     def bandpassFilterData(self, mneObj):
         upperFreq = self.config.getProcessingConfig().get("upperFreq")
@@ -104,6 +94,14 @@ class MNEUtil():
         print raw
         _ = plt.plot(raw._data[1, :])
         plt.show()
+
+    def plotPSDTopo(self, mneObj):
+        layout = mne.channels.read_layout('EEG1005')
+        mneObj.plot_psd_topo(tmax=30., fmin=5., fmax=60., n_fft=128, layout=layout)
+        layout.plot()
+
+    def plotSensors(self, mneObj):
+        mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
 if __name__ == '__main__':
     path = os.path.dirname(os.path.abspath(__file__)) +  "/../../../captured_data/test_data/"
