@@ -15,11 +15,9 @@ import mne
 import numpy as np
 
 from config.config import ConfigProvider
-from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
+from util.eeg_table_util import EEGTableFileUtil
 from util.mne_util import MNEUtil
 from numpy import array_equal
-from numpy.testing.utils import assert_array_equal
-
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
