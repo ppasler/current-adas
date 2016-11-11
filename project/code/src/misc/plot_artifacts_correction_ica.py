@@ -115,7 +115,7 @@ def main():
     n_max_eog = 1  # here we bet on finding the vertical EOG components
     eog_epochs = create_eog_epochs(raw, reject=reject)  # get single EOG trials
     eog_inds, scores = ica.find_bads_eog(eog_epochs)  # find via correlation
-    
+    print eog_inds, scores
     ica.plot_scores(scores, exclude=eog_inds)  # look at r scores of components
     # we can see that only one component is highly correlated and that this
     # component got detected by our correlation analysis (red).

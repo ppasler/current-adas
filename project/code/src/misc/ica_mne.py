@@ -20,6 +20,7 @@ import mne
 from mne.datasets import sample
 from mne.preprocessing import ICA
 from mne.preprocessing import create_ecg_epochs, create_eog_epochs
+from mne.preprocessing.ica import corrmap
 
 import numpy as np
 from util.eeg_table_util import EEGTableFileUtil
@@ -85,32 +86,47 @@ def plotICA():
 print(ica)
 #plotICA()
 
-def findEOG():
-    ch_name = "AF3"
-    eog_average = create_eog_epochs(raw, reject=reject, ch_name=ch_name, picks=picks).average()
-    
-    eog_epochs = create_eog_epochs(raw, ch_name=ch_name, reject=reject)  # get single EOG trials
-    eog_inds, scores = ica.find_bads_eog(eog_epochs, ch_name=ch_name)  # find via correlation
+ch_name = "AF3"
 
+eog_average = create_eog_epochs(raw, reject=reject, ch_name=ch_name, picks=picks).average()
+
+eog_epochs = create_eog_epochs(raw, ch_name=ch_name, reject=reject)  # get single EOG trials
+eog_inds, scores = ica.find_bads_eog(eog_epochs, ch_name=ch_name)  # find via correlation
+
+def plotEOGStats():
     ica.plot_scores(scores, exclude=eog_inds)  # look at r scores of components
     # we can see that only one component is highly correlated and that this
     # component got detected by our correlation analysis (red).
     
     ica.plot_sources(eog_average, exclude=eog_inds)  # look at source time course
-
+    
     ica.plot_properties(eog_epochs, picks=eog_inds, psd_args={'fmax': 35.},
                         image_args={'sigma': 1.})
-
+    
     print(ica.labels_)
-
+    
     ica.plot_overlay(eog_average, exclude=eog_inds, show=False)
+# plotEOGStats()
 
-    ica.exclude.extend(eog_inds)
+ica.exclude.extend(eog_inds)
 
-#findEOG()
+subjects = ["nati", "janis", "gregor", "gerald"]
+
+def findEOGEpochs():
+    for sub in subjects:
+        raw = createRawObject(sub + ".csv")
+        raw.filter(1, 45, n_jobs=1, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
+           filter_length='10s', phase='zero-double')
+        print('look for eog: {0}'.format(sub))
+        for ch_name in raw.info["ch_names"]:
+            eog_average = create_eog_epochs(raw, ch_name=ch_name, picks=picks).average()
+            eog_epochs = create_eog_epochs(raw, ch_name=ch_name)
+            eog_inds, scores = ica.find_bads_eog(eog_epochs, ch_name=ch_name)  # find via correlation
+            print ch_name, eog_average, eog_inds, scores
+
+#findEOGEpochs()
 
 def findCorrmap():
-    subjects = ["nati", "janis", "gregor", "gerald"]
     
     icas_from_other_data = list()
     for sub in subjects:
@@ -119,7 +135,16 @@ def findCorrmap():
            filter_length='10s', phase='zero-double')
         print('fitting ICA for {0}'.format(sub))
         this_ica = ICA(n_components=n_components, method=method).fit(raw, picks=picks, reject=reject)
-        print(this_ica)
         icas_from_other_data.append(this_ica)
 
-findCorrmap()
+    return icas_from_other_data
+
+icas = findCorrmap()
+
+
+for i in range(len(icas)):
+    for j in range(n_components):
+        template = (i, j)
+        fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
+                                         show=False, ch_type='eeg', verbose=True)
+        print i, j, fig_template, fig_detected
