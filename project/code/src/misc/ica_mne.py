@@ -27,85 +27,99 @@ from util.mne_util import MNEUtil
 
 
 ###############################################################################
-# Setup paths and prepare raw data
+# read and prepare raw data
+def createInfo(filePath):
+    with open(filePath, 'rb') as f:
+        ch_names = f.readline().strip().split(",")
+    ch_types = ["eeg"] * len(ch_names)
+    sfreq = 128
+    montage = mne.channels.read_montage("standard_1020")
+    info = mne.create_info(ch_names, sfreq, ch_types, montage)
+    return info
 
-PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../../captured_data/test_data/"
-eegDto = EEGTableFileUtil().readFile(PATH + "awake_full.csv")
-raw = MNEUtil().createMNEObjectFromDto(eegDto)
+def createRawObject(filePath):
+    info = createInfo(filePath)
+    data = np.swapaxes(np.delete(np.genfromtxt(filePath, dtype=float, delimiter=","), 0, 0),0,1)
+    return mne.io.RawArray(data, info)
 
-###############################################################################
-# 1) Fit ICA model using the FastICA algorithm
+filePath = "test_data.txt"
+raw = createRawObject(filePath)
+raw.filter(1, 45, n_jobs=1, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
+           filter_length='10s', phase='zero-double')
 
-# Other available choices are `infomax` or `extended-infomax`
-# We pass a float value between 0 and 1 to select n_components based on the
-# percentage of variance explained by the PCA components.
 
-ica = ICA(n_components=0.95, method='fastica', verbose=True)
+####################################
 
+
+n_components = 14# 0.99  # if float, select n_components by explained variance of PCA
+method = 'fastica'  # for comparison with EEGLAB try "extended-infomax" here
+decim = 3  # we need sufficient statistics, not all time points -> saves time
 picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
                        stim=False, exclude='bads')
 
-ica.fit(raw, picks=picks, decim=3)#, reject=dict(eeg=40e-6, mag=4e-12, grad=4000e-13))
+ica = ICA(n_components=n_components, method=method, verbose=True)
 
-# maximum number of components to reject
-n_max_ecg, n_max_eog = 3, 1  # here we don't expect horizontal EOG components
 
-###############################################################################
-# 2) identify bad components by analyzing latent sources.
+reject = dict(eeg=400)
 
-title = 'Sources related to %s artifacts (red)'
-# generate ECG epochs use detection via phase statistics
+ica.fit(raw, picks=picks, decim=decim, verbose=True, reject=reject)
 
-# ecg_epochs = create_ecg_epochs(raw, tmin=-.5, tmax=.5, picks=picks)
 
-# ecg_inds, scores = ica.find_bads_ecg(ecg_epochs, method='ctps')
-# ica.plot_scores(scores, exclude=ecg_inds, title=title % 'ecg', labels='ecg')
+####################################
 
-# show_picks = np.abs(scores).argsort()[::-1][:5]
+def plotICA():
+    ica.plot_components()
+    
+    # Let's take a closer look at properties of first three independent components.
+    
+    # first, component 0:
+    ica.plot_properties(raw, picks=0)
+    
+    # we can see that the data were filtered so the spectrum plot is not
+    # very informative, let's change that:
+    ica.plot_properties(raw, picks=0, psd_args={'fmax': 35.})
+    
+    # we can also take a look at multiple different components at once:
+    ica.plot_properties(raw, picks=[1, 2], psd_args={'fmax': 35.})
 
-# ica.plot_sources(raw, show_picks, exclude=ecg_inds, title=title % 'ecg')
-# ica.plot_components(ecg_inds, title=title % 'ecg', colorbar=True)
+print(ica)
+#plotICA()
 
-# ecg_inds = ecg_inds[:n_max_ecg]
-# ica.exclude += ecg_inds
+def findEOG():
+    ch_name = "AF3"
+    eog_average = create_eog_epochs(raw, reject=reject, ch_name=ch_name, picks=picks).average()
+    
+    eog_epochs = create_eog_epochs(raw, ch_name=ch_name, reject=reject)  # get single EOG trials
+    eog_inds, scores = ica.find_bads_eog(eog_epochs, ch_name=ch_name)  # find via correlation
 
-# detect EOG by correlation
+    ica.plot_scores(scores, exclude=eog_inds)  # look at r scores of components
+    # we can see that only one component is highly correlated and that this
+    # component got detected by our correlation analysis (red).
+    
+    ica.plot_sources(eog_average, exclude=eog_inds)  # look at source time course
 
-ch_name = "F3" # ["AF3", "AF4"]
-eog_inds, scores = ica.find_bads_eog(raw, ch_name=ch_name, verbose=True)
-ica.plot_scores(scores, exclude=eog_inds, title=title % 'eog', labels='eog')
+    ica.plot_properties(eog_epochs, picks=eog_inds, psd_args={'fmax': 35.},
+                        image_args={'sigma': 1.})
 
-show_picks = np.abs(scores).argsort()[::-1][:5]
+    print(ica.labels_)
 
-ica.plot_sources(raw, show_picks, exclude=eog_inds, title=title % 'eog')
-ica.plot_components(eog_inds, title=title % 'eog', colorbar=True)
+    ica.plot_overlay(eog_average, exclude=eog_inds, show=False)
 
-eog_inds = eog_inds[:n_max_eog]
-ica.exclude += eog_inds
+    ica.exclude.extend(eog_inds)
 
-###############################################################################
-# 3) Assess component selection and unmixing quality
+#findEOG()
 
-# estimate average artifact
-# ecg_evoked = ecg_epochs.average()
-# ica.plot_sources(ecg_evoked, exclude=ecg_inds)  # plot ECG sources + selection
-# ica.plot_overlay(ecg_evoked, exclude=ecg_inds)  # plot ECG cleaning
+def findCorrmap():
+    subjects = ["nati", "janis", "gregor", "gerald"]
+    
+    icas_from_other_data = list()
+    for sub in subjects:
+        raw = createRawObject(sub + ".csv")
+        raw.filter(1, 45, n_jobs=1, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
+           filter_length='10s', phase='zero-double')
+        print('fitting ICA for {0}'.format(sub))
+        this_ica = ICA(n_components=n_components, method=method).fit(raw, picks=picks, reject=reject)
+        print(this_ica)
+        icas_from_other_data.append(this_ica)
 
-eog_evoked = create_eog_epochs(raw, tmin=-.5, tmax=.5, picks=picks).average()
-ica.plot_sources(eog_evoked, exclude=eog_inds)  # plot EOG sources + selection
-ica.plot_overlay(eog_evoked, exclude=eog_inds)  # plot EOG cleaning
-
-# check the amplitudes do not change
-ica.plot_overlay(raw)  # EOG artifacts remain
-
-###############################################################################
-
-# To save an ICA solution you can say:
-# ica.save('my_ica.fif')
-
-# You can later load the solution by saying:
-# from mne.preprocessing import read_ica
-# read_ica('my_ica.fif')
-
-# Apply the solution to Raw, Epochs or Evoked like this:
-# ica.apply(epochs)
+findCorrmap()
