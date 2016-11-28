@@ -26,8 +26,10 @@ from mne.preprocessing.ica import corrmap
 import numpy as np
 import matplotlib.pyplot as plt
 from mne.viz.utils import plt_show
+from util.mne_util import MNEUtil
 
 def main():
+    util = MNEUtil()
     ###############################################################################
     # read and prepare raw data
     def createInfo(filePath):
@@ -73,11 +75,10 @@ def main():
         raw_from_other_data = list()
         for sub in subjects:
             raw = createRawObject(sub + ".csv")
-            raw.filter(1, 45, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
-               filter_length=filter_length, phase='zero-double', fir_window="hamming")
+            util.filterData(raw, 1, 45)
             print('fitting ICA for {0}'.format(sub))
-            picks = createPicks(raw)
-            this_ica = ICA(n_components=n_components, method=method).fit(raw, picks=picks, reject=reject)
+            picks = util.createPicks(raw)
+            this_ica = util.ICA(raw)
             raw_from_other_data.append(raw)
             icas_from_other_data.append(this_ica)
     
@@ -100,8 +101,11 @@ def main():
                      (2, 1)#, (2, 6), (3, 11)
                     ]
         for template in templates:
-            fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
-                                             show=False, ch_type='eeg', verbose=True)
+            templateICA = icas[template[0]]
+            icas.remove(templateICA)
+            templateIC = template[1]
+            label = "blinks"
+            fig_template, fig_detected = util.labelArtefact(templateICA, templateIC, icas, label)
     
             print template, fig_template, fig_detected
         plt.show()
@@ -116,6 +120,9 @@ def main():
         plt_show()
 
     compICAs(icas)
+    
+
+    
 
 if __name__ == "__main__":
     main()

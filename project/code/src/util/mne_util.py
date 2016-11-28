@@ -12,7 +12,8 @@ import os
 
 from matplotlib import pyplot as plt
 import mne
-from mne.preprocessing.ica import ICA
+from mne.preprocessing.ica import ICA, corrmap
+from mne.viz.utils import plt_show
 
 from config.config import ConfigProvider
 from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
@@ -58,6 +59,13 @@ class MNEUtil():
             duration=0.5
         return mne.make_fixed_length_events(raw, clazz, duration=duration)
 
+    def filterData(self, mneObj, upperFreq, lowerFreq):
+        return mneObj.filter(upperFreq, lowerFreq, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
+               filter_length="10s", phase='zero-double', fir_window="hamming")
+
+    def createPicks(self, mneObj):
+        return mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
+
     def bandpassFilterData(self, mneObj):
         upperFreq = self.config.getProcessingConfig().get("upperFreq")
         lowerFreq = self.config.getProcessingConfig().get("lowerFreq")
@@ -76,24 +84,28 @@ class MNEUtil():
         return mneObj.copy().drop_channels(channels)
 
     def ICA(self, mneObj):
-        #TODO what to do with this?
-        ica = ICA(n_components=0.95, method='fastica', max_iter=500)
+        ica = ICA(n_components=14, method='fastica')
 
-        picks = mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
-        reject = dict()#dict(grad=4000e-13, mag=4e-12, eog=150e-6, eeg=40e-6)
-        ica.fit(mneObj, picks=picks, decim=3, reject=reject)#, reject=dict())
-        ica.plot_components()
+        picks = self.createPicks(mneObj)
+        reject = dict(eeg=300)
+        ica.fit(mneObj, picks=picks, reject=reject)
+        # ica.plot_components()
         return ica
 
-    def getChannel(self, mneObj):
-        channels = ["AF3", "AF4", "F3", "F4"]
-        raw = self.getChannels(mneObj, channels)
-        raw = self.cropChannels(raw, 3, 4)
-        print raw
-        raw = self.dropChannels(raw, channels[:2])
-        print raw
-        _ = plt.plot(raw._data[1, :])
-        plt.show()
+    def labelArtefact(self, templateICA, templateIC, icas, label):
+        template = (0, templateIC)
+        icas = [templateICA] + icas
+
+        return corrmap(icas, template=template, label=label, show=False, ch_type='eeg')
+
+    def plotCorrmaps(self, icas):
+        n_components = icas[0].n_components_
+        for i in range(len(icas)):
+            for j in range(n_components):
+                template = (i, j)
+                fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
+                                                 show=False, ch_type='eeg', verbose=True)
+                print i, j, fig_template, fig_detected
 
     def plotPSDTopo(self, mneObj):
         layout = mne.channels.read_layout('EEG1005')
