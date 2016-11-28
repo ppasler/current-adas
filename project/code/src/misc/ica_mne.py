@@ -1,3 +1,4 @@
+#!/usr/bin/env python -W ignore::DeprecationWarning
 # found at: http://martinos.org/mne/dev/auto_tutorials/plot_ica_from_raw.html
 """
 .. _tut_preprocessing_ica:
@@ -23,128 +24,98 @@ from mne.preprocessing import create_ecg_epochs, create_eog_epochs
 from mne.preprocessing.ica import corrmap
 
 import numpy as np
-from util.eeg_table_util import EEGTableFileUtil
-from util.mne_util import MNEUtil
+import matplotlib.pyplot as plt
+from mne.viz.utils import plt_show
 
-
-###############################################################################
-# read and prepare raw data
-def createInfo(filePath):
-    with open(filePath, 'rb') as f:
-        ch_names = f.readline().strip().split(",")
-    ch_types = ["eeg"] * len(ch_names)
-    sfreq = 128
-    montage = mne.channels.read_montage("standard_1020")
-    info = mne.create_info(ch_names, sfreq, ch_types, montage)
-    return info
-
-def createRawObject(filePath):
-    info = createInfo(filePath)
-    data = np.swapaxes(np.delete(np.genfromtxt(filePath, dtype=float, delimiter=","), 0, 0),0,1)
-    return mne.io.RawArray(data, info)
-
-filePath = "test_data.txt"
-raw = createRawObject(filePath)
-raw.filter(1, 45, n_jobs=1, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
-           filter_length='10s', phase='zero-double')
-
-
-####################################
-
-
-n_components = 14# 0.99  # if float, select n_components by explained variance of PCA
-method = 'fastica'  # for comparison with EEGLAB try "extended-infomax" here
-decim = 3  # we need sufficient statistics, not all time points -> saves time
-picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
-                       stim=False, exclude='bads')
-
-ica = ICA(n_components=n_components, method=method, verbose=True)
-
-
-reject = dict(eeg=400)
-
-ica.fit(raw, picks=picks, decim=decim, verbose=True, reject=reject)
-
-
-####################################
-
-def plotICA():
-    ica.plot_components()
+def main():
+    ###############################################################################
+    # read and prepare raw data
+    def createInfo(filePath):
+        with open(filePath, 'rb') as f:
+            ch_names = f.readline().strip().split(",")
+        ch_types = ["eeg"] * len(ch_names)
+        sfreq = 128
+        montage = mne.channels.read_montage("standard_1020")
+        info = mne.create_info(ch_names, sfreq, ch_types, montage)
+        return info
     
-    # Let's take a closer look at properties of first three independent components.
+    def createRawObject(filePath):
+        info = createInfo(filePath)
+        data = np.swapaxes(np.delete(np.genfromtxt(filePath, dtype=float, delimiter=","), 0, 0),0,1)
+        return mne.io.RawArray(data, info)
     
-    # first, component 0:
-    ica.plot_properties(raw, picks=0)
+    def createPicks(raw):
+        return mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
+                           stim=False, exclude='bads')
     
-    # we can see that the data were filtered so the spectrum plot is not
-    # very informative, let's change that:
-    ica.plot_properties(raw, picks=0, psd_args={'fmax': 35.})
+    n_components = 14# 0.99  # if float, select n_components by explained variance of PCA
+    method = 'fastica'  # for comparison with EEGLAB try "extended-infomax" here
+    decim = 3  # we need sufficient statistics, not all time points -> saves time
+    filter_length = "5s"
+    reject = dict(eeg=300)
     
-    # we can also take a look at multiple different components at once:
-    ica.plot_properties(raw, picks=[1, 2], psd_args={'fmax': 35.})
-
-print(ica)
-#plotICA()
-
-ch_name = "AF3"
-
-eog_average = create_eog_epochs(raw, reject=reject, ch_name=ch_name, picks=picks).average()
-
-eog_epochs = create_eog_epochs(raw, ch_name=ch_name, reject=reject)  # get single EOG trials
-eog_inds, scores = ica.find_bads_eog(eog_epochs, ch_name=ch_name)  # find via correlation
-
-def plotEOGStats():
-    ica.plot_scores(scores, exclude=eog_inds)  # look at r scores of components
-    # we can see that only one component is highly correlated and that this
-    # component got detected by our correlation analysis (red).
+    def plotICA(ica, raw):
+        ica.plot_components()
+        
+        ica.plot_properties(raw, picks=0)
+        
+        # we can see that the data were filtered so the spectrum plot is not
+        # very informative, let's change that:
+        ica.plot_properties(raw, picks=0, psd_args={'fmax': 35.})
+        
+        # we can also take a look at multiple different components at once:
+        ica.plot_properties(raw, picks=[1, 2], psd_args={'fmax': 35.})
     
-    ica.plot_sources(eog_average, exclude=eog_inds)  # look at source time course
+    subjects = ["nati", "janis", "gregor", "gerald"]
     
-    ica.plot_properties(eog_epochs, picks=eog_inds, psd_args={'fmax': 35.},
-                        image_args={'sigma': 1.})
+    def findCorrmap():
+        icas_from_other_data = list()
+        raw_from_other_data = list()
+        for sub in subjects:
+            raw = createRawObject(sub + ".csv")
+            raw.filter(1, 45, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
+               filter_length=filter_length, phase='zero-double', fir_window="hamming")
+            print('fitting ICA for {0}'.format(sub))
+            picks = createPicks(raw)
+            this_ica = ICA(n_components=n_components, method=method).fit(raw, picks=picks, reject=reject)
+            raw_from_other_data.append(raw)
+            icas_from_other_data.append(this_ica)
     
-    print(ica.labels_)
+        return icas_from_other_data, raw_from_other_data
     
-    ica.plot_overlay(eog_average, exclude=eog_inds, show=False)
-# plotEOGStats()
-
-ica.exclude.extend(eog_inds)
-
-subjects = ["nati", "janis", "gregor", "gerald"]
-
-def findEOGEpochs():
-    for sub in subjects:
-        raw = createRawObject(sub + ".csv")
-        raw.filter(1, 45, n_jobs=1, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
-           filter_length='10s', phase='zero-double')
-        print('look for eog: {0}'.format(sub))
-        for ch_name in raw.info["ch_names"]:
-            eog_average = create_eog_epochs(raw, ch_name=ch_name, picks=picks).average()
-            eog_epochs = create_eog_epochs(raw, ch_name=ch_name)
-            eog_inds, scores = ica.find_bads_eog(eog_epochs, ch_name=ch_name)  # find via correlation
-            print ch_name, eog_average, eog_inds, scores
-
-#findEOGEpochs()
-
-def findCorrmap():
+    icas, raws = findCorrmap()
     
-    icas_from_other_data = list()
-    for sub in subjects:
-        raw = createRawObject(sub + ".csv")
-        raw.filter(1, 45, n_jobs=1, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
-           filter_length='10s', phase='zero-double')
-        print('fitting ICA for {0}'.format(sub))
-        this_ica = ICA(n_components=n_components, method=method).fit(raw, picks=picks, reject=reject)
-        icas_from_other_data.append(this_ica)
+    
+    ###############################################################################
+    # Now we can do the corrmap.
 
-    return icas_from_other_data
+    #for i in range(len(icas)):
+    #    for j in range(n_components):
+    #        template = (i, j)
+    #        fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
+    #                                         show=False, ch_type='eeg', verbose=True)
+    #        print i, j, fig_template, fig_detected
+    def compICAs(icas):
+        templates = [#(0, 4), (0, 8), (1, 6), (1, 11), 
+                     (2, 1)#, (2, 6), (3, 11)
+                    ]
+        for template in templates:
+            fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
+                                             show=False, ch_type='eeg', verbose=True)
+    
+            print template, fig_template, fig_detected
+        plt.show()
 
-icas = findCorrmap()
+    def plotICAs(icas):
+        for i in range(len(icas)):
+            #art = icas[i].labels_["blinks"][0]
+            #print art
+            icas[i].plot_sources(raws[i], show=False)
+            
+        #icas[i].plot_components(picks=range(10), inst=raws[i])
+        plt_show()
 
+    compICAs(icas)
 
-for i in range(len(icas)):
-    for j in range(n_components):
-        template = (i, j)
-        fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
-                                         show=False, ch_type='eeg', verbose=True)
-        print i, j, fig_template, fig_detected
+if __name__ == "__main__":
+    main()
