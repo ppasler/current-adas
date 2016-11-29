@@ -96,7 +96,7 @@ class MNEUtil():
         template = (0, templateIC)
         icas = [templateICA] + icas
 
-        return corrmap(icas, template=template, label=label, show=False, ch_type='eeg')
+        return corrmap(icas, template=template, threshold=0.85, label=label, show=False, ch_type='eeg', verbose=True)
 
     def plotCorrmaps(self, icas):
         n_components = icas[0].n_components_
