@@ -93,12 +93,25 @@ def main():
             print template, fig_template, fig_detected
         plt.show()
 
+    # load raw data and calc ICA
     templateRaw, templateICA = createICA(scriptPath + "/blink.csv")
-    plotICA(templateRaw, templateICA)
+
+    # plot ICs with topographic info
+    #plotICA(templateRaw, templateICA)
+    
+    # load data from previous experiment and calc ICA
     raws, icas = createICAList()
+
+    # match blink IC (0) from template with other ICs 
     fig_template, fig_detected = util.labelArtefact(templateICA, 0, icas, "blinks")
 
+    templateRaw.plot(show=False, scalings=dict(eeg=300))
+    cleaned = templateICA.apply(templateRaw, exclude=templateICA.labels_["blinks"])
+    
+    cleaned.plot(show=False, scalings=dict(eeg=300))
     plt_show()
+    
+    
     #compICAs(icas, raws)
 
 if __name__ == "__main__":
