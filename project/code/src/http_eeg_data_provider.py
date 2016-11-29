@@ -107,7 +107,7 @@ class HttpEEGDataProvider(object):
 
 
 if __name__ == "__main__":
-    emotiv = Emotiv(display_output=False)
+    emotiv = Emotiv(display_output=False, write_to_file=True)
     server = HttpEEGDataProvider()
     try:
         print "starting server and emotiv"
