@@ -93,6 +93,11 @@ def main():
             print template, fig_template, fig_detected
         plt.show()
 
+    def excludeAndPlotRaw(raw, exclude, title):
+        templateRaw1 = templateRaw.copy()
+        eog = templateICA.apply(templateRaw1, exclude=exclude)
+        eog.plot(show=False, scalings=dict(eeg=300), title=title)
+
     # load raw data and calc ICA
     templateRaw, templateICA = createICA(scriptPath + "/blink.csv")
 
@@ -105,10 +110,11 @@ def main():
     # match blink IC (0) from template with other ICs 
     fig_template, fig_detected = util.labelArtefact(templateICA, 0, icas, "blinks")
 
-    templateRaw.plot(show=False, scalings=dict(eeg=300))
-    cleaned = templateICA.apply(templateRaw, exclude=templateICA.labels_["blinks"])
-    
-    cleaned.plot(show=False, scalings=dict(eeg=300))
+    templateRaw.plot(show=False, title="Raw data", scalings=dict(eeg=300))
+
+    excludeAndPlotRaw(templateRaw, [0], "Blinks removed")
+    excludeAndPlotRaw(templateRaw, range(1, 14), "Only blinks")
+
     plt_show()
     
     
