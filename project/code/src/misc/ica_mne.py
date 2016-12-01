@@ -1,27 +1,11 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
-# found at: http://martinos.org/mne/dev/auto_tutorials/plot_ica_from_raw.html
-"""
-.. _tut_preprocessing_ica:
-
-Compute ICA on MEG data and remove artifacts
-============================================
-
-ICA is fit to MEG raw data.
-The sources matching the ECG and EOG are automatically found and displayed.
-Subsequently, artifact detection and rejection quality are assessed.
-"""
-# Authors: Denis Engemann <denis.engemann@gmail.com>
-#          Alexandre Gramfort <alexandre.gramfort@telecom-paristech.fr>
-#
-# License: BSD (3-clause)
+# based on: http://martinos.org/mne/dev/auto_tutorials/plot_ica_from_raw.html
 
 import os
 import time
 
 import mne
 from mne.viz.utils import plt_show
-
-import matplotlib.pyplot as plt
 import numpy as np
 from util.mne_util import MNEUtil
 
@@ -31,23 +15,12 @@ scriptPath = os.path.dirname(os.path.abspath(__file__))
 def main():
     util = MNEUtil()
 
-    def createInfo(filePath):
+    def createRawObject(filePath):
         with open(filePath, 'rb') as f:
             ch_names = f.readline().strip().split(",")
-        ch_types = ["eeg"] * len(ch_names)
-        sfreq = 128
-        montage = mne.channels.read_montage("standard_1020")
-        info = mne.create_info(ch_names, sfreq, ch_types, montage)
-        return info
-    
-    def createRawObject(filePath):
-        info = createInfo(filePath)
+        info = util._createInfo(ch_names, filePath)
         data = np.swapaxes(np.delete(np.genfromtxt(filePath, dtype=float, delimiter=","), 0, 0),0,1)
         return mne.io.RawArray(data, info)
-    
-    def createPicks(raw):
-        return mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
-                           stim=False, exclude='bads')
 
     def createICA(fileName):
         start = time.time()
@@ -73,52 +46,41 @@ def main():
     
         return raw_from_other_data, icas_from_other_data
 
-    #for i in range(len(icas)):
-    #    for j in range(n_components):
-    #        template = (i, j)
-    #        fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
-    #                                         show=False, ch_type='eeg', verbose=True)
-    #        print i, j, fig_template, fig_detected
-    def compICAs(template, icas):
-        templates = [#(0, 4), (0, 8), (1, 6), (1, 11), 
-                     (2, 1)#, (2, 6), (3, 11)
-                    ]
-        for template in templates:
-            templateICA = icas[template[0]]
-            icas.remove(templateICA)
-            templateIC = template[1]
-            label = "blinks"
-            fig_template, fig_detected = util.labelArtefact(template, 0, icas, label)
-    
-            print template, fig_template, fig_detected
-        plt.show()
-
-    def excludeAndPlotRaw(raw, exclude, title):
-        templateRaw1 = templateRaw.copy()
-        eog = templateICA.apply(templateRaw1, exclude=exclude)
+    def excludeAndPlotRaw(raw, ica, exclude, title):
+        raw1 = raw.copy()
+        eog = ica.apply(raw1, exclude=exclude)
         eog.plot(show=False, scalings=dict(eeg=300), title=title)
 
+    def plotSignal(raw, ica):
+        filename = raw.info["filename"]
+        raw.plot(show=False, title="%s: Raw data" % filename, scalings=dict(eeg=300))
+        eogInd = ica.labels_["blinks"]
+        withoutEogInds = range(14)
+        withoutEogInds.remove(eogInd[0])
+        excludeAndPlotRaw(raw, ica, eogInd, "%s: Blinks removed" % filename)
+        excludeAndPlotRaw(raw, ica, withoutEogInds, "%s: Only blinks" % filename)
+
+    def plotSignals(templateRaw, templateICA, raws, icas):
+        plotSignal(templateRaw, templateICA)
+        for i in range(len(icas)):
+            plotSignal(raws[i], icas[i])
+        
     # load raw data and calc ICA
     templateRaw, templateICA = createICA(scriptPath + "/blink.csv")
 
     # plot ICs with topographic info
-    #plotICA(templateRaw, templateICA)
+    plotICA(templateRaw, templateICA)
     
     # load data from previous experiment and calc ICA
     raws, icas = createICAList()
 
     # match blink IC (0) from template with other ICs 
-    fig_template, fig_detected = util.labelArtefact(templateICA, 0, icas, "blinks")
+    _, _ = util.labelArtefact(templateICA, 0, icas, "blinks")
 
-    templateRaw.plot(show=False, title="Raw data", scalings=dict(eeg=300))
-
-    excludeAndPlotRaw(templateRaw, [0], "Blinks removed")
-    excludeAndPlotRaw(templateRaw, range(1, 14), "Only blinks")
+    # print raw, cleaned and eog data
+    plotSignals(templateRaw, templateICA, raws, icas)
 
     plt_show()
-    
-    
-    #compICAs(icas, raws)
 
 if __name__ == "__main__":
     main()
