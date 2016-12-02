@@ -10,7 +10,7 @@ from scipy.signal.filter_design import freqz
 
 import numpy as np
 from util.eeg_data_source import EEGTablePacketSource
-from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
+from util.signal_table_util import TableFileUtil, EEGTableDto
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
 from util.quality_util import QualityUtil
@@ -541,7 +541,7 @@ class TestEEGUtil(unittest.TestCase):
         self.assertTrue(all([x in channels["gamma"] for x in gamma]))
 
     def test_getWaves(self):
-        eegData = EEGTableFileUtil().readFile(PATH + "example_32.csv")
+        eegData = TableFileUtil().readEEGFile(PATH + "example_32.csv")
         eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
         waves = self.util.getWaves(eeg, eegData.getSamplingRate())
@@ -551,7 +551,7 @@ class TestEEGUtil(unittest.TestCase):
             self.assertEqual(len(wave), nEeg)
 
     def test_getSingleWaves(self):
-        eegData = EEGTableFileUtil().readFile(PATH + "example_32.csv")
+        eegData = TableFileUtil().readEEGFile(PATH + "example_32.csv")
         eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
         samplingRate = eegData.getSamplingRate()
@@ -580,7 +580,7 @@ class TestEEGUtil(unittest.TestCase):
 class TestEEGTableFileUtil(unittest.TestCase):
 
     def setUp(self):
-        self.reader = EEGTableFileUtil()
+        self.reader = TableFileUtil()
 
     def test_readData(self):
         file_path = PATH + "example_32.csv"
@@ -596,10 +596,10 @@ class TestEEGTableFileUtil(unittest.TestCase):
         else:
             print "'%s' not found" % file_path
 
-    def test_readFile(self):
+    def testreadEEGFile(self):
         file_path = PATH + "example_32.csv"
         if os.path.isfile(file_path):
-            self.reader.readFile(file_path)
+            self.reader.readEEGFile(file_path)
         else:
             print "'%s' not found" % file_path
 
@@ -610,7 +610,7 @@ class TestEEGTableFileUtil(unittest.TestCase):
         self.reader.writeFile(filePath, data, header)
         
         if os.path.isfile(filePath):
-            read = self.reader.readFile(filePath)
+            read = self.reader.readEEGFile(filePath)
 
             for i in range(len(data)):
                 for j in range(len(data[i])):
@@ -637,24 +637,24 @@ class TestEEGTableFileUtil(unittest.TestCase):
         self.reader.writeStructredFile(filePath, data)
         
         if os.path.isfile(filePath):
-            read = self.reader.readFile(filePath)
+            read = self.reader.readEEGFile(filePath)
             for key, values in data.iteritems():
                 self.assertTrue(sameEntries(values["value"], read.getColumn(key)))
         removeFile(filePath)
 
-    def test_readFile_NaNValues(self):
-        eegData = self.reader.readFile(PATH + "example_32_empty.csv")
+    def testreadEEGFile_NaNValues(self):
+        eegData = self.reader.readEEGFile(PATH + "example_32_empty.csv")
         emptyCol = eegData.getColumn("Y")
         self.assertTrue(np.isnan(emptyCol).any())
         
         nonEmptyCol = eegData.getColumn("F3")
         self.assertFalse(np.isnan(nonEmptyCol).any())
 
-    def test_readFile_SeparatorFallback(self):
-        eegData = self.reader.readFile(PATH + "example_32_empty.csv")
+    def testreadEEGFile_SeparatorFallback(self):
+        eegData = self.reader.readEEGFile(PATH + "example_32_empty.csv")
         semicolonData = eegData.getColumn("F3")
 
-        eegData = self.reader.readFile(PATH + "example_32_comma.csv")
+        eegData = self.reader.readEEGFile(PATH + "example_32_comma.csv")
         commaData = eegData.getColumn("F3")
 
         self.assertTrue((semicolonData == commaData).all())
@@ -786,7 +786,7 @@ class TestEEGTableDto(unittest.TestCase):
         self.assertListEqual(self.eegData.getEEGHeader(), ["AF3", "F3"])
 
     def test_getEEGData(self):
-        self.assertEquals(self.eegData.getEEGData(), 1)
+        self.assertEquals(len(self.eegData.getEEGData()), 2)
 
 class TestEEGTableToPacketUtil(unittest.TestCase):
 

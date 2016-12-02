@@ -7,13 +7,13 @@ import time
 import mne
 from mne.viz.utils import plt_show
 import numpy as np
-from util.mne_util import MNEUtil
+from util.mne_eeg_util import MNEEEGUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 def main():
-    util = MNEUtil()
+    util = MNEEEGUtil()
 
     def createRawObject(filePath):
         with open(filePath, 'rb') as f:

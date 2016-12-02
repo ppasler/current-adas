@@ -17,7 +17,7 @@ from config.config import ConfigProvider
 from data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
-from util.eeg_table_util import EEGTableFileUtil
+from util.signal_table_util import TableFileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -36,7 +36,7 @@ class PoSDBoS(object):
         self._initNeuralNetwork(networkFile)
         self._initFeatureExtractor(demoFile)
         self.dm = DrowsinessMonitor()
-        self.fileUtil = EEGTableFileUtil()
+        self.fileUtil = TableFileUtil()
 
     def _initPoSDBoS(self):
         posdbosConfig = self.config.getPoSDBoSConfig()

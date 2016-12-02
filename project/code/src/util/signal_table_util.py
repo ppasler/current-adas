@@ -17,9 +17,10 @@ from config.config import ConfigProvider
 DEFAULT_DELIMITER = ";" # default delimiter for CSV file
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
 
-class EEGTableDto(object):
+
+class TableDto(object):
     '''
-    Representation of EEG table data
+    Representation of Signal table data
     '''
 
     def __init__(self, header=None, data=None, filePath=""):
@@ -49,18 +50,6 @@ class EEGTableDto(object):
     def getData(self):  # pragma: no cover
         return self.data
 
-    def getEEGHeader(self):
-        eegFields = ConfigProvider().getEmotivConfig().get("eegFields")
-        return [head for head in self.header if head in eegFields]
-
-    def getEEGData(self):
-        eegFields = self.getEEGHeader()
-        # TODO make me nice
-        eegData = []
-        for eegField in eegFields:
-            eegData.append(self.getColumn(eegField))
-        return array(eegData)
-
     def getTimeIndex(self, fromTime):
         '''
         get the index for the given fromTime
@@ -81,9 +70,6 @@ class EEGTableDto(object):
 
     def getTime(self, offset=0, limit=-1, length=-1):
         return self.getColumn(TIMESTAMP_STRING, offset, limit, length)
-
-    def getQuality(self, columnName, offset=0, limit=-1, length=-1):
-        return self.getColumn("Q" + columnName, offset, limit, length)
 
     def getColumn(self, columnName, offset=0, limit=-1, length=-1):
         '''
@@ -203,9 +189,50 @@ class EEGTableDto(object):
     def __repr__(self):
         return "EEGTableDto from '%s' shape %s\nheader %s" % (self.filePath, shape(self.data), self.header)
 
-class EEGTableFileUtil(object):
+
+
+class EEGTableDto(TableDto):
     '''
-    This class reads EEGTables created by emotiv.py
+    Representation of EEG table data
+    '''
+
+    def __init__(self, header=None, data=None, filePath=""):
+        super(EEGTableDto, self).__init__(header, data, filePath)
+
+    def getEEGHeader(self):
+        eegFields = ConfigProvider().getEmotivConfig().get("eegFields")
+        return [head for head in self.header if head in eegFields]
+
+    def getEEGData(self):
+        eegFields = self.getEEGHeader()
+        # TODO make me nice
+        eegData = []
+        for eegField in eegFields:
+            eegData.append(self.getColumn(eegField))
+        return array(eegData)
+
+    def __repr__(self):
+        return "EEGTableDto from '%s' shape %s\nheader %s" % (self.filePath, shape(self.data), self.header)
+
+
+class ECGTableDto(TableDto):
+    '''
+    Representation of ECG table data
+    '''
+
+    def __init__(self, header=None, data=None, filePath=""):
+        super(ECGTableDto, self).__init__(header, data, filePath)
+
+    def getECGData(self):
+        return array(self.getColumn("EcgWaveform"))
+
+    def __repr__(self):
+        return "ECGTableDto from '%s' shape %s\nheader %s" % (self.filePath, shape(self.data), self.header)
+
+
+class TableFileUtil(object):
+    '''
+    This class reads *.csv files and creates SignalTable
     '''
     
     def __init__(self):
@@ -253,8 +280,17 @@ class EEGTableFileUtil(object):
         return data
 
     def readFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
+        if filePath == "":
+            return None
+
+        header = self.readHeader(filePath)
+        data = self.readData(filePath)
+
+        return header, data
+
+    def readEEGFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
         '''
-        reads the given file
+        reads the given EEG file
         
         
         :param string filePath:
@@ -266,10 +302,25 @@ class EEGTableFileUtil(object):
         if filePath == "":
             return None
 
-        header = self.readHeader(filePath)
-        data = self.readData(filePath)
-
+        header, data = self.readFile(filePath, delimiter)
         return EEGTableDto(header, data, filePath)
+
+    def readECGFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
+        '''
+        reads the given ECG file
+        
+        
+        :param string filePath:
+        :param string delimiter:
+        
+        :return: ecg data
+        :rtype: ECGTabelUtil
+        '''
+        if filePath == "":
+            return None
+
+        header, data = self.readFile(filePath, delimiter)
+        return ECGTableDto(header, data, filePath)
 
     def writeFile(self, filePath, data, header, delimiter=DEFAULT_DELIMITER):
         savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%0.3f", comments="")
@@ -289,10 +340,10 @@ class EEGTableFileUtil(object):
         self.writeFile(filePath, transpose(structData), header)
 
 if __name__ == "__main__": # pragma: no cover
-    e = EEGTableFileUtil()
-    #eeg_data = e.readFile("example_full.csv")
+    e = TableFileUtil()
+    #eeg_data = e.readEEGFile("example_full.csv")
     scriptPath = os.path.dirname(os.path.abspath(__file__))
-    eeg_data = e.readFile(scriptPath + "/../../examples/example_32.csv")
+    eeg_data = e.readEEGFile(scriptPath + "/../../examples/example_32.csv")
     
     print eeg_data.data
     from_index = eeg_data.getTimeIndex(1456820379.22)

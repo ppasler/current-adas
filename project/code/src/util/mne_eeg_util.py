@@ -10,18 +10,16 @@ Created on 19.09.2016
 
 import os
 
-from matplotlib import pyplot as plt
 import mne
 from mne.preprocessing.ica import ICA, corrmap
-from mne.viz.utils import plt_show
 
 from config.config import ConfigProvider
-from util.eeg_table_util import EEGTableFileUtil, EEGTableDto
+from util.signal_table_util import TableFileUtil, EEGTableDto
 
 
 DEFAULT_SAMPLE_LENGTH = 1
 
-class MNEUtil():
+class MNEEEGUtil():
 
     def __init__(self):
         self.config = ConfigProvider()
@@ -117,9 +115,9 @@ class MNEUtil():
 
 if __name__ == '__main__':
     path = os.path.dirname(os.path.abspath(__file__)) +  "/../../../captured_data/test_data/"
-    util = MNEUtil()
-    awakeData = EEGTableFileUtil().readFile(path + "awake_full.csv")
-    drowsyData = EEGTableFileUtil().readFile(path + "drowsy_full.csv")
+    util = MNEEEGUtil()
+    awakeData = TableFileUtil().readEEGFile(path + "awake_full.csv")
+    drowsyData = TableFileUtil().readEEGFile(path + "drowsy_full.csv")
     #epochs = util.createMNEEpochsObject(awakeData, drowsyData)
     #epochs.plot(block=True)
     raw = util.createMNEObjectFromDto(awakeData)

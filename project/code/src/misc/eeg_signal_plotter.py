@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import numpy as np
 import matplotlib.pyplot as plt
 
-from util.eeg_table_util import EEGTableFileUtil
+from util.signal_table_util import TableFileUtil
 from util.fft_util import FFTUtil
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
@@ -86,14 +86,14 @@ class EEGSignalPlotter(object):
         axChan.set_xlabel('Frequency (Hz)')
         axChan.set_ylabel(label + str(freqRange))
 
-def readFile(fileName):
+def readEEGFile(fileName):
     scriptPath = os.path.dirname(os.path.abspath(__file__))
     eegPath = scriptPath + "/../../data/"
 
-    return EEGTableFileUtil().readFile(eegPath + fileName)
+    return TableFileUtil().readEEGFile(eegPath + fileName)
 
 def plot(fileName, channels):
-    eegData = readFile(fileName)
+    eegData = readEEGFile(fileName)
     e = EEGSignalPlotter()
     e.plotFFTSignals(eegData, channels, fileName)
 

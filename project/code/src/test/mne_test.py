@@ -15,8 +15,8 @@ import mne
 import numpy as np
 
 from config.config import ConfigProvider
-from util.eeg_table_util import EEGTableFileUtil
-from util.mne_util import MNEUtil
+from util.signal_table_util import TableFileUtil
+from util.mne_eeg_util import MNEEEGUtil
 from numpy import array_equal
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -24,12 +24,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
 
 def readData():
-    return EEGTableFileUtil().readFile(PATH + "example_1024.csv")
+    return TableFileUtil().readEEGFile(PATH + "example_1024.csv")
 
 class MNEUtilTest(unittest.TestCase):
 
     def setUp(self):
-        self.mne = MNEUtil()
+        self.mne = MNEEEGUtil()
         self.config = ConfigProvider().getEmotivConfig()
         self.eegData = readData()
 
