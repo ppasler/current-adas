@@ -223,8 +223,11 @@ class ECGTableDto(TableDto):
     def __init__(self, header=None, data=None, filePath=""):
         super(ECGTableDto, self).__init__(header, data, filePath)
 
+    def getECGHeader(self):
+        return self.header[1]
+
     def getECGData(self):
-        return array(self.getColumn("EcgWaveform"))
+        return array([self.getColumn("ECG")])
 
     def __repr__(self):
         return "ECGTableDto from '%s' shape %s\nheader %s" % (self.filePath, shape(self.data), self.header)
@@ -320,6 +323,7 @@ class TableFileUtil(object):
             return None
 
         header, data = self.readFile(filePath, delimiter)
+        header[1] = "ECG"
         return ECGTableDto(header, data, filePath)
 
     def writeFile(self, filePath, data, header, delimiter=DEFAULT_DELIMITER):
@@ -341,12 +345,9 @@ class TableFileUtil(object):
 
 if __name__ == "__main__": # pragma: no cover
     e = TableFileUtil()
-    #eeg_data = e.readEEGFile("example_full.csv")
-    scriptPath = os.path.dirname(os.path.abspath(__file__))
-    eeg_data = e.readEEGFile(scriptPath + "/../../examples/example_32.csv")
     
-    print eeg_data.data
-    from_index = eeg_data.getTimeIndex(1456820379.22)
-    to_index = eeg_data.getTimeIndex(1456820379.27)
-    print eeg_data.getColumn("F4", from_index, to_index)
-    eeg_data.getTimeIndex(1456820379.23)
+    scriptPath = os.path.dirname(os.path.abspath(__file__))
+    ecg_data = e.readECGFile("test.csv")
+    print ecg_data.getECGData()
+    print ecg_data.header
+    

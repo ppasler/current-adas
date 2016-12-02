@@ -16,7 +16,7 @@ import numpy as np
 
 from config.config import ConfigProvider
 from util.signal_table_util import TableFileUtil
-from util.mne_eeg_util import MNEEEGUtil
+from util.mne_util import MNEUtil
 from numpy import array_equal
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -29,7 +29,7 @@ def readData():
 class MNEUtilTest(unittest.TestCase):
 
     def setUp(self):
-        self.mne = MNEEEGUtil()
+        self.mne = MNEUtil()
         self.config = ConfigProvider().getEmotivConfig()
         self.eegData = readData()
 
@@ -41,14 +41,14 @@ class MNEUtilTest(unittest.TestCase):
 
 
     def test_createMNEObjectFromDto_creation(self):
-        self.mne.createMNEObjectFromDto(self.eegData)
+        self.mne.createMNEObjectFromEEGDto(self.eegData)
 
     def test_createMNEObject_creation(self):
         self.mne.createMNEObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), self.eegData.filePath)
 
     def test_createMNEObjectFromDto_getChannels(self):
         channels = ["AF3", "F3"]
-        raw = self.mne.createMNEObjectFromDto(self.eegData)
+        raw = self.mne.createMNEObjectFromEEGDto(self.eegData)
         chanObj = self.mne.getChannels(raw, channels)
         self.assertEqual(chanObj.info["nchan"], len(channels))
 
@@ -56,13 +56,13 @@ class MNEUtilTest(unittest.TestCase):
         channels = self.config.get("eegFields")
         samplingRate = self.config.get("samplingRate")
 
-        info = self.mne._createInfo(channels, "testFile")
+        info = self.mne._createEEGInfo(channels, "testFile")
         self.assertEquals(info["sfreq"], samplingRate)
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)
 
     def test_convertMNEToEEGTableDto(self):
-        mneObj = self.mne.createMNEObjectFromDto(self.eegData)
+        mneObj = self.mne.createMNEObjectFromEEGDto(self.eegData)
         eegData2 = self.mne.convertMNEToEEGTableDto(mneObj)
         self.assertListEqual(self.eegData.getEEGHeader(), eegData2.getHeader())
         array_equal(self.eegData.getEEGData(), eegData2.getData())
@@ -88,7 +88,7 @@ class MNEUtilTest(unittest.TestCase):
 
     @unittest.skip("todo")
     def test_ICA(self):
-        raw = self.mne.createMNEObjectFromDto(self.eegData)
+        raw = self.mne.createMNEObjectFromEEGDto(self.eegData)
         print self.mne.ICA(raw)
 
 if __name__ == '__main__':

@@ -7,18 +7,18 @@ import time
 import mne
 from mne.viz.utils import plt_show
 import numpy as np
-from util.mne_eeg_util import MNEEEGUtil
+from util.mne_util import MNEUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 def main():
-    util = MNEEEGUtil()
+    util = MNEUtil()
 
     def createRawObject(filePath):
         with open(filePath, 'rb') as f:
             ch_names = f.readline().strip().split(",")
-        info = util._createInfo(ch_names, filePath)
+        info = util._createEEGInfo(ch_names, filePath)
         data = np.swapaxes(np.delete(np.genfromtxt(filePath, dtype=float, delimiter=","), 0, 0),0,1)
         return mne.io.RawArray(data, info)
 

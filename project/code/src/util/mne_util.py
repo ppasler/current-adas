@@ -19,19 +19,31 @@ from util.signal_table_util import TableFileUtil, EEGTableDto
 
 DEFAULT_SAMPLE_LENGTH = 1
 
-class MNEEEGUtil():
+class MNEUtil():
 
     def __init__(self):
         self.config = ConfigProvider()
 
-    def createMNEObjectFromDto(self, eegDto):
+    def createMNEObjectFromEEGDto(self, eegDto):
         return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath)
 
     def createMNEObject(self, data, header, filePath):
-        info = self._createInfo(header, filePath)
+        info = self._createEEGInfo(header, filePath)
         return mne.io.RawArray(data, info)
 
-    def _createInfo(self, channelNames, filename):
+    def createMNEObjectFromECGDto(self, ecgDto):
+        info = self._createECGInfo(ecgDto.getECGHeader(), ecgDto.filePath, ecgDto.getSamplingRate())
+        return mne.io.RawArray(ecgDto.getECGData(), info)
+
+    def _createECGInfo(self, channelName, filename, samplingRate):
+        channelTypes = ["ecg"]
+        samplingRate = self.config.getEmotivConfig().get("samplingRate")
+        info = mne.create_info([channelName], samplingRate, channelTypes)
+        info["description"] = "PoSDBoS"
+        info["filename"] = filename
+        return info
+
+    def _createEEGInfo(self, channelNames, filename):
         channelTypes = ["eeg"] * len(channelNames)
         samplingRate = self.config.getEmotivConfig().get("samplingRate")
         montage = mne.channels.read_montage("standard_1020")
@@ -47,7 +59,7 @@ class MNEEEGUtil():
         return EEGTableDto(header, data, filePath)
 
     def createMNEEpochsObject(self, eegData, clazz):
-        raw = self.createMNEObjectFromDto(eegData)
+        raw = self.createMNEObjectFromEEGDto(eegData)
         events = self._createEventsArray(raw, clazz)
         return mne.Epochs(raw, events=events, tmin=0.0, tmax=0.99, add_eeg_ref=True)
 
@@ -114,11 +126,9 @@ class MNEEEGUtil():
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
 if __name__ == '__main__':
-    path = os.path.dirname(os.path.abspath(__file__)) +  "/../../../captured_data/test_data/"
-    util = MNEEEGUtil()
-    awakeData = TableFileUtil().readEEGFile(path + "awake_full.csv")
-    drowsyData = TableFileUtil().readEEGFile(path + "drowsy_full.csv")
-    #epochs = util.createMNEEpochsObject(awakeData, drowsyData)
-    #epochs.plot(block=True)
-    raw = util.createMNEObjectFromDto(awakeData)
-#    util.ICA(raw)
+    # http://martinos.org/mne/stable/auto_examples/preprocessing/plot_resample.html
+    util = MNEUtil()
+    awakeData = TableFileUtil().readECGFile("test_short.csv")
+    raw = util.createMNEObjectFromECGDto(awakeData)
+    print raw
+
