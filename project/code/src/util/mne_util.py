@@ -12,9 +12,11 @@ import os
 
 import mne
 from mne.preprocessing.ica import ICA, corrmap
+from mne.viz.utils import plt_show
 
 from config.config import ConfigProvider
 from util.signal_table_util import TableFileUtil, EEGTableDto
+from util.signal_util import SignalUtil
 
 
 DEFAULT_SAMPLE_LENGTH = 1
@@ -128,7 +130,9 @@ class MNEUtil():
 if __name__ == '__main__':
     # http://martinos.org/mne/stable/auto_examples/preprocessing/plot_resample.html
     util = MNEUtil()
-    awakeData = TableFileUtil().readECGFile("test_short.csv")
-    raw = util.createMNEObjectFromECGDto(awakeData)
-    print raw
+    fileName = "test.csv"
+    ecgData = TableFileUtil().readECGFile(fileName)
+    raw = util.createMNEObjectFromECGDto(ecgData)
+    raw.plot(show=False, title="%s: Raw data" % fileName, scalings=dict(eeg=300, ecg=500), duration=60.0, start=6000.0, n_channels=1)
+    plt_show()
 
