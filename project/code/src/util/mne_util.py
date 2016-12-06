@@ -8,15 +8,13 @@ Created on 19.09.2016
 :organization: Reutlingen University
 '''
 
-import os
-
+import numpy as np
 import mne
 from mne.preprocessing.ica import ICA, corrmap
 from mne.viz.utils import plt_show
-
+from scipy import signal
 from config.config import ConfigProvider
 from util.signal_table_util import TableFileUtil, EEGTableDto
-from util.signal_util import SignalUtil
 
 
 DEFAULT_SAMPLE_LENGTH = 1
@@ -27,27 +25,28 @@ class MNEUtil():
         self.config = ConfigProvider()
 
     def createMNEObjectFromEEGDto(self, eegDto):
-        return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath)
+        return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath, eegDto.getSamplingRate())
 
-    def createMNEObject(self, data, header, filePath):
-        info = self._createEEGInfo(header, filePath)
+    def createMNEObject(self, data, header, filePath, samplingRate):
+        info = self._createEEGInfo(header, filePath, samplingRate)
         return mne.io.RawArray(data, info)
 
-    def createMNEObjectFromECGDto(self, ecgDto):
+    def createMNEObjectFromECGDto(self, ecgDto, resampleFac=None):
         info = self._createECGInfo(ecgDto.getECGHeader(), ecgDto.filePath, ecgDto.getSamplingRate())
-        return mne.io.RawArray(ecgDto.getECGData(), info)
+        ecgData = ecgDto.getECGData()
+        if resampleFac is not None:
+            ecgData = signal.resample(ecgData, resampleFac)
+        return mne.io.RawArray(ecgData, info)
 
     def _createECGInfo(self, channelName, filename, samplingRate):
         channelTypes = ["ecg"]
-        samplingRate = self.config.getEmotivConfig().get("samplingRate")
         info = mne.create_info([channelName], samplingRate, channelTypes)
         info["description"] = "PoSDBoS"
         info["filename"] = filename
         return info
 
-    def _createEEGInfo(self, channelNames, filename):
+    def _createEEGInfo(self, channelNames, filename, samplingRate):
         channelTypes = ["eeg"] * len(channelNames)
-        samplingRate = self.config.getEmotivConfig().get("samplingRate")
         montage = mne.channels.read_montage("standard_1020")
         info = mne.create_info(channelNames, samplingRate, channelTypes, montage)
         info["description"] = "PoSDBoS"
@@ -70,6 +69,14 @@ class MNEUtil():
         if overlapping:
             duration=0.5
         return mne.make_fixed_length_events(raw, clazz, duration=duration)
+
+    def addECGChannel(self, eegRaw, ecgRaw):
+        sFreq = eegRaw.info['sfreq']
+        tMax = (eegRaw.n_times - 1) / sFreq
+
+        ecgRaw = ecgRaw.resample(sFreq, npad='auto').crop(0, tMax)
+
+        return eegRaw.add_channels([ecgRaw])
 
     def filterData(self, mneObj, upperFreq, lowerFreq):
         return mneObj.filter(upperFreq, lowerFreq, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
@@ -128,11 +135,20 @@ class MNEUtil():
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
 if __name__ == '__main__':
-    # http://martinos.org/mne/stable/auto_examples/preprocessing/plot_resample.html
     util = MNEUtil()
-    fileName = "test.csv"
-    ecgData = TableFileUtil().readECGFile(fileName)
-    raw = util.createMNEObjectFromECGDto(ecgData)
-    raw.plot(show=False, title="%s: Raw data" % fileName, scalings=dict(eeg=300, ecg=500), duration=60.0, start=6000.0, n_channels=1)
+    sFreq = 100.
+
+    eegFileName = "test_EEG.csv"
+    eegData = TableFileUtil().readEEGFile(eegFileName)
+    eegRaw = util.createMNEObjectFromEEGDto(eegData).resample(sFreq, npad='auto')
+
+    ecgFileName = "test_ECG.csv"
+    ecgData = TableFileUtil().readECGFile(ecgFileName)
+    ecgRaw = util.createMNEObjectFromECGDto(ecgData)
+
+    util.addECGChannel(eegRaw, ecgRaw)
+
+    eegRaw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
+
     plt_show()
 

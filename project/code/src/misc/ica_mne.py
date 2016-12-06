@@ -64,7 +64,7 @@ def main():
         plotSignal(templateRaw, templateICA)
         for i in range(len(icas)):
             plotSignal(raws[i], icas[i])
-        
+
     # load raw data and calc ICA
     templateRaw, templateICA = createICA(scriptPath + "/blink.csv")
 
@@ -72,13 +72,13 @@ def main():
     plotICA(templateRaw, templateICA)
     
     # load data from previous experiment and calc ICA
-    raws, icas = createICAList()
+    #raws, icas = createICAList()
 
     # match blink IC (0) from template with other ICs 
-    _, _ = util.labelArtefact(templateICA, 0, icas, "blinks")
+    #_, _ = util.labelArtefact(templateICA, 0, icas, "blinks")
 
     # print raw, cleaned and eog data
-    plotSignals(templateRaw, templateICA, raws, icas)
+    #plotSignals(templateRaw, templateICA, raws, icas)
 
     plt_show()
 
