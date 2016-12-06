@@ -18,7 +18,7 @@ from eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
 from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
-from util.eeg_table_util import EEGTableFileUtil
+from util.signal_table_util import TableFileUtil
 from util.eeg_util import EEGUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
@@ -57,8 +57,8 @@ class SignalStatisticUtil(object):
         self.stats[SIGNALS_KEY] = OrderedDict()
 
     def _readData(self):
-        self.reader = EEGTableFileUtil()
-        self.eegData = self.reader.readFile(self.filePath)
+        self.reader = TableFileUtil()
+        self.eegData = self.reader.readEEGFile(self.filePath)
 
     def _initSignals(self, signals):
         if not signals:

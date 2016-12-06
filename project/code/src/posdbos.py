@@ -17,7 +17,7 @@ from config.config import ConfigProvider
 from data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
-from util.eeg_table_util import EEGTableFileUtil
+from util.signal_table_util import TableFileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -36,7 +36,7 @@ class PoSDBoS(object):
         self._initNeuralNetwork(networkFile)
         self._initFeatureExtractor(demoFile)
         self.dm = DrowsinessMonitor()
-        self.fileUtil = EEGTableFileUtil()
+        self.fileUtil = TableFileUtil()
 
     def _initPoSDBoS(self):
         posdbosConfig = self.config.getPoSDBoSConfig()
@@ -130,13 +130,9 @@ class PoSDBoS(object):
 
 if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()
-    experimentDir = scriptPath + "/../../captured_data/"
-#    dire = "janis"
-#    filePath = "%s%s/%s" % (experimentDir, dire, "2016-07-12-11-15_EEG.csv")
-
-    dire = "test_data"
-#    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
-    filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
+    experimentDir = experiments["filePath"]
+    #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
+    filePath = "%s/test/%s" % (experimentDir, "drowsy_full.csv")
 
     p = PoSDBoS("knn_1", True, filePath)
     print "START"

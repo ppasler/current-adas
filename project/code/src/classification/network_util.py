@@ -19,7 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
 import numpy as np
-from util.eeg_table_util import EEGTableFileUtil
+from util.signal_table_util import TableFileUtil
 
 
 N_OUTPUT = 1
@@ -81,7 +81,7 @@ class NetworkDataUtil(object):
 
     def __init__(self, files=[]):
         self.files = files
-        self.fileUtil = EEGTableFileUtil()
+        self.fileUtil = TableFileUtil()
 
     def get(self, separate=True):
         values0, values1 = self.readFiles(self.files)

@@ -11,7 +11,7 @@ Created on 10.05.2016
 import os
 import time
 
-from util.eeg_table_util import EEGTableFileUtil
+from util.signal_table_util import TableFileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +32,7 @@ class EEGTableDataSource(object):
         '''
         Reads data from ./../../examples/example_4096.csv and builds the data structure
         '''
-        self.reader = EEGTableFileUtil()
+        self.reader = TableFileUtil()
         self.filepath = filePath
         self.infinite = infinite
         self.hasMore = False
