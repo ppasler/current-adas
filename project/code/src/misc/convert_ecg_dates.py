@@ -4,7 +4,7 @@ import time
 
 TIMEZONE = 1
 EPOCH = datetime(1970,1,1, hour=TIMEZONE)
-print EPOCH
+
 def getCSVFiles():
     return glob.glob("*.csv")
 
@@ -48,7 +48,7 @@ def processDir(filePath):
 def doit():
     pathString = "%s/%s/"
     basepath = "E:/thesis/experiment"
-    subjects = ["1/2016_12_05-13_58_59"]#, "2/2016_12_01-17_38_16"]
+    subjects = ["1/2016-12-05_13_58"]#, "2/2016-12-01_17-38"]
     for subject in subjects:
         filePath = pathString % (basepath, subject)
         processDir(filePath)

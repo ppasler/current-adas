@@ -149,7 +149,7 @@ def loadAndSave():
     sFreq = 100.
     filepath = "E:/thesis/experiment/2/"
     start = time.time()
-    eegFileName = filepath + "2016-12-01-17-50_EEG.csv"
+    eegFileName = filepath + "2016-12-01_17-50_EEG.csv"
     eegData = TableFileUtil().readEEGFile(eegFileName)
     eegRaw = util.createMNEObjectFromEEGDto(eegData)
 
@@ -163,7 +163,7 @@ def loadAndSave():
     print "resampled EEG: %.2f" % dur
     start = time.time()
 
-    ecgFileName = filepath + "2016-12-01-17-50_ECG.csv"
+    ecgFileName = filepath + "2016-12-01_17-50_ECG.csv"
     ecgData = TableFileUtil().readECGFile(ecgFileName)
     ecgRaw = util.createMNEObjectFromECGDto(ecgData)
 

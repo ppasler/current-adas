@@ -130,13 +130,9 @@ class PoSDBoS(object):
 
 if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()
-    experimentDir = scriptPath + "/../../captured_data/"
-#    dire = "janis"
-#    filePath = "%s%s/%s" % (experimentDir, dire, "2016-07-12-11-15_EEG.csv")
-
-    dire = "test_data"
-#    filePath = "%s%s/%s" % (experimentDir, dire, "awake_full.csv")
-    filePath = "%s%s/%s" % (experimentDir, dire, "drowsy_full.csv")
+    experimentDir = experiments["filePath"]
+    #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
+    filePath = "%s/test/%s" % (experimentDir, "drowsy_full.csv")
 
     p = PoSDBoS("knn_1", True, filePath)
     print "START"
