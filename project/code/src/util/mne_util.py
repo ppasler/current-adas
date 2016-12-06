@@ -8,10 +8,13 @@ Created on 19.09.2016
 :organization: Reutlingen University
 '''
 
+import time
+
 import mne
 from mne.preprocessing.ica import ICA, corrmap
 from mne.viz.utils import plt_show
 from scipy import signal
+
 from config.config import ConfigProvider
 from util.signal_table_util import TableFileUtil, EEGTableDto
 
@@ -141,27 +144,65 @@ class MNEUtil():
     def load(self, fileName):
         return mne.io.read_raw_fif(fileName)
 
-if __name__ == '__main__':
+def loadAndSave():
     util = MNEUtil()
     sFreq = 100.
-
-    filepath = "E:/current-adas/project/code/src/util/"
-
-    eegFileName = filepath + "eeg_long.csv"
+    filepath = "E:/thesis/experiment/2/"
+    start = time.time()
+    eegFileName = filepath + "2016-12-01-17-50_EEG.csv"
     eegData = TableFileUtil().readEEGFile(eegFileName)
-    eegRaw = util.createMNEObjectFromEEGDto(eegData).resample(sFreq, npad='auto')
+    eegRaw = util.createMNEObjectFromEEGDto(eegData)
 
-    ecgFileName = filepath + "ecg_long.csv"
+    dur = time.time() - start
+    print "read EEG: %.2f" % dur
+    start = time.time()
+
+    eegRaw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
+
+    dur = time.time() - start
+    print "resampled EEG: %.2f" % dur
+    start = time.time()
+
+    ecgFileName = filepath + "2016-12-01-17-50_ECG.csv"
     ecgData = TableFileUtil().readECGFile(ecgFileName)
     ecgRaw = util.createMNEObjectFromECGDto(ecgData)
 
+    dur = time.time() - start
+    print "read ECG: %.2f" % dur
+    start = time.time()
+
     util.addECGChannel(eegRaw, ecgRaw)
 
+    dur = time.time() - start
+    print "merged channels: %.2f" % dur
+    start = time.time()
+
     fifname = util.save(eegRaw)
+
+    dur = time.time() - start
+    print "saved file: %.2f" % dur
+    start = time.time()
+
     fifraw = util.load(fifname)
+    dur = time.time() - start
+    print "read EEG: %.2f" % dur
+    start = time.time()
 
     print fifraw, eegRaw
     #eegRaw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
 
     #plt_show()
+    
+    def test():
+        util = MNEUtil()
+        sFreq = 100.
+    
+        filepath = "E:/thesis/experiment/1/"
+        fifname = filepath + "2016-12-05-14-25_EEG.fif"
+        fifraw = util.load(fifname)
+        fifraw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
+    
+        plt_show()
+if __name__ == '__main__':
+    loadAndSave()
 
