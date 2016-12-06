@@ -8,7 +8,6 @@ Created on 19.09.2016
 :organization: Reutlingen University
 '''
 
-import numpy as np
 import mne
 from mne.preprocessing.ica import ICA, corrmap
 from mne.viz.utils import plt_show
@@ -76,7 +75,7 @@ class MNEUtil():
 
         ecgRaw = ecgRaw.resample(sFreq, npad='auto').crop(0, tMax)
 
-        return eegRaw.add_channels([ecgRaw])
+        return eegRaw.add_channels([ecgRaw], force_update_info=True)
 
     def filterData(self, mneObj, upperFreq, lowerFreq):
         return mneObj.filter(upperFreq, lowerFreq, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
@@ -134,21 +133,35 @@ class MNEUtil():
     def plotSensors(self, mneObj):
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
+    def save(self, mneObj):
+        fileName = mneObj.info["filename"].replace(".csv", ".fif")
+        mneObj.save(fileName, overwrite=True)
+        return fileName
+
+    def load(self, fileName):
+        return mne.io.read_raw_fif(fileName)
+
 if __name__ == '__main__':
     util = MNEUtil()
     sFreq = 100.
 
-    eegFileName = "test_EEG.csv"
+    filepath = "E:/current-adas/project/code/src/util/"
+
+    eegFileName = filepath + "eeg_long.csv"
     eegData = TableFileUtil().readEEGFile(eegFileName)
     eegRaw = util.createMNEObjectFromEEGDto(eegData).resample(sFreq, npad='auto')
 
-    ecgFileName = "test_ECG.csv"
+    ecgFileName = filepath + "ecg_long.csv"
     ecgData = TableFileUtil().readECGFile(ecgFileName)
     ecgRaw = util.createMNEObjectFromECGDto(ecgData)
 
     util.addECGChannel(eegRaw, ecgRaw)
 
-    eegRaw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
+    fifname = util.save(eegRaw)
+    fifraw = util.load(fifname)
 
-    plt_show()
+    print fifraw, eegRaw
+    #eegRaw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
+
+    #plt_show()
 

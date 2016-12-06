@@ -48,7 +48,7 @@ def processDir(filePath):
 def doit():
     pathString = "%s/%s/"
     basepath = "E:/thesis/experiment"
-    subjects = ["2/2016_12_01-17_38_16"]
+    subjects = ["1/2016_12_05-13_58_59"]#, "2/2016_12_01-17_38_16"]
     for subject in subjects:
         filePath = pathString % (basepath, subject)
         processDir(filePath)
