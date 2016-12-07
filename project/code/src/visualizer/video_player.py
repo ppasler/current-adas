@@ -8,6 +8,8 @@ import cv2
 FRAME_RATE = 32
 KEY_ESC = 27
 
+
+
 class DataAnalyzer(object):
 
     def __init__(self, videoPath):
