@@ -1,73 +1,52 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 07.12.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
 import sys
 
 from PyQt4 import QtGui, QtCore
+
+from video_player import VideoPlayer, VideoWidget
+from visualizer.data_plotter import DataWidget
+from visualizer.data_visualizer_ui import Ui_MainWindow
+
+
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
     _fromUtf8 = lambda s: s
-    
-import cv2
 
-import numpy as np
-from data_visualizer_ui import Ui_MainWindow
+class DataVisualizerWidget(QtGui.QWidget):
+    def __init__(self, videoWidget, dataWidget):
+        super(DataVisualizerWidget, self).__init__()
+        self.mainLayout = QtGui.QVBoxLayout()
+        self.mainLayout.addWidget(videoWidget)
+        self.mainLayout.addWidget(dataWidget)
 
-class Video():
-    def __init__(self,capture):
-        self.capture = capture
-        self.currentFrame=np.array([])
-
-    def captureNextFrame(self):
-        ret, readFrame=self.capture.read()
-        if(ret==True):
-            self.currentFrame=cv2.cvtColor(readFrame,cv2.COLOR_BGR2RGB)
-
-    def convertFrame(self):
-        '''converts frame to format suitable for QtGui'''
-        try:
-            height,width = self.currentFrame.shape[:2]
-            img=QtGui.QImage(self.currentFrame, width, height, QtGui.QImage.Format_RGB888)
-            img=QtGui.QPixmap.fromImage(img)
-            self.previousFrame = self.currentFrame
-            return img
-        except:
-            return None
-
-class VideoPlayer(QtGui.QWidget):
-    def __init__(self, parent, videoUrl):
-        super(VideoPlayer, self).__init__()
-        self.parent = parent
-        self.video = Video(cv2.VideoCapture(videoUrl))
-        self.videoFrame = QtGui.QLabel(self)
-        self.videoFrame.setGeometry(QtCore.QRect(40, 32, 721, 521))
-        self.videoFrame.setObjectName(_fromUtf8("videoFrame"))
-
-    def play(self):
-        try:
-            self.video.captureNextFrame()
-            self.videoFrame.setPixmap(self.video.convertFrame())
-            self.videoFrame.setScaledContents(True)
-        except TypeError:
-            print "No frame"
-
-class VideoWidget(QtGui.QWidget):
-
-    def __init__(self, videoPlayers):
-        super(VideoWidget, self).__init__()
-        self.mainLayout = QtGui.QHBoxLayout()
-        for videoPlayer in videoPlayers:
-            self.mainLayout.addWidget(videoPlayer)
         self.setLayout(self.mainLayout)
         self.setObjectName(_fromUtf8("centralwidget"))
 
 class DataVisualizer(QtGui.QMainWindow):
-    def __init__(self,parent, videoUrls):
+    def __init__(self, parent, videoUrls):
         super(DataVisualizer, self).__init__()
 
+        self._initPlotter()
         self._initPlayer(videoUrls)
+        self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter)
+
         self._initUI()
         self._initTimer()
-
         self.update()
+
+    def _initPlotter(self):
+        self.plotter = DataWidget()
+        self.plotter.plot()
 
     def _initPlayer(self, videoUrls):
         self.videoPlayers = []
@@ -77,14 +56,15 @@ class DataVisualizer(QtGui.QMainWindow):
 
     def _initUI(self):
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self, self.videoWidget)
+        self.ui.setupUi(self, self.wrapper)
 
     def _initTimer(self):
         self._timer = QtCore.QTimer(self)
-        self._timer.timeout.connect(self.play)
-        self._timer.start(27)
+        self._timer.timeout.connect(self.start)
+        self._timer.start(32)
 
-    def play(self):
+    def start(self):
+        #self.plotter.plot()
         for videoPlayer in self.videoPlayers:
             videoPlayer.play()
 

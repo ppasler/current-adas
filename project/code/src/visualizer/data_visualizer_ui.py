@@ -1,4 +1,12 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+'''
+Created on 07.12.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
 
 from PyQt4 import QtCore, QtGui
 
@@ -9,12 +17,13 @@ except AttributeError:
 
 class Ui_MainWindow(object):
 
-    def setupUi(self, MainWindow, VideoWidget):
-        self.MainWindow = MainWindow
-        self.MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        self.MainWindow.resize(823, 602)
+    def setupUi(self, mainWindow, wrapper):
+        self.mainWindow = mainWindow
+        self.mainWindow.setObjectName(_fromUtf8("mainWindow"))
+        self.mainWindow.showMaximized()
+        #self.mainWindow.resize(823, 602)
 
-        self.MainWindow.setCentralWidget(VideoWidget)
+        self.mainWindow.setCentralWidget(wrapper)
 
         self._initMenuBar()
 
@@ -24,28 +33,28 @@ class Ui_MainWindow(object):
 
         self.retranslateUi()
 
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(mainWindow)
 
     def _initToolbar(self):
-        exitAction = QtGui.QAction(QtGui.QIcon('exit24.png'), 'Exit', self.MainWindow)
+        exitAction = QtGui.QAction(QtGui.QIcon('exit24.png'), 'Exit', self.mainWindow)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(QtGui.qApp.quit)
 
-        self.MainWindow.toolbar = self.MainWindow.addToolBar('Exit')
-        self.MainWindow.toolbar.addAction(exitAction)
+        self.mainWindow.toolbar = self.mainWindow.addToolBar('Exit')
+        self.mainWindow.toolbar.addAction(exitAction)
 
     def _initStatusBar(self):
-        self.statusbar = QtGui.QStatusBar(self.MainWindow)
+        self.statusbar = QtGui.QStatusBar(self.mainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
-        self.MainWindow.setStatusBar(self.statusbar)
+        self.mainWindow.setStatusBar(self.statusbar)
 
     def _initMenuBar(self):
-        self.menubar = QtGui.QMenuBar(self.MainWindow)
+        self.menubar = QtGui.QMenuBar(self.mainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 823, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
-        self.MainWindow.setMenuBar(self.menubar)
+        self.mainWindow.setMenuBar(self.menubar)
 
     def retranslateUi(self):
-        self.MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        #self.videoFrame.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.mainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        #self.videoFrame.setText(QtGui.QApplication.translate("mainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
 
