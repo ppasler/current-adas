@@ -1,6 +1,11 @@
 import sys
 
 from PyQt4 import QtGui, QtCore
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+    
 import cv2
 
 import numpy as np
@@ -32,14 +37,27 @@ class VideoPlayer(QtGui.QWidget):
         super(VideoPlayer, self).__init__()
         self.parent = parent
         self.video = Video(cv2.VideoCapture(videoUrl))
+        self.videoFrame = QtGui.QLabel(self)
+        self.videoFrame.setGeometry(QtCore.QRect(40, 32, 721, 521))
+        self.videoFrame.setObjectName(_fromUtf8("videoFrame"))
 
     def play(self):
         try:
             self.video.captureNextFrame()
-            self.parent.ui.videoFrame.setPixmap(self.video.convertFrame())
-            self.parent.ui.videoFrame.setScaledContents(True)
+            self.videoFrame.setPixmap(self.video.convertFrame())
+            self.videoFrame.setScaledContents(True)
         except TypeError:
             print "No frame"
+
+class VideoWidget(QtGui.QWidget):
+
+    def __init__(self, videoPlayers):
+        super(VideoWidget, self).__init__()
+        self.mainLayout = QtGui.QHBoxLayout()
+        for videoPlayer in videoPlayers:
+            self.mainLayout.addWidget(videoPlayer)
+        self.setLayout(self.mainLayout)
+        self.setObjectName(_fromUtf8("centralwidget"))
 
 class DataVisualizer(QtGui.QMainWindow):
     def __init__(self,parent, videoUrls):
@@ -55,10 +73,11 @@ class DataVisualizer(QtGui.QMainWindow):
         self.videoPlayers = []
         for videoUrl in videoUrls:
             self.videoPlayers.append(VideoPlayer(self, videoUrl))
+        self.videoWidget = VideoWidget(self.videoPlayers)
 
     def _initUI(self):
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self, self.videoPlayers[0])
+        self.ui.setupUi(self, self.videoWidget)
 
     def _initTimer(self):
         self._timer = QtCore.QTimer(self)

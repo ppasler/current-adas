@@ -8,41 +8,44 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow, VideoPlayer):
-        MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(823, 602)
 
-        self.centralwidget = VideoPlayer
-        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
+    def setupUi(self, MainWindow, VideoWidget):
+        self.MainWindow = MainWindow
+        self.MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        self.MainWindow.resize(823, 602)
 
-        self.videoFrame = QtGui.QLabel(self.centralwidget)
-        self.videoFrame.setGeometry(QtCore.QRect(40, 32, 721, 521))
-        self.videoFrame.setObjectName(_fromUtf8("videoFrame"))
-        MainWindow.setCentralWidget(self.centralwidget)
+        self.MainWindow.setCentralWidget(VideoWidget)
 
-        self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 823, 21))
-        self.menubar.setObjectName(_fromUtf8("menubar"))
-        MainWindow.setMenuBar(self.menubar)
+        self._initMenuBar()
 
-        self.statusbar = QtGui.QStatusBar(MainWindow)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
-        MainWindow.setStatusBar(self.statusbar)
+        self._initStatusBar()
 
-        self.initToolbar(MainWindow)
+        self._initToolbar()
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi()
+
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def initToolbar(self, MainWindow):
-        exitAction = QtGui.QAction(QtGui.QIcon('exit24.png'), 'Exit', MainWindow)
+    def _initToolbar(self):
+        exitAction = QtGui.QAction(QtGui.QIcon('exit24.png'), 'Exit', self.MainWindow)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(QtGui.qApp.quit)
 
-        MainWindow.toolbar = MainWindow.addToolBar('Exit')
-        MainWindow.toolbar.addAction(exitAction)
+        self.MainWindow.toolbar = self.MainWindow.addToolBar('Exit')
+        self.MainWindow.toolbar.addAction(exitAction)
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.videoFrame.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+    def _initStatusBar(self):
+        self.statusbar = QtGui.QStatusBar(self.MainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        self.MainWindow.setStatusBar(self.statusbar)
+
+    def _initMenuBar(self):
+        self.menubar = QtGui.QMenuBar(self.MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 823, 21))
+        self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.MainWindow.setMenuBar(self.menubar)
+
+    def retranslateUi(self):
+        self.MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        #self.videoFrame.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
 
