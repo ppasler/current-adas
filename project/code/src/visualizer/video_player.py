@@ -8,9 +8,13 @@ Created on 08.12.2016
 :organization: Reutlingen University
 '''
 
+import random
+
 from PyQt4 import QtGui, QtCore
 import cv2
+
 import numpy as np
+
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -44,7 +48,7 @@ class VideoPlayer(QtGui.QWidget):
         self.parent = parent
         self.video = Video(cv2.VideoCapture(videoUrl))
         self.videoFrame = QtGui.QLabel(self)
-        self.videoFrame.setGeometry(QtCore.QRect(40, 32, 721, 521))
+        self.videoFrame.setGeometry(self.geometry())
         self.videoFrame.setObjectName(_fromUtf8("videoFrame"))
 
     def play(self):
@@ -57,10 +61,12 @@ class VideoPlayer(QtGui.QWidget):
 
 class VideoWidget(QtGui.QWidget):
 
-    def __init__(self, videoPlayers):
+    def __init__(self):
         super(VideoWidget, self).__init__()
         self.mainLayout = QtGui.QHBoxLayout()
-        for videoPlayer in videoPlayers:
-            self.mainLayout.addWidget(videoPlayer)
         self.setLayout(self.mainLayout)
         self.setObjectName(_fromUtf8("videolwidget"))
+
+    def setPlayers(self, videoPlayers):
+        for videoPlayer in videoPlayers:
+            self.mainLayout.addWidget(videoPlayer)

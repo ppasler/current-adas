@@ -33,10 +33,10 @@ class DataVisualizerWidget(QtGui.QWidget):
         self.setObjectName(_fromUtf8("centralwidget"))
 
 class DataVisualizer(QtGui.QMainWindow):
-    def __init__(self, parent, videoUrls):
+    def __init__(self, parent, videoUrls, dataUrls):
         super(DataVisualizer, self).__init__()
 
-        self._initPlotter()
+        self._initPlotter(dataUrls)
         self._initPlayer(videoUrls)
         self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter)
 
@@ -44,15 +44,20 @@ class DataVisualizer(QtGui.QMainWindow):
         self._initTimer()
         self.update()
 
-    def _initPlotter(self):
-        self.plotter = DataWidget()
-        self.plotter.plot()
+        palette = QtGui.QPalette()
+        palette.setColor(QtGui.QPalette.Background,QtCore.Qt.white)
+        self.setPalette(palette)
+
+    def _initPlotter(self, dataUrls):
+        self.plotter = DataWidget(dataUrls)
+        #self.plotter.plot()
 
     def _initPlayer(self, videoUrls):
+        self.videoWidget = VideoWidget()
         self.videoPlayers = []
         for videoUrl in videoUrls:
             self.videoPlayers.append(VideoPlayer(self, videoUrl))
-        self.videoWidget = VideoWidget(self.videoPlayers)
+        self.videoWidget.setPlayers(self.videoPlayers)
 
     def _initUI(self):
         self.ui = Ui_MainWindow()
@@ -71,7 +76,8 @@ class DataVisualizer(QtGui.QMainWindow):
 def main():
     app = QtGui.QApplication(sys.argv)
     videoUrls = ['E:/thesis/experiment/1/2016-12-05_14-25_drive.mp4', 'E:/thesis/experiment/1/2016-12-05_14-25_face.mp4']
-    vis = DataVisualizer(None, videoUrls)
+    dataUrls = ['E:/thesis/experiment/1/2016-12-05_14-25_EEG.csv']
+    vis = DataVisualizer(None, videoUrls, dataUrls)
     vis.show()
     sys.exit(app.exec_())
 
