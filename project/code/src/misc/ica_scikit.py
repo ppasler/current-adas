@@ -30,18 +30,18 @@ time = np.linspace(0, 8, n_samples)
 
 s1 = np.sin(2 * time)  # Signal 1 : sinusoidal signal
 s2 = np.sign(np.sin(3 * time))  # Signal 2 : square signal
-s3 = signal.sawtooth(2 * np.pi * time)  # Signal 3: saw tooth signal
+#s2 = signal.sawtooth(2 * np.pi * time)  # Signal 3: saw tooth signal
 
-S = np.c_[s1, s2, s3]
+S = np.c_[s1, s2]
 S += 0.2 * np.random.normal(size=S.shape)  # Add noise
 
 S /= S.std(axis=0)  # Standardize data
 # Mix data
-A = np.array([[1, 1, 1], [0.5, 2, 1.0], [1.5, 1.0, 2.0]])  # Mixing matrix
+A = np.array([[1, 0.5], [0.8, 1]])  # Mixing matrix
 X = np.dot(S, A.T)  # Generate observations
 
 # Compute ICA
-ica = FastICA(n_components=3)
+ica = FastICA(n_components=2)
 S_ = ica.fit_transform(X)  # Reconstruct signals
 A_ = ica.mixing_  # Get estimated mixing matrix
 
@@ -49,7 +49,7 @@ A_ = ica.mixing_  # Get estimated mixing matrix
 assert np.allclose(X, np.dot(S_, A_.T) + ica.mean_)
 
 # For comparison, compute PCA
-pca = PCA(n_components=3)
+pca = PCA(n_components=2)
 H = pca.fit_transform(X)  # Reconstruct signals based on orthogonal components
 
 ###############################################################################
@@ -57,17 +57,17 @@ H = pca.fit_transform(X)  # Reconstruct signals based on orthogonal components
 
 plt.figure()
 
-models = [X, S, S_, H]
+models = [X, S, S_]
 names = ['Observations (mixed signal)',
          'True Sources',
-         'ICA recovered signals', 
-         'PCA recovered signals']
+         'ICA recovered signals']
 colors = ['red', 'steelblue', 'orange']
 
-for ii, (model, name) in enumerate(zip(models, names), 1):
-    plt.subplot(4, 1, ii)
+for ii, (model, name) in enumerate(zip(models, names), 0):
+    ii = (ii*2)+1
     plt.title(name)
-    for sig, color in zip(model.T, colors):
+    for j, (sig, color) in enumerate(zip(model.T, colors)):
+        plt.subplot(7, 1, ii+j)
         plt.plot(sig, color=color)
 
 plt.subplots_adjust(0.09, 0.04, 0.94, 0.94, 0.26, 0.46)
