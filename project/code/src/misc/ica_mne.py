@@ -18,7 +18,7 @@ def main():
     def createRawObject(filePath):
         with open(filePath, 'rb') as f:
             ch_names = f.readline().strip().split(",")
-        info = util._createEEGInfo(ch_names, filePath)
+        info = util._createEEGInfo(ch_names, filePath, 128)
         data = np.swapaxes(np.delete(np.genfromtxt(filePath, dtype=float, delimiter=","), 0, 0),0,1)
         return mne.io.RawArray(data, info)
 
@@ -32,7 +32,7 @@ def main():
         return raw, ica
 
     def plotICA(raw, ica):
-        ica.plot_components(inst=raw, colorbar=True, show=False)
+        ica.plot_components(inst=raw, colorbar=True, show=False, picks=[0, 1, 2, 3])
         ica.plot_sources(raw, show=False)
         #ica.plot_properties(raw, picks=0, psd_args={'fmax': 35.})
     
@@ -54,11 +54,11 @@ def main():
     def plotSignal(raw, ica):
         filename = raw.info["filename"]
         raw.plot(show=False, title="%s: Raw data" % filename, scalings=dict(eeg=300))
-        eogInd = ica.labels_["blinks"]
-        withoutEogInds = range(14)
-        withoutEogInds.remove(eogInd[0])
-        excludeAndPlotRaw(raw, ica, eogInd, "%s: Blinks removed" % filename)
-        excludeAndPlotRaw(raw, ica, withoutEogInds, "%s: Only blinks" % filename)
+        #eogInd = ica.labels_["blinks"]
+        #withoutEogInds = range(14)
+        #withoutEogInds.remove(eogInd[0])
+        #excludeAndPlotRaw(raw, ica, eogInd, "%s: Blinks removed" % filename)
+        #excludeAndPlotRaw(raw, ica, withoutEogInds, "%s: Only blinks" % filename)
 
     def plotSignals(templateRaw, templateICA, raws, icas):
         plotSignal(templateRaw, templateICA)
@@ -70,6 +70,7 @@ def main():
 
     # plot ICs with topographic info
     plotICA(templateRaw, templateICA)
+    plotSignal(templateRaw, templateICA)
     
     # load data from previous experiment and calc ICA
     #raws, icas = createICAList()
@@ -80,7 +81,15 @@ def main():
     # print raw, cleaned and eog data
     #plotSignals(templateRaw, templateICA, raws, icas)
 
-    plt_show()
-
+    #plt_show()
+    print ",".join(templateICA.ch_names)
+    for row in templateICA.unmixing_matrix_:
+        s = ""
+        for c in row:
+            s += "%.5f," % c
+        print s
+    
+    print templateICA.get_components()
+    print "hello"
 if __name__ == "__main__":
     main()
