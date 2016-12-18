@@ -33,18 +33,26 @@ class EmotivConnector(object):
     def dequeue(self):
         return self.emotiv.dequeue()
 
-    def close(self):
+    def stop(self):
         try:
             self.emotiv.stop()
         except Exception as e:
             print "Error while shutting down", e
 
+    def close(self):
+        self.stop()
+
 if __name__ == "__main__":
-    a = EmotivConnector(display_output=True, write=True, verbose=True)
-    try:
-        while True:
-            packet = a.dequeue()
-            time.sleep(0.001)
-    except KeyboardInterrupt:
-        a.close()
-    a.close()
+    scriptPath = os.path.dirname(os.path.abspath(__file__))
+    output_path = scriptPath + "/../data/"
+
+    headset = EmotivConnector(display_output=False, write=True, verbose=True, output_path=output_path)
+    print("Serial Number: %s" % headset.emotiv.serial_number)
+
+    while headset.emotiv.running:
+        try:
+            packet = headset.dequeue()
+        except Exception:
+            headset.stop()
+        time.sleep(0.0001)
+    headset.stop()

@@ -62,7 +62,7 @@ class NetworkUtil(object):
             res = self.nn.activate(inpt)
             clazz = self.nn._clazz(res)
             resArr.append([res, clazz, target])
-            matrix[target[0]][clazz] += 1
+            matrix[int(target[0])][clazz] += 1
         matrix[0, 2] = matrix[0, 0] / total
         matrix[1, 2] = matrix[1, 1] / total 
         return matrix, np.array(resArr)
