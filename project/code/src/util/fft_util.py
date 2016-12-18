@@ -26,7 +26,7 @@ class FFTUtil(object):
         '''remove mirrored data, only take left side
         '''
         
-        nUniquePts = np.ceil((n+1)/2.0)
+        nUniquePts = int(np.ceil((n+1)/2.0))
         return fft_data[0:nUniquePts]
 
     def _doubleValues(self, fft_data):

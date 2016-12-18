@@ -10,9 +10,7 @@ Created on 30.05.2016
 
 from time import sleep
 
-import gevent
-
-from emokit.emotiv import Emotiv
+from emotiv_connector import EmotivConnector
 from window.rectangular_signal_window import RectangularSignalWindow
 from http_eeg_data_receiver import HttpEEGDataReceiver
 from util.eeg_data_source import EEGTableWindowSource
@@ -89,9 +87,7 @@ class EEGDataCollector(DataCollector):
 
     def _setDefaultDataSource(self): # pragma: no cover
         '''Set Emotiv as default source and starts it inside a gevent context'''
-        emotiv = Emotiv(display_output=False)
-        gevent.spawn(emotiv.setup)
-        gevent.sleep(0)
+        emotiv = EmotivConnector(display_output=False)
         print "using default datasource: " + emotiv.__class__.__name__
         return emotiv
 
@@ -158,6 +154,7 @@ if __name__ == "__main__": # pragma: no cover
     dc.setHandler(handler)
     dc.collectData()
     sleep(2)
+    print "hello"
     dc.close()
     
 

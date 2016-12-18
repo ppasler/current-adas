@@ -8,13 +8,16 @@ Created on 09.05.2016
 :organization: Reutlingen University
 '''
 import BaseHTTPServer
-import threading
 import json
-import xmlrpclib
+import os
+import threading
 import time
+import xmlrpclib
+
+from emotiv_connector import EmotivConnector
 
 
-from emokit.emotiv import Emotiv
+scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 emotiv = None
 
@@ -88,7 +91,6 @@ class HttpEEGDataProvider(object):
             server.ping()
         except Exception:
             """Ignore, 1 ping is enough"""
-            
 
     def run(self):
         '''Serve EPOC data until forever'''
@@ -107,15 +109,16 @@ class HttpEEGDataProvider(object):
 
 
 if __name__ == "__main__":
-    emotiv = Emotiv(display_output=False, write_to_file=True)
+    output_path = scriptPath + "/../data/"
+    emotiv = EmotivConnector(display_output=False, output_path=output_path)
     server = HttpEEGDataProvider()
     try:
         print "starting server and emotiv"
         t = threading.Thread(target=server.run)
         t.start()
-        
-        emotiv.setup()
-        
+
+        time.sleep(1)
+
         print "closing server and emotiv"
         emotiv.close()
         server.stop()

@@ -37,14 +37,14 @@ class MNEUtilTest(unittest.TestCase):
         header = ["F3", "F4", "AF3", "AF4"]
         data = np.random.rand(4,512)
         filePath = "test"
-        return self.mne.createMNEObject(data, header, filePath)
+        return self.mne.createMNEObject(data, header, filePath, 128)
 
 
     def test_createMNEObjectFromDto_creation(self):
         self.mne.createMNEObjectFromEEGDto(self.eegData)
 
     def test_createMNEObject_creation(self):
-        self.mne.createMNEObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), self.eegData.filePath)
+        self.mne.createMNEObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), self.eegData.filePath, self.eegData.getSamplingRate())
 
     def test_createMNEObjectFromDto_getChannels(self):
         channels = ["AF3", "F3"]
@@ -56,7 +56,7 @@ class MNEUtilTest(unittest.TestCase):
         channels = self.config.get("eegFields")
         samplingRate = self.config.get("samplingRate")
 
-        info = self.mne._createEEGInfo(channels, "testFile")
+        info = self.mne._createEEGInfo(channels, "testFile", 128)
         self.assertEquals(info["sfreq"], samplingRate)
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)

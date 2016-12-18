@@ -75,6 +75,9 @@ class EEGTableDataSource(object):
     def close(self):
         pass
 
+    def stop(self):
+        pass
+
 class EEGTablePacketSource(EEGTableDataSource):
     '''
     Util for EPOC dummy data 
