@@ -43,21 +43,22 @@ class EEGTableDataSource(object):
         self.index = 0
 
     def convert(self):
-        self._readHeader()
-        self._readRawData()
+        dto = self.reader.readEEGFile(self.filepath)
+        self._readHeader(dto)
+        self._readRawData(dto)
 
         self.data = self._buildDataStructure()
 
-    def _readHeader(self):
+    def _readHeader(self, dto):
         self.header = self.reader.readHeader(self.filepath)
-        
+
         fields = self.header[:]
         fields.remove("Timestamp")
         fields.remove("Unknown")
         self.fields = filter(lambda x: not (x.startswith("Q")), fields)
 
-    def _readRawData(self):
-        self.rawData = self.reader.readData(self.filepath)
+    def _readRawData(self, dto):
+        self.rawData = dto.getData()
         self.len = len(self.rawData)
         if self.len > 0:
             self.hasMore = True
