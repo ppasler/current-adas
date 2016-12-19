@@ -661,10 +661,10 @@ class TestEEGTableFileUtil(unittest.TestCase):
         self.assertTrue((semicolonData == commaData).all())
 
     def test_readEEGFile_newStyle(self):
-        eegData = self.reader.readEEGFile(PATH + "example_1024_new.csv")
+        _ = self.reader.readEEGFile(PATH + "example_1024_new.csv")
 
     def test_readEEGFile_ECG(self):
-        ecgData = self.reader.readECGFile(PATH + "example_4096_ecg.csv")
+        _ = self.reader.readECGFile(PATH + "example_4096_ecg.csv")
 
     def test_transformTimestamp_ecg(self):
         header = ["Timestamp", "ECG"]
