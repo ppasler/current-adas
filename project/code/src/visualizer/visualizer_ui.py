@@ -57,4 +57,3 @@ class Ui_MainWindow(object):
     def retranslateUi(self):
         self.mainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         #self.videoFrame.setText(QtGui.QApplication.translate("mainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
-

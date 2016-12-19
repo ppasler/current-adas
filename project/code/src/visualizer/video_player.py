@@ -8,8 +8,6 @@ Created on 08.12.2016
 :organization: Reutlingen University
 '''
 
-import random
-
 from PyQt4 import QtGui, QtCore
 import cv2
 
@@ -49,7 +47,7 @@ class VideoPlayer(QtGui.QWidget):
         self.video = Video(cv2.VideoCapture(videoUrl))
         self.videoFrame = QtGui.QLabel(self)
         self.videoFrame.setGeometry(self.geometry())
-        self.videoFrame.setObjectName(_fromUtf8("videoFrame"))
+        self.videoFrame.setObjectName("videoFrame")
 
     def play(self):
         try:
@@ -63,9 +61,8 @@ class VideoWidget(QtGui.QWidget):
 
     def __init__(self):
         super(VideoWidget, self).__init__()
-        self.mainLayout = QtGui.QHBoxLayout()
-        self.setLayout(self.mainLayout)
-        self.setObjectName(_fromUtf8("videolwidget"))
+        self.mainLayout = QtGui.QHBoxLayout(self)
+        self.setObjectName("videolwidget")
 
     def setPlayers(self, videoPlayers):
         for videoPlayer in videoPlayers:

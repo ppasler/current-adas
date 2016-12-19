@@ -9,7 +9,6 @@ Created on 08.12.2016
 '''
 
 import os
-import random
 
 from PyQt4 import QtGui
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -31,10 +30,11 @@ class DataWidget(QtGui.QWidget):
         self.canvas = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.canvas, self)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QtGui.QVBoxLayout(self)
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
-        self.setLayout(layout)
+
+        self.setObjectName("datawidget")
 
     def plot(self):
         ''' plot some random stuff '''
@@ -42,7 +42,6 @@ class DataWidget(QtGui.QWidget):
         eegData = self.dto.getEEGData()
         
         channels = len(eegData)
-        print channels
         axes = []
         for i, column in enumerate(eegData):
             axes.append(self.figure.add_subplot(channels, 1, i+1))
