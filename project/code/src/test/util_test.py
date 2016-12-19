@@ -643,7 +643,7 @@ class TestEEGTableFileUtil(unittest.TestCase):
         removeFile(filePath)
 
     @unittest.skip("There should be no empty values")
-    def testreadEEGFile_NaNValues(self):
+    def test_readEEGFile_NaNValues(self):
         eegData = self.reader.readEEGFile(PATH + "example_32_empty.csv")
         emptyCol = eegData.getColumn("Y")
         self.assertTrue(np.isnan(emptyCol).any())
@@ -651,7 +651,7 @@ class TestEEGTableFileUtil(unittest.TestCase):
         nonEmptyCol = eegData.getColumn("F3")
         self.assertFalse(np.isnan(nonEmptyCol).any())
 
-    def testreadEEGFile_SeparatorFallback(self):
+    def test_readEEGFile_SeparatorFallback(self):
         eegData = self.reader.readEEGFile(PATH + "example_32.csv")
         semicolonData = eegData.getColumn("F3")
 
@@ -660,6 +660,31 @@ class TestEEGTableFileUtil(unittest.TestCase):
 
         self.assertTrue((semicolonData == commaData).all())
 
+    def test_readEEGFile_newStyle(self):
+        eegData = self.reader.readEEGFile(PATH + "example_1024_new.csv")
+
+    def test_readEEGFile_ECG(self):
+        ecgData = self.reader.readECGFile(PATH + "example_4096_ecg.csv")
+
+    def test_transformTimestamp_ecg(self):
+        header = ["Timestamp", "ECG"]
+        data = np.array([["05/12/2016 13:58:59.407","3798"],
+                         ["05/12/2016 13:58:59.408","3798"],
+                         ["05/12/2016 13:58:59.409","3798"],
+                         ["05/12/2016 13:58:59.410","3798"],
+                         ["05/12/2016 13:58:59.411","3798"]])
+        ecgData = self.reader.transformTimestamp(header, data)
+        self.assertAlmostEquals(float(ecgData[0][0]), 1480942739., delta=1.)
+
+    def test_transformTimestamp_eeg(self):
+        header = ["Timestamp", "F3", "X"]
+        data = np.array([["2016-12-19 08:18:38.415000","-3200","0"],
+                         ["2016-12-19 08:18:38.423000","-3171","0"],
+                         ["2016-12-19 08:18:38.430000","-3184","0"],
+                         ["2016-12-19 08:18:38.438000","-3176","0"],
+                         ["2016-12-19 08:18:38.446000","-3172","0"]])
+        eegData = self.reader.transformTimestamp(header, data)
+        self.assertAlmostEquals(float(eegData[0][0]), 1482131918., delta=1.)
 
 class TestEEGTableDto(unittest.TestCase):
 

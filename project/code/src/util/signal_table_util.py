@@ -318,7 +318,7 @@ class TableFileUtil(object):
             header.remove("Z")
             data = delete(data, zIndex, 1)
 
-        return header, data.astype(float)
+        return header, data
 
     def readEEGFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
         '''
@@ -337,7 +337,7 @@ class TableFileUtil(object):
         header, data = self.readFile(filePath, delimiter)
 
         data = self.transformTimestamp(header, data)
-        return EEGTableDto(header, data, filePath)
+        return EEGTableDto(header, data.astype(float), filePath)
 
     def readECGFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
         '''
@@ -354,10 +354,11 @@ class TableFileUtil(object):
             return None
 
         header, data = self.readFile(filePath, delimiter)
+        header[0] = TIMESTAMP_STRING
         header[1] = "ECG"
 
         data = self.transformTimestamp(header, data)
-        return ECGTableDto(header, data, filePath)
+        return ECGTableDto(header, data.astype(float), filePath)
 
     def transformTimestamp(self, header, data):
         if TIMESTAMP_STRING in header: 
@@ -407,10 +408,12 @@ if __name__ == "__main__": # pragma: no cover
     e = TableFileUtil()
     
     scriptPath = os.path.dirname(os.path.abspath(__file__))
-    eeg_data = e.readEEGFile("test.csv", ",")
-    eeg_data2 = e.readEEGFile("test2.csv", ";")
+    eeg_data = e.readEEGFile("../../examples/example_1024_new.csv", ",")
+    eeg_data2 = e.readEEGFile("../../examples/example_1024.csv", ";")
+    ecg_data = e.readECGFile("../../examples/example_4096_ecg.csv", ",")
     print eeg_data.getData()[:,0]
     print eeg_data2.getData()[:,0]
+    print ecg_data.getData()[:,0]
 #    print ecg_data.getECGData()
 #    print ecg_data.header
     
