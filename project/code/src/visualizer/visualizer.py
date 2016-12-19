@@ -88,7 +88,7 @@ class DataVisualizer(QtGui.QMainWindow):
         self.step()
 
     def prev(self):
-        print "TODO"
+        self.plotter.plot()
 
 def main():
     app = QtGui.QApplication(sys.argv)

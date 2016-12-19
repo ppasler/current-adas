@@ -16,7 +16,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 
 import matplotlib.pyplot as plt
 from util.signal_table_util import TableFileUtil
-
+import numpy as np
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -34,21 +34,29 @@ class DataWidget(QtGui.QWidget):
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
 
+        self.eegHeader = self.dto.getEEGHeader()
+        self.eegData = self.dto.getEEGData()
+        self.numChannels = len(self.eegData)
+        self.index = 0
+        self.length = 128
+
+        self.axes = []
+        for i, _ in enumerate(self.eegData):
+            self.axes.append(self.figure.add_subplot(self.numChannels, 1, i+1))
+
         self.setObjectName("datawidget")
 
-    def plot(self):
-        ''' plot some random stuff '''
-        eegHeader = self.dto.getEEGHeader()
-        eegData = self.dto.getEEGData()
-        
-        channels = len(eegData)
-        axes = []
-        for i, column in enumerate(eegData):
-            axes.append(self.figure.add_subplot(channels, 1, i+1))
 
-        for i, ax in enumerate(axes):
+    def plot(self):
+        start = self.index
+        end = self.index+self.length
+        x_values = [x for x in range(start, end)]
+
+        for i, ax in enumerate(self.axes):
             ax.hold(False)
-            ax.plot(eegData[i], '*-')
-            ax.set_ylabel(eegHeader[i])
+            ax.plot(x_values, self.eegData[i][start:end], '-')
+            ax.set_xlim([start,end])
+            ax.set_ylabel(self.eegHeader[i])
+        self.index += self.length
         # refresh canvas
         self.canvas.draw()
