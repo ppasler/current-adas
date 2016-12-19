@@ -9,13 +9,19 @@ Created on 10.05.2016
 '''
 
 import os
+import re
 
 from numpy import genfromtxt, delete, shape, savetxt, transpose, array
+
 from config.config import ConfigProvider
+from util.date_converter import DateConverter
 
 
 DEFAULT_DELIMITER = ";" # default delimiter for CSV file
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
+
+EMOKIT_TIME_PATTERN = "%Y-%m-%d %H:%M:%S.%f"
+BIOHARNESS_TIME_PATTERN = '%d/%m/%Y %H:%M:%S.%f'
 
 
 class TableDto(object):
@@ -96,7 +102,7 @@ class TableDto(object):
                 limit = offset+length
 
         index = self.header.index(columnName)
-        return self.data[:, index][offset:limit]      
+        return self.data[:, index][offset:limit]
 
     def getColumnByTime(self, columnName, fromTime, toTime):
         '''
@@ -239,7 +245,7 @@ class TableFileUtil(object):
     '''
     
     def __init__(self):
-        self.delimiter = DEFAULT_DELIMITER 
+        self.delimiter = DEFAULT_DELIMITER
 
     def readHeader(self, filePath):
         '''
@@ -258,8 +264,23 @@ class TableFileUtil(object):
             if self.delimiter not in headerLine:
                 self.delimiter = ","
             header = headerLine.split(self.delimiter)
-            
+
         return header
+
+    def _isNewFile(self, header):
+        return any(" Value" in s for s in header)
+
+    def _modifyHeader(self, header):
+        header = [channel.replace(" Value", "") for channel in header]
+        header = [self._replaceQuality(channel) for channel in header]
+        return header
+
+    def _replaceQuality(self, channel):
+        regex = re.compile(r"^(.*) Quality$", re.IGNORECASE)
+        match = regex.search(channel)
+        if match is not None:
+            return "Q" + match.group(1)
+        return channel
 
     def readData(self, filePath):
         '''
@@ -279,17 +300,25 @@ class TableFileUtil(object):
         :return: data columns
         :rtype: array
         '''
-        data = delete(genfromtxt(filePath, dtype=float, delimiter=self.delimiter), 0, 0)
+        data = genfromtxt(filePath, delimiter=self.delimiter, dtype=str, skip_header=1)
+
         return data
 
     def readFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
         if filePath == "":
             return None
+        self.delimiter = delimiter
 
         header = self.readHeader(filePath)
         data = self.readData(filePath)
 
-        return header, data
+        if self._isNewFile(header):
+            header = self._modifyHeader(header)
+            zIndex = header.index("Z")
+            header.remove("Z")
+            data = delete(data, zIndex, 1)
+
+        return header, data.astype(float)
 
     def readEEGFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
         '''
@@ -306,6 +335,8 @@ class TableFileUtil(object):
             return None
 
         header, data = self.readFile(filePath, delimiter)
+
+        data = self.transformTimestamp(header, data)
         return EEGTableDto(header, data, filePath)
 
     def readECGFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
@@ -324,7 +355,36 @@ class TableFileUtil(object):
 
         header, data = self.readFile(filePath, delimiter)
         header[1] = "ECG"
+
+        data = self.transformTimestamp(header, data)
         return ECGTableDto(header, data, filePath)
+
+    def transformTimestamp(self, header, data):
+        if TIMESTAMP_STRING in header: 
+            timestampIndex = header.index(TIMESTAMP_STRING)
+            timestampColumn = data[:, timestampIndex]
+            firstElement = timestampColumn[0]
+    
+            if not self._isFloat(firstElement):
+                dateConverter = self._getConverter(firstElement)
+                timestampColumn = [dateConverter.convertDate(dateString) for dateString in timestampColumn]
+                data[:,0] = timestampColumn
+
+        return data
+
+    def _isFloat(self, value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    def _getConverter(self, dateString):
+        dateConverter = DateConverter(EMOKIT_TIME_PATTERN, 1)
+        if dateConverter.matchesDatePattern(dateString):
+            return dateConverter
+        dateConverter.setPattern(BIOHARNESS_TIME_PATTERN)
+        return dateConverter
 
     def writeFile(self, filePath, data, header, delimiter=DEFAULT_DELIMITER):
         savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%0.3f", comments="")
@@ -347,7 +407,10 @@ if __name__ == "__main__": # pragma: no cover
     e = TableFileUtil()
     
     scriptPath = os.path.dirname(os.path.abspath(__file__))
-    ecg_data = e.readECGFile("test.csv")
-    print ecg_data.getECGData()
-    print ecg_data.header
+    eeg_data = e.readEEGFile("test.csv", ",")
+    eeg_data2 = e.readEEGFile("test2.csv", ";")
+    print eeg_data.getData()[:,0]
+    print eeg_data2.getData()[:,0]
+#    print ecg_data.getECGData()
+#    print ecg_data.header
     

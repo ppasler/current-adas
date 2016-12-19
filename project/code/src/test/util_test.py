@@ -642,16 +642,17 @@ class TestEEGTableFileUtil(unittest.TestCase):
                 self.assertTrue(sameEntries(values["value"], read.getColumn(key)))
         removeFile(filePath)
 
+    @unittest.skip("There should be no empty values")
     def testreadEEGFile_NaNValues(self):
         eegData = self.reader.readEEGFile(PATH + "example_32_empty.csv")
         emptyCol = eegData.getColumn("Y")
         self.assertTrue(np.isnan(emptyCol).any())
-        
+
         nonEmptyCol = eegData.getColumn("F3")
         self.assertFalse(np.isnan(nonEmptyCol).any())
 
     def testreadEEGFile_SeparatorFallback(self):
-        eegData = self.reader.readEEGFile(PATH + "example_32_empty.csv")
+        eegData = self.reader.readEEGFile(PATH + "example_32.csv")
         semicolonData = eegData.getColumn("F3")
 
         eegData = self.reader.readEEGFile(PATH + "example_32_comma.csv")

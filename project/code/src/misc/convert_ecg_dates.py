@@ -1,9 +1,10 @@
-from datetime import datetime
 import os, glob, csv
+import sys
 import time
 
-TIMEZONE = 1
-EPOCH = datetime(1970,1,1, hour=TIMEZONE)
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from util.date_converter import DateConverter
 
 def getCSVFiles():
     return glob.glob("*.csv")
@@ -20,24 +21,15 @@ def processCSVFile(filePath):
         header[timeIndex] = "Timestamp"
         writer.writerow(header)
 
+        converter = DateConverter('%d/%m/%Y %H:%M:%S.%f', 1)
         for row in reader:  # process data lines
-            row[timeIndex] = convertDate(row[timeIndex])
+            row[timeIndex] = converter.convertDate(row[timeIndex])
             writer.writerow(row)
 
         #http://stackoverflow.com/questions/19309834/how-write-csv-file-without-new-line-character-in-last-line
         fout.seek(-2, os.SEEK_END) # <---- 2 : len('\r\n')
         fout.truncate()
         print "took %.2fs for %s" % ((time.time() - start), filePath) 
-
-def convertDate(dateString):
-    if dateString == "":
-        return ""
-    return totimestamp(datetime.strptime(dateString, '%d/%m/%Y %H:%M:%S.%f'))
-
-# http://stackoverflow.com/questions/8777753/converting-datetime-date-to-utc-timestamp-in-python
-def totimestamp(dt):
-    td = dt - EPOCH
-    return td.total_seconds()
 
 def processDir(filePath):
     os.chdir(filePath)
