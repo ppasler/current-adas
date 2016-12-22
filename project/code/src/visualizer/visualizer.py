@@ -74,6 +74,7 @@ class DataVisualizer(QtGui.QMainWindow):
     def step(self):
         for videoPlayer in self.videoPlayers:
             videoPlayer.play()
+        self.plotter.next()
 
     def play(self):
         if not self._timer.isActive():
@@ -88,7 +89,8 @@ class DataVisualizer(QtGui.QMainWindow):
         self.step()
 
     def prev(self):
-        self.plotter.plot()
+        self.pause()
+        self.plotter.prev()
 
 def main():
     app = QtGui.QApplication(sys.argv)

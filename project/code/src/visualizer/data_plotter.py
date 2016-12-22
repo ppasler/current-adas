@@ -16,23 +16,26 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 
 import matplotlib.pyplot as plt
 from util.signal_table_util import TableFileUtil
-import numpy as np
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 class DataWidget(QtGui.QWidget):
+
     def __init__(self, dataUrls):
         super(DataWidget, self).__init__()
-        util = TableFileUtil()
-        self.dto = util.readEEGFile(dataUrls[0])
-        
-        self.figure = plt.figure()
-        self.canvas = FigureCanvas(self.figure)
-        self.toolbar = NavigationToolbar(self.canvas, self)
+
+        self._initData(dataUrls)
+        self._initPlot()
 
         layout = QtGui.QVBoxLayout(self)
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
+
+        self.setObjectName("datawidget")
+
+    def _initData(self, dataUrls):
+        util = TableFileUtil()
+        self.dto = util.readEEGFile(dataUrls[0])
 
         self.eegHeader = self.dto.getEEGHeader()
         self.eegData = self.dto.getEEGData()
@@ -40,23 +43,50 @@ class DataWidget(QtGui.QWidget):
         self.index = 0
         self.length = 128
 
+    def _initPlot(self):
+        self.figure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+        self.toolbar = NavigationToolbar(self.canvas, self)
+
         self.axes = []
         for i, _ in enumerate(self.eegData):
             self.axes.append(self.figure.add_subplot(self.numChannels, 1, i+1))
 
-        self.setObjectName("datawidget")
-
-
-    def plot(self):
-        start = self.index
-        end = self.index+self.length
+        start, end = self._getRange()
         x_values = [x for x in range(start, end)]
 
+        self.lines = []
         for i, ax in enumerate(self.axes):
-            ax.hold(False)
-            ax.plot(x_values, self.eegData[i][start:end], '-')
+            line, = ax.plot(x_values, self.eegData[i][start:end], '-')
+            self.lines.append(line)
+
             ax.set_xlim([start,end])
             ax.set_ylabel(self.eegHeader[i])
-        self.index += self.length
-        # refresh canvas
+
+    def next(self):
+        self._incIndex()
+        self.plot()
+
+    def prev(self):
+        self._decIndex()
+        self.plot()
+
+    def plot(self):
+        start, end = self._getRange()
+
+        for i in range(self.numChannels):
+            self.lines[i].set_ydata(self.eegData[i][start:end])
+
         self.canvas.draw()
+
+    def _incIndex(self):
+        self.index += self.length
+
+    def _decIndex(self):
+        self.index -= self.length
+
+    def _getRange(self):
+        start = self.index
+        end = self.index+self.length
+        return start, end
+

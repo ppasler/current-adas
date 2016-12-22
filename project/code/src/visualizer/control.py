@@ -41,7 +41,7 @@ class ControlPanelWidget(QtGui.QWidget):
         self.window().prev()
 
     def _initPlayPause(self):
-        self.playPauseButton = QtGui.QPushButton('play', self)
+        self.playPauseButton = QtGui.QPushButton('pause', self)
         self.playPauseButton.clicked.connect(self._handlePlayPause)
         self.mainLayout.addWidget(self.playPauseButton)
 

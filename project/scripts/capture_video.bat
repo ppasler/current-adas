@@ -4,7 +4,7 @@ SET vlc="C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"
 :: 2 seconds delay filename to first frame
 SET datetime=%date:~-4%-%date:~3,2%-%date:~0,2%_%time:~0,2%-%time:~3,2%-%time:~6,2%
 :: creates current time(y-m-d_H:M:S) for stream
-SET sfilter="marq{marquee='%%y-%%m-%%d_%%H:%%M:%%S',position=6,size=10}"
+SET sfilter="marq{marquee='%%y-%%m-%%d_%%H:%%M:%%S',position=6,size=25}"
 
 :: 12921
 SET file2=C:\\Users\\Paul Pasler\\Desktop\\%datetime%_face.mp4
