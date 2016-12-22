@@ -62,6 +62,7 @@ class DataWidget(QtGui.QWidget):
 
             ax.set_xlim([start,end])
             ax.set_ylabel(self.eegHeader[i])
+        self._incIndex()
 
     def next(self):
         self._incIndex()
@@ -74,8 +75,8 @@ class DataWidget(QtGui.QWidget):
     def plot(self):
         start, end = self._getRange()
 
-        for i in range(self.numChannels):
-            self.lines[i].set_ydata(self.eegData[i][start:end])
+        for i, line in enumerate(self.lines):
+            line.set_ydata(self.eegData[i][start:end])
 
         self.canvas.draw()
 

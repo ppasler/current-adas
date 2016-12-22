@@ -51,7 +51,6 @@ class DataVisualizer(QtGui.QMainWindow):
 
     def _initPlotter(self, dataUrls):
         self.plotter = DataWidget(dataUrls)
-        self.plotter.plot()
 
     def _initPlayer(self, videoUrls):
         self.videoWidget = VideoWidget()
