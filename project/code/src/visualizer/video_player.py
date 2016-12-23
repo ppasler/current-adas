@@ -20,14 +20,14 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 class Video():
-    def __init__(self,capture):
+    def __init__(self, videoId, capture):
         self.capture = capture
         self.currentFrame=np.array([])
 
     def captureNextFrame(self):
         ret, readFrame=self.capture.read()
         if(ret==True):
-            self.currentFrame=cv2.cvtColor(readFrame,cv2.COLOR_BGR2RGB)
+            self.currentFrame=cv2.cvtColor(readFrame, cv2.COLOR_BGR2RGB)
 
     def convertFrame(self):
         '''converts frame to format suitable for QtGui'''
@@ -41,13 +41,19 @@ class Video():
             return None
 
 class VideoPlayer(QtGui.QWidget):
-    def __init__(self, parent, videoUrl):
+    def __init__(self, parent, playerId, videoUrl):
         super(VideoPlayer, self).__init__()
+
         self.parent = parent
-        self.video = Video(cv2.VideoCapture(videoUrl))
+        self.capture = cv2.VideoCapture(videoUrl)
+        print "player%d\t#%d" % (playerId, self.capture.get(cv2.CAP_PROP_FRAME_COUNT))
+
+        self.video = Video("video" + str(playerId), self.capture)
         self.videoFrame = QtGui.QLabel(self)
         self.videoFrame.setGeometry(self.geometry())
-        self.videoFrame.setObjectName("videoFrame")
+        self.videoFrame.setObjectName("videoFrame" + str(playerId))
+
+        self.setObjectName("videoPlayer" + str(playerId))
 
     def play(self):
         try:

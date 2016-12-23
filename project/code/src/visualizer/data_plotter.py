@@ -42,6 +42,7 @@ class DataWidget(QtGui.QWidget):
         self.numChannels = len(self.eegData)
         self.index = 0
         self.length = 128
+        print "plotter\t#%d" % len(self.eegData[0])
 
     def _initPlot(self):
         self.figure = plt.figure()

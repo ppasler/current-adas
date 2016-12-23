@@ -55,8 +55,8 @@ class DataVisualizer(QtGui.QMainWindow):
     def _initPlayer(self, videoUrls):
         self.videoWidget = VideoWidget()
         self.videoPlayers = []
-        for videoUrl in videoUrls:
-            self.videoPlayers.append(VideoPlayer(self, videoUrl))
+        for playerId, videoUrl in enumerate(videoUrls):
+            self.videoPlayers.append(VideoPlayer(self, playerId, videoUrl))
         self.videoWidget.setPlayers(self.videoPlayers)
 
     def _initControlPanel(self):
@@ -93,9 +93,15 @@ class DataVisualizer(QtGui.QMainWindow):
 
 def main():
     app = QtGui.QApplication(sys.argv)
-    videoUrls = ['E:/thesis/experiment/1/2016-12-05_14-25_drive.mp4', 'E:/thesis/experiment/1/2016-12-05_14-25_face.mp4']
-    dataUrls = ['../../examples/example_4096.csv']
-    #dataUrls = ['E:/thesis/experiment/1/2016-12-05_14-25_EEG.csv']
+    expPath = "E:/thesis/experiment/"
+    probands = ["1/2016-12-05_14-25", "2/2016-12-01_17-50", "3/2016-12-20_14-11-18"]
+    files = ["_drive_.mp4", "_face.mp4", "_EEG.csv"]
+    #dataUrls = ['../../examples/example_4096.csv']
+
+    url = expPath + probands[2]
+    videoUrls = [url+files[0], url+files[1]]
+    dataUrls = [url+files[2]]
+
     vis = DataVisualizer(None, videoUrls, dataUrls)
     vis.show()
     sys.exit(app.exec_())
