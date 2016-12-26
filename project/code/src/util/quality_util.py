@@ -9,9 +9,12 @@ Created on 13.06.2016
 '''
 from itertools import groupby
 
-from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstate, copy, nan_to_num
+from numpy import array, count_nonzero, isnan, where, hstack, ones, NaN, errstate, copy, nan_to_num, \
+    clip
 from scipy.ndimage.morphology import binary_closing
+
 from config.config import ConfigProvider
+
 
 DEFAULT_REPLACE_VALUE = NaN
 
@@ -47,13 +50,13 @@ class QualityUtil(object):
         if upperBound == None:
             upperBound=self.upperBound
         #TODO could be nicer / faster?
-        # http://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
         with errstate(invalid='ignore'): #avoid warning because of DEFAULT_REPLACE_VALUE value
             ret = self._copyArray(data)
             if value == None:
-                ret[ret > upperBound] = upperBound
-                ret[ret < lowerBound] = lowerBound
+                #http://stackoverflow.com/questions/41329691/pythonic-way-to-replace-list-values-with-upper-and-lower-bound/41329750#41329750
+                clip(ret, lowerBound, upperBound, out=ret)
             else:
+                # http://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
                 ret[ret > upperBound] = value
                 ret[ret < lowerBound] = value
         return ret
@@ -98,9 +101,8 @@ class QualityUtil(object):
             threshold = self.minQuality
         #TODO make me nice
         ret = self._copyArray(data)
-        for i, qual in enumerate(quality):
-            if qual < threshold:
-                ret[i] = value
+        ret[quality < threshold] = value
+
         return ret
 
     def countBadQuality(self, data, quality, threshold=None):

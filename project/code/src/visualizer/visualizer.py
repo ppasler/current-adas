@@ -95,7 +95,7 @@ def main():
     app = QtGui.QApplication(sys.argv)
     expPath = "E:/thesis/experiment/"
     probands = ["1/2016-12-05_14-25", "2/2016-12-01_17-50", "3/2016-12-20_14-11-18"]
-    files = ["_drive_.mp4", "_face.mp4", "_EEG.csv"]
+    files = ["_drive.mp4", "_face.mp4", "_EEG.csv"]
     #dataUrls = ['../../examples/example_4096.csv']
 
     url = expPath + probands[2]

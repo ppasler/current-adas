@@ -46,7 +46,10 @@ class VideoPlayer(QtGui.QWidget):
 
         self.parent = parent
         self.capture = cv2.VideoCapture(videoUrl)
-        print "player%d\t#%d" % (playerId, self.capture.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.frameCount = self.capture.get(cv2.CAP_PROP_FRAME_COUNT)
+        self.fps = self.capture.get(cv2.CAP_PROP_FPS)
+        
+        print "player%d\t#%d\t%dfps\t%ds" % (playerId, self.frameCount, self.fps, self.frameCount / self.fps)
 
         self.video = Video("video" + str(playerId), self.capture)
         self.videoFrame = QtGui.QLabel(self)
