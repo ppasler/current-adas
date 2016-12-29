@@ -10,14 +10,12 @@ Created on 19.12.2016
 
 from PyQt4 import QtGui
 
-def toggleText(button, text1, text2, method):
-    if button.text() == text1:
-        button.setText(text2)
-    else:
-        button.setText(text1)
+PLAY_STRING = "play"
+PAUSE_STRING = "pause"
+PREV_STRING = "prev"
+NEXT_STRING = "next"
 
 class ControlPanelWidget(QtGui.QWidget):
-
 
     def __init__(self, ):
         super(ControlPanelWidget, self).__init__()
@@ -30,9 +28,8 @@ class ControlPanelWidget(QtGui.QWidget):
 
         self.setObjectName("controlpanel")
 
-
     def _initPrev(self):
-        self.prevButton = QtGui.QPushButton('prev', self)
+        self.prevButton = QtGui.QPushButton(PREV_STRING, self)
         self.prevButton.clicked.connect(self.prev)
         self.mainLayout.addWidget(self.prevButton)
 
@@ -41,27 +38,27 @@ class ControlPanelWidget(QtGui.QWidget):
         self.window().prev()
 
     def _initPlayPause(self):
-        self.playPauseButton = QtGui.QPushButton('pause', self)
+        self.playPauseButton = QtGui.QPushButton(PAUSE_STRING, self)
         self.playPauseButton.clicked.connect(self._handlePlayPause)
         self.mainLayout.addWidget(self.playPauseButton)
 
     def _handlePlayPause(self):
         button = self.sender()
-        if button.text() == "play":
+        if button.text() == PAUSE_STRING:
             self.pause(button)
         else:
             self.play(button)
 
     def play(self, button):
-        button.setText("play")
+        button.setText(PAUSE_STRING)
         self.window().play()
 
     def pause(self, button):
-        button.setText("pause")
+        button.setText(PLAY_STRING)
         self.window().pause()
 
     def _initNext(self):
-        self.nextButton = QtGui.QPushButton('next', self)
+        self.nextButton = QtGui.QPushButton(NEXT_STRING, self)
         self.nextButton.clicked.connect(self.next)
         self.mainLayout.addWidget(self.nextButton)
 

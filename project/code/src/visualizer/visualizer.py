@@ -12,18 +12,21 @@ import sys
 
 from PyQt4 import QtGui, QtCore
 
-from visualizer_ui import Ui_MainWindow
-from video_player import VideoPlayer, VideoWidget
-from data_plotter import DataWidget
 from control import ControlPanelWidget
+from data_plotter import DataWidget
+from video_player import VideoPlayer, VideoWidget
+from info import InfoPanelWidget
+from visualizer_ui import Ui_MainWindow
+
 
 class DataVisualizerWidget(QtGui.QWidget):
-    def __init__(self, videoWidget, dataWidget, controlWidget):
+    def __init__(self, videoWidget, dataWidget, infoPanel, controlWidget):
         super(DataVisualizerWidget, self).__init__()
 
         self.mainLayout = QtGui.QVBoxLayout(self)
         self.mainLayout.addWidget(videoWidget, 10)
         self.mainLayout.addWidget(dataWidget, 10)
+        self.mainLayout.addWidget(infoPanel, 1)
         self.mainLayout.addWidget(controlWidget, 1)
 
         self.setObjectName("mainwidget")
@@ -32,11 +35,13 @@ class DataVisualizer(QtGui.QMainWindow):
     def __init__(self, parent, videoUrls, dataUrls, interval=32):
         super(DataVisualizer, self).__init__()
         self.interval = interval
+        self.curFrame = 0
 
-        self._initPlotter(dataUrls)
         self._initPlayer(videoUrls)
+        self._initPlotter(dataUrls)
         self._initControlPanel()
-        self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter, self.controlPanel)
+        self._initInfoPanel()
+        self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter, self.infoPanel, self.controlPanel)
 
         self._initUI()
         self._initTimer()
@@ -50,17 +55,23 @@ class DataVisualizer(QtGui.QMainWindow):
         self.setObjectName("mainwindow")
 
     def _initPlotter(self, dataUrls):
-        self.plotter = DataWidget(dataUrls)
+        self.plotter = DataWidget(dataUrls, self.maxFps)
 
     def _initPlayer(self, videoUrls):
         self.videoWidget = VideoWidget()
         self.videoPlayers = []
+        self.maxFps = 0
         for playerId, videoUrl in enumerate(videoUrls):
-            self.videoPlayers.append(VideoPlayer(self, playerId, videoUrl))
+            videoPlayer = VideoPlayer(self, playerId, videoUrl)
+            self.maxFps = max(self.maxFps, videoPlayer.fps)
+            self.videoPlayers.append(videoPlayer)
         self.videoWidget.setPlayers(self.videoPlayers)
 
     def _initControlPanel(self):
         self.controlPanel = ControlPanelWidget()
+
+    def _initInfoPanel(self):
+        self.infoPanel = InfoPanelWidget(self.maxFps, self.curFrame)
 
     def _initUI(self):
         self.ui = Ui_MainWindow()
@@ -71,9 +82,11 @@ class DataVisualizer(QtGui.QMainWindow):
         self._timer.timeout.connect(self.step)
 
     def step(self):
+        self.curFrame += 1
         for videoPlayer in self.videoPlayers:
-            videoPlayer.play()
-        self.plotter.next()
+            videoPlayer.show()
+        self.plotter.next(self.curFrame)
+        self.infoPanel.update(self.curFrame)
 
     def play(self):
         if not self._timer.isActive():
@@ -88,17 +101,18 @@ class DataVisualizer(QtGui.QMainWindow):
         self.step()
 
     def prev(self):
+        self.curFrame -= 1
         self.pause()
-        self.plotter.prev()
+        self.plotter.prev(self.curFrame)
 
 def main():
     app = QtGui.QApplication(sys.argv)
     expPath = "E:/thesis/experiment/"
-    probands = ["1/2016-12-05_14-25", "2/2016-12-01_17-50", "3/2016-12-20_14-11-18"]
+    probands = ["1/2016-12-05_14-25", "2/2016-12-01_17-50", "3/2016-12-20_14-11-18", "test/blink"]
     files = ["_drive.mp4", "_face.mp4", "_EEG.csv"]
     #dataUrls = ['../../examples/example_4096.csv']
 
-    url = expPath + probands[2]
+    url = expPath + probands[3]
     videoUrls = [url+files[0], url+files[1]]
     dataUrls = [url+files[2]]
 

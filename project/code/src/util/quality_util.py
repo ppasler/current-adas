@@ -99,7 +99,7 @@ class QualityUtil(object):
         
         if threshold == None:
             threshold = self.minQuality
-        #TODO make me nice
+
         ret = self._copyArray(data)
         ret[quality < threshold] = value
 

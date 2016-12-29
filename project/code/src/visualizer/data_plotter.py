@@ -21,10 +21,11 @@ scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 class DataWidget(QtGui.QWidget):
 
-    def __init__(self, dataUrls):
+    def __init__(self, dataUrls, maxFps):
         super(DataWidget, self).__init__()
 
         self._initData(dataUrls)
+        self.maxFps = maxFps
         self._initPlot()
 
         layout = QtGui.QVBoxLayout(self)
@@ -41,8 +42,9 @@ class DataWidget(QtGui.QWidget):
         self.eegData = self.dto.getEEGData()
         self.numChannels = len(self.eegData)
         self.index = 0
-        self.length = 128
-        print "plotter\t#%d" % len(self.eegData[0])
+        self.samplingRate = self.dto.getSamplingRate()
+        self.length = int(self.samplingRate)
+        print "plotter\t#%d\t%.2fHz" % (len(self.eegData[0]), self.samplingRate)
 
     def _initPlot(self):
         self.figure = plt.figure()
@@ -65,11 +67,13 @@ class DataWidget(QtGui.QWidget):
             ax.set_ylabel(self.eegHeader[i])
         self._incIndex()
 
-    def next(self):
-        self._incIndex()
-        self.plot()
+    def next(self, curFrame):
+        print curFrame, self._isFullSecond(curFrame)
+        if self._isFullSecond(curFrame):
+            self._incIndex()
+            self.plot()
 
-    def prev(self):
+    def prev(self, curFrame):
         self._decIndex()
         self.plot()
 
@@ -82,13 +86,15 @@ class DataWidget(QtGui.QWidget):
         self.canvas.draw()
 
     def _incIndex(self):
-        self.index += self.length
+        self.index += 1
 
     def _decIndex(self):
-        self.index -= self.length
+        self.index -= 1
 
     def _getRange(self):
-        start = self.index
-        end = self.index+self.length
+        start = self.index * self.length
+        end = start + self.length
         return start, end
 
+    def _isFullSecond(self, curFrame):
+        return (curFrame % self.maxFps) == 0
