@@ -26,6 +26,7 @@ class DataWidget(QtGui.QWidget):
 
         self._initData(dataUrls)
         self.maxFps = maxFps
+        self.curSecond = 0
         self._initPlot()
 
         layout = QtGui.QVBoxLayout(self)
@@ -68,14 +69,14 @@ class DataWidget(QtGui.QWidget):
         self._incIndex()
 
     def next(self, curFrame):
-        print curFrame, self._isFullSecond(curFrame)
-        if self._isFullSecond(curFrame):
+        if self.replot(curFrame):
             self._incIndex()
             self.plot()
 
     def prev(self, curFrame):
-        self._decIndex()
-        self.plot()
+        if self.replot(curFrame):
+            self._decIndex()
+            self.plot()
 
     def plot(self):
         start, end = self._getRange()
@@ -96,5 +97,9 @@ class DataWidget(QtGui.QWidget):
         end = start + self.length
         return start, end
 
-    def _isFullSecond(self, curFrame):
-        return (curFrame % self.maxFps) == 0
+    def replot(self, curFrame):
+        curSecond = curFrame / self.maxFps
+        if curSecond != self.curSecond:
+            self.curSecond = curSecond
+            return True
+        return False 

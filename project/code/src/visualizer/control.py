@@ -9,6 +9,8 @@ Created on 19.12.2016
 '''
 
 from PyQt4 import QtGui
+from PyQt4.Qt import Qt
+
 
 PLAY_STRING = "play"
 PAUSE_STRING = "pause"
@@ -16,17 +18,40 @@ PREV_STRING = "prev"
 NEXT_STRING = "next"
 
 class ControlPanelWidget(QtGui.QWidget):
-
-    def __init__(self, ):
+    def __init__(self, frameCount):
         super(ControlPanelWidget, self).__init__()
+        self.mainLayout = QtGui.QVBoxLayout(self)
+
+        self.buttonPanel = ButtonPanelWidget()
+        self.slider = Slider(frameCount)
+        self.mainLayout.addWidget(self.slider)
+        self.mainLayout.addWidget(self.buttonPanel)
+
+        self.setObjectName("controlpanel")
+
+class Slider(QtGui.QSlider):
+
+    def __init__(self, frameCount):
+        super(Slider, self).__init__(Qt.Horizontal)
+        self.setMaximum(frameCount)
+        self.sliderReleased.connect(self.handleSliderReleased)
+
+        self.setObjectName("sliderpanel")
+
+    def handleSliderReleased(self):
+        self.window().setCurFrame(self.value())
+
+class ButtonPanelWidget(QtGui.QWidget):
+
+    def __init__(self):
+        super(ButtonPanelWidget, self).__init__()
         self.mainLayout = QtGui.QHBoxLayout(self)
-        self.mainWindow = self.window()
 
         self._initPrev()
         self._initPlayPause()
         self._initNext()
 
-        self.setObjectName("controlpanel")
+        self.setObjectName("buttonpanel")
 
     def _initPrev(self):
         self.prevButton = QtGui.QPushButton(PREV_STRING, self)

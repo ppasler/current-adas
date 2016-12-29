@@ -29,6 +29,13 @@ class Video():
         if(ret==True):
             self.currentFrame=cv2.cvtColor(readFrame, cv2.COLOR_BGR2RGB)
 
+    # TODO warning
+    def captureFrame(self, curFrame):
+        self.capture.set(1,curFrame)
+        ret, readFrame=self.capture.read()
+        if(ret==True):
+            self.currentFrame=cv2.cvtColor(readFrame, cv2.COLOR_BGR2RGB)
+
     def convertFrame(self):
         '''converts frame to format suitable for QtGui'''
         try:
@@ -58,9 +65,10 @@ class VideoPlayer(QtGui.QWidget):
 
         self.setObjectName("videoPlayer" + str(playerId))
 
-    def show(self):
+    def show(self, curFrame):
         try:
-            self.video.captureNextFrame()
+            #self.video.captureNextFrame()
+            self.video.captureFrame(curFrame)
             self.videoFrame.setPixmap(self.video.convertFrame())
             self.videoFrame.setScaledContents(True)
         except TypeError:

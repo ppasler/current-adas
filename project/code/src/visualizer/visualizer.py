@@ -35,6 +35,7 @@ class DataVisualizer(QtGui.QMainWindow):
     def __init__(self, parent, videoUrls, dataUrls, interval=32):
         super(DataVisualizer, self).__init__()
         self.interval = interval
+        self.direction = 1
         self.curFrame = 0
 
         self._initPlayer(videoUrls)
@@ -61,14 +62,16 @@ class DataVisualizer(QtGui.QMainWindow):
         self.videoWidget = VideoWidget()
         self.videoPlayers = []
         self.maxFps = 0
+        self.maxFrameCount = 0
         for playerId, videoUrl in enumerate(videoUrls):
             videoPlayer = VideoPlayer(self, playerId, videoUrl)
             self.maxFps = max(self.maxFps, videoPlayer.fps)
+            self.maxFrameCount = max(self.maxFrameCount, videoPlayer.frameCount)
             self.videoPlayers.append(videoPlayer)
         self.videoWidget.setPlayers(self.videoPlayers)
 
     def _initControlPanel(self):
-        self.controlPanel = ControlPanelWidget()
+        self.controlPanel = ControlPanelWidget(self.maxFrameCount)
 
     def _initInfoPanel(self):
         self.infoPanel = InfoPanelWidget(self.maxFps, self.curFrame)
@@ -82,11 +85,15 @@ class DataVisualizer(QtGui.QMainWindow):
         self._timer.timeout.connect(self.step)
 
     def step(self):
-        self.curFrame += 1
+        self.curFrame += self.direction
+        self.update()
+
+    def update(self):
         for videoPlayer in self.videoPlayers:
-            videoPlayer.show()
+            videoPlayer.show(self.curFrame)
         self.plotter.next(self.curFrame)
         self.infoPanel.update(self.curFrame)
+        self.controlPanel.slider.setValue(self.curFrame)
 
     def play(self):
         if not self._timer.isActive():
@@ -97,13 +104,18 @@ class DataVisualizer(QtGui.QMainWindow):
             self._timer.stop()
 
     def next(self):
+        self.direction = 1
         self.pause()
         self.step()
 
     def prev(self):
-        self.curFrame -= 1
+        self.direction = -1
         self.pause()
-        self.plotter.prev(self.curFrame)
+        self.step()
+
+    def setCurFrame(self, newFrame):
+        self.curFrame = newFrame
+        self.update()
 
 def main():
     app = QtGui.QApplication(sys.argv)
