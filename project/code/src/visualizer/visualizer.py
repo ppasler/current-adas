@@ -15,19 +15,23 @@ from PyQt4 import QtGui, QtCore
 from control import ControlPanelWidget
 from data_plotter import DataWidget
 from video_player import VideoPlayer, VideoWidget
-from info import InfoPanelWidget
 from visualizer_ui import Ui_MainWindow
 
+class TopWrapper(QtGui.QWidget):
+    def __init__(self, videoWidget, controlWidget):
+        super(TopWrapper, self).__init__()
+        self.mainLayout = QtGui.QHBoxLayout(self)
+        self.mainLayout.addWidget(videoWidget, 10)
+        self.mainLayout.addWidget(controlWidget, 1)
 
 class DataVisualizerWidget(QtGui.QWidget):
-    def __init__(self, videoWidget, dataWidget, infoPanel, controlWidget):
+    def __init__(self, videoWidget, dataWidget, controlWidget):
         super(DataVisualizerWidget, self).__init__()
 
+        topWrapper = TopWrapper(videoWidget, controlWidget)
         self.mainLayout = QtGui.QVBoxLayout(self)
-        self.mainLayout.addWidget(videoWidget, 10)
-        self.mainLayout.addWidget(dataWidget, 10)
-        self.mainLayout.addWidget(infoPanel, 1)
-        self.mainLayout.addWidget(controlWidget, 1)
+        self.mainLayout.addWidget(topWrapper)
+        self.mainLayout.addWidget(dataWidget)
 
         self.setObjectName("mainwidget")
 
@@ -41,8 +45,7 @@ class DataVisualizer(QtGui.QMainWindow):
         self._initPlayer(videoUrls)
         self._initPlotter(dataUrls)
         self._initControlPanel()
-        self._initInfoPanel()
-        self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter, self.infoPanel, self.controlPanel)
+        self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter, self.controlPanel)
 
         self._initUI()
         self._initTimer()
@@ -71,10 +74,7 @@ class DataVisualizer(QtGui.QMainWindow):
         self.videoWidget.setPlayers(self.videoPlayers)
 
     def _initControlPanel(self):
-        self.controlPanel = ControlPanelWidget(self.maxFrameCount)
-
-    def _initInfoPanel(self):
-        self.infoPanel = InfoPanelWidget(self.maxFps, self.curFrame)
+        self.controlPanel = ControlPanelWidget(self.maxFrameCount, self.maxFps)
 
     def _initUI(self):
         self.ui = Ui_MainWindow()
@@ -96,8 +96,7 @@ class DataVisualizer(QtGui.QMainWindow):
         for videoPlayer in self.videoPlayers:
             videoPlayer.show(self.curFrame)
         self.plotter.next(self.curFrame)
-        self.infoPanel.update(self.curFrame)
-        self.controlPanel.slider.setValue(self.curFrame)
+        self.controlPanel.update(self.curFrame)
 
     def play(self):
         if not self._timer.isActive():

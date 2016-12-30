@@ -11,7 +11,6 @@ Created on 19.12.2016
 from PyQt4 import QtGui
 from PyQt4.Qt import Qt
 
-
 PLAY_STRING = "play"
 PAUSE_STRING = "pause"
 PREV_SEC_STRING = "prev second"
@@ -19,17 +18,42 @@ PREV_STRING = "prev"
 NEXT_STRING = "next"
 NEXT_SEC_STRING = "next second"
 
+INFO_STRING = "FPS: %.2f\t%ds\tFrame: %d"
+
 class ControlPanelWidget(QtGui.QWidget):
-    def __init__(self, frameCount):
+    def __init__(self, frameCount, fps):
         super(ControlPanelWidget, self).__init__()
         self.mainLayout = QtGui.QVBoxLayout(self)
 
         self.buttonPanel = ButtonPanelWidget()
         self.slider = Slider(frameCount)
+        self.info = InfoPanelWidget(fps)
+        self.mainLayout.addWidget(self.info)
         self.mainLayout.addWidget(self.slider)
         self.mainLayout.addWidget(self.buttonPanel)
 
         self.setObjectName("controlpanel")
+
+    def update(self, curFrame):
+        self.info.setText(curFrame)
+        self.slider.setValue(curFrame)
+
+class InfoPanelWidget(QtGui.QWidget):
+
+    def __init__(self, fps):
+        super(InfoPanelWidget, self).__init__()
+        self.mainLayout = QtGui.QHBoxLayout(self)
+        self.mainWindow = self.window()
+
+        self.fps = fps
+        self.textbox = QtGui.QLineEdit(self)
+        self.textbox.setFixedWidth(400)
+        self.setText(0)
+
+        self.setObjectName("infopanel")
+
+    def setText(self, curFrame):
+        self.textbox.setText(INFO_STRING % (self.fps, round(curFrame / self.fps), curFrame))
 
 class Slider(QtGui.QSlider):
 
