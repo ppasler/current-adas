@@ -85,7 +85,11 @@ class DataVisualizer(QtGui.QMainWindow):
         self._timer.timeout.connect(self.step)
 
     def step(self):
-        self.curFrame += self.direction
+        self.addFrame(self.direction)
+        self.update()
+
+    def stepSec(self):
+        self.addFrame(self.direction * round(self.maxFps))
         self.update()
 
     def update(self):
@@ -105,17 +109,29 @@ class DataVisualizer(QtGui.QMainWindow):
 
     def next(self):
         self.direction = 1
-        self.pause()
         self.step()
+
+    def nextSec(self):
+        self.direction = 1
+        self.stepSec()
 
     def prev(self):
         self.direction = -1
-        self.pause()
         self.step()
 
+    def prevSec(self):
+        self.direction = -1
+        self.stepSec()
+
+    def addFrame(self, addFrame):
+        newFrame = self.curFrame + addFrame
+        if 0 <= newFrame <= self.maxFrameCount:
+            self.curFrame = newFrame
+
     def setCurFrame(self, newFrame):
-        self.curFrame = newFrame
-        self.update()
+        if 0 <= newFrame <= self.maxFrameCount:
+            self.curFrame = newFrame
+            self.update()
 
 def main():
     app = QtGui.QApplication(sys.argv)

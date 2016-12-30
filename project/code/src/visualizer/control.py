@@ -14,8 +14,10 @@ from PyQt4.Qt import Qt
 
 PLAY_STRING = "play"
 PAUSE_STRING = "pause"
+PREV_SEC_STRING = "prev second"
 PREV_STRING = "prev"
 NEXT_STRING = "next"
+NEXT_SEC_STRING = "next second"
 
 class ControlPanelWidget(QtGui.QWidget):
     def __init__(self, frameCount):
@@ -47,25 +49,30 @@ class ButtonPanelWidget(QtGui.QWidget):
         super(ButtonPanelWidget, self).__init__()
         self.mainLayout = QtGui.QHBoxLayout(self)
 
-        self._initPrev()
-        self._initPlayPause()
-        self._initNext()
+        self._initButtons()
 
         self.setObjectName("buttonpanel")
 
-    def _initPrev(self):
-        self.prevButton = QtGui.QPushButton(PREV_STRING, self)
-        self.prevButton.clicked.connect(self.prev)
-        self.mainLayout.addWidget(self.prevButton)
+    def _initButtons(self):
+        self.prevSecButton = self._createButton(PREV_SEC_STRING, self.prevSec)
+        self.prevButton = self._createButton(PREV_STRING, self.prev)
+        self.playPauseButton = self._createButton(PAUSE_STRING, self._handlePlayPause)
+        self.nextButton = self._createButton(NEXT_STRING, self.next)
+        self.nextSecButton = self._createButton(NEXT_SEC_STRING, self.nextSec)
+
+    def _createButton(self, label, method):
+        button = QtGui.QPushButton(label, self)
+        button.clicked.connect(method)
+        self.mainLayout.addWidget(button)
+        return button
+
+    def prevSec(self):
+        self.pause(self.playPauseButton)
+        self.window().prevSec()
 
     def prev(self):
-        # TODO
+        self.pause(self.playPauseButton)
         self.window().prev()
-
-    def _initPlayPause(self):
-        self.playPauseButton = QtGui.QPushButton(PAUSE_STRING, self)
-        self.playPauseButton.clicked.connect(self._handlePlayPause)
-        self.mainLayout.addWidget(self.playPauseButton)
 
     def _handlePlayPause(self):
         button = self.sender()
@@ -82,11 +89,10 @@ class ButtonPanelWidget(QtGui.QWidget):
         button.setText(PLAY_STRING)
         self.window().pause()
 
-    def _initNext(self):
-        self.nextButton = QtGui.QPushButton(NEXT_STRING, self)
-        self.nextButton.clicked.connect(self.next)
-        self.mainLayout.addWidget(self.nextButton)
-
     def next(self):
         self.pause(self.playPauseButton)
         self.window().next()
+
+    def nextSec(self):
+        self.pause(self.playPauseButton)
+        self.window().nextSec()

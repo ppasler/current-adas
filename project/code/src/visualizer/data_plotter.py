@@ -61,10 +61,12 @@ class DataWidget(QtGui.QWidget):
 
         self.lines = []
         for i, ax in enumerate(self.axes):
-            line, = ax.plot(x_values, self.eegData[i][start:end], '-')
+            data = self.eegData[i]
+            line, = ax.plot(x_values, data[start:end], '-')
             self.lines.append(line)
 
             ax.set_xlim([start,end])
+            ax.set_ylim([min(data), max(data)])
             ax.set_ylabel(self.eegHeader[i])
         self._incIndex()
 
@@ -98,7 +100,7 @@ class DataWidget(QtGui.QWidget):
         return start, end
 
     def replot(self, curFrame):
-        curSecond = curFrame / self.maxFps
+        curSecond = int(curFrame / self.maxFps)
         if curSecond != self.curSecond:
             self.curSecond = curSecond
             return True

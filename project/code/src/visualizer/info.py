@@ -10,7 +10,7 @@ Created on 19.12.2016
 
 from PyQt4 import QtGui
 
-INFO_STRING = "FPS: %s\nFrame: %s"
+INFO_STRING = "FPS: %.2f\t%ds\tFrame: %d"
 
 class InfoPanelWidget(QtGui.QWidget):
 
@@ -21,9 +21,13 @@ class InfoPanelWidget(QtGui.QWidget):
 
         self.maxFps = maxFps
         self.textbox = QtGui.QLineEdit(self)
-        self.textbox.setText(INFO_STRING % (self.maxFps, curFrame))
+        self.textbox.setFixedWidth(400)
+        self.setText(0)
 
         self.setObjectName("infopanel")
 
     def update(self, curFrame):
-        self.textbox.setText(INFO_STRING % (self.maxFps, curFrame))
+        self.setText(curFrame)
+
+    def setText(self, curFrame):
+        self.textbox.setText(INFO_STRING % (self.maxFps, round(curFrame / self.maxFps), curFrame))
