@@ -67,10 +67,9 @@ class DataWidget(QtGui.QWidget):
             ax.set_xlim([start,end])
             ax.set_ylim([min(data), max(data)])
             ax.set_ylabel(self.eegHeader[i])
-        print self.curSecond, start, end
 
-    def show(self, curFrame):
-        if self._isReplot(curFrame):
+    def show(self, curSecond):
+        if self._isReplot(curSecond):
             self.plot()
 
     def plot(self):
@@ -81,7 +80,7 @@ class DataWidget(QtGui.QWidget):
     
             self.canvas.draw()
         else:
-            print start, end
+            print "no data found for index range [%d:%d]" % (start, end)
 
     def _isInDataRange(self, start, end):
         return end < self.length
@@ -92,12 +91,8 @@ class DataWidget(QtGui.QWidget):
         return start, end
 
     # TODO method does 2 things
-    def _isReplot(self, curFrame):
-        curSecond = self._calcCurSecond(curFrame)
+    def _isReplot(self, curSecond):
         if curSecond != self.curSecond:
             self.curSecond = curSecond
             return True
-        return False 
-
-    def _calcCurSecond(self, curFrame):
-        return int(curFrame / self.maxFps)
+        return False

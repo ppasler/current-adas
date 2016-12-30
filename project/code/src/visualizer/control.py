@@ -34,8 +34,8 @@ class ControlPanelWidget(QtGui.QWidget):
 
         self.setObjectName("controlpanel")
 
-    def update(self, curFrame):
-        self.info.setText(curFrame)
+    def update(self, curFrame, curSecond):
+        self.info.setText(curFrame, curSecond)
         self.slider.setValue(curFrame)
 
 class InfoPanelWidget(QtGui.QWidget):
@@ -48,12 +48,12 @@ class InfoPanelWidget(QtGui.QWidget):
         self.fps = fps
         self.textbox = QtGui.QLineEdit(self)
         self.textbox.setFixedWidth(400)
-        self.setText(0)
+        self.setText(0, 0)
 
         self.setObjectName("infopanel")
 
-    def setText(self, curFrame):
-        self.textbox.setText(INFO_STRING % (self.fps, int(curFrame / self.fps), curFrame))
+    def setText(self, curFrame, curSecond):
+        self.textbox.setText(INFO_STRING % (self.fps, curSecond, curFrame))
 
 class Slider(QtGui.QSlider):
 

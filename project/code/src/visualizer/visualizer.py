@@ -9,6 +9,7 @@ Created on 07.12.2016
 '''
 
 import sys
+from math import ceil
 
 from PyQt4 import QtGui, QtCore
 
@@ -16,6 +17,7 @@ from control import ControlPanelWidget
 from data_plotter import DataWidget
 from video_player import VideoPlayer, VideoWidget
 from visualizer_ui import Ui_MainWindow
+
 
 class TopWrapper(QtGui.QWidget):
     def __init__(self, videoWidget, dataWidget):
@@ -41,6 +43,7 @@ class DataVisualizer(QtGui.QMainWindow):
         self.interval = interval
         self.direction = 1
         self.curFrame = 0
+        self.curSecond = 0
 
         self._initPlayer(videoUrls)
         self._initPlotter(dataUrls)
@@ -84,17 +87,30 @@ class DataVisualizer(QtGui.QMainWindow):
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self.step)
 
+
     def step(self):
-        self.addFrame(self.direction)
+        self._addFrame(self.direction)
+
+    def _addFrame(self, addFrame):
+        newFrame = self.curFrame + addFrame
+        self.setCurFrame(newFrame)
 
     def stepSec(self):
-        self.addFrame(self.direction * round(self.maxFps))
+        self.setCurFrame(self._calcNextFullSecondFrame())
+
+    def setCurFrame(self, newFrame):
+        newFrame = min(max(0, newFrame), self.maxFrameCount)
+        if newFrame != self.curFrame:
+            self.curFrame = newFrame
+            self.curSecond = self._calcCurSecond()
+            self.update()
 
     def update(self):
         for videoPlayer in self.videoPlayers:
             videoPlayer.show(self.curFrame)
-        self.plotter.show(self.curFrame)
-        self.controlPanel.update(self.curFrame)
+        self.plotter.show(self.curSecond)
+        self.controlPanel.update(self.curFrame, self.curSecond)
+
 
     def play(self):
         if not self._timer.isActive():
@@ -120,15 +136,12 @@ class DataVisualizer(QtGui.QMainWindow):
         self.direction = -1
         self.stepSec()
 
-    def addFrame(self, addFrame):
-        newFrame = self.curFrame + addFrame
-        self.setCurFrame(newFrame)
 
-    def setCurFrame(self, newFrame):
-        newFrame = min(max(0, newFrame), self.maxFrameCount)
-        if newFrame != self.curFrame:
-            self.curFrame = newFrame
-            self.update()
+    def _calcCurSecond(self):
+        return int(self.curFrame / self.maxFps)
+
+    def _calcNextFullSecondFrame(self):
+        return int(ceil((self.curSecond+self.direction) * self.maxFps))
 
 def main():
     app = QtGui.QApplication(sys.argv)
@@ -137,7 +150,7 @@ def main():
     files = ["_drive.mp4", "_face.mp4", "_EEG.csv"]
     #dataUrls = ['../../examples/example_4096.csv']
 
-    url = expPath + probands[3]
+    url = expPath + probands[2]
     videoUrls = [url+files[0], url+files[1]]
     dataUrls = [url+files[2]]
 

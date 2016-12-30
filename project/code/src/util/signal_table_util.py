@@ -314,9 +314,10 @@ class TableFileUtil(object):
 
         if self._isNewFile(header):
             header = self._modifyHeader(header)
-            zIndex = header.index("Z")
-            header.remove("Z")
-            data = delete(data, zIndex, 1)
+            # TODO causes memory error
+            # zIndex = header.index("Z")
+            # header.remove("Z")
+            # data = delete(data, zIndex, 1)
 
         return header, data
 
