@@ -78,7 +78,7 @@ class VideoWidget(QtGui.QWidget):
 
     def __init__(self):
         super(VideoWidget, self).__init__()
-        self.mainLayout = QtGui.QHBoxLayout(self)
+        self.mainLayout = QtGui.QVBoxLayout(self)
         self.setObjectName("videolwidget")
 
     def setPlayers(self, videoPlayers):

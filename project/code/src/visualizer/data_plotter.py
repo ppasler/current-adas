@@ -42,10 +42,9 @@ class DataWidget(QtGui.QWidget):
         self.eegHeader = self.dto.getEEGHeader()
         self.eegData = self.dto.getEEGData()
         self.numChannels = len(self.eegData)
-        self.index = 0
         self.samplingRate = self.dto.getSamplingRate()
-        self.length = int(self.samplingRate)
-        print "plotter\t#%d\t%.2fHz" % (len(self.eegData[0]), self.samplingRate)
+        self.length = len(self.eegData[0])
+        print "plotter\t#%d\t%.2fHz" % (self.length, self.samplingRate)
 
     def _initPlot(self):
         self.figure = plt.figure()
@@ -68,40 +67,37 @@ class DataWidget(QtGui.QWidget):
             ax.set_xlim([start,end])
             ax.set_ylim([min(data), max(data)])
             ax.set_ylabel(self.eegHeader[i])
-        self._incIndex()
+        print self.curSecond, start, end
 
-    def next(self, curFrame):
-        if self.replot(curFrame):
-            self._incIndex()
-            self.plot()
-
-    def prev(self, curFrame):
-        if self.replot(curFrame):
-            self._decIndex()
+    def show(self, curFrame):
+        if self._isReplot(curFrame):
             self.plot()
 
     def plot(self):
         start, end = self._getRange()
+        if self._isInDataRange(start, end):
+            for i, line in enumerate(self.lines):
+                line.set_ydata(self.eegData[i][start:end])
+    
+            self.canvas.draw()
+        else:
+            print start, end
 
-        for i, line in enumerate(self.lines):
-            line.set_ydata(self.eegData[i][start:end])
-
-        self.canvas.draw()
-
-    def _incIndex(self):
-        self.index += 1
-
-    def _decIndex(self):
-        self.index -= 1
+    def _isInDataRange(self, start, end):
+        return end < self.length
 
     def _getRange(self):
-        start = self.index * self.length
-        end = start + self.length
+        start = int(self.curSecond * self.samplingRate)
+        end = int(start + self.samplingRate)
         return start, end
 
-    def replot(self, curFrame):
-        curSecond = int(curFrame / self.maxFps)
+    # TODO method does 2 things
+    def _isReplot(self, curFrame):
+        curSecond = self._calcCurSecond(curFrame)
         if curSecond != self.curSecond:
             self.curSecond = curSecond
             return True
         return False 
+
+    def _calcCurSecond(self, curFrame):
+        return int(curFrame / self.maxFps)

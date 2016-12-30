@@ -161,7 +161,7 @@ class TableDto(object):
 
         '''
         duration = self.getDuration()
-        return self.len / duration  
+        return self.len / duration
 
     def getStartTime(self):
         '''

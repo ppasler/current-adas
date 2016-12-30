@@ -18,20 +18,20 @@ from video_player import VideoPlayer, VideoWidget
 from visualizer_ui import Ui_MainWindow
 
 class TopWrapper(QtGui.QWidget):
-    def __init__(self, videoWidget, controlWidget):
+    def __init__(self, videoWidget, dataWidget):
         super(TopWrapper, self).__init__()
         self.mainLayout = QtGui.QHBoxLayout(self)
-        self.mainLayout.addWidget(videoWidget, 10)
-        self.mainLayout.addWidget(controlWidget, 1)
+        self.mainLayout.addWidget(videoWidget, 2)
+        self.mainLayout.addWidget(dataWidget, 3)
 
 class DataVisualizerWidget(QtGui.QWidget):
     def __init__(self, videoWidget, dataWidget, controlWidget):
         super(DataVisualizerWidget, self).__init__()
 
-        topWrapper = TopWrapper(videoWidget, controlWidget)
+        topWrapper = TopWrapper(videoWidget, dataWidget)
         self.mainLayout = QtGui.QVBoxLayout(self)
-        self.mainLayout.addWidget(topWrapper)
-        self.mainLayout.addWidget(dataWidget)
+        self.mainLayout.addWidget(topWrapper, 6)
+        self.mainLayout.addWidget(controlWidget, 1)
 
         self.setObjectName("mainwidget")
 
@@ -86,16 +86,14 @@ class DataVisualizer(QtGui.QMainWindow):
 
     def step(self):
         self.addFrame(self.direction)
-        self.update()
 
     def stepSec(self):
         self.addFrame(self.direction * round(self.maxFps))
-        self.update()
 
     def update(self):
         for videoPlayer in self.videoPlayers:
             videoPlayer.show(self.curFrame)
-        self.plotter.next(self.curFrame)
+        self.plotter.show(self.curFrame)
         self.controlPanel.update(self.curFrame)
 
     def play(self):
@@ -124,11 +122,11 @@ class DataVisualizer(QtGui.QMainWindow):
 
     def addFrame(self, addFrame):
         newFrame = self.curFrame + addFrame
-        if 0 <= newFrame <= self.maxFrameCount:
-            self.curFrame = newFrame
+        self.setCurFrame(newFrame)
 
     def setCurFrame(self, newFrame):
-        if 0 <= newFrame <= self.maxFrameCount:
+        newFrame = min(max(0, newFrame), self.maxFrameCount)
+        if newFrame != self.curFrame:
             self.curFrame = newFrame
             self.update()
 

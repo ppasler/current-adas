@@ -53,7 +53,7 @@ class InfoPanelWidget(QtGui.QWidget):
         self.setObjectName("infopanel")
 
     def setText(self, curFrame):
-        self.textbox.setText(INFO_STRING % (self.fps, round(curFrame / self.fps), curFrame))
+        self.textbox.setText(INFO_STRING % (self.fps, int(curFrame / self.fps), curFrame))
 
 class Slider(QtGui.QSlider):
 
