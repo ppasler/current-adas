@@ -37,12 +37,12 @@ class DataWidget(QtGui.QWidget):
 
     def _initData(self, dataUrls):
         util = TableFileUtil()
-        self.dto = util.readEEGFile(dataUrls[0])
+        dto = util.readEEGFile(dataUrls[0])
 
-        self.eegHeader = self.dto.getEEGHeader()
-        self.eegData = self.dto.getEEGData()
+        self.eegHeader = dto.getEEGHeader()
+        self.eegData = dto.getEEGData()
         self.numChannels = len(self.eegData)
-        self.samplingRate = self.dto.getSamplingRate()
+        self.samplingRate = dto.getSamplingRate()
         self.length = len(self.eegData[0])
         print "plotter\t#%d\t%.2fHz" % (self.length, self.samplingRate)
 

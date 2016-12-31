@@ -26,6 +26,8 @@ class TopWrapper(QtGui.QWidget):
         self.mainLayout.addWidget(videoWidget, 2)
         self.mainLayout.addWidget(dataWidget, 3)
 
+        self.setObjectName("topwrapperwidget")
+
 class DataVisualizerWidget(QtGui.QWidget):
     def __init__(self, videoWidget, dataWidget, controlWidget):
         super(DataVisualizerWidget, self).__init__()
@@ -44,11 +46,10 @@ class DataVisualizer(QtGui.QMainWindow):
         self.direction = 1
         self.curFrame = 0
         self.curSecond = 0
+        self.maxFps = 0
+        self.maxFrameCount = 0
 
-        self._initPlayer(videoUrls)
-        self._initPlotter(dataUrls)
-        self._initControlPanel()
-        self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter, self.controlPanel)
+        self._initWrapper(videoUrls, dataUrls)
 
         self._initUI()
         self._initTimer()
@@ -61,20 +62,23 @@ class DataVisualizer(QtGui.QMainWindow):
 
         self.setObjectName("mainwindow")
 
+    def _initWrapper(self, videoUrls, dataUrls):
+        self._initPlayer(videoUrls)
+        self._initPlotter(dataUrls)
+        self._initControlPanel()
+        self.wrapper = DataVisualizerWidget(self.videoWidget, self.plotter, self.controlPanel)
+
     def _initPlotter(self, dataUrls):
         self.plotter = DataWidget(dataUrls, self.maxFps)
 
     def _initPlayer(self, videoUrls):
-        self.videoWidget = VideoWidget()
         self.videoPlayers = []
-        self.maxFps = 0
-        self.maxFrameCount = 0
         for playerId, videoUrl in enumerate(videoUrls):
             videoPlayer = VideoPlayer(self, playerId, videoUrl)
             self.maxFps = max(self.maxFps, videoPlayer.fps)
             self.maxFrameCount = max(self.maxFrameCount, videoPlayer.frameCount)
             self.videoPlayers.append(videoPlayer)
-        self.videoWidget.setPlayers(self.videoPlayers)
+        self.videoWidget = VideoWidget(self.videoPlayers)
 
     def _initControlPanel(self):
         self.controlPanel = ControlPanelWidget(self.maxFrameCount, self.maxFps)
@@ -150,7 +154,7 @@ def main():
     files = ["_drive.mp4", "_face.mp4", "_EEG.csv"]
     #dataUrls = ['../../examples/example_4096.csv']
 
-    url = expPath + probands[2]
+    url = expPath + probands[3]
     videoUrls = [url+files[0], url+files[1]]
     dataUrls = [url+files[2]]
 

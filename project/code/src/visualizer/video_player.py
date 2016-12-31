@@ -8,42 +8,29 @@ Created on 08.12.2016
 :organization: Reutlingen University
 '''
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 import cv2
-
-import numpy as np
-
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
 
 class Video():
     def __init__(self, videoId, capture):
         self.capture = capture
-        self.currentFrame=np.array([])
-
-    def captureNextFrame(self):
-        ret, readFrame=self.capture.read()
-        if(ret==True):
-            self.currentFrame=cv2.cvtColor(readFrame, cv2.COLOR_BGR2RGB)
 
     # TODO warning
     def captureFrame(self, curFrame):
         self.capture.set(1,curFrame)
         ret, readFrame=self.capture.read()
         if(ret==True):
-            self.currentFrame=cv2.cvtColor(readFrame, cv2.COLOR_BGR2RGB)
+            currentFrame=cv2.cvtColor(readFrame, cv2.COLOR_BGR2RGB)
+            return self.convertFrame(currentFrame)
+        return None
 
-    def convertFrame(self):
+    def convertFrame(self, currentFrame):
         '''converts frame to format suitable for QtGui'''
         try:
-            height,width = self.currentFrame.shape[:2]
-            img=QtGui.QImage(self.currentFrame, width, height, QtGui.QImage.Format_RGB888)
-            img=QtGui.QPixmap.fromImage(img)
-            self.previousFrame = self.currentFrame
-            return img
+            height, width = currentFrame.shape[:2]
+            videoImage = QtGui.QImage(currentFrame, width, height, QtGui.QImage.Format_RGB888)
+            videoImage = QtGui.QPixmap.fromImage(videoImage)
+            return videoImage
         except:
             return None
 
@@ -67,20 +54,18 @@ class VideoPlayer(QtGui.QWidget):
 
     def show(self, curFrame):
         try:
-            #self.video.captureNextFrame()
-            self.video.captureFrame(curFrame)
-            self.videoFrame.setPixmap(self.video.convertFrame())
+            videoImage = self.video.captureFrame(curFrame)
+            self.videoFrame.setPixmap(videoImage)
             self.videoFrame.setScaledContents(True)
         except TypeError:
             print "No frame"
 
 class VideoWidget(QtGui.QWidget):
 
-    def __init__(self):
+    def __init__(self, videoPlayers):
         super(VideoWidget, self).__init__()
         self.mainLayout = QtGui.QVBoxLayout(self)
-        self.setObjectName("videolwidget")
-
-    def setPlayers(self, videoPlayers):
         for videoPlayer in videoPlayers:
             self.mainLayout.addWidget(videoPlayer)
+
+        self.setObjectName("videolwidget")

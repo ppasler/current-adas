@@ -61,7 +61,8 @@ class Slider(QtGui.QSlider):
         super(Slider, self).__init__(Qt.Horizontal)
         self.setMaximum(frameCount)
         self.sliderReleased.connect(self.handleSliderReleased)
-
+        self.setTickPosition(QtGui.QSlider.TicksBelow)
+        self.setTickInterval(frameCount / 16)
         self.setObjectName("sliderpanel")
 
     def handleSliderReleased(self):
