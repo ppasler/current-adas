@@ -15,7 +15,6 @@ import seaborn as sns
 from statistic.signal_statistic_constants import TITLE, getNewFileName, getFileName
 from util.eeg_util import EEGUtil
 from util.quality_util import QualityUtil
-from util.signal_util import SignalUtil
 
 
 SCREEN_SIZE = (24, 12)

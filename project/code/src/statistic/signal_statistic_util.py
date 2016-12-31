@@ -27,7 +27,7 @@ from util.signal_util import SignalUtil
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-PLOTTER = [ProcessedSignalPlotter]
+PLOTTER = [RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter]
 
 class SignalStatisticUtil(object):
     '''
@@ -75,7 +75,7 @@ class SignalStatisticUtil(object):
         self.statFields["zeros"][METHOD] = self.qu.countZeros
         self.statFields["seq"][METHOD] = self.qu.countSequences
         self.statFields["out"][METHOD] = self.qu.countOutliners
-        self.statFields["nrgy"][METHOD] = self.su.energy
+        self.statFields["signal_energy"][METHOD] = self.su.energy
         self.statFields["zcr"][METHOD] = self.su.zcr
 
     def _initPlotter(self, person, plot, logScale):
@@ -268,16 +268,15 @@ class SignalStatisticCollector(object):
         self.ssPrint.saveStats(filePath, content) 
 
 def rawDataStatisticSingle():
-    experimentDir = scriptPath + "/../../../captured_data/"
+    experimentDir ="E:/thesis/experiment/"
     experiments = {
         #"janis/parts": ["2016-07-12-11-15_EEG_2.csv", "2016-07-12-11-15_EEG_7.csv"]
         #"nati/parts": ["2016-07-13-14-38_EEG_2.csv", "2016-07-13-14-38_EEG_7.csv"]
         #"gregor/parts": ["2016-07-12-13-45_EEG_2.csv", "2016-07-12-13-45_EEG_5.csv"]
         #"gerald/parts": ["2016-07-12-10-00_EEG_2.csv", "2016-07-12-10-00_EEG_5.csv"]
         #"test_data": ["awake_1.csv", "awake_2.csv", "awake_3.csv"]
-        #"test_data": ["drowsy_1.csv", "drowsy_2.csv", "drowsy_3.csv"]
-        #"test_data": ["awake_4_bad.csv", "drowsy_4_bad.csv"]
-        "test_data": ["drowsy_full.csv", "awake_full.csv"]
+        "Test": ["blink_EEG.csv"]
+        #"3": ["2016-12-20_14-11-18_EEG.csv"]
     }
     return experimentDir, experiments
 

@@ -9,9 +9,7 @@ Created on 02.08.2016
 '''
 from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY
 
-
 DIVIDER = "******************************\n\n"
-
 
 class SignalStatisticPrinter(object):
 
@@ -35,8 +33,13 @@ class SignalStatisticPrinter(object):
         for signal, values in stats[SIGNALS_KEY].iteritems():
             l = [signal]
             l.extend(self._printSignalStat(RAW_KEY, signal, values))
-            s += "\t".join([str(x) for x in l]) + "\n"
+            s += "\t".join([self._roundIfFloat(x) for x in l]) + "\n"
         return s
+
+    def _roundIfFloat(self, value):
+        if isinstance(value, float):
+            return "%.2f" % value
+        return str(value)
 
     def _printSignalStat(self, category, signal, values):
         l = []

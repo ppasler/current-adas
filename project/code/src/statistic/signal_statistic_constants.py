@@ -40,7 +40,7 @@ def initFields():
         "zeros": _initField(AGGREGATION_TYPE),
         "seq": _initField(AGGREGATION_TYPE),
         "out": _initField(AGGREGATION_TYPE),
-        "nrgy": _initField(MEAN_TYPE),
+        "signal_energy": _initField(MEAN_TYPE),
         "zcr": _initField(AGGREGATION_TYPE),
     })
 

@@ -195,7 +195,11 @@ class TableDto(object):
     def __repr__(self):
         return "EEGTableDto from '%s' shape %s\nheader %s" % (self.filePath, shape(self.data), self.header)
 
-
+    def getColumns(self, columnNames):
+        data = []
+        for columnName in columnNames:
+            data.append(self.getColumn(columnName))
+        return array(data)
 
 class EEGTableDto(TableDto):
     '''
@@ -211,11 +215,14 @@ class EEGTableDto(TableDto):
 
     def getEEGData(self):
         eegFields = self.getEEGHeader()
-        # TODO make me nice
-        eegData = []
-        for eegField in eegFields:
-            eegData.append(self.getColumn(eegField))
-        return array(eegData)
+        return self.getColumns(eegFields)
+
+    def getQualityData(self):
+        eegQualFields = ["Q"+head for head in self.getEEGHeader()]
+        return self.getColumns(eegQualFields)
+
+    def getQuality(self, eegQualField):
+        return self.getColumn(eegQualField)
 
     def __repr__(self):
         return "EEGTableDto from '%s' shape %s\nheader %s" % (self.filePath, shape(self.data), self.header)

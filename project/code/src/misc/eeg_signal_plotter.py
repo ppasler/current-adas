@@ -87,8 +87,7 @@ class EEGSignalPlotter(object):
         axChan.set_ylabel(label + str(freqRange))
 
 def readEEGFile(fileName):
-    scriptPath = os.path.dirname(os.path.abspath(__file__))
-    eegPath = scriptPath + "/../../data/"
+    eegPath = "E:/thesis/experiment/Test/"
 
     return TableFileUtil().readEEGFile(eegPath + fileName)
 
@@ -99,7 +98,7 @@ def plot(fileName, channels):
 
 def plotBlink():
     channels = ["FC5", "FC6", "F8", "F7", "AF4", "AF3", "F4"]
-    fileName = "blink.csv"
+    fileName = "blink_EEG.csv"
     plot(fileName, channels)
 
 def plotLeftRight():
