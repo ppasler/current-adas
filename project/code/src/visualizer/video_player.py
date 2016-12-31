@@ -35,30 +35,37 @@ class Video():
             return None
 
 class VideoPlayer(QtGui.QWidget):
-    def __init__(self, parent, playerId, videoUrl):
+    def __init__(self, playerId, videoUrl):
         super(VideoPlayer, self).__init__()
 
-        self.parent = parent
+        self.playerId = playerId
         self.capture = cv2.VideoCapture(videoUrl)
         self.frameCount = self.capture.get(cv2.CAP_PROP_FRAME_COUNT)
         self.fps = self.capture.get(cv2.CAP_PROP_FPS)
 
-        print "player%d\t#%d\t%.2ffps\t%ds" % (playerId, self.frameCount, self.fps, self.frameCount / self.fps)
+        print "player%d\t#%d\t%.2ffps\t%ds" % (self.playerId, self.frameCount, self.fps, self.frameCount / self.fps)
 
-        self.video = Video("video" + str(playerId), self.capture)
+        self.video = Video("video" + str(self.playerId), self.capture)
         self.videoFrame = QtGui.QLabel(self)
         self.videoFrame.setGeometry(self.geometry())
-        self.videoFrame.setObjectName("videoFrame" + str(playerId))
+        self.videoFrame.setObjectName("videoFrame" + str(self.playerId))
 
-        self.setObjectName("videoPlayer" + str(playerId))
+        self.setObjectName("videoPlayer" + str(self.playerId))
+
+    def setMaxFps(self, maxFps):
+        self.maxFps = maxFps
 
     def show(self, curFrame):
         try:
+            curFrame = self._calcCurFrame(curFrame)
             videoImage = self.video.captureFrame(curFrame)
             self.videoFrame.setPixmap(videoImage)
             self.videoFrame.setScaledContents(True)
         except TypeError:
-            print "No frame"
+            print "No frame for player %s" % self.playerId
+
+    def _calcCurFrame(self, curFrame):
+        return int(curFrame * (self.fps / self.maxFps))
 
 class VideoWidget(QtGui.QWidget):
 

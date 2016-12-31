@@ -74,11 +74,13 @@ class DataVisualizer(QtGui.QMainWindow):
     def _initPlayer(self, videoUrls):
         self.videoPlayers = []
         for playerId, videoUrl in enumerate(videoUrls):
-            videoPlayer = VideoPlayer(self, playerId, videoUrl)
+            videoPlayer = VideoPlayer(playerId, videoUrl)
             self.maxFps = max(self.maxFps, videoPlayer.fps)
             self.maxFrameCount = max(self.maxFrameCount, videoPlayer.frameCount)
             self.videoPlayers.append(videoPlayer)
         self.videoWidget = VideoWidget(self.videoPlayers)
+        for videoPlayer in self.videoPlayers:
+            videoPlayer.setMaxFps(self.maxFps)
 
     def _initControlPanel(self):
         self.controlPanel = ControlPanelWidget(self.maxFrameCount, self.maxFps)
@@ -154,7 +156,7 @@ def main():
     files = ["_drive.mp4", "_face.mp4", "_EEG.csv"]
     #dataUrls = ['../../examples/example_4096.csv']
 
-    url = expPath + probands[3]
+    url = expPath + probands[1]
     videoUrls = [url+files[0], url+files[1]]
     dataUrls = [url+files[2]]
 
