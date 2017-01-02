@@ -137,19 +137,19 @@ class MNEUtil():
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
     def save(self, mneObj):
-        fileName = mneObj.info["filename"].replace(".csv", ".fif")
+        fileName = mneObj.info["filename"].replace(".csv", ".raw.fif")
         mneObj.save(fileName, overwrite=True)
         return fileName
 
     def load(self, fileName):
         return mne.io.read_raw_fif(fileName)
 
-def loadAndSave():
+def save(proband):
     util = MNEUtil()
-    sFreq = 100.
-    filepath = "E:/thesis/experiment/2/"
+    sFreq = 64.
+    filepath = "E:/thesis/experiment/%s/" % str(proband)
     start = time.time()
-    eegFileName = filepath + "2016-12-01_17-50_EEG.csv"
+    eegFileName = filepath + "EEG.csv"
     eegData = TableFileUtil().readEEGFile(eegFileName)
     eegRaw = util.createMNEObjectFromEEGDto(eegData)
 
@@ -161,48 +161,57 @@ def loadAndSave():
 
     dur = time.time() - start
     print "resampled EEG: %.2f" % dur
+
+    try:
+        start = time.time()
+        ecgFileName = filepath + "ECG.csv"
+        ecgData = TableFileUtil().readECGFile(ecgFileName)
+        ecgRaw = util.createMNEObjectFromECGDto(ecgData)
+
+        dur = time.time() - start
+        print "read ECG: %.2f" % dur
+        start = time.time()
+    
+        util.addECGChannel(eegRaw, ecgRaw)
+
+        dur = time.time() - start
+        print "merged channels: %.2f" % dur
+    except Exception as e:
+        print e
+
     start = time.time()
-
-    ecgFileName = filepath + "2016-12-01_17-50_ECG.csv"
-    ecgData = TableFileUtil().readECGFile(ecgFileName)
-    ecgRaw = util.createMNEObjectFromECGDto(ecgData)
-
-    dur = time.time() - start
-    print "read ECG: %.2f" % dur
-    start = time.time()
-
-    util.addECGChannel(eegRaw, ecgRaw)
-
-    dur = time.time() - start
-    print "merged channels: %.2f" % dur
-    start = time.time()
-
-    fifname = util.save(eegRaw)
-
+    util.save(eegRaw)
     dur = time.time() - start
     print "saved file: %.2f" % dur
-    start = time.time()
 
+def load(proband):
+    util = MNEUtil()
+    fifname = "E:/thesis/experiment/%s/EEG.raw.fif" % str(proband)
+    start = time.time()
     fifraw = util.load(fifname)
     dur = time.time() - start
     print "read EEG: %.2f" % dur
     start = time.time()
 
-    print fifraw, eegRaw
-    #eegRaw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
+    print fifraw
+    fifraw.plot(show=False, title="Raw data " + proband, scalings=dict(eeg=300, ecg=500), duration=10.0, start=0.0, n_channels=15)
 
-    #plt_show()
-    
-    def test():
-        util = MNEUtil()
-        sFreq = 100.
-    
-        filepath = "E:/thesis/experiment/1/"
-        fifname = filepath + "2016-12-05-14-25_EEG.fif"
-        fifraw = util.load(fifname)
-        fifraw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
-    
-        plt_show()
+    plt_show()
+
+def test():
+    util = MNEUtil()
+
+    filepath = "E:/thesis/experiment/1/"
+    fifname = filepath + "EEG.raw.fif"
+    fifraw = util.load(fifname)
+    fifraw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
+
+    plt_show()
+
 if __name__ == '__main__':
-    loadAndSave()
+    start = time.time()
+    for c in ["a", "b", "c", "d", "e"]:
+        load(c)
+    dur = time.time() - start
+    print "\n\nTOTAL: %.2f" % dur
 
