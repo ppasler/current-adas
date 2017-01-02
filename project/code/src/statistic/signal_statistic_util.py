@@ -60,23 +60,14 @@ class SignalStatisticUtil(object):
         self.reader = TableFileUtil()
         self.eegData = self.reader.readEEGFile(self.filePath)
 
+    def _initFields(self):
+        self.statFields = STAT_FIELDS
+        addMethods(self)
+
     def _initSignals(self, signals):
         if not signals:
             signals = ConfigProvider().getEmotivConfig().get("eegFields")
         self.signals = signals
-
-    def _initFields(self):
-        self.statFields = STAT_FIELDS
-        self.statFields["max"][METHOD] = self.su.maximum 
-        self.statFields["min"][METHOD] = self.su.minimum
-        self.statFields["mean"][METHOD] = self.su.mean
-        self.statFields["std"][METHOD] = self.su.std
-        self.statFields["var"][METHOD] = self.su.var
-        self.statFields["zeros"][METHOD] = self.qu.countZeros
-        self.statFields["seq"][METHOD] = self.qu.countSequences
-        self.statFields["out"][METHOD] = self.qu.countOutliners
-        self.statFields["signal_energy"][METHOD] = self.su.energy
-        self.statFields["zcr"][METHOD] = self.su.zcr
 
     def _initPlotter(self, person, plot, logScale):
         self.plotter = []
@@ -178,31 +169,35 @@ class SignalStatisticUtil(object):
 
 class SignalStatisticCollector(object):
     
-    def __init__(self, experimentDir, experiments=None, signals=None, save=False, plot=False, logScale=False):
+    def __init__(self, experimentDir, probands=None, fileName=None, signals=None, save=False, plot=False, logScale=False):
         self.experimentDir = experimentDir
-        self.experiments = experiments
         self.signals = signals
         self.save = save
         self.plot = plot
         self.logScale = logScale
         self.experimentDir = experimentDir
-        if experiments is None:
-            self.experiments = ConfigProvider().getExperimentConfig()
+        if probands is None:
+            self.probands = ConfigProvider().getExperimentConfig().get("probands")
         else:
-            self.experiments = experiments
+            self.probands = probands
+
+        if fileName is None:
+            self.fileName = FILE_NAME
+        else:
+            self.fileName = fileName
         self.stats = []
         self.merge = {}
         self.ssPrint = SignalStatisticPrinter("merge")
         self.dataLen = 0
     
     def main(self):
-        for person, fileNames in self.experiments.iteritems():
-            for fileName in fileNames:
-                filePath =  "%s%s/%s" % (self.experimentDir, person, fileName)
-                s = SignalStatisticUtil(person, filePath, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale)
-                self.dataLen += s.eegData.len
-                s.main()
-                self.stats.append(s.stats)
+        for proband in self.probands:
+            filePath =  "%s%s/%s" % (self.experimentDir, proband, self.fileName)
+            s = SignalStatisticUtil(proband, filePath, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale)
+            self.dataLen += s.eegData.len
+            s.main()
+            self.stats.append(s.stats)
+
         if len(self.stats) > 1:
             self._addCollections()
             self.printCollection()
@@ -255,9 +250,9 @@ class SignalStatisticCollector(object):
 
     def _mergeByType(self, typ, value, count):
         if typ in [MAX_TYPE, MIN_TYPE, AGGREGATION_TYPE, DIFF_TYPE]:
-            return str(value)
+            return value
         if typ == MEAN_TYPE:
-            return str(value / float(count))
+            return value / float(count)
 
     def printCollection(self):
         general = {"dataLength": str(self.dataLen)}
@@ -267,26 +262,18 @@ class SignalStatisticCollector(object):
         filePath = experimentDir + "merge.txt"
         self.ssPrint.saveStats(filePath, content) 
 
-def rawDataStatisticSingle():
-    experimentDir ="E:/thesis/experiment/"
-    experiments = {
-        #"janis/parts": ["2016-07-12-11-15_EEG_2.csv", "2016-07-12-11-15_EEG_7.csv"]
-        #"nati/parts": ["2016-07-13-14-38_EEG_2.csv", "2016-07-13-14-38_EEG_7.csv"]
-        #"gregor/parts": ["2016-07-12-13-45_EEG_2.csv", "2016-07-12-13-45_EEG_5.csv"]
-        #"gerald/parts": ["2016-07-12-10-00_EEG_2.csv", "2016-07-12-10-00_EEG_5.csv"]
-        #"test_data": ["awake_1.csv", "awake_2.csv", "awake_3.csv"]
-        "Test": ["blink_EEG.csv"]
-        #"3": ["2016-12-20_14-11-18_EEG.csv"]
-    }
-    return experimentDir, experiments
+def test():
+    return ["Test"], "blink.csv"
 
-def rawDataStatisticAll():
-    experimentDir = scriptPath + "/../../../captured_data/"
-    experiments = None
-    return experimentDir, experiments
+def single():
+    return ["1", "2", "3"], None
 
 if __name__ == "__main__":
-    experimentDir, experiments = rawDataStatisticSingle()
-    s = SignalStatisticCollector(experimentDir, experiments, plot=True, save=False)
+    config = ConfigProvider().getExperimentConfig()
+
+    experimentDir = config.get("filePath")
+    probands, fileName = single()
+
+    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=False, save=False)
     s.main()
 

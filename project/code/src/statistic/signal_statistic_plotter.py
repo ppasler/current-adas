@@ -12,7 +12,7 @@ from eeg_processor import SignalProcessor, SignalPreProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-from statistic.signal_statistic_constants import TITLE, getNewFileName, getFileName
+from statistic.signal_statistic_constants import TITLE, getNewFileName
 from util.eeg_util import EEGUtil
 from util.quality_util import QualityUtil
 
@@ -28,7 +28,7 @@ PNG_EXTENSION = "png"
 class AbstractSignalPlotter(object):
     
     def __init__(self, name, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
-        self.title = TITLE % (name + " plot ", person) + " " + FILE_TITLE % getFileName(filePath)
+        self.title = TITLE % (name + " plot", person)
         self.eegData = eegData
         self.signals = signals
         self.logScale = logScale

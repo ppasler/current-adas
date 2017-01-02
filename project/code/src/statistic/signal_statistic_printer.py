@@ -17,7 +17,7 @@ class SignalStatisticPrinter(object):
         self.person = person
 
     def getSignalStatsString(self, stats):
-        s = TITLE % ("Statistics", self.person)
+        s = TITLE % ("Statistics print", self.person)
         s += "\n"
         s += DIVIDER
         for key, value in stats[GENERAL_KEY].iteritems():
@@ -38,7 +38,7 @@ class SignalStatisticPrinter(object):
 
     def _roundIfFloat(self, value):
         if isinstance(value, float):
-            return "%.2f" % value
+            return ('%.2f' % value).rstrip('0').rstrip('.')#"%.2f" % value
         return str(value)
 
     def _printSignalStat(self, category, signal, values):
