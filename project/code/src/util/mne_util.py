@@ -8,6 +8,9 @@ Created on 19.09.2016
 :organization: Reutlingen University
 '''
 
+import warnings
+warnings.filterwarnings(action='ignore')
+
 import time
 
 import mne
@@ -80,17 +83,17 @@ class MNEUtil():
 
         return eegRaw.add_channels([ecgRaw], force_update_info=True)
 
-    def filterData(self, mneObj, upperFreq, lowerFreq):
-        return mneObj.filter(upperFreq, lowerFreq, l_trans_bandwidth=0.5, h_trans_bandwidth=0.5,
-               filter_length="10s", phase='zero-double', fir_window="hamming")
-
     def createPicks(self, mneObj):
         return mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
 
     def bandpassFilterData(self, mneObj):
-        upperFreq = self.config.getProcessingConfig().get("upperFreq")
-        lowerFreq = self.config.getProcessingConfig().get("lowerFreq")
-        return mneObj.filter(lowerFreq, upperFreq)
+        highFreq = self.config.getProcessingConfig().get("upperFreq")
+        lowFreq = self.config.getProcessingConfig().get("lowerFreq")
+        return self.filterData(mneObj, lowFreq, highFreq)
+
+    def filterData(self, mneObj, lowFreq, highFreq):
+        return mneObj.filter(lowFreq, highFreq, filter_length="auto", l_trans_bandwidth="auto", 
+                             h_trans_bandwidth="auto", phase='zero', fir_window="hamming")
 
     def getEEGCannels(self, mneObj):
         return mneObj.copy().pick_types(meg=False, eeg=True)
@@ -142,23 +145,27 @@ class MNEUtil():
         return fileName
 
     def load(self, fileName):
-        return mne.io.read_raw_fif(fileName)
+        return mne.io.read_raw_fif(fileName, add_eeg_ref=False)
 
 def save(proband):
     util = MNEUtil()
     sFreq = 64.
     filepath = "E:/thesis/experiment/%s/" % str(proband)
+
     start = time.time()
     eegFileName = filepath + "EEG.csv"
     eegData = TableFileUtil().readEEGFile(eegFileName)
     eegRaw = util.createMNEObjectFromEEGDto(eegData)
-
     dur = time.time() - start
-    print "read EEG: %.2f" % dur
+    print "read EEG and create MNE object: %.2f" % dur
+
     start = time.time()
+    util.bandpassFilterData(eegRaw)
+    dur = time.time() - start
+    print "filter EEG: %.2f" % dur
 
+    start = time.time()
     eegRaw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
-
     dur = time.time() - start
     print "resampled EEG: %.2f" % dur
 
@@ -209,9 +216,10 @@ def test():
     plt_show()
 
 if __name__ == '__main__':
+    probands = ConfigProvider().getExperimentConfig().get("probands")
     start = time.time()
-    for c in ["a", "b", "c", "d", "e"]:
-        load(c)
+    for proband in probands:
+        load(proband)
     dur = time.time() - start
     print "\n\nTOTAL: %.2f" % dur
 

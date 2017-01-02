@@ -13,6 +13,7 @@ from math import ceil
 
 from PyQt4 import QtGui, QtCore
 
+from config.config import ConfigProvider
 from control import ControlPanelWidget
 from data_plotter import DataWidget
 from video_player import VideoPlayer, VideoWidget
@@ -152,11 +153,11 @@ class DataVisualizer(QtGui.QMainWindow):
 def main():
     app = QtGui.QApplication(sys.argv)
     expPath = "E:/thesis/experiment/"
-    probands = ["1/2016-12-05_14-25", "2/2016-12-01_17-50", "3/2016-12-20_14-11-18", "test/blink"]
-    files = ["_drive.mp4", "_face.mp4", "_EEG.csv"]
+    probands = ConfigProvider().getExperimentConfig().get("probands")
+    files = ["drive.mp4", "face.mp4", "EEG.csv"]
     #dataUrls = ['../../examples/example_4096.csv']
 
-    url = expPath + probands[1]
+    url = expPath + probands[1] + "/"
     videoUrls = [url+files[0], url+files[1]]
     dataUrls = [url+files[2]]
 
