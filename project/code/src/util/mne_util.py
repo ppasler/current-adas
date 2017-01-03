@@ -21,7 +21,7 @@ from numpy import swapaxes
 
 from config.config import ConfigProvider
 from util.signal_table_util import TableFileUtil
-from util.table_dto import EEGTableDto
+from util.table_dto import TableDto
 
 
 DEFAULT_SAMPLE_LENGTH = 1
@@ -60,12 +60,12 @@ class MNEUtil():
         info["filename"] = filename
         return info
 
-    def convertMNEToEEGTableDto(self, mneObj):
+    def convertMNEToTableDto(self, mneObj):
         header = mneObj.ch_names
         data = swapaxes(mneObj._data, 0, 1)
         filePath = mneObj.info["filename"]
         samplingRate = mneObj.info['sfreq']
-        return EEGTableDto(header, data, filePath, samplingRate)
+        return TableDto(header, data, filePath, samplingRate)
 
     def createMNEEpochsObject(self, eegData, clazz):
         raw = self.createMNEObjectFromEEGDto(eegData)

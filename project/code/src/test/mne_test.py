@@ -61,12 +61,13 @@ class MNEUtilTest(unittest.TestCase):
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)
 
-    def test_convertMNEToEEGTableDto(self):
+    def test_convertMNEToTableDto(self):
         mneObj = self.mne.createMNEObjectFromEEGDto(self.eegData)
-        eegData2 = self.mne.convertMNEToEEGTableDto(mneObj)
+        eegData2 = self.mne.convertMNEToTableDto(mneObj)
         self.assertListEqual(self.eegData.getEEGHeader(), eegData2.getHeader())
         array_equal(self.eegData.getEEGData(), eegData2.getData())
         self.assertEqual(self.eegData.filePath, eegData2.filePath)
+        self.assertTrue(eegData2.hasEEGData)
 
     def test_createMNEEpochsObject(self):
         epochs = self.mne.createMNEEpochsObject(self.eegData, 1)

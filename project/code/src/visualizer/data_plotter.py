@@ -55,7 +55,7 @@ class DataWidget(QtGui.QWidget):
     def _getDtoFromFif(self, filePath):
         util = MNEUtil()
         mneObj = util.load(filePath)
-        return util.convertMNEToEEGTableDto(mneObj)
+        return util.convertMNEToTableDto(mneObj)
 
     def _initPlot(self):
         self.figure = plt.figure()

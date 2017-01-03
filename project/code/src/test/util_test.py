@@ -10,7 +10,8 @@ from scipy.signal.filter_design import freqz
 
 import numpy as np
 from util.eeg_data_source import EEGTablePacketSource
-from util.signal_table_util import TableFileUtil, EEGTableDto
+from util.signal_table_util import TableFileUtil
+from util.table_dto import TableDto
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
 from util.quality_util import QualityUtil
@@ -664,8 +665,15 @@ class TestEEGTableFileUtil(unittest.TestCase):
     def test_readEEGFile_newStyle(self):
         _ = self.reader.readEEGFile(PATH + "example_1024_new.csv")
 
-    def test_readEEGFile_ECG(self):
-        _ = self.reader.readECGFile(PATH + "example_4096_ecg.csv")
+    def test_readEEGFile(self):
+        self.eegData = self.reader.readEEGFile(PATH + "example_32.csv")
+        self.assertTrue(self.eegData.hasEEGData)
+        self.assertFalse(self.eegData.hasECGData)
+
+    def test_readECGFile(self):
+        self.ecgData = self.reader.readECGFile(PATH + "example_4096_ecg.csv")
+        self.assertFalse(self.ecgData.hasEEGData)
+        self.assertTrue(self.ecgData.hasECGData)
 
     def test_transformTimestamp_ecg(self):
         header = ["Timestamp", "ECG"]
@@ -687,22 +695,22 @@ class TestEEGTableFileUtil(unittest.TestCase):
         eegData = self.reader.transformTimestamp(header, data)
         self.assertAlmostEquals(float(eegData[0][0]), 1482131918., delta=1.)
 
-class TestEEGTableDto(unittest.TestCase):
+class TestTableDto(unittest.TestCase):
 
     def setUp(self):
-        self.header = ["Timestamp", "X", "Y", "AF3", "F3"]
+        self.header = ["Timestamp", "X", "Y", "AF3", "F3", "ECG"]
         self.data = np.array([
-            [1456820379.00, 1, 2, 3, 9],
-            [1456820379.25, 1, 2, 4, 9],
-            [1456820379.50, 1, 2, 5, 9],
-            [1456820379.75, 1, 2, 6, 9],
-            [1456820380.00, 1, 2, 7, 9],
-            [1456820380.25, 1, 2, 8, 9],
-            [1456820380.50, 1, 2, 9, 9],
-            [1456820380.75, 1, 2, 10, 9],
-            [1456820381.00, 1, 2, 11, 9]
+            [1456820379.00, 1, 2, 3, 9, 0],
+            [1456820379.25, 1, 2, 4, 9, 1],
+            [1456820379.50, 1, 2, 5, 9, 0],
+            [1456820379.75, 1, 2, 6, 9, 1],
+            [1456820380.00, 1, 2, 7, 9, 0],
+            [1456820380.25, 1, 2, 8, 9, 1],
+            [1456820380.50, 1, 2, 9, 9, 0],
+            [1456820380.75, 1, 2, 10, 9, 1],
+            [1456820381.00, 1, 2, 11, 9, 0]
         ])
-        self.eegData = EEGTableDto(self.header, self.data)
+        self.eegData = TableDto(self.header, self.data)
 
     def test_getSamplingRate(self):
         # 9 values within 2 seconds = sampling rate 4.5
@@ -814,6 +822,17 @@ class TestEEGTableDto(unittest.TestCase):
 
     def test_getEEGData(self):
         self.assertEquals(len(self.eegData.getEEGData()), 2)
+
+    def test_getECGHeader(self):
+        self.assertEqual(self.eegData.getECGHeader(), "ECG")
+
+    def test_getECGData(self):
+        self.assertEquals(len(self.eegData.getECGData()), 1)
+
+    def test_setDataTypes(self):
+        self.assertTrue(self.eegData.hasEEGData)
+        self.assertFalse(self.eegData.hasEEGQuality)
+        self.assertTrue(self.eegData.hasECGData)
 
 class TestEEGTableToPacketUtil(unittest.TestCase):
 

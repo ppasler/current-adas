@@ -12,6 +12,7 @@ from numpy import array
 from config.config import ConfigProvider
 
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
+ECG_HEADER = "ECG"
 
 class TableDto(object):
     '''
@@ -27,8 +28,9 @@ class TableDto(object):
         :param filePath:
         '''
         self.filePath = filePath
-        self.header = header
+        self.setHeader(header)
         self.setData(data)
+        self._setDataTypes()
         self.setSamplingRate(samplingRate)
 
     def setHeader(self, header):  # pragma: no cover
@@ -38,6 +40,20 @@ class TableDto(object):
         self.data = data
         if data is not None:
             self.len = len(data)
+
+    def _setDataTypes(self):  # pragma: no cover
+        self.hasEEGData = self._containsEEGData()
+        self.hasEEGQuality = self._containsEEGQuality()
+        self.hasECGData = self._containsECGData()
+
+    def _containsEEGData(self):
+        return len(self.getEEGHeader()) > 0
+
+    def _containsEEGQuality(self):
+        return len(self.getQualityHeader()) > 0
+
+    def _containsECGData(self):
+        return ECG_HEADER in self.header
 
     def setSamplingRate(self, samplingRate=None):
         if samplingRate is not None:
@@ -112,6 +128,12 @@ class TableDto(object):
 
         index = self.header.index(columnName)
         return self.data[:, index][offset:limit]
+
+    def getColumns(self, columnNames):
+        data = []
+        for columnName in columnNames:
+            data.append(self.getColumn(columnName))
+        return array(data)
 
     def getColumnByTime(self, columnName, fromTime, toTime):
         '''
@@ -194,53 +216,38 @@ class TableDto(object):
         return (min(data) <= time <= max(data))
 
     def __repr__(self):
-        return "EEGTableDto from '%s' shape %s\nheader %s" % (self.filePath, self.data.shape, self.header)
+        return "TableDto from '%s' shape %s\nheader %s" % (self.filePath, self.data.shape, self.header)
 
-    def getColumns(self, columnNames):
-        data = []
-        for columnName in columnNames:
-            data.append(self.getColumn(columnName))
-        return array(data)
-
-class EEGTableDto(TableDto):
-    '''
-    Representation of EEG table data
-    '''
-
-    def __init__(self, header=None, data=None, filePath="", samplingRate=None):
-        super(EEGTableDto, self).__init__(header, data, filePath, samplingRate)
 
     def getEEGHeader(self):
         eegFields = ConfigProvider().getEmotivConfig().get("eegFields")
         return [head for head in self.header if head in eegFields]
 
     def getEEGData(self):
-        eegFields = self.getEEGHeader()
-        return self.getColumns(eegFields)
+        if self.hasEEGData:
+            eegFields = self.getEEGHeader()
+            return self.getColumns(eegFields)
+        return None
+
+    def getQualityHeader(self):
+        return ["Q"+head for head in self.getEEGHeader() if "Q"+head in self.header]
 
     def getQualityData(self):
-        eegQualFields = ["Q"+head for head in self.getEEGHeader()]
-        return self.getColumns(eegQualFields)
+        if self.hasEEGQuality:
+            eegQualFields = self.getQualityHeader()
+            return self.getColumns(eegQualFields)
+        return None
 
     def getQuality(self, eegQualField):
         return self.getColumn(eegQualField)
 
-    def __repr__(self):
-        return "EEGTableDto from '%s' shape %s\nheader %s" % (self.filePath, self.data.shape, self.header)
-
-class ECGTableDto(TableDto):
-    '''
-    Representation of ECG table data
-    '''
-
-    def __init__(self, header=None, data=None, filePath="", samplingRate=None):
-        super(ECGTableDto, self).__init__(header, data, filePath, samplingRate)
 
     def getECGHeader(self):
-        return self.header[1]
+        if self.hasECGData:
+            return ECG_HEADER
+        return None
 
     def getECGData(self):
-        return array([self.getColumn("ECG")])
-
-    def __repr__(self):
-        return "ECGTableDto from '%s' shape %s\nheader %s" % (self.filePath, self.data.shape, self.header)
+        if self.hasECGData:
+            return array([self.getColumn(ECG_HEADER)])
+        return None

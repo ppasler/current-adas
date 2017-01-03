@@ -14,7 +14,7 @@ import re
 from numpy import genfromtxt, delete, savetxt, transpose
 
 from util.date_converter import DateConverter
-from table_dto import EEGTableDto, ECGTableDto
+from table_dto import TableDto
 
 DEFAULT_DELIMITER = ";" # default delimiter for CSV file
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
@@ -121,7 +121,7 @@ class TableFileUtil(object):
         header, data = self.readFile(filePath, delimiter)
 
         data = self.transformTimestamp(header, data)
-        return EEGTableDto(header, data.astype(float), filePath)
+        return TableDto(header, data.astype(float), filePath)
 
     def readECGFile(self, filePath="", delimiter=DEFAULT_DELIMITER):
         '''
@@ -142,7 +142,7 @@ class TableFileUtil(object):
         header[1] = "ECG"
 
         data = self.transformTimestamp(header, data)
-        return ECGTableDto(header, data.astype(float), filePath)
+        return TableDto(header, data.astype(float), filePath)
 
     def transformTimestamp(self, header, data):
         if TIMESTAMP_STRING in header: 
