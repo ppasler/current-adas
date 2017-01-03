@@ -17,9 +17,11 @@ import mne
 from mne.preprocessing.ica import ICA, corrmap
 from mne.viz.utils import plt_show
 from scipy import signal
+from numpy import swapaxes
 
 from config.config import ConfigProvider
-from util.signal_table_util import TableFileUtil, EEGTableDto
+from util.signal_table_util import TableFileUtil
+from util.table_dto import EEGTableDto
 
 
 DEFAULT_SAMPLE_LENGTH = 1
@@ -60,9 +62,10 @@ class MNEUtil():
 
     def convertMNEToEEGTableDto(self, mneObj):
         header = mneObj.ch_names
-        data = mneObj._data
+        data = swapaxes(mneObj._data, 0, 1)
         filePath = mneObj.info["filename"]
-        return EEGTableDto(header, data, filePath)
+        samplingRate = mneObj.info['sfreq']
+        return EEGTableDto(header, data, filePath, samplingRate)
 
     def createMNEEpochsObject(self, eegData, clazz):
         raw = self.createMNEObjectFromEEGDto(eegData)
@@ -145,7 +148,7 @@ class MNEUtil():
         return fileName
 
     def load(self, fileName):
-        return mne.io.read_raw_fif(fileName, add_eeg_ref=False)
+        return mne.io.read_raw_fif(fileName, add_eeg_ref=False, preload=True)
 
 def save(proband):
     util = MNEUtil()

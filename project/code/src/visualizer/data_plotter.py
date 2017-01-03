@@ -16,6 +16,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 
 import matplotlib.pyplot as plt
 from util.signal_table_util import TableFileUtil
+from util.mne_util import MNEUtil
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,7 +25,7 @@ class DataWidget(QtGui.QWidget):
     def __init__(self, dataUrls, maxFps):
         super(DataWidget, self).__init__()
 
-        self._initData(dataUrls)
+        self._initData(dataUrls[0])
         self.maxFps = maxFps
         self.curSecond = 0
         self._initPlot()
@@ -35,9 +36,11 @@ class DataWidget(QtGui.QWidget):
 
         self.setObjectName("datawidget")
 
-    def _initData(self, dataUrls):
-        util = TableFileUtil()
-        dto = util.readEEGFile(dataUrls[0])
+    def _initData(self, filePath):
+        if filePath.endswith(".csv"):
+            dto = self._getDtoFromCsv(filePath)
+        else:
+            dto = self._getDtoFromFif(filePath)
 
         self.eegHeader = dto.getEEGHeader()
         self.eegData = dto.getEEGData()
@@ -45,6 +48,14 @@ class DataWidget(QtGui.QWidget):
         self.samplingRate = dto.getSamplingRate()
         self.length = len(self.eegData[0])
         print "plotter\t#%d\t%.2fHz" % (self.length, self.samplingRate)
+
+    def _getDtoFromCsv(self, filePath):
+        return TableFileUtil().readEEGFile(filePath)
+
+    def _getDtoFromFif(self, filePath):
+        util = MNEUtil()
+        mneObj = util.load(filePath)
+        return util.convertMNEToEEGTableDto(mneObj)
 
     def _initPlot(self):
         self.figure = plt.figure()

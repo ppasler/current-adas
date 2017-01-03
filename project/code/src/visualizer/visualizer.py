@@ -154,10 +154,10 @@ def main():
     app = QtGui.QApplication(sys.argv)
     expPath = "E:/thesis/experiment/"
     probands = ConfigProvider().getExperimentConfig().get("probands")
-    files = ["drive.mp4", "face.mp4", "EEG.csv"]
+    files = ["drive.mp4", "face.mp4", "EEG.raw.fif"]
     #dataUrls = ['../../examples/example_4096.csv']
 
-    url = expPath + probands[1] + "/"
+    url = expPath + "Test/" #probands[1] + "/"
     videoUrls = [url+files[0], url+files[1]]
     dataUrls = [url+files[2]]
 
