@@ -4,9 +4,7 @@
 import os
 import time
 
-import mne
 from mne.viz.utils import plt_show
-import numpy as np
 from util.mne_util import MNEUtil
 
 
@@ -15,25 +13,19 @@ scriptPath = os.path.dirname(os.path.abspath(__file__))
 def main():
     util = MNEUtil()
 
-    def createRawObject(filePath):
-        with open(filePath, 'rb') as f:
-            ch_names = f.readline().strip().split(",")
-        info = util._createEEGInfo(ch_names, filePath, 128)
-        data = np.swapaxes(np.delete(np.genfromtxt(filePath, dtype=float, delimiter=","), 0, 0),0,1)
-        return mne.io.RawArray(data, info)
-
     def createICA(fileName):
         start = time.time()
-        raw = createRawObject(fileName)
-        util.filterData(raw, 1, 45)
+        raw = util.createMNEObjectFromCSV(fileName)
+        util.bandpassFilterData(raw)
         ica = util.ICA(raw)
         print("create raw and ica in %.2fs for %s" % (time.time()-start, fileName))
 
         return raw, ica
 
     def plotICA(raw, ica):
-        ica.plot_components(inst=raw, colorbar=True, show=False, picks=[0, 1, 2, 3])
-        ica.plot_sources(raw, show=False)
+        picks=[2, 7, 11]
+        ica.plot_components(inst=raw, colorbar=True, show=False, picks=picks)
+        ica.plot_sources(raw, show=False, picks=picks)
         #ica.plot_properties(raw, picks=0, psd_args={'fmax': 35.})
     
     def createICAList():
@@ -66,8 +58,11 @@ def main():
             plotSignal(raws[i], icas[i])
 
     # load raw data and calc ICA
-    templateRaw, templateICA = createICA(scriptPath + "/blink.csv")
-
+    dataPath = scriptPath + "/../../data/blink"
+    templateRaw, templateICA = createICA(dataPath + ".csv")
+    util.saveICA(templateICA, dataPath)
+    tIca = util.loadICA(dataPath)
+    print templateICA, tIca
     # plot ICs with topographic info
     plotICA(templateRaw, templateICA)
     plotSignal(templateRaw, templateICA)
@@ -81,15 +76,8 @@ def main():
     # print raw, cleaned and eog data
     #plotSignals(templateRaw, templateICA, raws, icas)
 
-    #plt_show()
-    print ",".join(templateICA.ch_names)
-    for row in templateICA.unmixing_matrix_:
-        s = ""
-        for c in row:
-            s += "%.5f," % c
-        print s
-    
-    print templateICA.get_components()
-    print "hello"
+    plt_show()
+    #print templateICA.get_components()
+
 if __name__ == "__main__":
     main()

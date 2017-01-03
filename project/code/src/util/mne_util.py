@@ -15,6 +15,7 @@ import time
 
 import mne
 from mne.preprocessing.ica import ICA, corrmap
+from mne.preprocessing import read_ica
 from mne.viz.utils import plt_show
 from scipy import signal
 from numpy import swapaxes
@@ -30,6 +31,10 @@ class MNEUtil():
 
     def __init__(self):
         self.config = ConfigProvider()
+
+    def createMNEObjectFromCSV(self, filePath):
+        eegData = TableFileUtil().readEEGFile(filePath)
+        return self.createMNEObjectFromEEGDto(eegData)
 
     def createMNEObjectFromEEGDto(self, eegDto):
         return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath, eegDto.getSamplingRate())
@@ -149,6 +154,12 @@ class MNEUtil():
 
     def load(self, fileName):
         return mne.io.read_raw_fif(fileName, add_eeg_ref=False, preload=True)
+
+    def saveICA(self, ica, filepath):
+        ica.save(filepath + ".ica.fif")
+
+    def loadICA(self, filepath):
+        return read_ica(filepath + ".ica.fif")
 
 def save(proband):
     util = MNEUtil()
