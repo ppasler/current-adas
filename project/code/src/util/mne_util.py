@@ -91,6 +91,9 @@ class MNEUtil():
 
         return eegRaw.add_channels([ecgRaw], force_update_info=True)
 
+    def markBadChannels(self, raw, channels):
+        raw.info['bads'] = channels
+
     def createPicks(self, mneObj):
         return mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
 
@@ -116,10 +119,10 @@ class MNEUtil():
         return mneObj.copy().drop_channels(channels)
 
     def ICA(self, mneObj):
-        ica = ICA(n_components=14, method='fastica')
-
         picks = self.createPicks(mneObj)
         reject = dict(eeg=300)
+
+        ica = ICA(n_components=len(picks), method='fastica')
         ica.fit(mneObj, picks=picks, reject=reject)
         # ica.plot_components()
         return ica
@@ -147,19 +150,27 @@ class MNEUtil():
     def plotSensors(self, mneObj):
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
-    def save(self, mneObj):
-        fileName = mneObj.info["filename"].replace(".csv", ".raw.fif")
-        mneObj.save(fileName, overwrite=True)
-        return fileName
+    def save(self, mneObj, filepath=None):
+        if filepath is None:
+            filepath = mneObj.info["filename"].replace(".csv", "")
+        filepath += ".raw.fif"
+        mneObj.save(filepath, overwrite=True)
+        return filepath
 
-    def load(self, fileName):
-        return mne.io.read_raw_fif(fileName, add_eeg_ref=False, preload=True)
+    def load(self, filepath):
+        '''A file with extension .raw.fif'''
+        raw = mne.io.read_raw_fif(filepath, add_eeg_ref=False, preload=True)
+        return raw
 
     def saveICA(self, ica, filepath):
-        ica.save(filepath + ".ica.fif")
+        extension = ".ica.fif"
+        if not filepath.endswith(extension):
+            filepath += extension
+        ica.save(filepath)
 
     def loadICA(self, filepath):
-        return read_ica(filepath + ".ica.fif")
+        '''A file with extension .ica.fif'''
+        return read_ica(filepath)
 
 def save(proband):
     util = MNEUtil()
@@ -201,7 +212,7 @@ def save(proband):
         print e
 
     start = time.time()
-    util.save(eegRaw)
+    util.save(eegRaw, filepath + "EEG_resampled_64hz")
     dur = time.time() - start
     print "saved file: %.2f" % dur
 
@@ -229,11 +240,13 @@ def test():
 
     plt_show()
 
-if __name__ == '__main__':
+def saveAll():
     probands = ConfigProvider().getExperimentConfig().get("probands")
     start = time.time()
     for proband in probands:
-        load(proband)
+        save(proband)
     dur = time.time() - start
     print "\n\nTOTAL: %.2f" % dur
 
+if __name__ == '__main__':
+    save("Test")
