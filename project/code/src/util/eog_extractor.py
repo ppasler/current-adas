@@ -17,6 +17,8 @@ from util.mne_util import MNEUtil
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_ICA_PATH = scriptPath + "/../../data/"
 
+BLINK_LABEL = "blinks"
+
 FRONTAL_SENSORS = ["AF3", "F7", "F3", "FC5", "FC6", "F4", "F8", "AF4"]
 BAD_CHANNELS = ["T7", "P7", "O1", "O2", "P8", "T8"]
 
@@ -34,17 +36,19 @@ class EOGExtractor(object):
         self.templateICA.labels_ = dict()
         #plotICA(self.templateRaw, self.templateICA)
 
-    def findEOGChannel(self, icas):
-        self.util.labelArtefact(self.templateICA, self.eogChan, icas, "blinks")
+    def labelEOGChannel(self, icas):
+        self.util.labelArtefact(self.templateICA, self.eogChan, icas, BLINK_LABEL)
 
-    def getEOGChannel(self, raw, ica):
+    def getEOGChannel(self, raw, ica, eogInd = None):
+        eogInd = self._getEOGIndex(ica, eogInd)
+
         eog = raw.copy()
         eog = ica.get_sources(eog)
 
-        dropNames = self._createDropNames()
+        dropNames = self._createDropNames(ica, eogInd)
         eog.drop_channels(dropNames)
 
-        nameDict = {self._getICAName(self.eogChan): "EOG"}
+        nameDict = {self._getICAName(eogInd[0]): "EOG"}
         eog.rename_channels(nameDict)
         
         typeDict = {"EOG": "eog"}
@@ -52,14 +56,23 @@ class EOGExtractor(object):
         #eog.plot(show=False, scalings=dict(eog=10), title=" eog")
         return eog
 
-    def _createDropNames(self):
-        ind = range(self.templateICA.n_components_)
-        ind.remove(self.eogChan)
-        return [self._getICAName(i) for i in ind]
+    def _getEOGIndex(self, ica, eogInd):
+        if eogInd is None:
+            eogInd = ica.labels_[BLINK_LABEL]
+        return eogInd
+
+    def _createDropNames(self, ica, eogInd):
+        ind = range(ica.n_components_)
+        return [self._getICAName(i) for i in ind if i not in eogInd]
 
     def _getICAName(self, number):
         # TODO remove '+ 1' after #3889
         return 'ICA %03d' % (number + 1)
+
+    def removeEOGChannel(self, raw, ica, eogInd = None):
+        eogInd = self._getEOGIndex(ica, eogInd)
+        return ica.apply(raw, exclude=eogInd)
+        
 
 def plotICA(raw, ica):
     picks=None
@@ -110,15 +123,17 @@ def excludeAndPlotRaw(raw, ica, exclude, title=""):
 
 if __name__ == '__main__':
     from mne.viz.utils import plt_show
+    util = MNEUtil()
 
     extractor = EOGExtractor()
-    raw, ica, exclude = extractor.templateRaw, extractor.templateICA, extractor.eogChan
-    #excludeAndPlotRaw(raw, ica, [exclude], "template")
-    extractor.getEOGChannel(raw, ica)
-    #raws, icas = createICAList()
-    #extractor.findEOGChannel(icas)
-    #for ica, raw in zip(icas, raws):
-    #    extractor.getEOGChannel(raw, ica)
+    raws, icas = createICAList()
+    extractor.labelEOGChannel(icas)
+    raw, ica = raws[1], icas[1]
+
+    eogRaw = extractor.getEOGChannel(raw, ica)
+    raw = extractor.removeEOGChannel(raw, ica)
+    util.addEOGChannel(raw, eogRaw)
+    util.plotRaw(raw)
     plt_show()
 
     #s = raw_input("save: ")

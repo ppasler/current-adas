@@ -46,7 +46,7 @@ def main():
         eog.plot(show=False, scalings=dict(eeg=300), title=title)
 
     def plotSignal(raw, ica):
-        filename = raw.info["filename"]
+        filename = raw.info["description"]
         raw.plot(show=False, title="%s: Raw data" % filename, scalings=dict(eeg=300))
         eogInd = ica.labels_["blinks"]
         withoutEogInds = range(14)

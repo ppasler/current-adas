@@ -53,22 +53,20 @@ class MNEUtil():
     def _createECGInfo(self, channelName, filename, samplingRate):
         channelTypes = ["ecg"]
         info = mne.create_info([channelName], samplingRate, channelTypes)
-        info["description"] = "PoSDBoS"
-        info["filename"] = filename
+        info["description"] = filename
         return info
 
     def _createEEGInfo(self, channelNames, filename, samplingRate):
         channelTypes = ["eeg"] * len(channelNames)
         montage = mne.channels.read_montage("standard_1020")
         info = mne.create_info(channelNames, samplingRate, channelTypes, montage)
-        info["description"] = "PoSDBoS"
-        info["filename"] = filename
+        info["description"] =  filename
         return info
 
     def convertMNEToTableDto(self, mneObj):
         header = mneObj.ch_names
         data = swapaxes(mneObj._data, 0, 1)
-        filePath = mneObj.info["filename"]
+        filePath = mneObj.info["description"]
         samplingRate = mneObj.info['sfreq']
         return TableDto(header, data, filePath, samplingRate)
 
@@ -84,12 +82,34 @@ class MNEUtil():
         return mne.make_fixed_length_events(raw, clazz, duration=duration)
 
     def addECGChannel(self, eegRaw, ecgRaw):
-        sFreq = eegRaw.info['sfreq']
-        tMax = (eegRaw.n_times - 1) / sFreq
+        if "ecg" in ecgRaw:
+            return self._addChannel(eegRaw, ecgRaw)
 
-        ecgRaw = ecgRaw.resample(sFreq, npad='auto').crop(0, tMax)
+    def addEOGChannel(self, eegRaw, eogRaw):
+        if "eog" in eogRaw:
+            return self._addChannel(eegRaw, eogRaw)
 
-        return eegRaw.add_channels([ecgRaw], force_update_info=True)
+    def _addChannel(self, eegRaw, otherRaw):
+        otherRaw = self.adjustSampleRate(eegRaw, otherRaw)
+        otherRaw = self.adjustLength(eegRaw, otherRaw)
+
+        return eegRaw.add_channels([otherRaw], force_update_info=True)
+
+    def adjustSampleRate(self, eegRaw, otherRaw):
+        eegSFreq = eegRaw.info['sfreq']
+        otherSFreq = otherRaw.info['sfreq']
+        if eegSFreq != otherSFreq:
+            otherRaw = otherRaw.resample(eegSFreq, npad='auto')
+        return otherRaw
+
+    def adjustLength(self, eegRaw, otherRaw):
+        eegNTimes = eegRaw.n_times
+        otherNTimes = otherRaw.n_times
+        if eegNTimes != otherNTimes:
+            eegSFreq = eegRaw.info['sfreq']
+            tMax = (eegRaw.n_times - 1) / eegSFreq
+            otherRaw = otherRaw.crop(0, tMax)
+        return otherRaw
 
     def markBadChannels(self, raw, channels):
         raw.info['bads'] = channels
@@ -150,9 +170,15 @@ class MNEUtil():
     def plotSensors(self, mneObj):
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
+    def plotRaw(self, mneObj, show=False):
+        scalings = dict(eeg=300, eog=10, ecg=100)
+        color = dict(eeg="k", eog="b", ecg="r")
+        title = mneObj.info["description"]
+        mneObj.plot(show=show, scalings=scalings, color=color, title=title)
+
     def save(self, mneObj, filepath=None):
         if filepath is None:
-            filepath = mneObj.info["filename"].replace(".csv", "")
+            filepath = mneObj.info["description"].replace(".csv", "")
         filepath += ".raw.fif"
         mneObj.save(filepath, overwrite=True)
         return filepath
@@ -249,4 +275,4 @@ def saveAll():
     print "\n\nTOTAL: %.2f" % dur
 
 if __name__ == '__main__':
-    save("Test")
+    load("Test")
