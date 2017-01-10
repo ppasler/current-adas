@@ -7,16 +7,9 @@ Created on 19.09.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-
-import warnings
-warnings.filterwarnings(action='ignore')
-
-import time
-
 import mne
 from mne.preprocessing.ica import ICA, corrmap
 from mne.preprocessing import read_ica
-from mne.viz.utils import plt_show
 from scipy import signal
 from numpy import swapaxes
 
@@ -170,11 +163,13 @@ class MNEUtil():
     def plotSensors(self, mneObj):
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
-    def plotRaw(self, mneObj, show=False):
+    def plotRaw(self, mneObj, title=None, show=False):
         scalings = dict(eeg=300, eog=10, ecg=100)
         color = dict(eeg="k", eog="b", ecg="r")
-        title = mneObj.info["description"]
-        mneObj.plot(show=show, scalings=scalings, color=color, title=title)
+        if title is None:
+            title = mneObj.info["description"]
+        n_channels = len(mneObj.ch_names)
+        return mneObj.plot(show=show, scalings=scalings, color=color, title=title, duration=60.0, n_channels=n_channels)
 
     def save(self, mneObj, filepath=None):
         if filepath is None:
@@ -193,86 +188,11 @@ class MNEUtil():
         if not filepath.endswith(extension):
             filepath += extension
         ica.save(filepath)
+        return filepath
 
     def loadICA(self, filepath):
         '''A file with extension .ica.fif'''
         return read_ica(filepath)
 
-def save(proband):
-    util = MNEUtil()
-    sFreq = 64.
-    filepath = "E:/thesis/experiment/%s/" % str(proband)
-
-    start = time.time()
-    eegFileName = filepath + "EEG.csv"
-    eegData = TableFileUtil().readEEGFile(eegFileName)
-    eegRaw = util.createMNEObjectFromEEGDto(eegData)
-    dur = time.time() - start
-    print "read EEG and create MNE object: %.2f" % dur
-
-    start = time.time()
-    util.bandpassFilterData(eegRaw)
-    dur = time.time() - start
-    print "filter EEG: %.2f" % dur
-
-    start = time.time()
-    eegRaw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
-    dur = time.time() - start
-    print "resampled EEG: %.2f" % dur
-
-    try:
-        start = time.time()
-        ecgFileName = filepath + "ECG.csv"
-        ecgData = TableFileUtil().readECGFile(ecgFileName)
-        ecgRaw = util.createMNEObjectFromECGDto(ecgData)
-
-        dur = time.time() - start
-        print "read ECG: %.2f" % dur
-        start = time.time()
-    
-        util.addECGChannel(eegRaw, ecgRaw)
-
-        dur = time.time() - start
-        print "merged channels: %.2f" % dur
-    except Exception as e:
-        print e
-
-    start = time.time()
-    util.save(eegRaw, filepath + "EEG_resampled_64hz")
-    dur = time.time() - start
-    print "saved file: %.2f" % dur
-
-def load(proband):
-    util = MNEUtil()
-    fifname = "E:/thesis/experiment/%s/EEG.raw.fif" % str(proband)
-    start = time.time()
-    fifraw = util.load(fifname)
-    dur = time.time() - start
-    print "read EEG: %.2f" % dur
-    start = time.time()
-
-    print fifraw
-    fifraw.plot(show=False, title="Raw data " + proband, scalings=dict(eeg=300, ecg=500), duration=10.0, start=0.0, n_channels=15)
-
-    plt_show()
-
-def test():
-    util = MNEUtil()
-
-    filepath = "E:/thesis/experiment/1/"
-    fifname = filepath + "EEG.raw.fif"
-    fifraw = util.load(fifname)
-    fifraw.plot(show=False, title="Raw data", scalings=dict(eeg=300, ecg=500), duration=60.0, start=1000.0, n_channels=15)
-
-    plt_show()
-
-def saveAll():
-    probands = ConfigProvider().getExperimentConfig().get("probands")
-    start = time.time()
-    for proband in probands:
-        save(proband)
-    dur = time.time() - start
-    print "\n\nTOTAL: %.2f" % dur
-
 if __name__ == '__main__':
-    load("Test")
+    util = MNEUtil()
