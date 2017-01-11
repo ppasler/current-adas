@@ -21,9 +21,12 @@ from util.mne_util import MNEUtil
 from util.signal_table_util import TableFileUtil
 
 mneUtil = MNEUtil()
-eogExtractor = EOGExtractor()
+#eogExtractor = EOGExtractor()
+procConfig = ConfigProvider().getProcessingConfig()
 FILE_PATH = "E:/thesis/experiment/%s/"
-sFreq = 64.
+sFreq = procConfig.get("samplingRate")
+icCount = procConfig.get("icCount")
+probands = ConfigProvider().getExperimentConfig().get("probands")
 
 def saveRaw(proband):
     filepath = FILE_PATH % str(proband)
@@ -45,6 +48,9 @@ def saveRaw(proband):
     dur = time.time() - start
     print "resampled EEG: %.2f" % dur
 
+    mneUtil.markBadChannels(eegRaw, ["AF3"])
+    eegRaw = mneUtil.interpolateBadChannels(eegRaw)
+
     try:
         start = time.time()
         ecgFileName = filepath + "ECG.csv"
@@ -63,13 +69,13 @@ def saveRaw(proband):
         print e
 
     start = time.time()
-    mneUtil.save(eegRaw, filepath + "EEG_resampled_64hz")
+    mneUtil.save(eegRaw, filepath + "EEG")
     dur = time.time() - start
     print "saved file: %.2f" % dur
 
 def saveRawAll():
     start = time.time()
-    for proband in getProbands():
+    for proband in probands:
         saveRaw(proband)
     dur = time.time() - start
     print "\n\nTOTAL: %.2f" % dur
@@ -83,6 +89,7 @@ def loadRaw(proband):
     start = time.time()
 
     mneUtil.plotRaw(fifraw, title="Raw data " + proband)
+    return fifraw
 
 
 def testLoadRaw():
@@ -97,9 +104,8 @@ def plotICA(raw, ica):
 def createICAList():
     icas_from_other_data = list()
     raw_from_other_data = list()
-    for proband in getProbands():
+    for proband in probands:
         raw, ica = createICA(proband)
-        print "load ICA ", proband, ica.get_components().shape
         raw_from_other_data.append(raw)
         icas_from_other_data.append(ica)
     return raw_from_other_data, icas_from_other_data
@@ -107,29 +113,32 @@ def createICAList():
 def createICA(proband):
     filePath = (FILE_PATH % str(proband))
     raw = mneUtil.load(filePath + "EEG.raw.fif")
-    ica = mneUtil.loadICA(filePath + "EEG.ica.fif")
+    ica = mneUtil.ICA(raw)
     return raw, ica
 
 def saveICAList(icas, name="EEG"):
-    for i, proband in enumerate(getProbands()):
-        filePath = (FILE_PATH % str(proband)) + name + ".ica.fif"
-        mneUtil.saveICA(icas[i], filePath)
+    for proband, ica in zip(probands, icas):
+        saveICA(proband, ica, name)
 
-def getProbands():
-    return ConfigProvider().getExperimentConfig().get("probands")
+def saveICA(proband, ica, name):
+    filePath = (FILE_PATH % str(proband)) + name + ".ica.fif"
+    mneUtil.saveICA(ica, filePath)
 
 def loadICAList():
-    util = MNEUtil()
     icas_from_other_data = list()
     raw_from_other_data = list()
-    for proband in getProbands():
-        filePath = (FILE_PATH % str(proband)) + "EEG"
-        raw = util.load(filePath + ".raw.fif")
-        ica = util.loadICA(filePath + ".ica.fif")
-
+    for proband in probands:
+        raw, ica = loadICA(proband)
+        ica.labels_ = dict()
         raw_from_other_data.append(raw)
         icas_from_other_data.append(ica)
     return raw_from_other_data, icas_from_other_data
+
+def loadICA(proband):
+    filePath = (FILE_PATH % str(proband)) + "EEG"
+    raw = mneUtil.load(filePath + ".raw.fif")
+    ica = mneUtil.loadICA(filePath + "_8.ica.fif")
+    return raw, ica
 
 def excludeAndPlotRaw(raw, ica, exclude, title=""):
     raw1 = raw.copy()
@@ -137,12 +146,11 @@ def excludeAndPlotRaw(raw, ica, exclude, title=""):
     raw.plot(show=False, scalings=dict(eeg=300), title=title + " raw")
     raw1.plot(show=False, scalings=dict(eeg=300), title=title + " eog")
 
-def getAndAddEOGChannel():
+def getAndAddEOGChannel(raws, icas):
     extractor = EOGExtractor()
-    raws, icas = createICAList()
     extractor.labelEOGChannel(icas)
 
-    for raw, ica, proband in zip(raws, icas, getProbands()):
+    for raw, ica, proband in zip(raws, icas, probands):
         eogRaw = extractor.getEOGChannel(raw, ica)
         raw = extractor.removeEOGChannel(raw, ica)
         mneUtil.addEOGChannel(raw, eogRaw)
@@ -152,6 +160,10 @@ def getAndAddEOGChannel():
         mneUtil.save(raw, filePath)
     plt_show()
 
-if __name__ == '__main__':
-    getAndAddEOGChannel()
+def addBlink():
+    global probands
+    probands.insert(0, "Test")
 
+if __name__ == '__main__':
+    raws, icas = loadICAList()
+    getAndAddEOGChannel(raws, icas)

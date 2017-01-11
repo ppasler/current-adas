@@ -107,6 +107,9 @@ class MNEUtil():
     def markBadChannels(self, raw, channels):
         raw.info['bads'] = channels
 
+    def interpolateBadChannels(self, raw):
+        return raw.interpolate_bads()
+
     def createPicks(self, mneObj):
         return mne.pick_types(mneObj.info, meg=False, eeg=True, eog=False, stim=False, exclude='bads')
 
@@ -131,11 +134,13 @@ class MNEUtil():
     def dropChannels(self, mneObj, channels):
         return mneObj.copy().drop_channels(channels)
 
-    def ICA(self, mneObj):
+    def ICA(self, mneObj, icCount=None):
         picks = self.createPicks(mneObj)
         reject = dict(eeg=300)
 
-        ica = ICA(n_components=len(picks), method='fastica')
+        if icCount is None:
+            icCount = len(picks)
+        ica = ICA(n_components=icCount, method='fastica')
         ica.fit(mneObj, picks=picks, reject=reject)
         # ica.plot_components()
         return ica
@@ -143,7 +148,7 @@ class MNEUtil():
     def labelArtefact(self, templateICA, templateIC, icas, label):
         template = (0, templateIC)
         icas = [templateICA] + icas
-
+        print icas
         return corrmap(icas, template=template, threshold=0.85, label=label, show=False, ch_type='eeg', verbose=True)
 
     def plotCorrmaps(self, icas):
