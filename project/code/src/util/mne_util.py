@@ -11,7 +11,7 @@ import mne
 from mne.preprocessing.ica import ICA, corrmap
 from mne.preprocessing import read_ica
 from scipy import signal
-from numpy import swapaxes
+from numpy import swapaxes, mean
 
 from config.config import ConfigProvider
 from util.signal_table_util import TableFileUtil
@@ -106,6 +106,14 @@ class MNEUtil():
 
     def markBadChannels(self, raw, channels):
         raw.info['bads'] = channels
+
+    def interpolateNonExtstingChannel(self, raw, channel):
+        print raw.info['bads']
+        data = raw._data
+        chanData = mean(data, axis=0)
+        
+        print chanData.shape, raw._data.shape
+
 
     def interpolateBadChannels(self, raw):
         return raw.interpolate_bads()

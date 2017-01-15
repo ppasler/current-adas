@@ -158,7 +158,7 @@ def main():
     #dataUrls = ['../../examples/example_4096.csv']
 
     url = expPath + "Test/" #probands[1] + "/"
-    videoUrls = [url+files[0], url+files[1]]
+    videoUrls = [url+files[0], expPath + "1/" +files[0]]
     dataUrls = [url+files[2]]
 
     vis = DataVisualizer(None, videoUrls, dataUrls)

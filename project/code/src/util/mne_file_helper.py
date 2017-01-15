@@ -149,15 +149,16 @@ def excludeAndPlotRaw(raw, ica, exclude, title=""):
 def getAndAddEOGChannel(raws, icas):
     extractor = EOGExtractor()
     extractor.labelEOGChannel(icas)
-
+    x = []
     for raw, ica, proband in zip(raws, icas, probands):
         eogRaw = extractor.getEOGChannel(raw, ica)
         raw = extractor.removeEOGChannel(raw, ica)
         mneUtil.addEOGChannel(raw, eogRaw)
-        mneUtil.plotRaw(raw, title=proband)
-
+        x.append(raw)
         filePath = (FILE_PATH % proband) + "EOG"
-        mneUtil.save(raw, filePath)
+        #mneUtil.save(raw, filePath)
+    mneUtil.plotRaw(x[0], title=proband)
+    mneUtil.plotRaw(x[1], title=proband)
     plt_show()
 
 def addBlink():
@@ -165,5 +166,6 @@ def addBlink():
     probands.insert(0, "Test")
 
 if __name__ == '__main__':
+    #addBlink()
     raws, icas = loadICAList()
     getAndAddEOGChannel(raws, icas)
