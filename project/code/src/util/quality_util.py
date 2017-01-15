@@ -49,16 +49,15 @@ class QualityUtil(object):
             lowerBound=self.lowerBound
         if upperBound == None:
             upperBound=self.upperBound
-        #TODO could be nicer / faster?
+
         with errstate(invalid='ignore'): #avoid warning because of DEFAULT_REPLACE_VALUE value
             ret = self._copyArray(data)
             if value == None:
                 #http://stackoverflow.com/questions/41329691/pythonic-way-to-replace-list-values-with-upper-and-lower-bound/41329750#41329750
                 clip(ret, lowerBound, upperBound, out=ret)
             else:
-                # http://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
-                ret[ret > upperBound] = value
-                ret[ret < lowerBound] = value
+                # http://stackoverflow.com/questions/41654038/replace-list-values-above-and-below-thresholds-with-default-value-in-python/41654071#41654071
+                ret[(ret < lowerBound) | (ret > upperBound)] = value
         return ret
 
     def countOutliners(self, data, lowerBound=None, upperBound=None):
@@ -76,10 +75,7 @@ class QualityUtil(object):
         if upperBound == None:
             upperBound=self.upperBound
         
-        cdata = copy(data[:])
-        with errstate(invalid='ignore'): 
-            cdata[cdata > upperBound] = DEFAULT_REPLACE_VALUE
-            cdata[cdata < lowerBound] = DEFAULT_REPLACE_VALUE
+        cdata = self.replaceOutliners(copy(data[:]), DEFAULT_REPLACE_VALUE, lowerBound, upperBound)
         return count_nonzero(isnan(cdata))
 
     def replaceBadQuality(self, data, quality, value, threshold=None):
