@@ -7,12 +7,14 @@ Created on 03.01.2017
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from numpy import array
+from numpy import array, arange, zeros
 
 from config.config import ConfigProvider
 
+
 TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the data
 ECG_HEADER = "ECG"
+TIME_START = 558345300
 
 class TableDto(object):
     '''
@@ -30,6 +32,8 @@ class TableDto(object):
         self.filePath = filePath
         self.setHeader(header)
         self.setData(data)
+        if TIMESTAMP_STRING not in header:
+            self._createTimeData(samplingRate)
         self._setDataTypes()
         self.setSamplingRate(samplingRate)
 
@@ -45,6 +49,20 @@ class TableDto(object):
         self.hasEEGData = self._containsEEGData()
         self.hasEEGQuality = self._containsEEGQuality()
         self.hasECGData = self._containsECGData()
+
+    def _createTimeData(self, samplingRate):
+        stop = TIME_START + (len(self) / samplingRate)
+        timeData = arange(TIME_START, stop, 1./samplingRate)
+        self.addRow(TIMESTAMP_STRING, timeData)
+
+    def addRow(self, name, row):
+        self.header.insert(0, name)
+
+        data = zeros((len(self), len(self.header)))
+        data[:,0] = row
+        data[:,1:] = self.data
+        self.data = data
+
 
     def _containsEEGData(self):
         return len(self.getEEGHeader()) > 0
@@ -208,6 +226,9 @@ class TableDto(object):
 
     def getValueCount(self):
         return len(self.getColumn(self.header[0]))
+
+    def __len__(self):
+        return self.getValueCount()
 
     def _switchTime(self, time1, time2):
         return time2, time1

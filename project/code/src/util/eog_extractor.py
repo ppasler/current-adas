@@ -10,6 +10,8 @@ Created on 05.01.2017
 
 import os
 
+from numpy import mean
+
 from util.mne_util import MNEUtil
 
 
@@ -28,43 +30,47 @@ class EOGExtractor(object):
 
     def __init__(self):
         self.util = MNEUtil()
-        self.eogChan = 2
+        self.eogChans = [0, 2, 10]
         self.templateRaw = self.util.load(TEMPLATE_ICA_PATH + "blink.raw.fif")
-        self.templateICA = self.util.loadICA(TEMPLATE_ICA_PATH + "blink.ica.fif")
+        self.templateICA = self.util.loadICA(TEMPLATE_ICA_PATH + "blink_.ica.fif")
         # TODO remove after merge #3886
-        self.templateICA.labels_ = dict()
+        #self.templateICA.labels_ = dict()
         print "load ICA ", "template", self.templateICA.get_components().shape
 
         #plotICA(self.templateRaw, self.templateICA)
 
     def labelEOGChannel(self, icas):
-        self.util.labelArtefact(self.templateICA, self.eogChan, icas, BLINK_LABEL)
+        for eogChan in self.eogChans:
+            self.util.labelArtefact(self.templateICA, eogChan, icas, BLINK_LABEL)
 
-    def getEOGChannel(self, raw, ica, eogInd = None):
-        eogInd = self._getEOGIndex(ica, eogInd)
+    def getEOGChannel(self, raw, ica, eogInds = None):
+        eogInds = self._getEOGIndex(ica, eogInds)
 
         eog = raw.copy()
         eog = ica.get_sources(eog)
 
-        dropNames = self._createDropNames(ica, eogInd)
+        eogChan = mean(raw._data[eogInds], axis=0)
+
+        dropNames = self._createDropNames(ica, [0])
         eog.drop_channels(dropNames)
 
-        nameDict = {self._getICAName(eogInd[0]): "EOG"}
+        raw._data[0] = eogChan
+        nameDict = {self._getICAName(0): "EOG"}
         eog.rename_channels(nameDict)
-        
+
         typeDict = {"EOG": "eog"}
         eog.set_channel_types(typeDict)
-        #eog.plot(show=False, scalings=dict(eog=10), title=" eog")
+
         return eog
 
-    def _getEOGIndex(self, ica, eogInd):
-        if eogInd is None:
-            eogInd = ica.labels_[BLINK_LABEL]
-        return eogInd
+    def _getEOGIndex(self, ica, eogInds):
+        if eogInds is None:
+            eogInds = ica.labels_[BLINK_LABEL]
+        return eogInds
 
-    def _createDropNames(self, ica, eogInd):
+    def _createDropNames(self, ica, eogInds):
         ind = range(ica.n_components_)
-        return [self._getICAName(i) for i in ind if i not in eogInd]
+        return [self._getICAName(i) for i in ind if i not in eogInds]
 
     def _getICAName(self, number):
         # TODO remove '+ 1' after #3889

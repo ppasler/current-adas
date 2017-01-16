@@ -87,7 +87,7 @@ class EEGSignalPlotter(object):
         axChan.set_ylabel(label + str(freqRange))
 
 def readEEGFile(fileName):
-    eegPath = "E:/thesis/experiment/Test/"
+    eegPath = "E:/thesis/experiment/"
 
     return TableFileUtil().readEEGFile(eegPath + fileName)
 
@@ -112,6 +112,7 @@ def plotCloseOpen():
     plot(fileName, channels)
 
 if __name__ == "__main__":
-    plotBlink()
+    channels = ["FC5", "FC6", "F8", "F7", "AF4", "AF3", "F4"]
+    plot("3/EEG.csv", channels)
 
 

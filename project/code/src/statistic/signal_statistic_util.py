@@ -22,6 +22,7 @@ from util.signal_table_util import TableFileUtil
 from util.eeg_util import EEGUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
+from util.mne_file_helper import mneUtil
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -57,9 +58,12 @@ class SignalStatisticUtil(object):
         self.stats[SIGNALS_KEY] = OrderedDict()
 
     def _readData(self):
-        self.reader = TableFileUtil()
-        self.eegData = self.reader.readEEGFile(self.filePath)
-
+        if self.filePath.endswith("csv"):
+            self.eegData = TableFileUtil().readEEGFile(self.filePath)
+        else:
+            raw = mneUtil.load(self.filePath)
+            self.eegData = mneUtil.convertMNEToTableDto(raw)
+        
     def _initFields(self):
         self.statFields = STAT_FIELDS
         addMethods(self)
@@ -266,14 +270,17 @@ def test():
     return ["Test"], "blink.csv"
 
 def single():
-    return ["1", "2", "3"], None
+    return ["1", "2"], None
+
+def singleMNE():
+    return ["1", "2"], "EEG.raw.fif"
 
 if __name__ == "__main__":
     config = ConfigProvider().getExperimentConfig()
 
     experimentDir = config.get("filePath")
-    probands, fileName = single()
+    probands, fileName = singleMNE()
 
-    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=False, save=False)
+    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=False, save=True)
     s.main()
 

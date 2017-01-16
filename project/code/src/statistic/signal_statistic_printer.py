@@ -11,6 +11,7 @@ from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY
 
 DIVIDER = "******************************\n\n"
 
+#TODO https://pypi.python.org/pypi/terminaltables/1.0.2
 class SignalStatisticPrinter(object):
 
     def __init__(self, person):

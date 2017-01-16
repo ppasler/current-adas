@@ -38,18 +38,18 @@ def saveRaw(proband):
     dur = time.time() - start
     print "read EEG and create MNE object: %.2f" % dur
 
-    start = time.time()
-    mneUtil.bandpassFilterData(eegRaw)
-    dur = time.time() - start
-    print "filter EEG: %.2f" % dur
+    #start = time.time()
+    #mneUtil.bandpassFilterData(eegRaw)
+    #dur = time.time() - start
+    #print "filter EEG: %.2f" % dur
 
-    start = time.time()
-    eegRaw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
-    dur = time.time() - start
-    print "resampled EEG: %.2f" % dur
+    #start = time.time()
+    #eegRaw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
+    #dur = time.time() - start
+    #print "resampled EEG: %.2f" % dur
 
     mneUtil.markBadChannels(eegRaw, ["AF3"])
-    eegRaw = mneUtil.interpolateBadChannels(eegRaw)
+    #eegRaw = mneUtil.interpolateBadChannels(eegRaw)
 
     try:
         start = time.time()
@@ -69,7 +69,7 @@ def saveRaw(proband):
         print e
 
     start = time.time()
-    mneUtil.save(eegRaw, filepath + "EEG")
+    mneUtil.save(eegRaw, filepath + "EEG_")
     dur = time.time() - start
     print "saved file: %.2f" % dur
 
@@ -80,15 +80,15 @@ def saveRawAll():
     dur = time.time() - start
     print "\n\nTOTAL: %.2f" % dur
 
-def loadRaw(proband):
-    fifname = (FILE_PATH % str(proband)) + "EEG.raw.fif"
+def loadRaw(proband, name = "EEG"):
+    fifname = (FILE_PATH % str(proband)) + name + ".raw.fif"
     start = time.time()
     fifraw = mneUtil.load(fifname)
     dur = time.time() - start
     print "read EEG: %.2f" % dur
     start = time.time()
 
-    mneUtil.plotRaw(fifraw, title="Raw data " + proband)
+    #mneUtil.plotRaw(fifraw, title="Raw data " + proband)
     return fifraw
 
 
@@ -110,17 +110,17 @@ def createICAList():
         icas_from_other_data.append(ica)
     return raw_from_other_data, icas_from_other_data
 
-def createICA(proband):
-    filePath = (FILE_PATH % str(proband))
-    raw = mneUtil.load(filePath + "EEG.raw.fif")
-    ica = mneUtil.ICA(raw)
+def createICA(proband, raw = None, icCount=None, random_state=None):
+    if raw is None:
+        raw = loadRaw(proband)
+    ica = mneUtil.ICA(raw, icCount=icCount, random_state=random_state)
     return raw, ica
 
 def saveICAList(icas, name="EEG"):
     for proband, ica in zip(probands, icas):
         saveICA(proband, ica, name)
 
-def saveICA(proband, ica, name):
+def saveICA(proband, ica, name="EEG"):
     filePath = (FILE_PATH % str(proband)) + name + ".ica.fif"
     mneUtil.saveICA(ica, filePath)
 
@@ -137,7 +137,7 @@ def loadICAList():
 def loadICA(proband):
     filePath = (FILE_PATH % str(proband)) + "EEG"
     raw = mneUtil.load(filePath + ".raw.fif")
-    ica = mneUtil.loadICA(filePath + "_8.ica.fif")
+    ica = mneUtil.loadICA(filePath + ".ica.fif")
     return raw, ica
 
 def excludeAndPlotRaw(raw, ica, exclude, title=""):
@@ -149,23 +149,26 @@ def excludeAndPlotRaw(raw, ica, exclude, title=""):
 def getAndAddEOGChannel(raws, icas):
     extractor = EOGExtractor()
     extractor.labelEOGChannel(icas)
-    x = []
     for raw, ica, proband in zip(raws, icas, probands):
         eogRaw = extractor.getEOGChannel(raw, ica)
         raw = extractor.removeEOGChannel(raw, ica)
         mneUtil.addEOGChannel(raw, eogRaw)
-        x.append(raw)
-        filePath = (FILE_PATH % proband) + "EOG"
+        raw.info["description"] = proband
+        mneUtil.plotRaw(raw)
+
+        #filePath = (FILE_PATH % proband) + "EOG"
         #mneUtil.save(raw, filePath)
-    mneUtil.plotRaw(x[0], title=proband)
-    mneUtil.plotRaw(x[1], title=proband)
-    plt_show()
 
 def addBlink():
     global probands
     probands.insert(0, "Test")
 
 if __name__ == '__main__':
-    #addBlink()
-    raws, icas = loadICAList()
-    getAndAddEOGChannel(raws, icas)
+    proband = "1"
+    rawO = loadRaw(proband, "EEG_")
+    raw = loadRaw(proband)
+
+    mneUtil.plotRaw(rawO, title="RAW O")
+    mneUtil.plotRaw(raw, title="RAW")
+
+    plt_show()

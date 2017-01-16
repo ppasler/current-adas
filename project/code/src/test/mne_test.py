@@ -18,6 +18,7 @@ from config.config import ConfigProvider
 from util.signal_table_util import TableFileUtil
 from util.mne_util import MNEUtil
 from numpy import array_equal
+from util.table_dto import TIMESTAMP_STRING
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -64,7 +65,7 @@ class MNEUtilTest(unittest.TestCase):
     def test_convertMNEToTableDto(self):
         mneObj = self.mne.createMNEObjectFromEEGDto(self.eegData)
         eegData2 = self.mne.convertMNEToTableDto(mneObj)
-        self.assertListEqual(self.eegData.getEEGHeader(), eegData2.getHeader())
+        self.assertListEqual([TIMESTAMP_STRING] + self.eegData.getEEGHeader(), eegData2.getHeader())
         array_equal(self.eegData.getEEGData(), eegData2.getData())
         self.assertEqual(self.eegData.filePath, eegData2.filePath)
         self.assertTrue(eegData2.hasEEGData)

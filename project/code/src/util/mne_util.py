@@ -111,7 +111,7 @@ class MNEUtil():
         print raw.info['bads']
         data = raw._data
         chanData = mean(data, axis=0)
-        
+
         print chanData.shape, raw._data.shape
 
 
@@ -142,13 +142,13 @@ class MNEUtil():
     def dropChannels(self, mneObj, channels):
         return mneObj.copy().drop_channels(channels)
 
-    def ICA(self, mneObj, icCount=None):
+    def ICA(self, mneObj, icCount=None, random_state=None):
         picks = self.createPicks(mneObj)
         reject = dict(eeg=300)
 
         if icCount is None:
             icCount = len(picks)
-        ica = ICA(n_components=icCount, method='fastica')
+        ica = ICA(n_components=icCount, method="fastica", random_state=random_state)
         ica.fit(mneObj, picks=picks, reject=reject)
         # ica.plot_components()
         return ica
