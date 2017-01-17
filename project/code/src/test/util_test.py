@@ -606,8 +606,8 @@ class TestEEGTableFileUtil(unittest.TestCase):
 
     def test_writeFile(self):
         filePath = PATH + "test.csv"
-        header= ["A", "B", "C"]
-        data = np.array([[1.123456789, 2, 3], [-4.123456789, 5, 6], [7.123456789, 8, 99.123]])
+        header= ["Timestamp", "B", "C"]
+        data = np.array([[1, 1.123456789, 2], [2, -4.123456789, 6], [3, 7.123456789, 99.123]])
         self.reader.writeFile(filePath, data, header)
         
         if os.path.isfile(filePath):

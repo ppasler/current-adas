@@ -50,10 +50,12 @@ class TableDto(object):
         self.hasEEGQuality = self._containsEEGQuality()
         self.hasECGData = self._containsECGData()
 
+    # TODO samplingRate == None
     def _createTimeData(self, samplingRate):
-        stop = TIME_START + (len(self) / samplingRate)
-        timeData = arange(TIME_START, stop, 1./samplingRate)
-        self.addRow(TIMESTAMP_STRING, timeData)
+        if samplingRate is not None:
+            stop = TIME_START + (len(self) / samplingRate)
+            timeData = arange(TIME_START, stop, 1./samplingRate)
+            self.addRow(TIMESTAMP_STRING, timeData)
 
     def addRow(self, name, row):
         self.header.insert(0, name)
