@@ -164,11 +164,9 @@ def addBlink():
     probands.insert(0, "Test")
 
 if __name__ == '__main__':
-    proband = "1"
-    rawO = loadRaw(proband, "EEG_")
-    raw = loadRaw(proband)
-
-    mneUtil.plotRaw(rawO, title="RAW O")
-    mneUtil.plotRaw(raw, title="RAW")
+    proband = "Test"
+    raw, ica = loadICA(proband)
+    plotICA(raw, ica)
+    excludeAndPlotRaw(raw, ica, [2])
 
     plt_show()

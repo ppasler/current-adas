@@ -33,8 +33,6 @@ class EOGExtractor(object):
         self.eogChans = [0, 2, 10]
         self.templateRaw = self.util.load(TEMPLATE_ICA_PATH + "blink.raw.fif")
         self.templateICA = self.util.loadICA(TEMPLATE_ICA_PATH + "blink_.ica.fif")
-        # TODO remove after merge #3886
-        #self.templateICA.labels_ = dict()
         print "load ICA ", "template", self.templateICA.get_components().shape
 
         #plotICA(self.templateRaw, self.templateICA)
