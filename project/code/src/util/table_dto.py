@@ -252,6 +252,10 @@ class TableDto(object):
             return self.getColumns(eegFields)
         return None
 
+    def getGyroHeader(self):
+        gyroFields = ConfigProvider().getEmotivConfig().get("gyroFields")
+        return [head for head in self.header if head in gyroFields]
+
     def getQualityHeader(self):
         return ["Q"+head for head in self.getEEGHeader() if "Q"+head in self.header]
 

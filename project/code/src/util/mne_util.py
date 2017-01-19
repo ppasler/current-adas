@@ -8,12 +8,13 @@ Created on 19.09.2016
 :organization: Reutlingen University
 '''
 import mne
-from mne.preprocessing.ica import ICA, corrmap
 from mne.preprocessing import read_ica
-from scipy import signal
+from mne.preprocessing.ica import ICA, corrmap
 from numpy import swapaxes, mean
+from scipy import signal
 
 from config.config import ConfigProvider
+from util.file_util import FileUtil, ICA_EXTENSION
 from util.signal_table_util import TableFileUtil
 from util.table_dto import TableDto
 
@@ -24,6 +25,7 @@ class MNEUtil():
 
     def __init__(self):
         self.config = ConfigProvider()
+        self.fileUtil = FileUtil()
 
     def createMNEObjectFromCSV(self, filePath):
         eegData = TableFileUtil().readEEGFile(filePath)
@@ -185,9 +187,7 @@ class MNEUtil():
         return mneObj.plot(show=show, scalings=scalings, color=color, title=title, duration=60.0, n_channels=n_channels)
 
     def save(self, mneObj, filepath=None):
-        if filepath is None:
-            filepath = mneObj.info["description"].replace(".csv", "")
-        filepath += ".raw.fif"
+        filepath = self.fileUtil.getMNEFileName(mneObj, filepath)
         mneObj.save(filepath, overwrite=True)
         return filepath
 
@@ -197,9 +197,7 @@ class MNEUtil():
         return raw
 
     def saveICA(self, ica, filepath):
-        extension = ".ica.fif"
-        if not filepath.endswith(extension):
-            filepath += extension
+        filepath = self.fileUtil.addExtension(ICA_EXTENSION, filepath)
         ica.save(filepath)
         return filepath
 

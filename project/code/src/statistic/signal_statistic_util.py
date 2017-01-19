@@ -18,11 +18,12 @@ from eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
 from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
-from util.signal_table_util import TableFileUtil
 from util.eeg_util import EEGUtil
+from util.file_util import FileUtil
+from util.mne_util import MNEUtil
 from util.quality_util import QualityUtil
+from util.signal_table_util import TableFileUtil
 from util.signal_util import SignalUtil
-from util.mne_file_helper import mneUtil
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -58,11 +59,11 @@ class SignalStatisticUtil(object):
         self.stats[SIGNALS_KEY] = OrderedDict()
 
     def _readData(self):
-        if self.filePath.endswith("csv"):
-            self.eegData = TableFileUtil().readEEGFile(self.filePath)
+        fileUtil = FileUtil()
+        if fileUtil.isCSVFile(self.filePath):
+            self.eegData = fileUtil.getDtoFromCsv(TableFileUtil(), self.filePath)
         else:
-            raw = mneUtil.load(self.filePath)
-            self.eegData = mneUtil.convertMNEToTableDto(raw)
+            self.eegData = fileUtil.getDtoFromFif(MNEUtil(), self.filePath)
         
     def _initFields(self):
         self.statFields = STAT_FIELDS
@@ -279,8 +280,9 @@ if __name__ == "__main__":
     config = ConfigProvider().getExperimentConfig()
 
     experimentDir = config.get("filePath")
-    probands, fileName = singleMNE()
+    probands, fileName = test()
 
+    # TODO Fatal Python error: PyEval_RestoreThread: NULL tstate
     s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=False, save=True)
     s.main()
 

@@ -11,6 +11,8 @@ Created on 10.05.2016
 import os
 import time
 
+from util.file_util import FileUtil
+from util.mne_util import MNEUtil
 from util.signal_table_util import TableFileUtil
 
 
@@ -33,6 +35,7 @@ class EEGTableDataSource(object):
         Reads data from ./../../examples/example_4096.csv and builds the data structure
         '''
         self.reader = TableFileUtil()
+        self.fileUtil = FileUtil()
         self.filepath = filePath
         self.infinite = infinite
         self.hasMore = False
@@ -43,19 +46,18 @@ class EEGTableDataSource(object):
         self.index = 0
 
     def convert(self):
-        dto = self.reader.readEEGFile(self.filepath)
+        if self.fileUtil.isCSVFile(self.filepath):
+            dto = self.fileUtil.getDtoFromCsv(TableFileUtil(), self.filepath)
+        else:
+            dto = self.fileUtil.getDtoFromFif(MNEUtil(), self.filepath)
         self._readHeader(dto)
         self._readRawData(dto)
 
         self.data = self._buildDataStructure()
 
     def _readHeader(self, dto):
-        self.header = self.reader.readHeader(self.filepath)
-
-        fields = self.header[:]
-        fields.remove("Timestamp")
-        fields.remove("Unknown")
-        self.fields = filter(lambda x: not (x.startswith("Q")), fields)
+        self.header = dto.getHeader()
+        self.fields = dto.getEEGHeader() + dto.getGyroHeader()
 
     def _readRawData(self, dto):
         self.rawData = dto.getData()
