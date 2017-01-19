@@ -7,6 +7,13 @@ Created on 19.01.2017
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
+from mne.io import read_raw_fif
+from mne.preprocessing import read_ica
+from numpy import swapaxes
+
+from util.csv_util import CSVUtil
+from util.table_dto import TableDto
+
 
 CSV_EXTENSION = ".csv"
 RAW_EXTENSION = ".raw.fif"
@@ -14,15 +21,53 @@ ICA_EXTENSION = ".ica.fif"
 
 class FileUtil(object):
 
-    def getDtoFromCsv(self, tableFileUtil, filePath):
-        return tableFileUtil.readEEGFile(filePath)
+    def getDto(self, filePath):
+        if self.isCSVFile(filePath):
+            return self.getDtoFromCsv(filePath)
+        else:
+            return self.getDtoFromFif(filePath)
 
-    def getDtoFromFif(self, mneUtil, filePath):
-        mneObj = mneUtil.load(filePath)
-        return mneUtil.convertMNEToTableDto(mneObj)
+    def getDtoFromCsv(self, filePath):
+        return CSVUtil().readEEGFile(filePath)
+
+    def getDtoFromFif(self, filePath):
+        mneObj = self.load(filePath)
+        return self.convertMNEToTableDto(mneObj)
+
+    def getECGDto(self, filePath):
+        return CSVUtil().readECGFile(filePath)
+
+    def convertMNEToTableDto(self, mneObj):
+        header = mneObj.ch_names
+        data = swapaxes(mneObj._data, 0, 1)
+        filePath = mneObj.info["description"]
+        samplingRate = mneObj.info['sfreq']
+        return TableDto(header, data, filePath, samplingRate)
 
     def isCSVFile(self, filePath):
         return filePath.endswith(CSV_EXTENSION)
+
+    def saveCSV(self, filePath, data, header):
+        CSVUtil().writeFile(filePath, data, header)
+
+    def save(self, mneObj, filepath=None):
+        filepath = self.fileUtil.getMNEFileName(mneObj, filepath)
+        mneObj.save(filepath, overwrite=True)
+        return filepath
+
+    def load(self, filepath):
+        '''A file with extension .raw.fif'''
+        raw = read_raw_fif(filepath, add_eeg_ref=False, preload=True)
+        return raw
+
+    def saveICA(self, ica, filepath):
+        filepath = self.addExtension(ICA_EXTENSION, filepath)
+        ica.save(filepath)
+        return filepath
+
+    def loadICA(self, filepath):
+        '''A file with extension .ica.fif'''
+        return read_ica(filepath)
 
     def getMNEFileName(self, filePath, mneObj):
         if filePath is None:

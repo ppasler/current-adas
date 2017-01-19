@@ -12,20 +12,21 @@ import sys, os
 import unittest
 
 import mne
-import numpy as np
+from numpy import array_equal
 
 from config.config import ConfigProvider
-from util.signal_table_util import TableFileUtil
+import numpy as np
+from util.file_util import FileUtil
 from util.mne_util import MNEUtil
-from numpy import array_equal
 from util.table_dto import TIMESTAMP_STRING
+
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
 
 def readData():
-    return TableFileUtil().readEEGFile(PATH + "example_1024.csv")
+    return FileUtil().getDto(PATH + "example_1024.csv")
 
 class MNEUtilTest(unittest.TestCase):
 
@@ -64,7 +65,7 @@ class MNEUtilTest(unittest.TestCase):
 
     def test_convertMNEToTableDto(self):
         mneObj = self.mne.createMNEObjectFromEEGDto(self.eegData)
-        eegData2 = self.mne.convertMNEToTableDto(mneObj)
+        eegData2 = FileUtil().convertMNEToTableDto(mneObj)
         self.assertListEqual([TIMESTAMP_STRING] + self.eegData.getEEGHeader(), eegData2.getHeader())
         array_equal(self.eegData.getEEGData(), eegData2.getData())
         self.assertEqual(self.eegData.filePath, eegData2.filePath)

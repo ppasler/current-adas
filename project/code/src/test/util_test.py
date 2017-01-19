@@ -10,7 +10,7 @@ from scipy.signal.filter_design import freqz
 
 import numpy as np
 from util.eeg_data_source import EEGTablePacketSource
-from util.signal_table_util import TableFileUtil
+from util.csv_util import CSVUtil
 from util.table_dto import TableDto
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
@@ -542,7 +542,7 @@ class TestEEGUtil(unittest.TestCase):
         self.assertTrue(all([x in channels["gamma"] for x in gamma]))
 
     def test_getWaves(self):
-        eegData = TableFileUtil().readEEGFile(PATH + "example_32.csv")
+        eegData = CSVUtil().readEEGFile(PATH + "example_32.csv")
         eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
         waves = self.util.getWaves(eeg, eegData.getSamplingRate())
@@ -552,7 +552,7 @@ class TestEEGUtil(unittest.TestCase):
             self.assertEqual(len(wave), nEeg)
 
     def test_getSingleWaves(self):
-        eegData = TableFileUtil().readEEGFile(PATH + "example_32.csv")
+        eegData = CSVUtil().readEEGFile(PATH + "example_32.csv")
         eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
         samplingRate = eegData.getSamplingRate()
@@ -581,7 +581,7 @@ class TestEEGUtil(unittest.TestCase):
 class TestEEGTableFileUtil(unittest.TestCase):
 
     def setUp(self):
-        self.reader = TableFileUtil()
+        self.reader = CSVUtil()
 
     def test_readData(self):
         file_path = PATH + "example_32.csv"

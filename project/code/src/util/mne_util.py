@@ -8,15 +8,12 @@ Created on 19.09.2016
 :organization: Reutlingen University
 '''
 import mne
-from mne.preprocessing import read_ica
 from mne.preprocessing.ica import ICA, corrmap
-from numpy import swapaxes, mean
+from numpy import mean
 from scipy import signal
 
 from config.config import ConfigProvider
-from util.file_util import FileUtil, ICA_EXTENSION
-from util.signal_table_util import TableFileUtil
-from util.table_dto import TableDto
+from util.file_util import FileUtil
 
 
 DEFAULT_SAMPLE_LENGTH = 1
@@ -28,7 +25,7 @@ class MNEUtil():
         self.fileUtil = FileUtil()
 
     def createMNEObjectFromCSV(self, filePath):
-        eegData = TableFileUtil().readEEGFile(filePath)
+        eegData = self.fileUtil.getDtoFromCsv(filePath)
         return self.createMNEObjectFromEEGDto(eegData)
 
     def createMNEObjectFromEEGDto(self, eegDto):
@@ -57,13 +54,6 @@ class MNEUtil():
         info = mne.create_info(channelNames, samplingRate, channelTypes, montage)
         info["description"] =  filename
         return info
-
-    def convertMNEToTableDto(self, mneObj):
-        header = mneObj.ch_names
-        data = swapaxes(mneObj._data, 0, 1)
-        filePath = mneObj.info["description"]
-        samplingRate = mneObj.info['sfreq']
-        return TableDto(header, data, filePath, samplingRate)
 
     def createMNEEpochsObject(self, eegData, clazz):
         raw = self.createMNEObjectFromEEGDto(eegData)
@@ -185,25 +175,6 @@ class MNEUtil():
             title = mneObj.info["description"]
         n_channels = len(mneObj.ch_names)
         return mneObj.plot(show=show, scalings=scalings, color=color, title=title, duration=60.0, n_channels=n_channels)
-
-    def save(self, mneObj, filepath=None):
-        filepath = self.fileUtil.getMNEFileName(mneObj, filepath)
-        mneObj.save(filepath, overwrite=True)
-        return filepath
-
-    def load(self, filepath):
-        '''A file with extension .raw.fif'''
-        raw = mne.io.read_raw_fif(filepath, add_eeg_ref=False, preload=True)
-        return raw
-
-    def saveICA(self, ica, filepath):
-        filepath = self.fileUtil.addExtension(ICA_EXTENSION, filepath)
-        ica.save(filepath)
-        return filepath
-
-    def loadICA(self, filepath):
-        '''A file with extension .ica.fif'''
-        return read_ica(filepath)
 
 if __name__ == '__main__':
     util = MNEUtil()

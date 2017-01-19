@@ -1,15 +1,18 @@
 #!/usr/bin/python
 
 import sys, os
+
+import matplotlib.pyplot as plt
+import numpy as np
+from util.eeg_util import EEGUtil
+from util.fft_util import FFTUtil
+from util.file_util import FileUtil
+from util.signal_util import SignalUtil
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-import numpy as np
-import matplotlib.pyplot as plt
 
-from util.signal_table_util import TableFileUtil
-from util.fft_util import FFTUtil
-from util.eeg_util import EEGUtil
-from util.signal_util import SignalUtil
 
 class EEGSignalPlotter(object):
 
@@ -89,7 +92,7 @@ class EEGSignalPlotter(object):
 def readEEGFile(fileName):
     eegPath = "E:/thesis/experiment/"
 
-    return TableFileUtil().readEEGFile(eegPath + fileName)
+    return FileUtil().getDto(eegPath + fileName)
 
 def plot(fileName, channels):
     eegData = readEEGFile(fileName)

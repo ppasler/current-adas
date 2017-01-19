@@ -13,6 +13,7 @@ import os
 from numpy import mean
 
 from util.mne_util import MNEUtil
+from util.file_util import FileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -29,17 +30,18 @@ class EOGExtractor(object):
     '''
 
     def __init__(self):
-        self.util = MNEUtil()
+        self.mneUtil = MNEUtil()
+        self.fileUtil = FileUtil()
         self.eogChans = [0, 2, 10]
-        self.templateRaw = self.util.load(TEMPLATE_ICA_PATH + "blink.raw.fif")
-        self.templateICA = self.util.loadICA(TEMPLATE_ICA_PATH + "blink_.ica.fif")
+        self.templateRaw = self.fileUtil.load(TEMPLATE_ICA_PATH + "blink.raw.fif")
+        self.templateICA = self.fileUtil.loadICA(TEMPLATE_ICA_PATH + "blink_.ica.fif")
         print "load ICA ", "template", self.templateICA.get_components().shape
 
         #plotICA(self.templateRaw, self.templateICA)
 
     def labelEOGChannel(self, icas):
         for eogChan in self.eogChans:
-            self.util.labelArtefact(self.templateICA, eogChan, icas, BLINK_LABEL)
+            self.mneUtil.labelArtefact(self.templateICA, eogChan, icas, BLINK_LABEL)
 
     def getEOGChannel(self, raw, ica, eogInds = None):
         eogInds = self._getEOGIndex(ica, eogInds)

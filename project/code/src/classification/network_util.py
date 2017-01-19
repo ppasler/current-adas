@@ -13,13 +13,13 @@ import os, sys
 import time
 
 from pybrain.datasets.supervised import SupervisedDataSet
+from util.file_util import FileUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
 import numpy as np
-from util.signal_table_util import TableFileUtil
 
 
 N_OUTPUT = 1
@@ -81,7 +81,7 @@ class NetworkDataUtil(object):
 
     def __init__(self, files=[]):
         self.files = files
-        self.fileUtil = TableFileUtil()
+        self.fileUtil = FileUtil()
 
     def get(self, separate=True):
         values0, values1 = self.readFiles(self.files)
@@ -94,7 +94,7 @@ class NetworkDataUtil(object):
         return self.nInputs
 
     def readFiles(self, files):
-        return self.fileUtil.readData(files[0]), self.fileUtil.readData(files[1])
+        return self.fileUtil.getDto(files[0]), self.fileUtil.getDto(files[1])
 
     def buildFullTestSet(self, values0, values1):
         values0 = self._addClass(values0, 0.)

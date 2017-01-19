@@ -9,7 +9,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 from statistic.signal_statistic_plotter import AbstractSignalPlotter
-from util.signal_table_util import TableFileUtil
+from util.file_util import FileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -64,6 +64,6 @@ if __name__ == '__main__': # pragma: no cover
     #filePath = scriptPath + "/../../data/awake_full_.csv"
     filePath = scriptPath + "/../../data/classes.csv"
 
-    fileUtil = TableFileUtil()
-    fp = FeaturePlotter(fileUtil.readData(filePath), fileUtil.readHeader(filePath), filePath)
+    dto = FileUtil().getDto(filePath)
+    fp = FeaturePlotter(dto.getData(), dto.getHeader(), filePath)
     fp.doPlot()

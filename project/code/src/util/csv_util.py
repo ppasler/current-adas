@@ -22,7 +22,7 @@ TIMESTAMP_STRING = "Timestamp" # key which specifies the unix timestamp of the d
 EMOKIT_TIME_PATTERN = "%Y-%m-%d %H:%M:%S.%f"
 BIOHARNESS_TIME_PATTERN = '%d/%m/%Y %H:%M:%S.%f'
 
-class TableFileUtil(object):
+class CSVUtil(object):
     '''
     This class reads *.csv files and creates SignalTable
     '''
@@ -189,7 +189,7 @@ class TableFileUtil(object):
         self.writeFile(filePath, transpose(structData), header)
 
 if __name__ == "__main__": # pragma: no cover
-    e = TableFileUtil()
+    e = CSVUtil()
     
     scriptPath = os.path.dirname(os.path.abspath(__file__))
     eeg_data = e.readEEGFile("../../examples/example_1024_new.csv", ",")

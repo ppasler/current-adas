@@ -17,7 +17,7 @@ from config.config import ConfigProvider
 from data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
-from util.signal_table_util import TableFileUtil
+from util.file_util import FileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -36,7 +36,7 @@ class PoSDBoS(object):
         self._initNeuralNetwork(networkFile)
         self._initFeatureExtractor(demoFile)
         self.dm = DrowsinessMonitor()
-        self.fileUtil = TableFileUtil()
+        self.fileUtil = FileUtil()
 
     def _initPoSDBoS(self):
         posdbosConfig = self.config.getPoSDBoSConfig()
@@ -126,7 +126,7 @@ class PoSDBoS(object):
         #end = start + len(data[0])/6
         #for field in self.config.getCollectorConfig().get("fields"):
         #    header.extend([str(x) + "Hz" + field for x in range(start, end)])
-        self.fileUtil.writeFile(filePath, data, header)
+        self.fileUtil.saveCSV(filePath, data, header)
 
 if __name__ == '__main__': # pragma: no cover
     experiments = ConfigProvider().getExperimentConfig()

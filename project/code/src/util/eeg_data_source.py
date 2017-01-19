@@ -12,9 +12,6 @@ import os
 import time
 
 from util.file_util import FileUtil
-from util.mne_util import MNEUtil
-from util.signal_table_util import TableFileUtil
-
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -34,7 +31,6 @@ class EEGTableDataSource(object):
         '''
         Reads data from ./../../examples/example_4096.csv and builds the data structure
         '''
-        self.reader = TableFileUtil()
         self.fileUtil = FileUtil()
         self.filepath = filePath
         self.infinite = infinite
@@ -46,10 +42,7 @@ class EEGTableDataSource(object):
         self.index = 0
 
     def convert(self):
-        if self.fileUtil.isCSVFile(self.filepath):
-            dto = self.fileUtil.getDtoFromCsv(TableFileUtil(), self.filepath)
-        else:
-            dto = self.fileUtil.getDtoFromFif(MNEUtil(), self.filepath)
+        dto = self.fileUtil.getDto(self.filepath)
         self._readHeader(dto)
         self._readRawData(dto)
 

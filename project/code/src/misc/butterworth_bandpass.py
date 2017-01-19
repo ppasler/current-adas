@@ -9,10 +9,10 @@ from pylab import arange
 
 import matplotlib.pyplot as plt
 import numpy as np
+from util.file_util import FileUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from util.signal_table_util import TableFileUtil
 from util.eeg_util import EEGUtil
 from util.signal_util import SignalUtil
 
@@ -31,7 +31,7 @@ class BandPassExample(object):
     
     def getEEGSignal(self):
         scriptPath = os.path.dirname(os.path.abspath(__file__))
-        return TableFileUtil().readEEGFile(scriptPath + "/../../examples/example_1024.csv")
+        return FileUtil().getDto(scriptPath + "/../../examples/example_1024.csv")
     
     def plotBBF(self, fs, lowcut, highcut):
         # Plot the frequency response for a few different orders.

@@ -3,7 +3,7 @@
 
 import os, collections
 
-from util.signal_table_util import TableFileUtil
+from util.file_util import FileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -11,7 +11,7 @@ scriptPath = os.path.dirname(os.path.abspath(__file__))
 def main():
     filepath = "E:/thesis/experiment/2/"
     eegFileName = filepath + "2016-12-01-17-50_EEG.csv"
-    eegData = TableFileUtil().readEEGFile(eegFileName)
+    eegData = FileUtil().getDtoFromCsv(eegFileName)
     print "SampRate: %.2f" % eegData.getSamplingRate()
     timeData = eegData.getTime().astype(int)
     timeCount = collections.Counter(timeData)

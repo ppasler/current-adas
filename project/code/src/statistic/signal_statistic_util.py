@@ -20,9 +20,7 @@ from statistic.signal_statistic_constants import *  # @UnusedWildImport
 from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
 from util.eeg_util import EEGUtil
 from util.file_util import FileUtil
-from util.mne_util import MNEUtil
 from util.quality_util import QualityUtil
-from util.signal_table_util import TableFileUtil
 from util.signal_util import SignalUtil
 
 
@@ -40,7 +38,7 @@ class SignalStatisticUtil(object):
         self.person = person
         self.filePath = filePath
         self._initStatsDict()
-        self._readData()
+        self.eegData = FileUtil().getDto(filePath)
         self._initSignals(signals)
         self.su = SignalUtil()
         self.qu = QualityUtil()
@@ -58,13 +56,6 @@ class SignalStatisticUtil(object):
         self.stats[GENERAL_KEY] = OrderedDict()
         self.stats[SIGNALS_KEY] = OrderedDict()
 
-    def _readData(self):
-        fileUtil = FileUtil()
-        if fileUtil.isCSVFile(self.filePath):
-            self.eegData = fileUtil.getDtoFromCsv(TableFileUtil(), self.filePath)
-        else:
-            self.eegData = fileUtil.getDtoFromFif(MNEUtil(), self.filePath)
-        
     def _initFields(self):
         self.statFields = STAT_FIELDS
         addMethods(self)
