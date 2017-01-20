@@ -1,4 +1,3 @@
-
 # Code from Chapter 3 of Machine Learning: An Algorithmic Perspective (2nd Edition)
 # by Stephen Marsland (http://stephenmonika.net)
 

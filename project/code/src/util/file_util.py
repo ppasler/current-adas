@@ -7,6 +7,7 @@ Created on 19.01.2017
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
+import re
 from mne.io import read_raw_fif
 from mne.preprocessing import read_ica
 from numpy import swapaxes
@@ -51,7 +52,7 @@ class FileUtil(object):
         CSVUtil().writeFile(filePath, data, header)
 
     def save(self, mneObj, filepath=None):
-        filepath = self.fileUtil.getMNEFileName(mneObj, filepath)
+        filepath = self.getMNEFileName(mneObj, filepath)
         mneObj.save(filepath, overwrite=True)
         return filepath
 
@@ -69,9 +70,10 @@ class FileUtil(object):
         '''A file with extension .ica.fif'''
         return read_ica(filepath)
 
-    def getMNEFileName(self, filePath, mneObj):
+    def getMNEFileName(self, mneObj, filePath):
         if filePath is None:
-            filePath = mneObj.info["description"].replace(CSV_EXTENSION, "")
+            filePath = mneObj.info["description"]
+        filePath = re.sub(CSV_EXTENSION +  "$", "", filePath)
         filePath = self.addExtension(RAW_EXTENSION, filePath)
         return filePath
 

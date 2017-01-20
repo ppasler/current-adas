@@ -8,13 +8,13 @@ Created on 20.01.2017
 :organization: Reutlingen University
 '''
 
-from base_test import * # @UnusedWildImport
-
 from math import sqrt, ceil
 
+from numpy.testing.utils import assert_array_equal
 from scipy.io import wavfile
 from scipy.signal.filter_design import freqz
 
+from base_test import *  # @UnusedWildImport
 from config.config import ConfigProvider
 from util.fft_util import FFTUtil
 from util.signal_util import SignalUtil
@@ -45,7 +45,7 @@ class TestSignalUtil(BaseTest):
         self.assertEqual(len(testList), len(normList))
         self.assertTrue(max(normList) <= 1)
         self.assertTrue(min(normList) >= -1)
-        np.array_equal(testList, normList)
+        assert_array_equal(testList, normList)
 
     def test_normalize_NaN(self):
         testList = np.array([np.NaN, -2, -1, 0, np.NaN, 1, 2, np.NaN])

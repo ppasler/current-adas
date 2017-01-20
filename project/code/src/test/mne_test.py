@@ -25,7 +25,7 @@ class MNEUtilTest(BaseTest):
         self.eegData = self._readData()
 
     def _readData(self):
-        return FileUtil().getDto(self.getData1024())
+        return FileUtil().getDto(self.getData1024CSV())
 
     def _createTestData(self):
         header = ["F3", "F4", "AF3", "AF4"]

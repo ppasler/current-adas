@@ -31,7 +31,7 @@ class BandPassExample(object):
     
     def getEEGSignal(self):
         scriptPath = os.path.dirname(os.path.abspath(__file__))
-        return FileUtil().getDto(scriptPath + "/../../examples/example_1024.csv")
+        return FileUtil().getDto(scriptPath + "/data/example_1024.csv")
     
     def plotBBF(self, fs, lowcut, highcut):
         # Plot the frequency response for a few different orders.

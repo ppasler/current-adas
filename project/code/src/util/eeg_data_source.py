@@ -29,15 +29,14 @@ class EEGTableDataSource(object):
     
     def __init__(self, filePath=None, infinite=True):
         '''
-        Reads data from ./../../examples/example_4096.csv and builds the data structure
+        Reads data from filePath or ./../../data/dummy_4096.csv and builds the data structure
         '''
         self.fileUtil = FileUtil()
         self.filepath = filePath
         self.infinite = infinite
         self.hasMore = False
         if filePath == None:
-            self.filepath = scriptPath + "/../../examples/example_4096.csv"
-            #self.filepath = scriptPath + "/../../../captured_data/janis/2016-07-12-11-15_EEG_1.csv"
+            self.filepath = scriptPath + "/../../data/dummy_4096.csv"
         self.data = None
         self.index = 0
 

@@ -55,7 +55,7 @@ class TableDto(object):
         if samplingRate is not None:
             stop = TIME_START + (len(self) / samplingRate)
             timeData = arange(TIME_START, stop, 1./samplingRate)
-            self.addRow(TIMESTAMP_STRING, timeData)
+            self.addRow(TIMESTAMP_STRING, timeData[0:len(self)])
 
     def addRow(self, name, row):
         self.header.insert(0, name)

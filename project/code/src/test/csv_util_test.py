@@ -8,9 +8,11 @@ Created on 20.01.2017
 :organization: Reutlingen University
 '''
 
-from base_test import * # @UnusedWildImport
+from base_test import *  # @UnusedWildImport
 
 from os.path import isfile
+from numpy.testing.utils import assert_array_equal
+
 from util.csv_util import CSVUtil
 
 
@@ -20,21 +22,21 @@ class TestCSVUtil(BaseTest):
         self.reader = CSVUtil()
 
     def test_readData(self):
-        file_path = self.getData32()
+        file_path = self.getData32CSV()
         if isfile(file_path):
             self.reader.readData(file_path)
         else:
             print "'%s' not found" % file_path
 
     def test_readHeader(self):
-        file_path = self.getData32()
+        file_path = self.getData32CSV()
         if isfile(file_path):
             self.reader.readHeader(file_path)
         else:
             print "'%s' not found" % file_path
 
     def testreadEEGFile(self):
-        file_path = self.getData32()
+        file_path = self.getData32CSV()
         if isfile(file_path):
             self.reader.readEEGFile(file_path)
         else:
@@ -76,7 +78,7 @@ class TestCSVUtil(BaseTest):
         if isfile(filePath):
             read = self.reader.readEEGFile(filePath)
             for key, values in data.iteritems():
-                np.array_equal(values["value"], read.getColumn(key))
+                assert_array_equal(values["value"], read.getColumn(key))
         self.removeFile(filePath)
 
     @unittest.skip("There should be no empty values")
@@ -89,7 +91,7 @@ class TestCSVUtil(BaseTest):
         self.assertFalse(np.isnan(nonEmptyCol).any())
 
     def test_readEEGFile_SeparatorFallback(self):
-        eegData = self.reader.readEEGFile(self.getData32())
+        eegData = self.reader.readEEGFile(self.getData32CSV())
         semicolonData = eegData.getColumn("F3")
 
         eegData = self.reader.readEEGFile(self.PATH + "example_32_comma.csv")
@@ -102,7 +104,7 @@ class TestCSVUtil(BaseTest):
         _ = self.reader.readEEGFile(self.PATH + "example_1024_new.csv")
 
     def test_readEEGFile(self):
-        self.eegData = self.reader.readEEGFile(self.getData32())
+        self.eegData = self.reader.readEEGFile(self.getData32CSV())
         self.assertTrue(self.eegData.hasEEGData)
         self.assertFalse(self.eegData.hasECGData)
 

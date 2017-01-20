@@ -8,8 +8,9 @@ Created on 20.01.2017
 :organization: Reutlingen University
 '''
 
-from base_test import * # @UnusedWildImport
+from base_test import *  # @UnusedWildImport
 
+from numpy.testing.utils import assert_array_equal
 from util.table_dto import TableDto
 
 
@@ -44,21 +45,21 @@ class TestTableDto(BaseTest):
         offset = 3
         column = self.eegData.getColumn("AF3", offset)
         self.assertTrue(len(column) == len(self.data)-offset)
-        np.array_equal(column, [6, 7, 8, 9, 10, 11])
+        assert_array_equal(column, [6, 7, 8, 9, 10, 11])
 
     def test_getColumn_withOffsetAndLimit(self):
         offset = 3
         limit = 7
         column = self.eegData.getColumn("AF3", offset, limit)
         self.assertTrue(len(column) == limit-offset)
-        np.array_equal(column, [6, 7, 8, 9])
+        assert_array_equal(column, [6, 7, 8, 9])
 
     def test_getColumn_withOffsetAndLength(self):
         offset = 2
         length = 5
         column = self.eegData.getColumn("AF3", offset, length=length)
         self.assertTrue(len(column) == length)
-        np.array_equal(column, [5, 6, 7, 8, 9])
+        assert_array_equal(column, [5, 6, 7, 8, 9])
 
     def test_getColumn_withOffsetAndLimitAndLength(self):
         offset = 1
@@ -67,7 +68,7 @@ class TestTableDto(BaseTest):
         length = 3
         column = self.eegData.getColumn("AF3", offset, limit, length=length)
         self.assertTrue(len(column) == limit-offset)
-        np.array_equal(column, [4, 5, 6, 7, 8, 9])
+        assert_array_equal(column, [4, 5, 6, 7, 8, 9])
 
     def test_getTimeIndex(self):
         self.assertTrue(self.eegData.getTimeIndex(1456820379.00) == 0)
@@ -93,23 +94,23 @@ class TestTableDto(BaseTest):
 
     def test_getColumnByTime(self):
         column = self.eegData.getColumnByTime("AF3", 1456820379.00, 1456820379.75)
-        np.array_equal(column, [3, 4, 5])
+        assert_array_equal(column, [3, 4, 5])
 
         column2 = self.eegData.getColumnByTime("AF3", 1456820379.00, 1456820381)
-        np.array_equal(column2, [3, 4, 5, 6, 8, 8, 9, 10])
+        assert_array_equal(column2, [3, 4, 5, 6, 7, 8, 9, 10])
 
     def test_getColumnByTime_notExactly(self):
         column = self.eegData.getColumnByTime("AF3", 1456820379.00, 1456820379.75)
-        np.array_equal(column, [3, 4, 5])
+        assert_array_equal(column, [3, 4, 5])
         
         column2 = self.eegData.getColumnByTime("AF3", 1456820379.01, 1456820379.75)
-        np.array_equal(column2, [4, 5])
+        assert_array_equal(column2, [4, 5])
 
         column3 = self.eegData.getColumnByTime("AF3", 1456820379.00, 1456820379.74)
-        np.array_equal(column3, [3, 4, 5])
+        assert_array_equal(column3, [3, 4, 5])
 
         column4 = self.eegData.getColumnByTime("AF3", 1456820379.00, 1456820379.76)
-        np.array_equal(column4, [3, 4, 5, 6]) 
+        assert_array_equal(column4, [3, 4, 5, 6]) 
 
 
     def test_getColumnByTime_outOfRange(self):

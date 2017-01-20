@@ -15,7 +15,7 @@ from util.eeg_data_source import EEGTablePacketSource, EEGTableWindowSource
 class TestEEGTableToPacketConverter(BaseTest):
 
     def setUp(self):
-        self.converter = EEGTablePacketSource(self.getData32(), False)
+        self.converter = EEGTablePacketSource(self.getData32CSV(), False)
 
     def test_convert_sunshine(self):
         self.assertFalse(self.converter.hasMore)
@@ -28,7 +28,7 @@ class TestEEGTableToPacketConverter(BaseTest):
 class TestEEGTableToWindowConverter(BaseTest):
 
     def setUp(self):
-        self.converter = EEGTableWindowSource(self.getData32(), False, 16)
+        self.converter = EEGTableWindowSource(self.getData32CSV(), False, 16)
 
     def test_convert_sunshine(self):
         self.assertFalse(self.converter.hasMore)

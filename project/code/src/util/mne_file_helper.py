@@ -51,7 +51,7 @@ def saveRaw(proband):
     #dur = time.time() - start
     #print "resampled EEG: %.2f" % dur
 
-    mneUtil.markBadChannels(eegRaw, ["AF3"])
+    #mneUtil.markBadChannels(eegRaw, ["AF3"])
     #eegRaw = mneUtil.interpolateBadChannels(eegRaw)
 
     try:
@@ -166,9 +166,13 @@ def addBlink():
     global probands
     probands.insert(0, "Test")
 
-if __name__ == '__main__':
-    proband = "Test"
-    loadRaw(proband)
-    raw, ica = loadICA(proband)
+def testFolder():
+    global probands
+    probands = ["test_data"]
+    global FILE_PATH
+    FILE_PATH = "../test/%s/"
 
-    plt_show()
+
+if __name__ == '__main__':
+    testFolder()
+    saveRaw("test_data")

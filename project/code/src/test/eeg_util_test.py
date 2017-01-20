@@ -9,6 +9,8 @@ Created on 20.01.2017
 '''
 
 from base_test import *  # @UnusedWildImport
+
+from numpy.testing.utils import assert_array_equal
 from util.fft_util import FFTUtil
 
 
@@ -32,7 +34,7 @@ class TestFFTUtil(BaseTest):
         self.assertEqual(len(testList), len(procList))
         # absolute;     normalize 0,1;          **2
         # [1, 2, 3, 4]; [0.25, 0.5, 0.75, 1];   [0.0625, 0.25, 0.5625, 1] 
-        np.array_equal(procList, [0.0625, 0.25, 0.5625, 1])
+        assert_array_equal(procList, [0.0625, 0.25, 0.5625, 1])
 
     def test__doubleValues(self):
         # odd: first entry is not doubled

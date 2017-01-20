@@ -10,7 +10,6 @@ Created on 10.05.2016
 
 from base_test import * # @UnusedWildImport
 
-from numpy import array, array_equal
 from numpy.testing.utils import assert_array_equal
 from pybrain.datasets.supervised import SupervisedDataSet
 
@@ -80,7 +79,7 @@ class TestNeuralNetwork(BaseTest):
         
         self.assertNotEqual(self.nn, nn2)
         
-        array_equal(self.nn.net.params, nn2.net.params)
+        assert_array_equal(self.nn.net.params, nn2.net.params)
         for inpt, _ in ds:
             self.assertEqual(self.nn.activate(inpt), nn2.activate(inpt))
 
@@ -118,8 +117,8 @@ class TestNetworkDataUtil(unittest.TestCase):
         self.n = NetworkDataUtil()
 
     def test_buildTestSet(self):
-        classOne = array([[1., 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])
-        classTwo = array([[4., 5, 6], [4, 6, 5], [5, 4, 6], [5, 6, 4], [6, 4, 5], [6, 5, 4]])
+        classOne = np.array([[1., 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])
+        classTwo = np.array([[4., 5, 6], [4, 6, 5], [5, 4, 6], [5, 6, 4], [6, 4, 5], [6, 5, 4]])
         
         n = NetworkDataUtil()
         print n.buildTestSet(classOne, classTwo)

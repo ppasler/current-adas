@@ -45,11 +45,14 @@ class BaseTest(unittest.TestCase):
 
     TEST_DATA_NAN = np.array([ np.NAN, np.NAN, np.NAN ,np.NAN ])
 
-    def getData32(self):
+    def getData32CSV(self):
         return self.PATH + "example_32.csv"
 
-    def getData1024(self):
+    def getData1024CSV(self):
         return self.PATH + "example_1024.csv"
+
+    def getData1024FIF(self):
+        return self.PATH + "example_1024.raw.fif"
 
     def countOcc(self, a, x):
         return len(np.where(a==x)[0])
