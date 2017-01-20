@@ -20,7 +20,7 @@ import numpy as np
 
 class BaseTest(unittest.TestCase):
 
-    PATH = dirname(abspath(__file__)) +  "/../../examples/"
+    PATH = dirname(abspath(__file__)) + "/test_data/"
 
     TEST_DATA_12000Hz = np.array([     0,  32451,  -8988, -29964,  17284,  25176, -24258, -18459,
             29368,  10325, -32229,  -1401,  32616,  -7633, -30503,  16079,
@@ -44,6 +44,12 @@ class BaseTest(unittest.TestCase):
     TEST_DATA_MIXED = np.array([ np.NAN, 1.0, 0.0, 1.0, 0.0, np.NAN ])
 
     TEST_DATA_NAN = np.array([ np.NAN, np.NAN, np.NAN ,np.NAN ])
+
+    def getData32(self):
+        return self.PATH + "example_32.csv"
+
+    def getData1024(self):
+        return self.PATH + "example_1024.csv"
 
     def countOcc(self, a, x):
         return len(np.where(a==x)[0])

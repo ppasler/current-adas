@@ -20,21 +20,21 @@ class TestCSVUtil(BaseTest):
         self.reader = CSVUtil()
 
     def test_readData(self):
-        file_path = self.PATH + "example_32.csv"
+        file_path = self.getData32()
         if isfile(file_path):
             self.reader.readData(file_path)
         else:
             print "'%s' not found" % file_path
 
     def test_readHeader(self):
-        file_path = self.PATH + "example_32.csv"
+        file_path = self.getData32()
         if isfile(file_path):
             self.reader.readHeader(file_path)
         else:
             print "'%s' not found" % file_path
 
     def testreadEEGFile(self):
-        file_path = self.PATH + "example_32.csv"
+        file_path = self.getData32()
         if isfile(file_path):
             self.reader.readEEGFile(file_path)
         else:
@@ -89,7 +89,7 @@ class TestCSVUtil(BaseTest):
         self.assertFalse(np.isnan(nonEmptyCol).any())
 
     def test_readEEGFile_SeparatorFallback(self):
-        eegData = self.reader.readEEGFile(self.PATH + "example_32.csv")
+        eegData = self.reader.readEEGFile(self.getData32())
         semicolonData = eegData.getColumn("F3")
 
         eegData = self.reader.readEEGFile(self.PATH + "example_32_comma.csv")
@@ -102,7 +102,7 @@ class TestCSVUtil(BaseTest):
         _ = self.reader.readEEGFile(self.PATH + "example_1024_new.csv")
 
     def test_readEEGFile(self):
-        self.eegData = self.reader.readEEGFile(self.PATH + "example_32.csv")
+        self.eegData = self.reader.readEEGFile(self.getData32())
         self.assertTrue(self.eegData.hasEEGData)
         self.assertFalse(self.eegData.hasECGData)
 

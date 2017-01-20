@@ -11,13 +11,10 @@ Created on 19.09.2016
 from base_test import * # @UnusedWildImport
 
 import mne
-from numpy import array_equal
 
 from config.config import ConfigProvider
 from util.file_util import FileUtil
 from util.mne_util import MNEUtil
-from util.table_dto import TIMESTAMP_STRING
-
 
 
 class MNEUtilTest(BaseTest):
@@ -25,12 +22,12 @@ class MNEUtilTest(BaseTest):
     def setUp(self):
         self.mne = MNEUtil()
         self.config = ConfigProvider().getEmotivConfig()
-        self.eegData = self.readData()
+        self.eegData = self._readData()
 
-    def readData(self):
-        return FileUtil().getDto(self.PATH + "example_1024.csv")
+    def _readData(self):
+        return FileUtil().getDto(self.getData1024())
 
-    def createTestData(self):
+    def _createTestData(self):
         header = ["F3", "F4", "AF3", "AF4"]
         data = np.random.rand(4,512)
         filePath = "test"
@@ -58,20 +55,12 @@ class MNEUtilTest(BaseTest):
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)
 
-    def test_convertMNEToTableDto(self):
-        mneObj = self.mne.createMNEObjectFromEEGDto(self.eegData)
-        eegData2 = FileUtil().convertMNEToTableDto(mneObj)
-        self.assertListEqual([TIMESTAMP_STRING] + self.eegData.getEEGHeader(), eegData2.getHeader())
-        array_equal(self.eegData.getEEGData(), eegData2.getData())
-        self.assertEqual(self.eegData.filePath, eegData2.filePath)
-        self.assertTrue(eegData2.hasEEGData)
-
     def test_createMNEEpochsObject(self):
         epochs = self.mne.createMNEEpochsObject(self.eegData, 1)
         self.assertEqual(len(epochs.get_data()), 15)
 
     def test__createEventsArray_overlapping(self):
-        raw = self.createTestData()
+        raw = self._createTestData()
         event_id = dict(drowsy=1)
         events1 = self.mne._createEventsArray(raw, 1, False)
         epochs1 = mne.Epochs(raw, events=events1, event_id=event_id, tmin=0.0, tmax=0.99, add_eeg_ref=True)

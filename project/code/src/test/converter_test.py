@@ -11,12 +11,11 @@ from base_test import * # @UnusedWildImport
 
 from util.eeg_data_source import EEGTablePacketSource, EEGTableWindowSource
 
-FILE_PATH = dirname(abspath(__file__)) + "/../../examples/example_32.csv"
 
 class TestEEGTableToPacketConverter(BaseTest):
 
     def setUp(self):
-        self.converter = EEGTablePacketSource(FILE_PATH, False)
+        self.converter = EEGTablePacketSource(self.getData32(), False)
 
     def test_convert_sunshine(self):
         self.assertFalse(self.converter.hasMore)
@@ -29,7 +28,7 @@ class TestEEGTableToPacketConverter(BaseTest):
 class TestEEGTableToWindowConverter(BaseTest):
 
     def setUp(self):
-        self.converter = EEGTableWindowSource(FILE_PATH, False, 16)
+        self.converter = EEGTableWindowSource(self.getData32(), False, 16)
 
     def test_convert_sunshine(self):
         self.assertFalse(self.converter.hasMore)

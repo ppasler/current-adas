@@ -68,7 +68,7 @@ class TestEEGUtil(BaseTest):
         self.assertTrue(all([x in channels["gamma"] for x in gamma]))
 
     def test_getWaves(self):
-        eegData = FileUtil().getDto(self.PATH + "example_32.csv")
+        eegData = FileUtil().getDto(self.getData32())
         eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
         waves = self.util.getWaves(eeg, eegData.getSamplingRate())
@@ -78,7 +78,7 @@ class TestEEGUtil(BaseTest):
             self.assertEqual(len(wave), nEeg)
 
     def test_getSingleWaves(self):
-        eegData = FileUtil().getDto(self.PATH + "example_32.csv")
+        eegData = FileUtil().getDto(self.getData32())
         eeg = eegData.getColumn("F3")
         nEeg = len(eeg)
         samplingRate = eegData.getSamplingRate()
