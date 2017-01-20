@@ -35,6 +35,7 @@ class TestDataProcessor(BaseTest):
     def test_run(self):
         inpSize = self.inputQueue.qsize()
         self.assertEqual(self.outputQueue.qsize(), 0)
+
         self.processor.processData()
 
         self.assertEqual(self.inputQueue.qsize(), 0)

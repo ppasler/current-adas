@@ -48,13 +48,16 @@ class HttpEEGDataHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             data.pop("Unknown",None)
         data["UNIX_TIME"] = time.time()
         return data
-        
+
+    def setSource(self, source):
+        print "hello"
+        self.source = source
 
     def do_GET(self):
         """Respond to a GET request."""
 
-        global emotiv
-        packet = emotiv.dequeue()
+        packet = self.server.source.dequeue()
+
         if packet != None:
             self._add_success()
 
@@ -75,11 +78,13 @@ class HttpEEGDataProvider(object):
     /header     returns a list of all data keys
     '''
     
-    def __init__(self, host="localhost", port=9000):      
+    def __init__(self, host="localhost", port=9000, source=None):
         self.server_address = (host, port)
         self.run_server = True
         self.handler_class = HttpEEGDataHandler
         self.server_class = BaseHTTPServer.HTTPServer
+        self.httpd = self.server_class(self.server_address, self.handler_class)
+        self.httpd.source = source
 
     def stop(self):
         self.run_server = False
@@ -94,7 +99,6 @@ class HttpEEGDataProvider(object):
 
     def run(self):
         '''Serve EPOC data until forever'''
-        self.httpd = self.server_class(self.server_address, self.handler_class)
         print time.asctime(), "Server Starts - %s:%s" % self.server_address
         while self.run_server:
             try:
