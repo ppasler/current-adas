@@ -45,7 +45,7 @@ class DataProcessor(object):
                 if not procInvalid:
                     self.outputQueue.put(procData)
             except Empty:
-                pass
+                self.close()
 
     def process(self, data):
         #TODO make me fast and nice

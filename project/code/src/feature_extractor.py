@@ -73,7 +73,6 @@ class FeatureExtractor(object):
 
         
 if __name__ == "__main__":  # pragma: no cover
-    collector =
     extractor = FeatureExtractor()
     extractor.start()
     
