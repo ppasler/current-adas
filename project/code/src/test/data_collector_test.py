@@ -1,23 +1,25 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import sys, os
+'''
+Created on 02.07.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
+from base_test import * # @UnusedWildImport
 import threading
 from time import sleep
-import unittest
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from data_collector import EEGDataCollector
 from util.eeg_data_source import EEGTablePacketSource
 
 
-
-
-
 WINDOW_SIZE = 4
 FIELDS = ["F3", "F4", "X", "Y"]
 
-class DataCollectorTest(unittest.TestCase):
+class DataCollectorTest(BaseTest):
 
     def setUp(self):
         source = EEGTablePacketSource()

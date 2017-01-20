@@ -15,6 +15,8 @@ from scipy import signal
 from config.config import ConfigProvider
 from util.file_util import FileUtil
 
+import warnings
+warnings.filterwarnings(action='ignore')
 
 DEFAULT_SAMPLE_LENGTH = 1
 

@@ -8,32 +8,27 @@ Created on 19.09.2016
 :organization: Reutlingen University
 '''
 
-import sys, os
-import unittest
+from base_test import * # @UnusedWildImport
 
 import mne
 from numpy import array_equal
 
 from config.config import ConfigProvider
-import numpy as np
 from util.file_util import FileUtil
 from util.mne_util import MNEUtil
 from util.table_dto import TIMESTAMP_STRING
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-PATH = os.path.dirname(os.path.abspath(__file__)) +  "/../../examples/"
-
-def readData():
-    return FileUtil().getDto(PATH + "example_1024.csv")
-
-class MNEUtilTest(unittest.TestCase):
+class MNEUtilTest(BaseTest):
 
     def setUp(self):
         self.mne = MNEUtil()
         self.config = ConfigProvider().getEmotivConfig()
-        self.eegData = readData()
+        self.eegData = self.readData()
+
+    def readData(self):
+        return FileUtil().getDto(self.PATH + "example_1024.csv")
 
     def createTestData(self):
         header = ["F3", "F4", "AF3", "AF4"]

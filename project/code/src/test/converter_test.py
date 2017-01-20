@@ -7,17 +7,13 @@ Created on 08.08.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-import sys, os
-import unittest
+from base_test import * # @UnusedWildImport
 
 from util.eeg_data_source import EEGTablePacketSource, EEGTableWindowSource
 
+FILE_PATH = dirname(abspath(__file__)) + "/../../examples/example_32.csv"
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-FILE_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../../examples/example_32.csv"
-
-class TestEEGTableToPacketConverter(unittest.TestCase):
+class TestEEGTableToPacketConverter(BaseTest):
 
     def setUp(self):
         self.converter = EEGTablePacketSource(FILE_PATH, False)
@@ -30,7 +26,7 @@ class TestEEGTableToPacketConverter(unittest.TestCase):
             self.converter.dequeue()
         self.assertFalse(self.converter.hasMore)
 
-class TestEEGTableToWindowConverter(unittest.TestCase):
+class TestEEGTableToWindowConverter(BaseTest):
 
     def setUp(self):
         self.converter = EEGTableWindowSource(FILE_PATH, False, 16)

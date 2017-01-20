@@ -1,12 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import sys, os
-import unittest
+'''
+Created on 02.07.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
+from base_test import * # @UnusedWildImport
 
 from window.rectangular_signal_window import RectangularSignalWindow
-
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
 WINDOW_SIZE = 4
@@ -19,7 +23,7 @@ def _fillValues(window, count, start=0):
 def _fillWindowFull(window):
     _fillValues(window, WINDOW_SIZE)
 
-class RectanglarSignalWindowTest(unittest.TestCase):
+class RectanglarSignalWindowTest(BaseTest):
 
     def setUp(self):
         self.window = RectangularSignalWindow(WINDOW_SIZE, ["X"])
@@ -27,7 +31,7 @@ class RectanglarSignalWindowTest(unittest.TestCase):
     def notify(self, data):
         self.notifyCalled += 1
 
-    def test_windowsFilled(self):        
+    def test_windowsFilled(self):
         self.assertEquals(self.window.window, INIT_WINDOW)
         
         _fillValues(self.window, WINDOW_SIZE / 2)

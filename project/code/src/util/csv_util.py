@@ -11,7 +11,7 @@ Created on 10.05.2016
 import os
 import re
 
-from numpy import genfromtxt, delete, savetxt, transpose
+from numpy import genfromtxt, savetxt, transpose
 
 from util.date_converter import DateConverter
 from table_dto import TableDto

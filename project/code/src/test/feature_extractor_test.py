@@ -1,15 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, os
-import unittest
+'''
+Created on 02.07.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
+from base_test import * # @UnusedWildImport
+
 from Queue import Queue
 
-
 from data_processor import DataProcessor
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 
 WINDOW_SIZE = 4
 TEST_DATA = {
@@ -23,7 +26,7 @@ TEST_DATA = {
                 }
             }
 
-class TestProcessingChain(unittest.TestCase):
+class TestProcessingChain(BaseTest):
 
     # TODO test queue and threading
     def setUp(self):
@@ -44,16 +47,3 @@ class TestProcessingChain(unittest.TestCase):
     
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-
-
-
-
-
-
-
-    

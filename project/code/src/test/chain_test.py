@@ -1,12 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on 10.05.2016
 
-@author: Paul Pasler
+:author: Paul Pasler
+:organization: Reutlingen University
 '''
-import sys, os
-import unittest
 
-from numpy import NaN, isnan, count_nonzero, array
+from base_test import *  # @UnusedWildImport
+
+from numpy import NaN
 from numpy.testing.utils import assert_allclose
 
 from config.config import ConfigProvider
@@ -14,18 +18,8 @@ from eeg_processor import SignalProcessor
 from util.quality_util import QualityUtil
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-
-
-def sameEntries(list1, list2):
-    if len(list1) != len(list2):
-        return False
-
-    return all([x in list1 for x in list2])
-
 #TODO make this flexible to config values change
-class TestSimpleChain(unittest.TestCase):
+class TestSimpleChain(BaseTest):
 
     def setUp(self):
         self.chain = SignalProcessor()
@@ -37,7 +31,7 @@ class TestSimpleChain(unittest.TestCase):
         self.maxNaNValues = config.get("maxNaNValues")
 
     def _checkValidData(self, data, invalid):
-        self.assertEqual(invalid, self.maxNaNValues < count_nonzero(isnan(data)))
+        self.assertEqual(invalid, self.maxNaNValues < np.count_nonzero(np.isnan(data)))
 
     def test_process_sunshine(self):
         data = [self.lowerBound, self.lowerBound / 2.0, 0, self.upperBound / 2.0, self.upperBound]
@@ -54,7 +48,7 @@ class TestSimpleChain(unittest.TestCase):
 
         proc, invalidData = self.chain.process(data, qual)
         self._checkValidData(proc, invalidData)
-        assert_allclose(proc, [-1.0, NaN, NaN, 0.5, 1])
+        np.assert_allclose(proc, [-1.0, NaN, NaN, 0.5, 1])
 
     @unittest.skip("unused")
     def test_process_replaceSequences(self):
@@ -63,7 +57,7 @@ class TestSimpleChain(unittest.TestCase):
 
         proc, invalidData = self.chain.process(data, qual)
         self._checkValidData(proc, invalidData)
-        assert_allclose(proc, [NaN, NaN, NaN, NaN, NaN, 0.5, 1.0])
+        np.assert_allclose(proc, [NaN, NaN, NaN, NaN, NaN, 0.5, 1.0])
 
     def test_process_replaceOutliners(self):
         data = [-5000, self.lowerBound-1, self.lowerBound, self.lowerBound+1, self.upperBound-1, self.upperBound, self.upperBound+1, 5000]
@@ -71,7 +65,7 @@ class TestSimpleChain(unittest.TestCase):
 
         proc, invalidData = self.chain.process(data, qual)
         self._checkValidData(proc, invalidData)
-        self.assertEquals(count_nonzero(proc), 4)
+        self.assertEquals(np.count_nonzero(proc), 4)
 
     def test_checkValid(self):
         maxNaNValues = self.maxNaNValues
@@ -88,7 +82,7 @@ class TestSimpleChain(unittest.TestCase):
             self.assertTrue(invalidData, "length %d" % length)
 
     def _getNaNList(self, length):
-        return array([NaN]*length)
+        return np.array([NaN]*length)
 
 
 if __name__ == "__main__":

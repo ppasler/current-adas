@@ -1,30 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on 10.05.2016
 
-@author: Paul Pasler
+:author: Paul Pasler
+:organization: Reutlingen University
 '''
-import sys, os
-import unittest
 
-from numpy import array
+from base_test import * # @UnusedWildImport
+
+from numpy import array, array_equal
+from numpy.testing.utils import assert_array_equal
 from pybrain.datasets.supervised import SupervisedDataSet
 
 from classification.network_util import NetworkDataUtil, NetworkUtil
 from classification.neural_network import NeuralNetwork
-from numpy.testing.utils import assert_array_equal
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
 name = "zzz_test"
 
-def sameEntries(list1, list2):
-    if len(list1) != len(list2):
-        return False
 
-    return all([x in list1 for x in list2])
-
-class TestNeuralNetwork(unittest.TestCase):
+class TestNeuralNetwork(BaseTest):
 
     def setUp(self):
         self.nn = NeuralNetwork()
@@ -56,12 +53,6 @@ class TestNeuralNetwork(unittest.TestCase):
         values = [((0, 0), (0,)), ((0, 1), (0,)), ((1, 0), (0,)), ((1, 1), (1,))]*2
         return self._createData(2, 1, values)
 
-    def removeFile(self):
-        try:
-            os.remove(self.nn.path + name + ".nn")
-        except OSError as e:
-            print e.message
-
     def test_xor(self):
         ds = self.createXORData()
 
@@ -89,11 +80,11 @@ class TestNeuralNetwork(unittest.TestCase):
         
         self.assertNotEqual(self.nn, nn2)
         
-        self.assertTrue(sameEntries(self.nn.net.params, nn2.net.params))
+        array_equal(self.nn.net.params, nn2.net.params)
         for inpt, _ in ds:
             self.assertEqual(self.nn.activate(inpt), nn2.activate(inpt))
 
-        self.removeFile()
+        self.removeFile(name)
 
     def test_test(self):
         ds = self.createORData()

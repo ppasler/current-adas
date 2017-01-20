@@ -1,15 +1,20 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+'''
+Created on 02.07.2016
+
+:author: Paul Pasler
+:organization: Reutlingen University
+'''
+
+from base_test import * # @UnusedWildImport
 
 import ConfigParser
-import unittest
-
 from config.config import ConfigProvider
 
 
-class ConfigTest(unittest.TestCase):
+class ConfigTest(BaseTest):
 
     def setUp(self):
         self.config = ConfigProvider()
