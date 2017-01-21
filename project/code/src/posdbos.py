@@ -10,6 +10,7 @@ Created on 30.05.2016
 from Queue import Empty
 import os
 import threading
+from time import sleep
 import time
 
 from classification.neural_network import NeuralNetwork
@@ -68,8 +69,13 @@ class PoSDBoS(object):
         else:
             return EEGDataCollector(None, **collectorConfig)
 
+    def stop(self):
+        self.running = False
+
     def close(self):
         self.running = False
+        self.fe.close()
+        self.dm.close()
 
     def run(self):
         fet = threading.Thread(target=self.fe.start)
@@ -90,17 +96,25 @@ class PoSDBoS(object):
                 self.setStatus(clazz)
                 total += 1
             except Empty:
-                print "needed %sms for %d windows" % (time.time() - start, total) 
-                pass
+                print "Needed %.2fs for %d windows" % (time.time() - start, total) 
+                self.stop()
             except KeyboardInterrupt:
                 self.close()
             except Exception as e:
                 print e.message
                 self.close()
+
+
+        while dmt.is_alive():
+            try:
+                sleep(1)
+            except KeyboardInterrupt:
+                self.close()
         #self.writeFeature(c)
-        self.fe.close()
-        self.dm.close()
+        self.close()
+        fet.join()
         dmt.join()
+        print "done"
 
     def setStatus(self, clazz):
         self.classified[clazz] += 1

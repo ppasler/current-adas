@@ -15,6 +15,17 @@ from Queue import Queue
 from data_collector import DummyDataCollector
 from data_processor import DataProcessor
 
+WINDOW_SIZE = 4
+TEST_DATA = {
+                'X': {
+                    'quality': [0, 1],
+                    'value': [21.0, 22.0]
+                },
+                'F3': {
+                    'quality': [0, 12],
+                    'value': [-50.0, -55.0]
+                }
+            }
 
 class TestDataProcessor(BaseTest):
 
@@ -22,7 +33,6 @@ class TestDataProcessor(BaseTest):
         self.inputQueue = Queue()
         self.outputQueue = Queue()
         self.processor = DataProcessor(self.inputQueue, self.outputQueue)
-        self._fillQueue()
 
     def _addData(self, data):
         self.inputQueue.put(data)
@@ -33,6 +43,8 @@ class TestDataProcessor(BaseTest):
         dc.collectData()
 
     def test_run(self):
+        self._fillQueue()
+
         inpSize = self.inputQueue.qsize()
         self.assertEqual(self.outputQueue.qsize(), 0)
 
@@ -41,6 +53,15 @@ class TestDataProcessor(BaseTest):
         self.assertEqual(self.inputQueue.qsize(), 0)
         self.assertEqual(self.outputQueue.qsize(), inpSize)
 
+    def test_process(self):
+        self.processor.process(TEST_DATA)
+
+    def test_splitData(self):
+        eegData, gyroData = self.processor.splitData(TEST_DATA)
+        intersect = set(eegData) & set(gyroData)
+        self.assertTrue(len(intersect) == 0)
+        self.assertTrue("F3" in eegData)
+        self.assertTrue("X" in gyroData)
 
 if __name__ == '__main__':
     unittest.main()

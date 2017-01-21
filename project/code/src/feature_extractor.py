@@ -27,10 +27,10 @@ class FeatureExtractor(object):
         self.inputQueue = Queue()
         self.outputQueue = Queue()
         self.extractQueue = Queue()
-        
+
         self.sigUtil = SignalUtil()
         self.eegUtil = EEGUtil()
-        
+
         self.collector = dataCollector
         self.collectorThread = threading.Thread(target=self.collector.collectData)
         
@@ -69,9 +69,9 @@ class FeatureExtractor(object):
         self.processingThread.join()
         self.collector.close()
         self.collectorThread.join()
+        self.extract = False
         print("%s: closing feature extractor" % self.__class__.__name__)     
 
-        
 if __name__ == "__main__":  # pragma: no cover
     extractor = FeatureExtractor()
     extractor.start()

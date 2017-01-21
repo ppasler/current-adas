@@ -33,11 +33,19 @@ class TestHttpEEGData(BaseTest):
         self.pThread.start()
 
     def test_run(self):
-        print self.receiver.getHeader()
-        print self.receiver.getData()
+
+        header = self.receiver.getHeader()
+
+        fetchNum = 3
+        data = []
+        for _ in range(fetchNum):
+            data.append(self.receiver.getData())
 
         self.provider.stop()
         self.pThread.join(2)
+
+        self.assertTrue(len(header) > 0)
+        self.assertTrue(len(data) == fetchNum)
 
 if __name__ == '__main__':
     unittest.main()
