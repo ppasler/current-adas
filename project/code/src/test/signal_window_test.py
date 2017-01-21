@@ -10,7 +10,7 @@ Created on 02.07.2016
 
 from base_test import * # @UnusedWildImport
 
-from window.rectangular_signal_window import RectangularSignalWindow
+from collector.rectangular_signal_window import RectangularSignalWindow
 
 
 WINDOW_SIZE = 4

@@ -14,11 +14,13 @@ from time import sleep
 import time
 
 from classification.neural_network import NeuralNetwork
+from collector.data_collector import DummyDataCollector, EEGDataCollector
 from config.config import ConfigProvider
-from window.data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
+from util.eeg_data_source import EEGTableWindowSource
 from util.file_util import FileUtil
+from emotiv_connector import EmotivConnector
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -64,10 +66,15 @@ class PoSDBoS(object):
 
     def _initDataCollector(self, demoFile):
         collectorConfig = self.config.getCollectorConfig()
+        fields = collectorConfig.get("fields")
+        windowSize = collectorConfig.get("windowSize")
+        windowCount =collectorConfig.get("windowCount") 
         if self.demo:
-            return DummyDataCollector(demoFile, **collectorConfig)
+            datasource = EEGTableWindowSource(demoFile, False, windowSize, windowCount)
+            datasource.convert()
+            return DummyDataCollector(datasource, fields, windowSize, windowCount)
         else:
-            return EEGDataCollector(None, **collectorConfig)
+            return EEGDataCollector(EmotivConnector(), fields, windowSize, windowCount)
 
     def stop(self):
         self.running = False

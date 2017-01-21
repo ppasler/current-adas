@@ -8,8 +8,7 @@ Created on 30.05.2016
 :organization: Reutlingen University
 '''
 
-from util.eeg_data_source import EEGTableWindowSource
-from window.rectangular_signal_window import RectangularSignalWindow
+from rectangular_signal_window import RectangularSignalWindow
 
 
 class DataCollector(object):
@@ -23,11 +22,11 @@ class DataCollector(object):
     
     '''
 
-    def __init__(self, datasource=None, fields=[], windowSize=128, windowCount=2):
+    def __init__(self, datasource, fields=[], windowSize=128, windowCount=2):
         '''
         :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
         :param list fields: list of key which are taken from the EmotivData
-        :param int windowSize: size of one window (default 128)
+        :param int windowSize: size of one collector (default 128)
         :param int windowCount: number of windows (default 2)
         '''
         self.datasource = datasource
@@ -70,11 +69,11 @@ class EEGDataCollector(DataCollector):
     
     '''
 
-    def __init__(self, datasource=None, fields=[], windowSize=128, windowCount=2):
+    def __init__(self, datasource, fields=[], windowSize=128, windowCount=2):
         '''
         :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
         :param list fields: list of key which are taken from the EmotivData
-        :param int windowSize: size of one window (default 128)
+        :param int windowSize: size of one collector (default 128)
         :param int windowCount: number of windows (default 2)
         '''
         DataCollector.__init__(self, datasource, fields, windowSize, windowCount)
@@ -107,12 +106,8 @@ class EEGDataCollector(DataCollector):
 
 class DummyDataCollector(DataCollector):
 
-    def __init__(self, filePath=None, fields=[], windowSize=128, windowCount=2):
-        datasource = EEGTableWindowSource(filePath, False, windowSize, windowCount)
-        datasource.convert()
+    def __init__(self, datasource, fields=[], windowSize=128, windowCount=2):
         DataCollector.__init__(self, datasource, fields, windowSize, windowCount)
-        self.fields = fields
-        self.collect = True;
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''

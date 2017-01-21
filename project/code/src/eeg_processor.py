@@ -9,7 +9,6 @@ Created on 02.08.2016
 '''
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
-from numpy import NaN
 from config.config import ConfigProvider
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil

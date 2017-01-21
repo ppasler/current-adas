@@ -12,8 +12,10 @@ from base_test import *  # @UnusedWildImport
 
 from Queue import Queue
 
-from window.data_collector import DummyDataCollector
+from collector.data_collector import DummyDataCollector
 from data_processor import DataProcessor
+from util.eeg_data_source import EEGTableWindowSource
+
 
 WINDOW_SIZE = 4
 TEST_DATA = {
@@ -38,7 +40,9 @@ class TestDataProcessor(BaseTest):
         self.inputQueue.put(data)
 
     def _fillQueue(self):
-        dc = DummyDataCollector()
+        datasource = EEGTableWindowSource(self.getData1024CSV(), False, 128, 2)
+        datasource.convert()
+        dc = DummyDataCollector(datasource)
         dc.setHandler(self._addData)
         dc.collectData()
 

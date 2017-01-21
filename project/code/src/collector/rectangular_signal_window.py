@@ -12,7 +12,7 @@ from copy import deepcopy
 
 class RectangularSignalWindow(SignalWindow):
     '''
-    Interface for window function
+    Interface for collector function
     '''
     
     def __init__(self, windowSize, fields):
@@ -26,7 +26,7 @@ class RectangularSignalWindow(SignalWindow):
             observer.notify(data)
     
     def _doWindowFunction(self, data):
-        '''Simple window rectangular function '''
+        '''Simple collector rectangular function '''
         return data
     
     def _resetWindow(self):

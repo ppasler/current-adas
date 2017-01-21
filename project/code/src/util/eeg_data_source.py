@@ -136,7 +136,7 @@ class EEGTableWindowSource(EEGTableDataSource):
     '''
     Util for EPOC dummy data 
     
-    Converts CSV style data to a window object
+    Converts CSV style data to a collector object
 
     | CSV
     | ``Timestamp;         F3;   X; ... QF3``
@@ -145,7 +145,7 @@ class EEGTableWindowSource(EEGTableDataSource):
     | ``1459760955.863;  69.0;  -1; ...15.0``
 
      
-    | window
+    | collector
     | ``{``
     |    ``"Timestamp": [1459760953.863, ... 1459760955.863]``
     |    ``"F3" :{``
@@ -185,8 +185,8 @@ class EEGTableWindowSource(EEGTableDataSource):
         return window
 
     def dequeue(self):
-        '''get the current dummy data window
-        :return: data window
+        '''get the current dummy data collector
+        :return: data collector
         :rtype: np.array 
         '''
         row = self.data[self.index]

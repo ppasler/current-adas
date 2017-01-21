@@ -27,7 +27,7 @@ class EEGSignalPlotter(object):
 
 
     def configureFigure(self):
-        #http://stackoverflow.com/questions/12439588/how-to-maximize-a-plt-show-window-using-python
+        #http://stackoverflow.com/questions/12439588/how-to-maximize-a-plt-show-collector-using-python
         mng = plt.get_current_fig_manager()
         mng.resize(*mng.window.maxsize())
         mng.window.wm_geometry("+0+0")
