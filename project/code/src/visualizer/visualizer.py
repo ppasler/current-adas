@@ -8,12 +8,10 @@ Created on 07.12.2016
 :organization: Reutlingen University
 '''
 
-import sys
 from math import ceil
 
 from PyQt4 import QtGui, QtCore
 
-from config.config import ConfigProvider
 from control import ControlPanelWidget
 from data_plotter import DataWidget
 from video_player import VideoPlayer, VideoWidget
@@ -149,21 +147,3 @@ class DataVisualizer(QtGui.QMainWindow):
 
     def _calcNextFullSecondFrame(self):
         return int(ceil((self.curSecond+self.direction) * self.maxFps))
-
-def main():
-    app = QtGui.QApplication(sys.argv)
-    expPath = "E:/thesis/experiment/"
-    probands = ConfigProvider().getExperimentConfig().get("probands")
-    files = ["drive.mp4", "face.mp4", "EEG.raw.fif"]
-    #dataUrls = ['../../examples/example_4096.csv']
-
-    url = expPath + "Test/" #probands[1] + "/"
-    videoUrls = [url+files[0], expPath + "1/" +files[0]]
-    dataUrls = [url+files[2]]
-
-    vis = DataVisualizer(None, videoUrls, dataUrls)
-    vis.show()
-    sys.exit(app.exec_())
-
-if __name__ == "__main__":
-    main()

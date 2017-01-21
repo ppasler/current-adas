@@ -12,26 +12,29 @@ import sys
 
 from PyQt4 import QtGui
 
-from config.config import ConfigProvider
 from visualizer import DataVisualizer
 
 
-EXPERIMENT_PATH = "E:/thesis/experiment/"
+EXPERIMENT_PATH = "E:/thesis/experiment/%s/"
+EXPERIMENT_FILES = ["drive.mp4", "face.mp4", "EEG.raw.fif"]
+
+def runTest(videoFiles, dataFile):
+    url = EXPERIMENT_PATH % "test"
+    videoUrls = [url + videoFile for videoFile in videoFiles]
+    dataUrls = [url + dataFile]
+    return videoUrls, dataUrls
 
 def runWithProband(proband):
-    probands = ConfigProvider().getExperimentConfig().get("probands")
-    files = ["drive.mp4", "face.mp4", "EEG.raw.fif"]
-    #dataUrls = ['../../examples/example_4096.csv']
-
-    url = EXPERIMENT_PATH + str(proband) + "/"
-    videoUrls = [url+files[0], url+files[1]]
-    dataUrls = [url+files[2]]
+    url = EXPERIMENT_PATH % str(proband)
+    videoUrls = [url + EXPERIMENT_FILES[0], url + EXPERIMENT_FILES[1]]
+    dataUrls = [url + EXPERIMENT_FILES[2]]
     return videoUrls, dataUrls
 
 def main():
     app = QtGui.QApplication(sys.argv)
-    
-    videoUrls, dataUrls = runWithProband(1)
+
+    #videoUrls, dataUrls = runWithProband(1)
+    videoUrls, dataUrls = runTest(["blink.mp4"], "blink.csv")
 
     vis = DataVisualizer(None, videoUrls, dataUrls)
     vis.show()
