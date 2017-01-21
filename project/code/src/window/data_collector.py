@@ -8,12 +8,9 @@ Created on 30.05.2016
 :organization: Reutlingen University
 '''
 
-from time import sleep
-
-from emotiv_connector import EmotivConnector
-from window.rectangular_signal_window import RectangularSignalWindow
-from http_eeg_data_receiver import HttpEEGDataReceiver
 from util.eeg_data_source import EEGTableWindowSource
+from window.rectangular_signal_window import RectangularSignalWindow
+
 
 class DataCollector(object):
     '''
@@ -80,16 +77,8 @@ class EEGDataCollector(DataCollector):
         :param int windowSize: size of one window (default 128)
         :param int windowCount: number of windows (default 2)
         '''
-        if datasource == None: # pragma: no cover
-            datasource = self._setDefaultDataSource()
         DataCollector.__init__(self, datasource, fields, windowSize, windowCount)
         self._buildSignalWindows(windowSize, windowCount)
-
-    def _setDefaultDataSource(self): # pragma: no cover
-        '''Set Emotiv as default source and starts it inside a gevent context'''
-        emotiv = EmotivConnector(display_output=False)
-        print "using default datasource: " + emotiv.__class__.__name__
-        return emotiv
 
     def _buildSignalWindows(self, windowSize, windowCount):
         #TODO windowCount
@@ -140,21 +129,3 @@ class DummyDataCollector(DataCollector):
 
     def _getData(self):
         return self.datasource.dequeue()
-
-
-if __name__ == "__main__": # pragma: no cover
-    #emotiv = Emotiv(display_output=False)
-    #gevent.spawn(emotiv.setup)
-    #gevent.sleep(0)
-
-    client = HttpEEGDataReceiver("localhost", 9000)
-
-    dc = EEGDataCollector(client, ["X", "F3"])
-    handler = lambda x: x
-    dc.setHandler(handler)
-    dc.collectData()
-    sleep(2)
-    print "hello"
-    dc.close()
-    
-

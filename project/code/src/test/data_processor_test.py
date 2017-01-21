@@ -12,7 +12,7 @@ from base_test import *  # @UnusedWildImport
 
 from Queue import Queue
 
-from data_collector import DummyDataCollector
+from window.data_collector import DummyDataCollector
 from data_processor import DataProcessor
 
 WINDOW_SIZE = 4

@@ -15,7 +15,7 @@ import time
 
 from classification.neural_network import NeuralNetwork
 from config.config import ConfigProvider
-from data_collector import DummyDataCollector, EEGDataCollector
+from window.data_collector import DummyDataCollector, EEGDataCollector
 from feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
 from util.file_util import FileUtil

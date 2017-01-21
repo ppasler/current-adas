@@ -271,9 +271,9 @@ if __name__ == "__main__":
     config = ConfigProvider().getExperimentConfig()
 
     experimentDir = config.get("filePath")
-    probands, fileName = test()
+    probands, fileName = singleMNE()
 
     # TODO Fatal Python error: PyEval_RestoreThread: NULL tstate
-    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=False, save=True)
+    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=True, save=True)
     s.main()
 

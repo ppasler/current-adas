@@ -12,7 +12,7 @@ from base_test import * # @UnusedWildImport
 import threading
 from time import sleep
 
-from data_collector import EEGDataCollector
+from window.data_collector import EEGDataCollector
 from util.eeg_data_source import EEGTablePacketSource
 
 
