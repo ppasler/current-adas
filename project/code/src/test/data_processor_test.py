@@ -32,6 +32,7 @@ TEST_DATA = {
 class TestDataProcessor(BaseTest):
 
     def setUp(self):
+        self.fields = TEST_DATA.keys()
         self.inputQueue = Queue()
         self.outputQueue = Queue()
         self.processor = DataProcessor(self.inputQueue, self.outputQueue)
@@ -42,7 +43,7 @@ class TestDataProcessor(BaseTest):
     def _fillQueue(self):
         datasource = EEGTableWindowSource(self.getData1024CSV(), False, 128, 2)
         datasource.convert()
-        dc = DummyDataCollector(datasource)
+        dc = DummyDataCollector(datasource, self.fields)
         dc.setHandler(self._addData)
         dc.collectData()
 

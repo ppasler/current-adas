@@ -9,10 +9,9 @@ Created on 13.06.2016
 '''
 from Queue import Empty
 
-from numpy import array
-
 from config.config import ConfigProvider
-from eeg_processor import SignalProcessor, FFTProcessor, SignalPreProcessor
+from eeg_processor import EEGProcessor
+from gyro_processor import GyroProcessor
 
 
 class DataProcessor(object):
@@ -22,17 +21,14 @@ class DataProcessor(object):
         self.eegFields = config.getEmotivConfig()["eegFields"]
         self.gyroFields = config.getEmotivConfig()["gyroFields"]
         self.samplingRate = config.getEmotivConfig()["samplingRate"]
-        
         self.processingConfig = config.getProcessingConfig()
-        self.preProcessor = SignalPreProcessor()
-        self.signalProcessor = SignalProcessor()
-        self.fftProcessor = FFTProcessor()
+
+        self.eegProcessor = EEGProcessor()
+        self.gyroProcessor = GyroProcessor()
 
         self.inputQueue = inputQueue
         self.outputQueue = outputQueue
         self.runProcess = True
-        self.totalInvalid = 0
-        self.totalCount = 0
 
     def close(self):
         self.runProcess = False
@@ -50,10 +46,15 @@ class DataProcessor(object):
     def process(self, data):
         #TODO make me fast and nice
         eegRaw, gyroRaw = self.splitData(data)
-        eegProc, eegInvalid = self.processEEGData(eegRaw)
-        gyroProc, gyroIvalid = self.processGyroData(gyroRaw)
-        eegProc.update(gyroProc)
-        return eegProc, (eegInvalid or gyroIvalid)
+
+        eegProc, eegInvalid = self.eegProcessor.process(eegRaw)
+        gyroProc, gyroInvalid = self.gyroProcessor.process(gyroRaw)
+
+        self.reuniteData(eegProc, gyroProc)
+        return eegProc, (eegInvalid or gyroInvalid)
+
+    def reuniteData(self, eegData, gyroData):
+        eegData.update(gyroData)
 
     def splitData(self, data):
         '''split eeg and gyro data
@@ -64,28 +65,9 @@ class DataProcessor(object):
             eegData: eeg values as dict
             gyroData: gyro values as dict
         '''
-        #TODO handle data except eeg and gyro?
-        eegData = {x: data[x] for x in data if x in self.eegFields}
-        gyroData = {x: data[x] for x in data if x in self.gyroFields}
+        eegData = self.filterDictByKey(data, self.eegFields)
+        gyroData = self.filterDictByKey(data, self.gyroFields)
         return eegData, gyroData
 
-    def processEEGData(self, eegData):
-
-        invalidCount = 0
-        for _, signal in eegData.iteritems():
-            raw = array(signal["value"])
-            quality = array(signal["quality"])
-
-            proc = self.preProcessor.process(raw)
-            proc, _ = self.signalProcessor.process(proc, quality)
-
-            chan, fInvalid = self.fftProcessor.process(proc)
-            signal["theta"] = chan["theta"]
-            invalidCount += sum([fInvalid])
-        if invalidCount > 0:
-            self.totalInvalid += 1
-        self.totalCount += 1
-        return eegData, (invalidCount > 0)
-
-    def processGyroData(self, gyroData):
-        return gyroData, False
+    def filterDictByKey(self, data, keys):
+        return {key: data[key] for key in keys if key in data}

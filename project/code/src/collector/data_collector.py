@@ -45,7 +45,7 @@ class DataCollector(object):
         
         :return: filtered data set
         '''
-        return {x: data[x] for x in self.fields}
+        return {key: data[key] for key in self.fields if key in data}
 
     def _addData(self, data):
         for window in self.windows:

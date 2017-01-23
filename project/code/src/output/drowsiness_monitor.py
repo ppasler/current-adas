@@ -75,7 +75,7 @@ class DrowsinessMonitor(object):
     def run(self):
         pygame.init()
         self.screen = pygame.display.set_mode(resolution)
-        
+
         while self.running:
             try:
                 self._handleEvent()

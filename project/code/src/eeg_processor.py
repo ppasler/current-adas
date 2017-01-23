@@ -12,6 +12,33 @@ from util.signal_util import SignalUtil
 from config.config import ConfigProvider
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
+import numpy as np
+
+class EEGProcessor(object):
+    def __init__(self):
+        self.totalInvalid = 0
+        self.totalCount = 0
+
+        self.preProcessor = SignalPreProcessor()
+        self.signalProcessor = SignalProcessor()
+        self.fftProcessor = FFTProcessor()
+
+    def process(self, eegData):
+        invalidCount = 0
+        for _, signal in eegData.iteritems():
+            raw = np.array(signal["value"])
+            quality = np.array(signal["quality"])
+
+            proc = self.preProcessor.process(raw)
+            proc, _ = self.signalProcessor.process(proc, quality)
+
+            chan, fInvalid = self.fftProcessor.process(proc)
+            signal["theta"] = chan["theta"]
+            invalidCount += sum([fInvalid])
+        if invalidCount > 0:
+            self.totalInvalid += 1
+        self.totalCount += 1
+        return eegData, (invalidCount > 0)
 
 class SignalPreProcessor(object):
     def __init__(self):
