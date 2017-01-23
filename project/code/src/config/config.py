@@ -57,8 +57,3 @@ class ConfigProvider(object):
         except ConfigParser.NoSectionError:
             logging.warn("No config found for '%s'" % section)
             raise 
-
-if __name__ == "__main__":  # pragma: no cover
-    config = ConfigProvider()
-    
-    print config.getCollectorConfig()

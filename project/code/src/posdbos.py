@@ -100,7 +100,7 @@ class PoSDBoS(object):
                 features.append(data)
                 clazz = self.nn.activate(data, True)
                 c.append([clazz, clazz])
-                self.setStatus(clazz)
+                self.setState(clazz)
                 total += 1
             except Empty:
                 print "Needed %.2fs for %d windows" % (time.time() - start, total) 
@@ -123,7 +123,7 @@ class PoSDBoS(object):
         dmt.join()
         print "done"
 
-    def setStatus(self, clazz):
+    def setState(self, clazz):
         self.classified[clazz] += 1
         if self.curClass == clazz:
             self.classCount += 1
@@ -133,10 +133,10 @@ class PoSDBoS(object):
 
         info = "class %d row (%s)" % (clazz, str(self.classCount))
         if clazz == 1 and self.classCount >= self.drowsyMinCount:
-            self.dm.setStatus(clazz, info)
+            self.dm.setState(clazz, info)
             self.found += 1
         elif clazz == 0 and self.classCount >= self.awakeMinCount:
-            self.dm.setStatus(clazz, info)
+            self.dm.setState(clazz, info)
 
     def writeFeature(self, data):
         filePath = scriptPath + "/../data/" + "classes.csv"

@@ -7,7 +7,6 @@ Created on 30.05.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-import threading
 from time import sleep
 
 import pygame
@@ -94,20 +93,8 @@ class DrowsinessMonitor(object):
     def close(self):
         self.running = False
     
-    def setStatus(self, status, info=None):
-        self.state = self.classes[str(status)]
+    def setState(self, status, info=None):
+        self.state = self.classes.get(str(status), "awake") 
         if self.state == "drowsy":
             self.drowsyCount += 1
         self.info = str(info)
-
-if __name__ == "__main__":
-    d = DrowsinessMonitor()
-    t = threading.Thread(target=d.run)
-    t.start()
-    
-    for i in range(10):
-        d.setStatus(i%2, i%2)
-        sleep(2)
-
-    d.close()
-    t.join()
