@@ -16,7 +16,7 @@ from util.file_util import FileUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from classification.neural_network import NeuralNetwork
+from classificator.neural_network import NeuralNetwork
 from config.config import ConfigProvider
 import numpy as np
 

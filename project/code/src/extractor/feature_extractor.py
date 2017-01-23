@@ -12,14 +12,14 @@ from Queue import Queue, Empty
 import threading
 from time import sleep
 
-from data_processor import DataProcessor
+from processor.data_processor import DataProcessor
 from util.signal_util import SignalUtil
 from numpy import array
 from util.eeg_util import EEGUtil
 
 class FeatureExtractor(object):
     '''
-    Controls the processing chain and fetches the values needed for the classificator
+    Controls the processor chain and fetches the values needed for the classificator
     '''
 
     def __init__(self, dataCollector):

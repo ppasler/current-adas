@@ -14,7 +14,7 @@ import sys
 from numpy import nanmax, nanmin, nansum, nanmean
 
 from config.config import ConfigProvider
-from eeg_processor import SignalPreProcessor, SignalProcessor
+from processor.eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
 from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter

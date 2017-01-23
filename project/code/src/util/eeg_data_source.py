@@ -96,7 +96,7 @@ class EEGTablePacketSource(EEGTableDataSource):
     
     def __init__(self, filePath=None, infinite=True):
         '''
-        Reads data from ./../../examples/example_4096.csv and builds the data structure
+        Reads data from ./../../example/example_4096.csv and builds the data structure
         '''
         EEGTableDataSource.__init__(self, filePath, infinite)
 
@@ -158,7 +158,7 @@ class EEGTableWindowSource(EEGTableDataSource):
 
     def __init__(self, filePath=None, infinite=True, windowSize=None, windowCount=None):
         '''
-        Reads data from ./../../examples/example_4096.csv and builds the data structure
+        Reads data from ./../../example/example_4096.csv and builds the data structure
         '''
         EEGTableDataSource.__init__(self, filePath, infinite)
         self.windowSize = windowSize

@@ -13,8 +13,8 @@ from base_test import * # @UnusedWildImport
 from numpy.testing.utils import assert_array_equal
 from pybrain.datasets.supervised import SupervisedDataSet
 
-from classification.network_util import NetworkDataUtil, NetworkUtil
-from classification.neural_network import NeuralNetwork
+from classificator.network_util import NetworkDataUtil, NetworkUtil
+from classificator.neural_network import NeuralNetwork
 
 
 name = "zzz_test"

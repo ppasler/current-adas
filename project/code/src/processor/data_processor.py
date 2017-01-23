@@ -10,8 +10,8 @@ Created on 13.06.2016
 from Queue import Empty
 
 from config.config import ConfigProvider
-from eeg_processor import EEGProcessor
-from gyro_processor import GyroProcessor
+from processor.eeg_processor import EEGProcessor
+from processor.gyro_processor import GyroProcessor
 
 
 class DataProcessor(object):

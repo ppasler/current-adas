@@ -19,7 +19,7 @@ from scipy.signal import butter, lfilter
 class SignalUtil(object):
 
     def __init__(self):
-        """This class does signal processing with raw signals"""
+        """This class does signal processor with raw signals"""
 
     def normalize(self, data, extreme=None):
         '''normalizes data between -1 and 1

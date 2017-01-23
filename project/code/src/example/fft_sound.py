@@ -1,7 +1,7 @@
 '''
-Shows simple sound processing with fft
+Shows simple sound processor with fft
 
-Inspired by `Basic Sound Processing with Python <http://samcarcagno.altervista.org/blog/basic-sound-processing-python/>`_
+Inspired by `Basic Sound Processing with Python <http://samcarcagno.altervista.org/blog/basic-sound-processor-python/>`_
 '''
 import sys, os
 
@@ -39,7 +39,7 @@ def getFFTUtil(s1, n):
 
 def main():
 
-    path = "../../examples/"
+    path = "../../example/"
     #samplingRate, s1 = wavfile.read(path + '440_sine.wav')
     samplingRate, s1 = wavfile.read(path + '12000hz.wav')
     

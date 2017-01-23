@@ -13,7 +13,7 @@ from base_test import *  # @UnusedWildImport
 from Queue import Queue
 
 from collector.data_collector import DummyDataCollector
-from data_processor import DataProcessor
+from processor.data_processor import DataProcessor
 from util.eeg_data_source import EEGTableWindowSource
 
 

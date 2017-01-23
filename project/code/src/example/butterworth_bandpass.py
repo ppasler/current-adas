@@ -81,7 +81,7 @@ class BandPassExample(object):
     
     def plotSoundSignal(self):
         # Filter a noisy signal.
-        path = "../../examples/"
+        path = "../../example/"
         fs, s1 = wavfile.read(path + '12000hz.wav')
 
         if len(s1.shape) == 2:

@@ -14,7 +14,7 @@ import threading
 from time import sleep
 
 from collector.data_collector import EEGDataCollector
-from feature_extractor import FeatureExtractor
+from extractor.feature_extractor import FeatureExtractor
 from util.eeg_data_source import EEGTablePacketSource
 
 

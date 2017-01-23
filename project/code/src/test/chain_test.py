@@ -14,7 +14,7 @@ from numpy import NaN
 from numpy.testing.utils import assert_allclose
 
 from config.config import ConfigProvider
-from eeg_processor import SignalProcessor
+from processor.eeg_processor import SignalProcessor
 from util.quality_util import QualityUtil
 
 

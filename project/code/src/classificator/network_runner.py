@@ -11,7 +11,7 @@ import multiprocessing
 import os
 import time
 
-from classification.network_util import NetworkDataUtil, NetworkUtil
+from classificator.network_util import NetworkDataUtil, NetworkUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))

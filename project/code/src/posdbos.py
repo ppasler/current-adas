@@ -13,10 +13,10 @@ import threading
 from time import sleep
 import time
 
-from classification.neural_network import NeuralNetwork
+from classificator.neural_network import NeuralNetwork
 from collector.data_collector import DummyDataCollector, EEGDataCollector
 from config.config import ConfigProvider
-from feature_extractor import FeatureExtractor
+from extractor.feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
 from util.eeg_data_source import EEGTableWindowSource
 from util.file_util import FileUtil

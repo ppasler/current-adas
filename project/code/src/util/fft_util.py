@@ -18,7 +18,7 @@ class FFTUtil(object):
 
         inspired by:
         
-        * `basic sound processing python <http://samcarcagno.altervista.org/blog/basic-sound-processing-python>`_
+        * `basic sound processor python <http://samcarcagno.altervista.org/blog/basic-sound-processor-python>`_
         * `tech notes fft <https://web.archive.org/web/20120615002031/http://www.mathworks.com/support/tech-notes/1700/1702.html>`_
     '''
 
@@ -54,7 +54,7 @@ class FFTUtil(object):
         return fft_data
 
     def fft(self, data):
-        '''FFT with several processing steps
+        '''FFT with several processor steps
         
         :param array data: raw signal data
         * better use normalized data

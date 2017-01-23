@@ -8,7 +8,7 @@ Created on 02.08.2016
 :organization: Reutlingen University
 '''
 
-from eeg_processor import SignalProcessor, SignalPreProcessor
+from processor.eeg_processor import SignalProcessor, SignalPreProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
