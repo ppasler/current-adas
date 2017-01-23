@@ -62,7 +62,7 @@ class PoSDBoS(object):
         self.demoFile = demoFile
         collector = self._initDataCollector(self.demoFile)
         self.fe = FeatureExtractor(collector)
-        self.inputQueue = self.fe.extractQueue
+        self.extractedQueue = self.fe.extractedQueue
 
     def _initDataCollector(self, demoFile):
         collectorConfig = self.config.getCollectorConfig()
@@ -96,7 +96,7 @@ class PoSDBoS(object):
         while self.running and dmt.is_alive():
             try:
                 #awake = 0, drowsy = 1
-                data = self.inputQueue.get(timeout=1)
+                data = self.extractedQueue.get(timeout=1)
                 features.append(data)
                 clazz = self.nn.activate(data, True)
                 c.append([clazz, clazz])

@@ -32,7 +32,7 @@ class TestFeatureExtractor(BaseTest):
         self.handleDatasetCalled = 0 
 
     def handleDataSet(self, data):
-        self.extractor.inputQueue.put(data)
+        self.extractor.collectedQueue.put(data)
         self.handleDatasetCalled += 1
 
     def _initCollector(self):
@@ -44,9 +44,9 @@ class TestFeatureExtractor(BaseTest):
         return collector
 
     def _getTotalQueueSize(self):
-        return sum([self.extractor.inputQueue.qsize(), 
-             self.extractor.outputQueue.qsize(), 
-             self.extractor.extractQueue.qsize()])
+        return sum([self.extractor.collectedQueue.qsize(), 
+             self.extractor.processedQueue.qsize(), 
+             self.extractor.extractedQueue.qsize()])
 
     def test_run(self):
         eThread = threading.Thread(target=self.extractor.start)

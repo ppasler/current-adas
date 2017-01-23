@@ -14,6 +14,8 @@ from Queue import Queue
 
 from collector.data_collector import DummyDataCollector
 from processor.data_processor import DataProcessor
+from processor.eeg_processor import EEGProcessor
+from processor.gyro_processor import GyroProcessor
 from util.eeg_data_source import EEGTableWindowSource
 
 
@@ -33,12 +35,15 @@ class TestDataProcessor(BaseTest):
 
     def setUp(self):
         self.fields = TEST_DATA.keys()
-        self.inputQueue = Queue()
-        self.outputQueue = Queue()
-        self.processor = DataProcessor(self.inputQueue, self.outputQueue)
+        self.collectedQueue = Queue()
+        self.processedQueue = Queue()
+        eegProcessor = EEGProcessor()
+        gyroProcessor = GyroProcessor()
+
+        self.processor = DataProcessor(self.collectedQueue, self.processedQueue, eegProcessor, gyroProcessor)
 
     def _addData(self, data):
-        self.inputQueue.put(data)
+        self.collectedQueue.put(data)
 
     def _fillQueue(self):
         datasource = EEGTableWindowSource(self.getData1024CSV(), False, 128, 2)
@@ -50,13 +55,13 @@ class TestDataProcessor(BaseTest):
     def test_run(self):
         self._fillQueue()
 
-        inpSize = self.inputQueue.qsize()
-        self.assertEqual(self.outputQueue.qsize(), 0)
+        inpSize = self.collectedQueue.qsize()
+        self.assertEqual(self.processedQueue.qsize(), 0)
 
         self.processor.processData()
 
-        self.assertEqual(self.inputQueue.qsize(), 0)
-        self.assertEqual(self.outputQueue.qsize(), inpSize)
+        self.assertEqual(self.collectedQueue.qsize(), 0)
+        self.assertEqual(self.processedQueue.qsize(), inpSize)
 
     def test_process(self):
         self.processor.process(TEST_DATA)

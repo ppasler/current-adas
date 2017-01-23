@@ -10,12 +10,15 @@ Created on 30.05.2016
 
 from Queue import Queue, Empty
 import threading
-from time import sleep
+
+from numpy import array
 
 from processor.data_processor import DataProcessor
-from util.signal_util import SignalUtil
-from numpy import array
+from processor.eeg_processor import EEGProcessor
+from processor.gyro_processor import GyroProcessor
 from util.eeg_util import EEGUtil
+from util.signal_util import SignalUtil
+
 
 class FeatureExtractor(object):
     '''
@@ -24,9 +27,9 @@ class FeatureExtractor(object):
 
     def __init__(self, dataCollector):
 
-        self.inputQueue = Queue()
-        self.outputQueue = Queue()
-        self.extractQueue = Queue()
+        self.collectedQueue = Queue()
+        self.processedQueue = Queue()
+        self.extractedQueue = Queue()
 
         self.sigUtil = SignalUtil()
         self.eegUtil = EEGUtil()
@@ -34,7 +37,7 @@ class FeatureExtractor(object):
         self.collector = dataCollector
         self.collectorThread = threading.Thread(target=self.collector.collectData)
         
-        self.processor = DataProcessor(self.inputQueue, self.outputQueue)
+        self.processor = DataProcessor(self.collectedQueue, self.processedQueue, EEGProcessor(), GyroProcessor())
         self.processingThread = threading.Thread(target=self.processor.processData)
 
         self.extract = True
@@ -48,7 +51,7 @@ class FeatureExtractor(object):
         
         while self.extract:
             try:
-                procData = self.outputQueue.get(timeout=1)
+                procData = self.processedQueue.get(timeout=1)
                 self.extractFeatures(procData)
             except Empty:
                 pass
@@ -58,11 +61,11 @@ class FeatureExtractor(object):
         for _, sigData in data.iteritems():
             theta = sigData["theta"]
             features.extend(theta)
-        self.extractQueue.put(array(features))
+        self.extractedQueue.put(array(features))
     
     def handleDataSet(self, data):
         '''Add the given data to the processingQueue'''
-        self.inputQueue.put(data)
+        self.collectedQueue.put(data)
     
     def close(self):
         self.processor.close()
@@ -70,12 +73,4 @@ class FeatureExtractor(object):
         self.collector.close()
         self.collectorThread.join()
         self.extract = False
-        print("%s: closing feature extractor" % self.__class__.__name__)     
-
-if __name__ == "__main__":  # pragma: no cover
-    extractor = FeatureExtractor()
-    extractor.start()
-    
-    sleep(2)
-    
-    extractor.close()
+        print("%s: closing feature extractor" % self.__class__.__name__)

@@ -10,24 +10,22 @@ Created on 13.06.2016
 from Queue import Empty
 
 from config.config import ConfigProvider
-from processor.eeg_processor import EEGProcessor
-from processor.gyro_processor import GyroProcessor
 
 
 class DataProcessor(object):
-    
-    def __init__(self, inputQueue, outputQueue):
+
+    def __init__(self, collectedQueue, processedQueue, eegProcessor, gyroProcessor):
         config = ConfigProvider()
         self.eegFields = config.getEmotivConfig()["eegFields"]
         self.gyroFields = config.getEmotivConfig()["gyroFields"]
         self.samplingRate = config.getEmotivConfig()["samplingRate"]
         self.processingConfig = config.getProcessingConfig()
 
-        self.eegProcessor = EEGProcessor()
-        self.gyroProcessor = GyroProcessor()
+        self.eegProcessor = eegProcessor
+        self.gyroProcessor = gyroProcessor
 
-        self.inputQueue = inputQueue
-        self.outputQueue = outputQueue
+        self.collectedQueue = collectedQueue
+        self.processedQueue = processedQueue
         self.runProcess = True
 
     def close(self):
@@ -36,10 +34,10 @@ class DataProcessor(object):
     def processData(self):
         while self.runProcess:
             try:
-                data = self.inputQueue.get(timeout=1)
+                data = self.collectedQueue.get(timeout=1)
                 procData, procInvalid = self.process(data)
                 if not procInvalid:
-                    self.outputQueue.put(procData)
+                    self.processedQueue.put(procData)
             except Empty:
                 self.close()
 
