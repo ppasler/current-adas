@@ -8,16 +8,10 @@ Created on 30.05.2016
 :organization: Reutlingen University
 '''
 
-from Queue import Queue, Empty
+from Queue import Empty
 import threading
 
 from numpy import array
-
-from processor.data_processor import DataProcessor
-from processor.eeg_processor import EEGProcessor
-from processor.gyro_processor import GyroProcessor
-from util.eeg_util import EEGUtil
-from util.signal_util import SignalUtil
 
 
 class FeatureExtractor(object):
@@ -25,19 +19,16 @@ class FeatureExtractor(object):
     Controls the processor chain and fetches the values needed for the classificator
     '''
 
-    def __init__(self, dataCollector):
+    def __init__(self, dataCollector, dataProcessor, collectedQueue, processedQueue, extractedQueue):
 
-        self.collectedQueue = Queue()
-        self.processedQueue = Queue()
-        self.extractedQueue = Queue()
-
-        self.sigUtil = SignalUtil()
-        self.eegUtil = EEGUtil()
+        self.collectedQueue = collectedQueue
+        self.processedQueue = processedQueue
+        self.extractedQueue = extractedQueue
 
         self.collector = dataCollector
         self.collectorThread = threading.Thread(target=self.collector.collectData)
         
-        self.processor = DataProcessor(self.collectedQueue, self.processedQueue, EEGProcessor(), GyroProcessor())
+        self.processor = dataProcessor
         self.processingThread = threading.Thread(target=self.processor.processData)
 
         self.extract = True

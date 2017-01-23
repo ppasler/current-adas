@@ -7,20 +7,22 @@ Created on 30.05.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from Queue import Empty
+from Queue import Queue, Empty
 import os
 import threading
-from time import sleep
-import time
+from time import time, sleep
 
 from classificator.neural_network import NeuralNetwork
 from collector.data_collector import DummyDataCollector, EEGDataCollector
 from config.config import ConfigProvider
+from emotiv_connector import EmotivConnector
 from extractor.feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
+from processor.data_processor import DataProcessor
+from processor.eeg_processor import EEGProcessor
+from processor.gyro_processor import GyroProcessor
 from util.eeg_data_source import EEGTableWindowSource
 from util.file_util import FileUtil
-from emotiv_connector import EmotivConnector
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -37,9 +39,15 @@ class PoSDBoS(object):
         self.config = ConfigProvider()
         self._initPoSDBoS()
         self._initNeuralNetwork(networkFile)
+        self._initQueues()
         self._initFeatureExtractor(demoFile)
         self.dm = DrowsinessMonitor()
         self.fileUtil = FileUtil()
+
+    def _initQueues(self):
+        self.collectedQueue = Queue()
+        self.processedQueue = Queue()
+        self.extractedQueue = Queue()
 
     def _initPoSDBoS(self):
         posdbosConfig = self.config.getPoSDBoSConfig()
@@ -61,8 +69,8 @@ class PoSDBoS(object):
     def _initFeatureExtractor(self, demoFile):
         self.demoFile = demoFile
         collector = self._initDataCollector(self.demoFile)
-        self.fe = FeatureExtractor(collector)
-        self.extractedQueue = self.fe.extractedQueue
+        processor = self._initDataProcessor()
+        self.fe = FeatureExtractor(collector, processor, self.collectedQueue, self.processedQueue, self.extractedQueue)
 
     def _initDataCollector(self, demoFile):
         collectorConfig = self.config.getCollectorConfig()
@@ -75,6 +83,9 @@ class PoSDBoS(object):
             return DummyDataCollector(datasource, fields, windowSize, windowCount)
         else:
             return EEGDataCollector(EmotivConnector(), fields, windowSize, windowCount)
+
+    def _initDataProcessor(self):
+        return DataProcessor(self.collectedQueue, self.processedQueue, EEGProcessor(), GyroProcessor())
 
     def stop(self):
         self.running = False

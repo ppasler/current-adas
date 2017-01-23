@@ -8,13 +8,16 @@ Created on 02.07.2016
 :organization: Reutlingen University
 '''
 
-from base_test import *  # @UnusedWildImport
-
+from Queue import Queue
 import threading
 from time import sleep
 
+from base_test import *  # @UnusedWildImport
 from collector.data_collector import EEGDataCollector
 from extractor.feature_extractor import FeatureExtractor
+from processor.data_processor import DataProcessor
+from processor.eeg_processor import EEGProcessor
+from processor.gyro_processor import GyroProcessor
 from util.eeg_data_source import EEGTablePacketSource
 
 
@@ -23,13 +26,19 @@ FIELDS = ["F3", "F4"]
 
 class TestFeatureExtractor(BaseTest):
 
-
     # TODO test queue and threading
     def setUp(self):
+        self._initQueues()
         collector = self._initCollector()
-        self.extractor = FeatureExtractor(collector)
+        processor = self._initDataProcessor()
+        self.extractor = FeatureExtractor(collector, processor, self.collectedQueue, self.processedQueue, self.extractedQueue)
         self.extractor.handleDataSet = self.handleDataSet
         self.handleDatasetCalled = 0 
+
+    def _initQueues(self):
+        self.collectedQueue = Queue()
+        self.processedQueue = Queue()
+        self.extractedQueue = Queue()
 
     def handleDataSet(self, data):
         self.extractor.collectedQueue.put(data)
@@ -43,10 +52,14 @@ class TestFeatureExtractor(BaseTest):
         collector.setHandler(dataHandler)
         return collector
 
+    def _initDataProcessor(self):
+        return DataProcessor(self.collectedQueue, self.processedQueue, EEGProcessor(), GyroProcessor())
+
+
     def _getTotalQueueSize(self):
-        return sum([self.extractor.collectedQueue.qsize(), 
-             self.extractor.processedQueue.qsize(), 
-             self.extractor.extractedQueue.qsize()])
+        return sum([self.collectedQueue.qsize(), 
+             self.processedQueue.qsize(), 
+             self.extractedQueue.qsize()])
 
     def test_run(self):
         eThread = threading.Thread(target=self.extractor.start)
