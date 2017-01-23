@@ -47,9 +47,7 @@ class TestFeatureExtractor(BaseTest):
     def _initCollector(self):
         source = EEGTablePacketSource()
         source.convert()
-        collector = EEGDataCollector(source, FIELDS, WINDOW_SIZE)
-        dataHandler = lambda x: x
-        collector.setHandler(dataHandler)
+        collector = EEGDataCollector(source, self.collectedQueue, FIELDS, WINDOW_SIZE)
         return collector
 
     def _initDataProcessor(self):
@@ -65,13 +63,15 @@ class TestFeatureExtractor(BaseTest):
         eThread = threading.Thread(target=self.extractor.start)
         eThread.start()
 
+        self.assertEqual(self._getTotalQueueSize(), 0)
+
         sleep(0.1)
         self.extractor.close()
         eThread.join()
 
         totalEntries = self._getTotalQueueSize() 
-        self.assertTrue(self.handleDatasetCalled > 0)
-        self.assertEqual(self.handleDatasetCalled, totalEntries)
+        self.assertNotEqual(totalEntries, 0)
+        self.assertNotEqual(self.extractedQueue, 0)
 
     @unittest.skip("changes too often")
     def test_extractFeatures(self):

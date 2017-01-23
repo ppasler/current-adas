@@ -8,10 +8,11 @@ Created on 02.07.2016
 :organization: Reutlingen University
 '''
 
-from base_test import * # @UnusedWildImport
+from Queue import Queue
 import threading
 from time import sleep
 
+from base_test import *  # @UnusedWildImport
 from collector.data_collector import EEGDataCollector
 from util.eeg_data_source import EEGTablePacketSource
 
@@ -24,9 +25,8 @@ class DataCollectorTest(BaseTest):
     def setUp(self):
         source = EEGTablePacketSource()
         source.convert()
-        self.collector = EEGDataCollector(source, FIELDS, WINDOW_SIZE)
-        dataHandler = lambda x: x
-        self.collector.setHandler(dataHandler)
+        self.collectedQueue = Queue()
+        self.collector = EEGDataCollector(source, self.collectedQueue, FIELDS, WINDOW_SIZE)
         self.notifyCalled = 0
 
     def notify(self, data):
@@ -71,21 +71,17 @@ class DataCollectorTest(BaseTest):
         self.assertEquals(win2.window, initWindow) 
 
     def test_addData(self):
-        win1, win2 = self.collector.windows
-        win1.registerObserver(self)
-        win2.registerObserver(self)
-        
-        self.assertEqual(self.notifyCalled, 0)
-        
+        self.assertEqual(self.collectedQueue.qsize(), 0)
+
         # stop populating after 1 round
         collectorThread = threading.Thread(target=self.collector.collectData)
         collectorThread.start()
-        
+
         sleep(0.1)
         self.collector.close()
         collectorThread.join()
 
-        self.assertTrue(self.notifyCalled > 0)
+        self.assertTrue(self.collectedQueue.qsize() > 0)
 
     def test_filter(self):
         fields = ["F3", "X"]

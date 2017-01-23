@@ -8,46 +8,26 @@ Created on 11.04.2016
 :organization: Reutlingen University
 '''
 
-import abc
+from copy import deepcopy
 
-class SignalWindow:
-    __metaclass__ = abc.ABCMeta
+class SignalWindow(object):
 
-    def __init__(self, windowSize):
-        self.observer = []
+    def __init__(self, collectedQueue, windowSize, fields):
+        self.collectedQueue = collectedQueue
         self.windowSize = windowSize
+        self.fields = fields
         self.window = {}
         self.index = 0
 
-    def registerObserver(self, observer):
-        self.observer.append(observer)
-        
-    def unregisterObserver(self, observer):
-        if observer in self.observer:
-            self.observer.remove(observer)
+    def _resetWindow(self):
+        self.index = 0
+        self.window = deepcopy(self.initWindow)
 
-    @abc.abstractmethod
-    def notifyObserver(self, data):
-        '''
-        returns data like this      
-        {
-            "X": {
-                "value":     [1, 2, 3],
-                "quality":   [1, 2, 3]  
-            },
-            "F3": {
-                "value":     [1, 2, 3],
-                "quality":   [1, 2, 3]  
-            }, ...
-        }
+    def _initWindow(self, fields):
+        self.initWindow = {}
+        for key in fields:
+            self.initWindow[key] = {"value": [], "quality": []}
 
-        '''
-        pass
-
-    def isFull(self):
-        return self.index >= self.windowSize
-
-    @abc.abstractmethod
     def addData(self, data):
         '''
         expects data like this      
@@ -64,7 +44,37 @@ class SignalWindow:
         
         :param dict data: 
         '''
-        pass
+        #TODO potential bottleneck
+        self._addDataToWindow(data)
+        self.index += 1
+        
+        if self.isFull():
+            data = self.window.copy()
+            self._resetWindow()
+            self.collectedQueue.put(data)
+
+    def _addDataToWindow(self, data):   
+        for key, date in data.iteritems():
+            field = self.window[key]
+            field["value"].append(date["value"])
+            field["quality"].append(date["quality"])
+
+    def isFull(self):
+        return self.index >= self.windowSize
 
     def __repr__(self):  # pragma: no cover
         return "%s: { windowSize = %d, numValue = %d }" % (self.__class__.__name__, self.windowSize, self.index)
+    
+class RectangularSignalWindow(SignalWindow):
+    '''
+    Interface for collector function
+    '''
+    
+    def __init__(self, collectedQueue, windowSize, fields):
+        super(RectangularSignalWindow, self).__init__(collectedQueue, windowSize, fields)
+        self._initWindow(fields)
+        self._resetWindow()
+
+    def _doWindowFunction(self, data):
+        '''Simple collector rectangular function '''
+        return data

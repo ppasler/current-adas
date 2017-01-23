@@ -36,7 +36,6 @@ class FeatureExtractor(object):
     def start(self):
         '''setting data handler and starts collecting'''
         print("%s: starting feature extractor" % self.__class__.__name__)   
-        self.collector.setHandler(self.handleDataSet)  
         self.collectorThread.start()
         self.processingThread.start()
         
@@ -53,10 +52,6 @@ class FeatureExtractor(object):
             theta = sigData["theta"]
             features.extend(theta)
         self.extractedQueue.put(array(features))
-    
-    def handleDataSet(self, data):
-        '''Add the given data to the processingQueue'''
-        self.collectedQueue.put(data)
     
     def close(self):
         self.processor.close()

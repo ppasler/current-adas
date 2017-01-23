@@ -80,9 +80,9 @@ class PoSDBoS(object):
         if self.demo:
             datasource = EEGTableWindowSource(demoFile, False, windowSize, windowCount)
             datasource.convert()
-            return DummyDataCollector(datasource, fields, windowSize, windowCount)
+            return DummyDataCollector(datasource, self.collectedQueue, fields, windowSize, windowCount)
         else:
-            return EEGDataCollector(EmotivConnector(), fields, windowSize, windowCount)
+            return EEGDataCollector(EmotivConnector(), self.collectedQueue, fields, windowSize, windowCount)
 
     def _initDataProcessor(self):
         return DataProcessor(self.collectedQueue, self.processedQueue, EEGProcessor(), GyroProcessor())
@@ -102,7 +102,7 @@ class PoSDBoS(object):
         dmt.start()
         features = []
         total = 0
-        start = time.time()
+        start = time()
         c = []
         while self.running and dmt.is_alive():
             try:
@@ -114,7 +114,7 @@ class PoSDBoS(object):
                 self.setState(clazz)
                 total += 1
             except Empty:
-                print "Needed %.2fs for %d windows" % (time.time() - start, total) 
+                print "Needed %.2fs for %d windows" % (time() - start, total) 
                 self.stop()
             except KeyboardInterrupt:
                 self.close()
