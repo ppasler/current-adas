@@ -13,7 +13,6 @@ Created on 10.05.2016
 import os
 import pickle
 
-from pybrain.datasets.supervised import SupervisedDataSet
 from pybrain.structure.modules.tanhlayer import TanhLayer
 from pybrain.supervised.trainers.backprop import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
@@ -109,6 +108,3 @@ class NeuralNetwork(object):
 
     def __repr__(self):
         return "%s\n%s" % (self.__class__.__name__, str(self.net))
-
-if __name__ == "__main__": # pragma: no cover
-    nn = NeuralNetwork()

@@ -148,17 +148,3 @@ class PoSDBoS(object):
         #for field in self.config.getCollectorConfig().get("fields"):
         #    header.extend([str(x) + "Hz" + field for x in range(start, end)])
         self.fileUtil.saveCSV(filePath, data, header)
-
-if __name__ == '__main__': # pragma: no cover
-    experiments = ConfigProvider().getExperimentConfig()
-    experimentDir = experiments["filePath"]
-    #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
-    filePath = "%s/test/%s" % (experimentDir, "drowsy_full.csv")
-
-    p = PoSDBoS("knn_1", True, filePath)
-    print "START"
-    pt = threading.Thread(target=p.run)
-    pt.start()
-
-    pt.join()
-    print "END"
