@@ -16,7 +16,7 @@ from posdbos_factory import PoSDBoSFactory
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-if __name__ == '__main__': # pragma: no cover
+def runDemo():
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = experiments["filePath"]
     #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
@@ -29,3 +29,6 @@ if __name__ == '__main__': # pragma: no cover
 
     pt.join()
     print "END"
+
+if __name__ == '__main__': # pragma: no cover
+    runDemo()

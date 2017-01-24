@@ -15,6 +15,7 @@ from time import sleep
 from base_test import *  # @UnusedWildImport
 from collector.data_collector import EEGDataCollector
 from util.eeg_data_source import EEGTablePacketSource
+from test.posdbos_test_factory import PoSDBoSTestFactory
 
 
 WINDOW_SIZE = 4
@@ -23,14 +24,8 @@ FIELDS = ["F3", "F4", "X", "Y"]
 class DataCollectorTest(BaseTest):
 
     def setUp(self):
-        source = EEGTablePacketSource()
-        source.convert()
         self.collectedQueue = Queue()
-        self.collector = EEGDataCollector(source, self.collectedQueue, FIELDS, WINDOW_SIZE)
-        self.notifyCalled = 0
-
-    def notify(self, data):
-        self.notifyCalled += 1
+        self.collector = PoSDBoSTestFactory.createTestDataCollector(self.collectedQueue, FIELDS, WINDOW_SIZE)
 
     def _fillValues(self, count):
         data = self.collector.datasource.data

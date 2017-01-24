@@ -14,7 +14,7 @@ from Queue import Queue
 
 from collector.data_collector import DummyDataCollector
 from util.eeg_data_source import EEGTableWindowSource
-from posdbos_factory import PoSDBoSFactory
+from test.posdbos_test_factory import PoSDBoSTestFactory
 
 
 WINDOW_SIZE = 4
@@ -36,7 +36,7 @@ class TestDataProcessor(BaseTest):
         self.collectedQueue = Queue()
         self.processedQueue = Queue()
 
-        self.processor = PoSDBoSFactory.createDataProcessor(self.collectedQueue, self.processedQueue)
+        self.processor = PoSDBoSTestFactory.createDataProcessor(self.collectedQueue, self.processedQueue)
 
     def _addData(self, data):
         self.collectedQueue.put(data)

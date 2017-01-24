@@ -20,7 +20,7 @@ from posdbos import PoSDBoS
 from processor.data_processor import DataProcessor
 from processor.eeg_processor import EEGProcessor
 from processor.gyro_processor import GyroProcessor
-from util.eeg_data_source import EEGTableWindowSource, EEGTablePacketSource
+from util.eeg_data_source import EEGTableWindowSource
 from util.file_util import FileUtil
 
 
@@ -29,33 +29,26 @@ scriptPath = os.path.dirname(os.path.abspath(__file__))
 class PoSDBoSFactory(object):
 
     @staticmethod
-    def getForTesting():
+    def getForDemo(networkFile, demoFile):
         self = PoSDBoSFactory
 
-        posdbos= self._initPoSDBoS(True)
-        posdbos.collectedQueue = Queue()
-        posdbos.processedQueue = Queue()
-        posdbos.extractedQueue = Queue()
-        posdbos.nn = self.createNeuralNetwork()
-        posdbos.fe = self.createTestFeatureExtractor(posdbos.collectedQueue, posdbos.processedQueue, posdbos.extractedQueue)
-        posdbos.dm = DrowsinessMonitor()
-        posdbos.fileUtil = FileUtil()
+        posdbos= self._get()
+        posdbos.nn = self.loadNeuralNetwork(networkFile)
+        posdbos.fe = self.createFeatureExtractor(demoFile, posdbos.collectedQueue, posdbos.processedQueue, posdbos.extractedQueue)
 
         return posdbos
 
     @staticmethod
-    def getForDemo(networkFile, demoFile):
+    def _get():
         self = PoSDBoSFactory
 
         posdbos= self._initPoSDBoS(True)
         posdbos.collectedQueue = Queue()
         posdbos.processedQueue = Queue()
         posdbos.extractedQueue = Queue()
-        posdbos.nn = self.loadNeuralNetwork(networkFile)
-        posdbos.fe = self.createFeatureExtractor(demoFile, posdbos.collectedQueue, posdbos.processedQueue, posdbos.extractedQueue)
+
         posdbos.dm = DrowsinessMonitor()
         posdbos.fileUtil = FileUtil()
-
         return posdbos
 
     @staticmethod
@@ -88,22 +81,6 @@ class PoSDBoSFactory(object):
         collector = PoSDBoSFactory.createDemoDataCollector(demoFile, collectedQueue)
         processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
         return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
-
-    @staticmethod
-    def createTestFeatureExtractor(collectedQueue, processedQueue, extractedQueue):
-        collector = PoSDBoSFactory.createTestDataCollector(collectedQueue)
-        processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
-        return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
-
-    @staticmethod
-    def createTestDataCollector(collectedQueue):
-        collectorConfig = ConfigProvider().getCollectorConfig()
-        fields = collectorConfig.get("fields")
-        windowSize = collectorConfig.get("windowSize")
-        windowCount = collectorConfig.get("windowCount") 
-        datasource = EEGTableWindowSource(None, False, windowSize, windowCount)
-        datasource.convert()
-        return DummyDataCollector(datasource, collectedQueue, fields, windowSize, windowCount)
 
     @staticmethod
     def createDemoDataCollector(demoFile, collectedQueue):

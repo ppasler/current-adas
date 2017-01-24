@@ -14,7 +14,7 @@ from Queue import Queue
 import threading
 from time import sleep
 
-from posdbos_factory import PoSDBoSFactory
+from test.posdbos_test_factory import PoSDBoSTestFactory
 
 
 WINDOW_SIZE = 4
@@ -25,7 +25,7 @@ class TestFeatureExtractor(BaseTest):
     # TODO test queue and threading
     def setUp(self):
         self._initQueues()
-        self.extractor = PoSDBoSFactory.createTestFeatureExtractor(self.collectedQueue, self.processedQueue, self.extractedQueue)
+        self.extractor = PoSDBoSTestFactory.createTestFeatureExtractor(self.collectedQueue, self.processedQueue, self.extractedQueue)
 
     def _initQueues(self):
         self.collectedQueue = Queue()
