@@ -8,17 +8,13 @@ Created on 02.07.2016
 :organization: Reutlingen University
 '''
 
+from base_test import *  # @UnusedWildImport
+
 from Queue import Queue
 import threading
 from time import sleep
 
-from base_test import *  # @UnusedWildImport
-from collector.data_collector import EEGDataCollector
-from extractor.feature_extractor import FeatureExtractor
-from processor.data_processor import DataProcessor
-from processor.eeg_processor import EEGProcessor
-from processor.gyro_processor import GyroProcessor
-from util.eeg_data_source import EEGTablePacketSource
+from posdbos_factory import PoSDBoSFactory
 
 
 WINDOW_SIZE = 4
@@ -29,30 +25,12 @@ class TestFeatureExtractor(BaseTest):
     # TODO test queue and threading
     def setUp(self):
         self._initQueues()
-        collector = self._initCollector()
-        processor = self._initDataProcessor()
-        self.extractor = FeatureExtractor(collector, processor, self.collectedQueue, self.processedQueue, self.extractedQueue)
-        self.extractor.handleDataSet = self.handleDataSet
-        self.handleDatasetCalled = 0 
+        self.extractor = PoSDBoSFactory.createTestFeatureExtractor(self.collectedQueue, self.processedQueue, self.extractedQueue)
 
     def _initQueues(self):
         self.collectedQueue = Queue()
         self.processedQueue = Queue()
         self.extractedQueue = Queue()
-
-    def handleDataSet(self, data):
-        self.extractor.collectedQueue.put(data)
-        self.handleDatasetCalled += 1
-
-    def _initCollector(self):
-        source = EEGTablePacketSource()
-        source.convert()
-        collector = EEGDataCollector(source, self.collectedQueue, FIELDS, WINDOW_SIZE)
-        return collector
-
-    def _initDataProcessor(self):
-        return DataProcessor(self.collectedQueue, self.processedQueue, EEGProcessor(), GyroProcessor())
-
 
     def _getTotalQueueSize(self):
         return sum([self.collectedQueue.qsize(), 

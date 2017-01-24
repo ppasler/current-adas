@@ -10,13 +10,13 @@ Created on 20.01.2017
 
 from base_test import *  # @UnusedWildImport
 
-from posdbos import PoSDBoS
+from posdbos_factory import PoSDBoSFactory
 
 
 class TestPoSDBoS(BaseTest):
 
     def setUp(self):
-        self.posdbos = PoSDBoS(demo=True)
+        self.posdbos = PoSDBoSFactory.getForTesting()
 
     def test_run(self):
         self.posdbos.run()

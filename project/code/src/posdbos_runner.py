@@ -11,7 +11,7 @@ import os
 import threading
 
 from config.config import ConfigProvider
-from posdbos import PoSDBoS
+from posdbos_factory import PoSDBoSFactory
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -22,7 +22,7 @@ if __name__ == '__main__': # pragma: no cover
     #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
     filePath = "%s/test/%s" % (experimentDir, "drowsy_full.csv")
 
-    p = PoSDBoS("knn_1", True, filePath)
+    p = PoSDBoSFactory.getForDemo("knn_1", filePath)
     print "START"
     pt = threading.Thread(target=p.run)
     pt.start()

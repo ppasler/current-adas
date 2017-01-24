@@ -13,10 +13,8 @@ from base_test import *  # @UnusedWildImport
 from Queue import Queue
 
 from collector.data_collector import DummyDataCollector
-from processor.data_processor import DataProcessor
-from processor.eeg_processor import EEGProcessor
-from processor.gyro_processor import GyroProcessor
 from util.eeg_data_source import EEGTableWindowSource
+from posdbos_factory import PoSDBoSFactory
 
 
 WINDOW_SIZE = 4
@@ -37,10 +35,8 @@ class TestDataProcessor(BaseTest):
         self.fields = TEST_DATA.keys()
         self.collectedQueue = Queue()
         self.processedQueue = Queue()
-        eegProcessor = EEGProcessor()
-        gyroProcessor = GyroProcessor()
 
-        self.processor = DataProcessor(self.collectedQueue, self.processedQueue, eegProcessor, gyroProcessor)
+        self.processor = PoSDBoSFactory.createDataProcessor(self.collectedQueue, self.processedQueue)
 
     def _addData(self, data):
         self.collectedQueue.put(data)
