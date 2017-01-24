@@ -38,14 +38,15 @@ class PoSDBoSTestFactory(PoSDBoSFactory):
         collectorConfig = ConfigProvider().getCollectorConfig()
         fields = collectorConfig.get("fields")
         windowCount = collectorConfig.get("windowCount")
-        collector = PoSDBoSTestFactory.createTestDataCollector(collectedQueue, fields, windowCount)
+        samplingRate = 128
+        collector = PoSDBoSTestFactory.createTestDataCollector(collectedQueue, fields, windowCount, samplingRate)
         processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
         return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
 
     @staticmethod
-    def createTestDataCollector(collectedQueue, fields, windowSize):
+    def createTestDataCollector(collectedQueue, fields, windowSize, samplingRate):
         collectorConfig = ConfigProvider().getCollectorConfig()
         windowCount = collectorConfig.get("windowCount") 
         datasource = EEGTablePacketSource()
         datasource.convert()
-        return EEGDataCollector(datasource, collectedQueue, fields, windowSize, windowCount)
+        return EEGDataCollector(datasource, collectedQueue, fields, windowSize, windowCount, samplingRate)

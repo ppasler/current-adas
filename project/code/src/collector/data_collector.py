@@ -22,12 +22,10 @@ class DataCollector(object):
     
     '''
 
-    def __init__(self, datasource, collectedQueue, fields=[], windowSize=128, windowCount=2):
+    def __init__(self, datasource, collectedQueue, fields):
         '''
         :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
         :param list fields: list of key which are taken from the EmotivData
-        :param int windowSize: size of one collector (default 128)
-        :param int windowCount: number of windows (default 2)
         '''
         self.datasource = datasource
         self.collectedQueue = collectedQueue
@@ -63,18 +61,21 @@ class EEGDataCollector(DataCollector):
     
     '''
 
-    def __init__(self, datasource, collectedQueue, fields=[], windowSize=128, windowCount=2):
+    def __init__(self, datasource, collectedQueue, fields, windowSize, windowCount, sampleRate):
         '''
         :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
         :param list fields: list of key which are taken from the EmotivData
-        :param int windowSize: size of one collector (default 128)
-        :param int windowCount: number of windows (default 2)
+        :param int windowSize: size of one collector
+        :param int windowCount: number of windows
         '''
-        DataCollector.__init__(self, datasource, collectedQueue, fields, windowSize, windowCount)
-        self._buildSignalWindows(windowSize, windowCount)
+        DataCollector.__init__(self, datasource, collectedQueue, fields)
+        self._buildSignalWindows(windowSize, windowCount, sampleRate)
 
-    def _buildSignalWindows(self, windowSize, windowCount):
-        #TODO windowCount
+    def _calcWindowSize(self, windowSize, samplingRate):
+        return windowSize * samplingRate
+
+    def _buildSignalWindows(self, windowSize, windowCount, samplingRate):
+        windowSize = self._calcWindowSize(windowSize, samplingRate)
         self.windows = []
         for _ in range(windowCount):
             window = RectangularSignalWindow(self.collectedQueue, windowSize, self.fields)
@@ -97,8 +98,8 @@ class EEGDataCollector(DataCollector):
 
 class DummyDataCollector(DataCollector):
 
-    def __init__(self, datasource, collectedQueue, fields=[], windowSize=128, windowCount=2):
-        DataCollector.__init__(self, datasource, collectedQueue, fields, windowSize, windowCount)
+    def __init__(self, datasource, collectedQueue, fields):
+        DataCollector.__init__(self, datasource, collectedQueue, fields)
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''

@@ -42,7 +42,7 @@ class TestDataProcessor(BaseTest):
         self.collectedQueue.put(data)
 
     def _fillQueue(self):
-        datasource = EEGTableWindowSource(self.getData1024CSV(), False, 128, 2)
+        datasource = EEGTableWindowSource(self.getData1024CSV(), False, 1, 2)
         datasource.convert()
         dc = DummyDataCollector(datasource, self.collectedQueue, self.fields)
         dc.collectData()

@@ -99,7 +99,7 @@ class PoSDBoSFactory(object):
         windowCount = collectorConfig.get("windowCount") 
         datasource = EEGTableWindowSource(demoFile, False, windowSize, windowCount)
         datasource.convert()
-        return DummyDataCollector(datasource, collectedQueue, fields, windowSize, windowCount)
+        return DummyDataCollector(datasource, collectedQueue, fields)
 
     @staticmethod
     def createEmotivDataCollector(collectedQueue):

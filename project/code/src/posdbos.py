@@ -84,7 +84,7 @@ class PoSDBoS(object):
             self.dm.setState(clazz, info)
 
 
-    def runAndSave(self, filename):
+    def runAndSave(self, filePath):
         self.start()
         features = []
         total = 0
@@ -104,13 +104,12 @@ class PoSDBoS(object):
                 print e.message
                 self.close()
 
-        self.writeFeature(features, filename)
+        self.writeFeature(features, filePath)
         self.close()
         self.fet.join()
         print "done"
 
-    def writeFeature(self, data, filename):
-        filePath = scriptPath + "/../data/" + filename + ".csv"
+    def writeFeature(self, data, filePath):
         #filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
 
         header = []

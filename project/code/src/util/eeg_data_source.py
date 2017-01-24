@@ -44,6 +44,7 @@ class EEGTableDataSource(object):
         dto = self.fileUtil.getDto(self.filepath)
         self._readHeader(dto)
         self._readRawData(dto)
+        self.samplingRate = dto.getSamplingRate()
 
         self.data = self._buildDataStructure()
 
@@ -175,8 +176,10 @@ class EEGTableWindowSource(EEGTableDataSource):
 
 
     def _buildDataStructure(self): # pragma: no cover
-        if self.windowSize == None:
+        if self.windowSize is None:
             self.windowSize = self.len
+        else:
+            self.windowSize = int(round(self.windowSize * self.samplingRate))
 
         data = []
         for start in range(0, len(self.rawData), self.windowSize / 2):

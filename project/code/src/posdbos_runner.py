@@ -15,16 +15,21 @@ from posdbos_factory import PoSDBoSFactory
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
+probands = ConfigProvider().getExperimentConfig().get("probands")
 
-def runProcAndSave(filename, clazz):
+def runProcAndSaveAll(filename):
+    for proband in probands:
+        runProcAndSave(proband, filename)
+
+def runProcAndSave(proband, filename):
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = experiments["filePath"]
     #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
-    filePath = "%s/%s" % (experimentDir, filename)
+    filePath = "%s/%s/" % (experimentDir, proband)
 
-    p = PoSDBoSFactory.getForSave(filePath)
+    p = PoSDBoSFactory.getForSave(filePath + filename)
     print "START"
-    pt = threading.Thread(target=p.runAndSave, args=("test",))
+    pt = threading.Thread(target=p.runAndSave, args=(filePath + "test.csv",))
     pt.start()
 
     pt.join()
@@ -44,5 +49,10 @@ def runDemo():
     pt.join()
     print "END"
 
+def testFolder():
+    global probands
+    probands = ["test"]
+
 if __name__ == '__main__': # pragma: no cover
-    runProcAndSave("1/EEG.csv", 0)
+    testFolder()
+    runProcAndSaveAll("EEG.raw.fif")

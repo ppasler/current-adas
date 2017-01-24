@@ -28,7 +28,7 @@ class TestEEGTableToPacketConverter(BaseTest):
 class TestEEGTableToWindowConverter(BaseTest):
 
     def setUp(self):
-        self.converter = EEGTableWindowSource(self.getData32CSV(), False, 16)
+        self.converter = EEGTableWindowSource(self.getData1024CSV(), False, 1, 1)
 
     def test_convert_sunshine(self):
         self.assertFalse(self.converter.hasMore)

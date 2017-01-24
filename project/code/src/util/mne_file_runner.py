@@ -176,3 +176,4 @@ def testFolder():
 if __name__ == '__main__':
     testFolder()
     saveRaw("test_data")
+    plt_show()
