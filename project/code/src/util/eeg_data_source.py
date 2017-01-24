@@ -50,6 +50,10 @@ class EEGTableDataSource(object):
     def _readHeader(self, dto):
         self.header = dto.getHeader()
         self.fields = dto.getEEGHeader() + dto.getGyroHeader()
+        self._hasQuality()
+
+    def _hasQuality(self):
+        self.hasQuality = all([(("Q" + field) in self.header) for field in self.fields])
 
     def _readRawData(self, dto):
         self.rawData = dto.getData()
@@ -66,6 +70,9 @@ class EEGTableDataSource(object):
         if self.index >= len(self.data) and not self.infinite:
             self.hasMore = False
         self.index %= self.len
+
+    def _buildDataStructure(self):
+        pass
 
     def close(self):
         pass
@@ -112,7 +119,10 @@ class EEGTablePacketSource(EEGTableDataSource):
         ret = {}
         for h in self.fields:
             value = row[self.header.index(h)]
-            quality = row[self.header.index("Q" + h)]
+            if self.hasQuality:
+                quality = row[self.header.index("Q" + h)]
+            else:
+                quality = 0
             ret[h] = {
                 "value": value,
                 "quality": int(quality)
@@ -180,7 +190,10 @@ class EEGTableWindowSource(EEGTableDataSource):
         window = {}
         for field in self.fields:
             value = self.rawData[start:end, self.header.index(field)]
-            quality = self.rawData[start:end, self.header.index("Q" + field)]
+            if self.hasQuality:
+                quality = self.rawData[start:end, self.header.index("Q" + field)]
+            else:
+                quality = 0
             window[field] = {"value": value, "quality": quality}
         return window
 

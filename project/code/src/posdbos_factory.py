@@ -39,6 +39,15 @@ class PoSDBoSFactory(object):
         return posdbos
 
     @staticmethod
+    def getForSave(filePath):
+        self = PoSDBoSFactory
+
+        posdbos= self._get()
+        posdbos.fe = self.createFeatureExtractor(filePath, posdbos.collectedQueue, posdbos.processedQueue, posdbos.extractedQueue)
+
+        return posdbos
+
+    @staticmethod
     def _get():
         self = PoSDBoSFactory
 

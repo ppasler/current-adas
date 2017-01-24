@@ -172,7 +172,10 @@ class CSVUtil(object):
         return dateConverter
 
     def writeFile(self, filePath, data, header, delimiter=DEFAULT_DELIMITER):
-        savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%0.3f", comments="")
+        with open(filePath, 'w') as fout:
+            savetxt(filePath, data, delimiter=delimiter, header=delimiter.join(header), fmt="%0.3f", comments="")
+            fout.seek(-2, os.SEEK_END) # <---- 2 : len('\r\n')
+            fout.truncate()
 
     def writeStructredFile(self, filePath, data):
         header = []

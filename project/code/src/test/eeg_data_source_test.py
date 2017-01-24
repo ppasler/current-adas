@@ -17,10 +17,19 @@ class TestEEGTableDataSource(BaseTest):
 
     def setUp(self):
         self.source = EEGTableDataSource()
+        self.source.convert()
 
     def test_defaults(self):
         self.assertNotEqual(self.source.filepath, None)
         self.assertTrue(self.source.infinite)
+
+    def test_hasQuality(self):
+        self.source._hasQuality()
+        self.assertTrue(self.source.hasQuality)
+
+        self.source.header = [head for head in self.source.header if not head.startswith("Q")]
+        self.source._hasQuality()
+        self.assertFalse(self.source.hasQuality)
 
 class TestEEGTablePacketSource(BaseTest):
 
