@@ -55,4 +55,4 @@ def testFolder():
 
 if __name__ == '__main__': # pragma: no cover
     testFolder()
-    runProcAndSaveAll("EEG.raw.fif")
+    runProcAndSave("1", "EOG.raw.fif")

@@ -6,6 +6,7 @@ Created on 09.08.2016
 
 import os
 
+from config.config import ConfigProvider
 import matplotlib.pyplot as plt
 import numpy as np
 from statistic.signal_statistic_plotter import AbstractSignalPlotter
@@ -13,7 +14,7 @@ from util.file_util import FileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
-
+probands = ConfigProvider().getExperimentConfig().get("probands")
 
 SCREEN_SIZE = (24, 12)
 
@@ -60,10 +61,29 @@ class FeaturePlotter(AbstractSignalPlotter):
         print header, mean
         axis.plot([mean]*len(data))
 
-if __name__ == '__main__': # pragma: no cover
-    #filePath = scriptPath + "/../../data/awake_full_.csv"
-    filePath = scriptPath + "/../../data/classes.csv"
+
+
+def plotAll(filename):
+    for proband in probands:
+        plot(proband, filename)
+
+def plot(proband, filename):
+    experiments = ConfigProvider().getExperimentConfig()
+    experimentDir = experiments["filePath"]
+    #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
+    filePath = "%s/%s/%s" % (experimentDir, proband, filename)
 
     dto = FileUtil().getDto(filePath)
     fp = FeaturePlotter(dto.getData(), dto.getHeader(), filePath)
     fp.doPlot()
+
+def plotOld():
+    #filePath = scriptPath + "/../../data/awake_full_.csv"
+    filePath = scriptPath + "/../../data/classes.csv"
+    dto = FileUtil().getDto(filePath)
+    fp = FeaturePlotter(dto.getData(), dto.getHeader(), filePath)
+    fp.doPlot()
+
+if __name__ == '__main__': # pragma: no cover
+    #plot("1", "test.csv")
+    plotOld()

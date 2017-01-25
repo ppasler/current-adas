@@ -80,5 +80,22 @@ class TestFileUtil(BaseTest):
         mneFilePath = self.util.getMNEFileName(self.mneObj, None)
         self.assertEqual(filePath +  ".raw.fif", mneFilePath)
 
+    def test_getPartialDto(self):
+        end = len(self.dto.data[0]) / 2
+        copyDto = self.util.getPartialDto(self.dto, 0, end)
+
+        self.assertFalse(self.dto.header is copyDto.header)
+        assert_array_equal(self.dto.header, copyDto.header)
+        self.assertTrue(self.dto.filePath == copyDto.filePath)
+        self.assertTrue(self.dto.samplingRate == copyDto.samplingRate)
+
+        partData = copyDto.data
+        fullData = self.dto.data
+
+        self.assertFalse(fullData is partData)
+        assert_array_equal(fullData[:, 0:end], partData)
+        self.assertTrue(fullData.shape[0] == partData.shape[0])
+        self.assertTrue(fullData.shape[1] > partData.shape[1])
+
 if __name__ == '__main__':
     unittest.main()

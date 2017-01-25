@@ -10,7 +10,7 @@ Created on 19.01.2017
 import re
 from mne.io import read_raw_fif
 from mne.preprocessing import read_ica
-from numpy import swapaxes
+from numpy import swapaxes, copy
 
 from util.csv_util import CSVUtil
 from util.table_dto import TableDto
@@ -81,3 +81,8 @@ class FileUtil(object):
         if not filePath.endswith(extension):
             filePath += extension
         return filePath
+
+    def getPartialDto(self, dto, start, end):
+        data = dto.getPartialData(start, end)
+        header = copy(dto.header)
+        return TableDto(header, data, dto.filePath, dto.samplingRate)

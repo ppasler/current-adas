@@ -265,7 +265,7 @@ def single():
     return ["1", "2"], None
 
 def singleMNE():
-    return ["1", "2"], "EEG.raw.fif"
+    return ["1", "2"], "EOG.raw.fif"
 
 if __name__ == "__main__":
     config = ConfigProvider().getExperimentConfig()
@@ -274,6 +274,6 @@ if __name__ == "__main__":
     probands, fileName = singleMNE()
 
     # TODO Fatal Python error: PyEval_RestoreThread: NULL tstate
-    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=True, save=True)
+    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=True, save=False)
     s.main()
 
