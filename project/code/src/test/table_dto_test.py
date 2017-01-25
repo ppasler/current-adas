@@ -153,11 +153,5 @@ class TestTableDto(BaseTest):
         self.assertFalse(self.eegData.hasEEGQuality)
         self.assertTrue(self.eegData.hasECGData)
 
-    def test_getPartialData(self):
-        fullData = self.eegData.data
-        partData = self.eegData.getPartialData(0, len(fullData[0])-1)
-        self.assertTrue(fullData.shape[0] == partData.shape[0])
-        self.assertTrue(fullData.shape[1] > partData.shape[1])
-
 if __name__ == '__main__':
     unittest.main()

@@ -8,10 +8,10 @@ Created on 02.08.2016
 :organization: Reutlingen University
 '''
 from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY
+from terminaltables import AsciiTable
 
-DIVIDER = "******************************\n\n"
+DIVIDER = "\n******************************\n\n"
 
-#TODO https://pypi.python.org/pypi/terminaltables/1.0.2
 class SignalStatisticPrinter(object):
 
     def __init__(self, person):
@@ -20,22 +20,27 @@ class SignalStatisticPrinter(object):
     def getSignalStatsString(self, stats):
         s = TITLE % ("Statistics print", self.person)
         s += "\n"
-        s += DIVIDER
-        for key, value in stats[GENERAL_KEY].iteritems():
-            s += "%s:\t%s\n" % (key, value)
-        s += DIVIDER
+        s += self._getGeneralInformation(stats)
+        s += "\n"
         s += self._getSignalStatString(stats)
-        s += DIVIDER
+        s += "\n"
         return s
+
+    def _getGeneralInformation(self, stats):
+        infos = [[key, value] for key, value in stats[GENERAL_KEY].iteritems()]
+        table = AsciiTable(infos)
+        table.inner_heading_row_border = False
+        return table.table
 
     def _getSignalStatString(self, stats):
         header = [SIGNALS_KEY] + STAT_FIELDS.keys() #+ [s + "_Q" for s in STAT_FIELDS]
-        s = "\t".join(header) + "\n"
+        table = [header[:]]
         for signal, values in stats[SIGNALS_KEY].iteritems():
             l = [signal]
-            l.extend(self._printSignalStat(RAW_KEY, signal, values))
-            s += "\t".join([self._roundIfFloat(x) for x in l]) + "\n"
-        return s
+            v = self._printSignalStat(RAW_KEY, signal, values)
+            l.extend([self._roundIfFloat(x) for x in v])
+            table.append(l)
+        return AsciiTable(table).table
 
     def _roundIfFloat(self, value):
         if isinstance(value, float):

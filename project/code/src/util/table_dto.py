@@ -7,7 +7,7 @@ Created on 03.01.2017
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from numpy import array, arange, zeros, copy
+from numpy import array, arange, zeros
 
 from config.config import ConfigProvider
 
@@ -228,10 +228,6 @@ class TableDto(object):
 
     def getValueCount(self):
         return len(self.getColumn(self.header[0]))
-
-    def getPartialData(self, offset, limit):
-        return copy(self.data[:, offset:limit])
-
 
     def __len__(self):
         return self.getValueCount()

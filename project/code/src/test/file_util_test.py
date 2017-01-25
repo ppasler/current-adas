@@ -45,6 +45,15 @@ class TestFileUtil(BaseTest):
         assert_array_equal(dto.getEEGHeader(), dto2.getEEGHeader())
         assert_array_equal(dto.getEEGData(), dto2.getEEGData())
 
+    def test_getDto_dtoinput(self):
+        dto = self.util.getDto(self.getData1024CSV())
+        dto2 = self.util.getDto(dto)
+
+        self.assertTrue(dto is dto2)
+        self.assertAlmostEqual(dto.samplingRate, dto2.samplingRate, delta=0.1)
+        assert_array_equal(dto.getEEGHeader(), dto2.getEEGHeader())
+        assert_array_equal(dto.getEEGData(), dto2.getEEGData())
+
     def test_convertMNEToTableDto(self):
         dto2 = self.util.convertMNEToTableDto(self.mneObj)
 
@@ -81,9 +90,10 @@ class TestFileUtil(BaseTest):
         self.assertEqual(filePath +  ".raw.fif", mneFilePath)
 
     def test_getPartialDto(self):
-        end = len(self.dto.data[0]) / 2
+        end = len(self.dto) / 2
         copyDto = self.util.getPartialDto(self.dto, 0, end)
 
+        self.assertFalse(self.dto is copyDto)
         self.assertFalse(self.dto.header is copyDto.header)
         assert_array_equal(self.dto.header, copyDto.header)
         self.assertTrue(self.dto.filePath == copyDto.filePath)
@@ -93,9 +103,10 @@ class TestFileUtil(BaseTest):
         fullData = self.dto.data
 
         self.assertFalse(fullData is partData)
-        assert_array_equal(fullData[:, 0:end], partData)
-        self.assertTrue(fullData.shape[0] == partData.shape[0])
-        self.assertTrue(fullData.shape[1] > partData.shape[1])
+        assert_array_equal(fullData[0:end,:], partData)
+        self.assertEqual(len(partData), end)
+        self.assertTrue(fullData.shape[0] > partData.shape[0])
+        self.assertTrue(fullData.shape[1] == partData.shape[1])
 
 if __name__ == '__main__':
     unittest.main()

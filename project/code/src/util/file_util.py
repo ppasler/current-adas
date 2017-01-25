@@ -23,6 +23,8 @@ ICA_EXTENSION = ".ica.fif"
 class FileUtil(object):
 
     def getDto(self, filePath):
+        if type(filePath) == TableDto:
+            return filePath
         if self.isCSVFile(filePath):
             return self.getDtoFromCsv(filePath)
         else:
@@ -33,6 +35,7 @@ class FileUtil(object):
 
     def getDtoFromFif(self, filePath):
         mneObj = self.load(filePath)
+        mneObj.info["description"] = filePath
         return self.convertMNEToTableDto(mneObj)
 
     def getECGDto(self, filePath):
@@ -82,7 +85,7 @@ class FileUtil(object):
             filePath += extension
         return filePath
 
-    def getPartialDto(self, dto, start, end):
-        data = dto.getPartialData(start, end)
-        header = copy(dto.header)
+    def getPartialDto(self, dto, offset, limit):
+        data = copy(dto.data[offset:limit,:])
+        header = dto.header[:]
         return TableDto(header, data, dto.filePath, dto.samplingRate)

@@ -35,11 +35,11 @@ def initFields():
         "min": _initField(MIN_TYPE), 
         "mean": _initField(MEAN_TYPE),
         "std": _initField(MEAN_TYPE),
-        "variance": _initField(MEAN_TYPE),
+        "var": _initField(MEAN_TYPE),
         "zeros": _initField(AGGREGATION_TYPE),
         "seq": _initField(AGGREGATION_TYPE),
         "out": _initField(AGGREGATION_TYPE),
-        "signal_energy": _initField(MEAN_TYPE),
+        "energy": _initField(MEAN_TYPE),
         "zcr": _initField(AGGREGATION_TYPE),
     })
 
@@ -55,11 +55,11 @@ def addMethods(util):
     util.statFields["min"][METHOD] = util.su.minimum
     util.statFields["mean"][METHOD] = util.su.mean
     util.statFields["std"][METHOD] = util.su.std
-    util.statFields["variance"][METHOD] = util.su.var
+    util.statFields["var"][METHOD] = util.su.var
     util.statFields["zeros"][METHOD] = util.qu.countZeros
     util.statFields["seq"][METHOD] = util.qu.countSequences
     util.statFields["out"][METHOD] = util.qu.countOutliners
-    util.statFields["signal_energy"][METHOD] = util.su.energy
+    util.statFields["energy"][METHOD] = util.su.energy
     util.statFields["zcr"][METHOD] = util.su.zcr
 
 FILE_NAME = "EEG.csv"

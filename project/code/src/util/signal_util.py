@@ -10,6 +10,7 @@ Created on 10.05.2016
 
 from itertools import groupby
 import warnings
+warnings.filterwarnings(action='ignore')
 
 from numpy import count_nonzero, nanmax, nanmin, isnan, nanmean, \
     nanstd, nanvar, NaN
@@ -48,9 +49,7 @@ class SignalUtil(object):
         :return: signal maximum
         :rtype: float
         '''
-        with warnings.catch_warnings(): #avoid warning because of NaN values
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            return nanmax(data)
+        return nanmax(data)
 
     def minimum(self, data):
         '''calculates the signal min
@@ -61,9 +60,7 @@ class SignalUtil(object):
         :return: signal minimum
         :rtype: float
         '''
-        with warnings.catch_warnings(): #avoid warning because of NaN values
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            return nanmin(data)
+        return nanmin(data)
 
     def mean(self, data):
         '''calculates the signal mean
@@ -74,9 +71,7 @@ class SignalUtil(object):
         :return: signal mean
         :rtype: float
         '''
-        with warnings.catch_warnings(): #avoid warning because of NaN values
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            return nanmean(data)
+        return nanmean(data)
 
     def energy(self, data):
         '''calculates signal energy 
@@ -127,22 +122,18 @@ class SignalUtil(object):
         :return: standard deviation
         :rtype: float
         '''
-        with warnings.catch_warnings(): #avoid warning because of NaN values
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            return nanstd(data)
+        return nanstd(data)
 
     def var(self, data):
         '''calculates the signals' variance
         Ignores NaN values
 
         :param numpy.array data: list of values
-        
+
         :return: signal variance
         :rtype: float
         '''
-        with warnings.catch_warnings(): #avoid warning because of NaN values
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            return nanvar(data)
+        return nanvar(data)
 
     def butterBandpass(self, lowcut, highcut, samplingRate, order=5):
         '''
@@ -163,14 +154,13 @@ class SignalUtil(object):
             highcut = samplingRate / 2
         if lowcut < 0:
             lowcut = 0
-        
+
         nyq = 0.5 * samplingRate
         low = lowcut / nyq
         high = highcut / nyq
         b, a = butter(order, [low, high], btype='band')
         return b, a
-    
-    
+
     def butterBandpassFilter(self, data, lowcut, highcut, samplingRate, order=5):
         b, a = self.butterBandpass(lowcut, highcut, samplingRate, order)
         y = lfilter(b, a, data)

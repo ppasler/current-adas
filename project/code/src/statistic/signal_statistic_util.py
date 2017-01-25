@@ -10,6 +10,7 @@ Created on 02.07.2016
 from datetime import datetime
 import multiprocessing
 import sys
+from time import time
 
 from numpy import nanmax, nanmin, nansum, nanmean
 
@@ -27,15 +28,14 @@ from util.signal_util import SignalUtil
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-PLOTTER = [RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter]
+PLOTTER = [RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter]
 
 class SignalStatisticUtil(object):
     '''
     class to show some statistical values for a channel
     '''
 
-    def __init__(self, person, filePath, signals=None, save=True, plot=True, logScale=False):
-        self.person = person
+    def __init__(self, filePath, signals=None, save=True, plot=True, logScale=False):
         self.filePath = filePath
         self._initStatsDict()
         self.eegData = FileUtil().getDto(filePath)
@@ -45,11 +45,11 @@ class SignalStatisticUtil(object):
         self.eu = EEGUtil()
         self._initFields()
         self.save = save
-        self._initPlotter(person, plot, logScale)
-        self.ssPrint = SignalStatisticPrinter(person)
+        self._initPlotter(filePath, plot, logScale)
+        self.ssPrint = SignalStatisticPrinter(filePath)
         self.preProcessor = SignalPreProcessor()
         self.processor = SignalProcessor()
-        self.windowSize = ConfigProvider().getCollectorConfig().get("windowSize")
+        self.windowSize = self._calcWindowSize()
 
     def _initStatsDict(self):
         self.stats = OrderedDict()
@@ -72,6 +72,9 @@ class SignalStatisticUtil(object):
             thread = multiprocessing.Process(target=plotter.doPlot)
             self.plotter.append(thread)
 
+    def _calcWindowSize(self):
+        windowSize = ConfigProvider().getCollectorConfig().get("windowSize")
+        return int(round(self.eegData.samplingRate * windowSize))
 
     def main(self):
         self.doPlot()
@@ -165,31 +168,24 @@ class SignalStatisticUtil(object):
 
 class SignalStatisticCollector(object):
     
-    def __init__(self, experimentDir, probands=None, fileName=None, signals=None, save=False, plot=False, logScale=False):
+    def __init__(self, experimentDir, fileNames=None, signals=None, save=False, plot=False, logScale=False):
         self.experimentDir = experimentDir
         self.signals = signals
         self.save = save
         self.plot = plot
         self.logScale = logScale
         self.experimentDir = experimentDir
-        if probands is None:
-            self.probands = ConfigProvider().getExperimentConfig().get("probands")
-        else:
-            self.probands = probands
 
-        if fileName is None:
-            self.fileName = FILE_NAME
-        else:
-            self.fileName = fileName
+        self.fileNames = fileNames
         self.stats = []
         self.merge = {}
         self.ssPrint = SignalStatisticPrinter("merge")
         self.dataLen = 0
     
     def main(self):
-        for proband in self.probands:
-            filePath =  "%s%s/%s" % (self.experimentDir, proband, self.fileName)
-            s = SignalStatisticUtil(proband, filePath, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale)
+        start = time()
+        for fileName in self.fileNames:
+            s = SignalStatisticUtil(fileName, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale)
             self.dataLen += s.eegData.len
             s.main()
             self.stats.append(s.stats)
@@ -199,6 +195,7 @@ class SignalStatisticCollector(object):
             self.printCollection()
         else:
             print "did not merge 1 stat"
+        print "took %.2fs" % (time() - start)
 
     def _addCollections(self):
         '''[signals][channel][signal][type]'''
@@ -259,21 +256,45 @@ class SignalStatisticCollector(object):
         self.ssPrint.saveStats(filePath, content) 
 
 def test():
-    return ["Test"], "blink.csv"
+    return [buildPath("test", "test.csv")]
 
 def single():
     return ["1", "2"], None
 
 def singleMNE():
-    return ["1", "2"], "EOG.raw.fif"
+    return [buildPath("1", "EOG.raw.fif")]
+
+
+def doAll(fileName):
+    probands = ConfigProvider().getExperimentConfig().get("probands")
+    return probands, fileName
+
+def getAllWithSplit(fileName):
+    probands = ConfigProvider().getExperimentConfig().get("probands")
+    return probands, fileName
+
+def getStartStopPercent(dto, s1=5, s2=25, s3=75, s4=95):
+    length = len(dto) / 100
+    return s1*length, s2*length, s3*length, s4*length
+
+def getSplit(proband, fileName):
+    fu = FileUtil()
+    filePath = "%s%s/%s" % (experimentDir, proband, fileName)
+    dto = fu.getDto(filePath)
+    s1, s2, s3, s4 = getStartStopPercent(dto)
+    awake = fu.getPartialDto(dto, s1, s2)
+    drowsy = fu.getPartialDto(dto, s3, s4)
+    return [awake, drowsy]
+
+def buildPath(proband, fileName):
+    return "%s%s/%s" % (experimentDir, proband, fileName)
+
+experimentDir = ConfigProvider().getExperimentConfig().get("filePath")
 
 if __name__ == "__main__":
-    config = ConfigProvider().getExperimentConfig()
-
-    experimentDir = config.get("filePath")
-    probands, fileName = singleMNE()
+    fileNames = test()#singleMNE()#getSplit("1", "EOG.raw.fif")
 
     # TODO Fatal Python error: PyEval_RestoreThread: NULL tstate
-    s = SignalStatisticCollector(experimentDir, probands, fileName=fileName, plot=True, save=False)
+    s = SignalStatisticCollector(experimentDir, fileNames=fileNames, plot=False, save=False)
     s.main()
 
