@@ -17,7 +17,7 @@ from time import sleep
 from test.posdbos_test_factory import PoSDBoSTestFactory
 
 
-WINDOW_SIZE = 4
+WINDOW_SECONDS = 4
 FIELDS = ["F3", "F4"]
 
 class TestFeatureExtractor(BaseTest):

@@ -9,8 +9,7 @@ Created on 20.01.2017
 '''
 
 from base_test import *  # @UnusedWildImport
-from util.eeg_data_source import EEGTablePacketSource, EEGTableWindowSource, \
-    EEGTableDataSource
+from util.eeg_data_source import EEGTablePacketSource, EEGTableWindowSource, EEGTableDataSource
 
 
 class TestEEGTableDataSource(BaseTest):
@@ -34,8 +33,14 @@ class TestEEGTableDataSource(BaseTest):
 class TestEEGTablePacketSource(BaseTest):
 
     def setUp(self):
-        self.source = EEGTablePacketSource()
+        self.source = EEGTablePacketSource(self.getData32CSV(), False)
         self.source.convert()
+
+    def test_convert_sunshine(self):
+        self.assertTrue(self.source.hasMore)
+        for _ in range(0, len(self.source.data)):
+            self.source.dequeue()
+        self.assertFalse(self.source.hasMore)
 
     def test_dequeue(self):
         data = self.source.dequeue() 
@@ -46,8 +51,14 @@ class TestEEGTablePacketSource(BaseTest):
 class TestEEGTableWindowSource(BaseTest):
 
     def setUp(self):
-        self.source = EEGTableWindowSource()
+        self.source = EEGTableWindowSource(self.getData1024CSV(), False, 1, 1)
         self.source.convert()
+
+    def test_convert_sunshine(self):
+        self.assertTrue(self.source.hasMore)
+        for _ in range(0, len(self.source.data)):
+            self.source.dequeue()
+        self.assertFalse(self.source.hasMore)
 
     def test_dequeue(self):
         data = self.source.dequeue() 

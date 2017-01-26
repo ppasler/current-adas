@@ -61,27 +61,30 @@ class EEGDataCollector(DataCollector):
     
     '''
 
-    def __init__(self, datasource, collectedQueue, fields, windowSize, windowCount, sampleRate):
+    def __init__(self, datasource, collectedQueue, fields, windowSeconds, windowCount, sampleRate):
         '''
         :param datasource: object which provides EmotivPackage by calling dequeu(). By default the Emotiv class is used
         :param list fields: list of key which are taken from the EmotivData
-        :param int windowSize: size of one collector
+        :param int windowSeconds: size of one collector
         :param int windowCount: number of windows
         '''
         DataCollector.__init__(self, datasource, collectedQueue, fields)
-        self._buildSignalWindows(windowSize, windowCount, sampleRate)
+        self._buildSignalWindows(windowSeconds, windowCount, sampleRate)
 
-    def _calcWindowSize(self, windowSize, samplingRate):
-        return windowSize * samplingRate
+    def _calcWindowSize(self, windowSeconds, samplingRate):
+        return windowSeconds * samplingRate
 
-    def _buildSignalWindows(self, windowSize, windowCount, samplingRate):
-        windowSize = self._calcWindowSize(windowSize, samplingRate)
+    def _calcWindowRatio(self, windowSize, windowCount):
+        return int(windowSize / windowCount) 
+
+    def _buildSignalWindows(self, windowSeconds, windowCount, samplingRate):
+        self.windowSize = self._calcWindowSize(windowSeconds, samplingRate)
+        self.windowRatio = self._calcWindowRatio(self.windowSize, windowCount) 
         self.windows = []
-        for _ in range(windowCount):
-            window = RectangularSignalWindow(self.collectedQueue, windowSize, self.fields)
+        for i in range(windowCount):
+            window = RectangularSignalWindow(self.collectedQueue, self.windowSize, self.fields)
+            window.index = i * self.windowRatio
             self.windows.append(window)
-
-        self.windows[0].index = windowSize / 2
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''

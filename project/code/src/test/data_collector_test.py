@@ -16,15 +16,15 @@ from base_test import *  # @UnusedWildImport
 from test.posdbos_test_factory import PoSDBoSTestFactory
 
 
-WINDOW_SIZE = 1
-SAMPING_RATE = 4
+WINDOW_SECONDS = 1
+SAMPLING_RATE = 4
 FIELDS = ["F3", "F4", "X", "Y"]
 
 class DataCollectorTest(BaseTest):
 
     def setUp(self):
         self.collectedQueue = Queue()
-        self.collector = PoSDBoSTestFactory.createTestDataCollector(self.collectedQueue, FIELDS, WINDOW_SIZE, SAMPING_RATE)
+        self.collector = PoSDBoSTestFactory.createTestDataCollector(self.collectedQueue, FIELDS, WINDOW_SECONDS, SAMPLING_RATE)
 
     def _fillValues(self, count):
         data = self.collector.datasource.data
@@ -35,7 +35,7 @@ class DataCollectorTest(BaseTest):
             self.collector._addData(fData)
 
     def _fillWindowFull(self):
-        self._fillValues(WINDOW_SIZE)
+        self._fillValues(WINDOW_SECONDS)
 
     def getInitWindow(self):
         d = {}
@@ -45,25 +45,25 @@ class DataCollectorTest(BaseTest):
 
     def test_windowsFilled(self):
         initWindow = self.getInitWindow()
-        windowSize = self.collector._calcWindowSize(WINDOW_SIZE, SAMPING_RATE)
+        windowSize = self.collector._calcWindowSize(WINDOW_SECONDS, SAMPLING_RATE)
 
         win1 = self.collector.windows[0]
         win2 = self.collector.windows[1]
-        
-        self.assertEquals(win1.index, windowSize / 2)
+
+        self.assertEquals(win1.index, 0)
         self.assertEquals(win1.window, initWindow)
-        self.assertEquals(win2.index, 0)
-        self.assertEquals(win2.window, initWindow)
-        
-        self._fillValues(windowSize / 2)
-        self.assertEquals(win1.window, initWindow)
-        self.assertEquals(win1.index, 0) 
         self.assertEquals(win2.index, windowSize / 2)
-        self.assertEquals(win2.window["X"], {'quality': [0, 0], 'value': [24.0, 24.0]})
+        self.assertEquals(win2.window, initWindow)
 
         self._fillValues(windowSize / 2)
-        self.assertEquals(win1.index, 2) 
-        self.assertEquals(win2.window, initWindow) 
+        self.assertEquals(win1.index, windowSize / 2)
+        self.assertEquals(win1.window["X"], {'quality': [0, 0], 'value': [24.0, 24.0]})
+        self.assertEquals(win2.window, initWindow)
+        self.assertEquals(win2.index, 0) 
+
+        self._fillValues(windowSize / 2)
+        self.assertEquals(win1.window, initWindow) 
+        self.assertEquals(win2.index, 2) 
 
     def test_addData(self):
         self.assertEqual(self.collectedQueue.qsize(), 0)
@@ -89,6 +89,23 @@ class DataCollectorTest(BaseTest):
         self.assertEqual(len(filteredData), len(fields))
         self.assertTrue(set(filteredData.keys()).issubset(set(fields)))
         self.assertTrue(set(filteredData.keys()).issuperset(set(fields)))
+
+    def test__calcWindowSize(self):
+        self.assertEqual(self.collector._calcWindowSize(1, 64), 64)
+        self.assertEqual(self.collector._calcWindowSize(2, 32), 64)
+
+    def test__calcWindowRatio(self):
+        self.assertEqual(self.collector._calcWindowRatio(128, 2), 64)
+        self.assertEqual(self.collector._calcWindowRatio(4, 4), 1)
+        self.assertEqual(self.collector._calcWindowRatio(64, 4), 16)
+
+    def test__buildSignalWindows_windowCount(self):
+        col = self.collector
+        winCount = 4
+        self.collector._buildSignalWindows(4, winCount, 4)
+        self.assertEqual(len(col.windows), winCount)
+        for i in range(winCount):
+            self.assertEqual(col.windows[i].index, i * col.windowRatio)
 
 if __name__ == '__main__':
     unittest.main()

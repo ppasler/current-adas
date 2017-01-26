@@ -174,7 +174,7 @@ class EEGTableWindowSource(EEGTableDataSource):
         EEGTableDataSource.__init__(self, filePath, infinite)
         self.windowSize = windowSize
 
-
+    #TODO winsize of more than 2
     def _buildDataStructure(self): # pragma: no cover
         if self.windowSize is None:
             self.windowSize = self.len
