@@ -10,25 +10,26 @@ Created on 02.07.2016
 from datetime import datetime
 import multiprocessing
 import sys
-from time import time
 
-from numpy import nanmax, nanmin, nansum, nanmean
+from numpy import nanmax, nanmin, nansum, nanmean, array
 
 from config.config import ConfigProvider
 from processor.eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
-from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter
+from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter,\
+    FrequencyPlotter
 from util.eeg_util import EEGUtil
 from util.file_util import FileUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
+from util.fft_util import FFTUtil
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-PLOTTER = [RawSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter]
+PLOTTER = [RawSignalPlotter]
 
 class SignalStatisticUtil(object):
     '''
@@ -43,6 +44,7 @@ class SignalStatisticUtil(object):
         self.su = SignalUtil()
         self.qu = QualityUtil()
         self.eu = EEGUtil()
+        self.fft = FFTUtil()
         self._initFields()
         self.save = save
         self._initPlotter(filePath, plot, logScale)
@@ -81,6 +83,7 @@ class SignalStatisticUtil(object):
 
         self.collect_stats()
         self.printStats()
+        [plot.join() for plot in self.plotter]
 
     def doPlot(self):
         for thread in self.plotter:
@@ -88,9 +91,15 @@ class SignalStatisticUtil(object):
 
     def collect_stats(self):
         self.collectGeneralStats()
+        self.x = {}
         for signal in self.signals:
             self.stats[SIGNALS_KEY][signal] = {}
             self.collectRawStats(signal)
+        for freq in range(1, 15):
+            plotter = FrequencyPlotter(freq, self.eegData, self.signals, self.filePath, self.x, freq)
+            thread = multiprocessing.Process(target=plotter.doPlot)
+            self.plotter.append(thread)
+            thread.start()
 
     def collectGeneralStats(self):
         self._addGeneralStatValue("file path", self.filePath)
@@ -120,12 +129,27 @@ class SignalStatisticUtil(object):
 
     def _collectSignalStat(self, signal, category, data):
         self.stats[SIGNALS_KEY][signal][category] = OrderedDict()
+        windows = self.getWindows(data)
         for field, attributes in self.statFields.iteritems():
             fieldValues = []
-            for window in self.getWindows(data):
-                fieldValues.append(self._getSignalStat(signal, category, field, attributes["method"], window, 0))
+            for window in windows:
+                sigStat = self._getSignalStat(attributes["method"], window)
+                fieldValues.append(sigStat)
             merged = self._mergeValues(fieldValues, field)
             self._addSignalStatValue(signal, category, field, merged)
+        self._addFFT(signal, category, windows)
+
+    def _addFFT(self, signal, category, windows):
+        ffts = []
+        for window in windows:
+            ffts.append(self._getFreqValues(window))
+        ffts = array(ffts).transpose()
+        fftDict = {}
+        for i, fft in enumerate(ffts):
+            fftDict[str(i)] = fft
+            merged = nanmean(fft)
+            self._addSignalStatValue(signal, category, str(i), merged)
+        self.x[signal] = fftDict
 
     def getWindows(self, raw):
         windows = []
@@ -135,8 +159,12 @@ class SignalStatisticUtil(object):
                 windows.append(raw[start:end])
         return windows
 
-    def _getSignalStat(self, signal, category, name, method, raw, decPlace=2):
+    def _getSignalStat(self, method, raw):
         return method(raw)
+
+    def _getFreqValues(self, raw):
+        fft = self.fft.fft(raw)
+        return [fft[freq] for freq in range(1, 15)]
 
     def _addSignalStatValue(self, signal, category, name, value):
         self.stats[SIGNALS_KEY][signal][category][name] = value
@@ -183,7 +211,6 @@ class SignalStatisticCollector(object):
         self.dataLen = 0
     
     def main(self):
-        start = time()
         for fileName in self.fileNames:
             s = SignalStatisticUtil(fileName, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale)
             self.dataLen += s.eegData.len
@@ -195,7 +222,6 @@ class SignalStatisticCollector(object):
             self.printCollection()
         else:
             print "did not merge 1 stat"
-        print "took %.2fs" % (time() - start)
 
     def _addCollections(self):
         '''[signals][channel][signal][type]'''
@@ -258,8 +284,18 @@ class SignalStatisticCollector(object):
 def test():
     return [buildPath("test", "test.csv")]
 
+def runTest():
+    fileNames = test()
+    s = SignalStatisticCollector(experimentDir, fileNames=fileNames, plot=True, save=False)
+    s.main()
+
 def single():
     return ["1", "2"], None
+
+def runMNE():
+    fileNames = singleMNE()
+    s = SignalStatisticCollector(experimentDir, fileNames=fileNames, plot=True, save=False)
+    s.main()
 
 def singleMNE():
     return [buildPath("1", "EOG.raw.fif")]
@@ -269,13 +305,21 @@ def doAll(fileName):
     probands = ConfigProvider().getExperimentConfig().get("probands")
     return probands, fileName
 
+def runWithSplits(fileName):
+    awakes, drowsys = getAllWithSplit(fileName)
+    s = SignalStatisticCollector(experimentDir, fileNames=awakes, plot=False, save=False)
+    s.main()
+    x = SignalStatisticCollector(experimentDir, fileNames=drowsys, plot=False, save=False)
+    x.main()
+
 def getAllWithSplit(fileName):
     probands = ConfigProvider().getExperimentConfig().get("probands")
-    return probands, fileName
-
-def getStartStopPercent(dto, s1=5, s2=25, s3=75, s4=95):
-    length = len(dto) / 100
-    return s1*length, s2*length, s3*length, s4*length
+    awakes, drowsys = [], []
+    for proband in probands:
+        awake, drowsy = getSplit(proband, fileName)
+        awakes.append(awake)
+        drowsys.append(drowsy)
+    return awakes, drowsys
 
 def getSplit(proband, fileName):
     fu = FileUtil()
@@ -286,15 +330,16 @@ def getSplit(proband, fileName):
     drowsy = fu.getPartialDto(dto, s3, s4)
     return [awake, drowsy]
 
+def getStartStopPercent(dto, s1=5, s2=25, s3=75, s4=95):
+    length = len(dto) / 100
+    return s1*length, s2*length, s3*length, s4*length
+
 def buildPath(proband, fileName):
     return "%s%s/%s" % (experimentDir, proband, fileName)
 
 experimentDir = ConfigProvider().getExperimentConfig().get("filePath")
 
 if __name__ == "__main__":
-    fileNames = test()#singleMNE()#getSplit("1", "EOG.raw.fif")
-
-    # TODO Fatal Python error: PyEval_RestoreThread: NULL tstate
-    s = SignalStatisticCollector(experimentDir, fileNames=fileNames, plot=False, save=False)
-    s.main()
+    runMNE()
+    #runWithSplits("EOG.raw.fif")
 

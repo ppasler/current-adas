@@ -218,3 +218,38 @@ class ProcessedSignalPlotter(RawSignalPlotter):
         proc = self.pre.process(raw)
         proc, _ = self.chain.process(proc, qual)
         return proc
+
+class FrequencyPlotter(RawSignalPlotter):
+    def __init__(self, person, eegData, signals, filePath, stats, index, save=True, plot=True, logScale=False):
+        RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processed")
+        self.stats = stats
+        self.index = str(index)
+
+    def doPlot(self):
+        if self._shouldNotPlot():
+            return
+
+        fig, axes = self._initPlot()
+        fig.canvas.set_window_title(self.title)
+
+        for i, signal in enumerate(self.signals):
+            self._plotSignal(signal, axes[i])
+
+        self._configurePlot()
+
+        self.savePlot()
+        self.showPlot()
+        print "plotting done"
+
+    def _plotSignal(self, signal, axis):
+        raw = self._getData(signal)
+
+        axis.yaxis.set_label_position("right")
+        axis.set_ylabel(signal)
+
+        if self.logScale:
+            axis.set_yscale("log")
+        axis.plot(raw)
+
+    def _getData(self, signal):
+        return self.stats[signal][self.index]

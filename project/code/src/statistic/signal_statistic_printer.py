@@ -33,7 +33,7 @@ class SignalStatisticPrinter(object):
         return table.table
 
     def _getSignalStatString(self, stats):
-        header = [SIGNALS_KEY] + STAT_FIELDS.keys() #+ [s + "_Q" for s in STAT_FIELDS]
+        header = [SIGNALS_KEY] + STAT_FIELDS.keys() + [str(f)+"Hz" for f in range(1, 15)]
         table = [header[:]]
         for signal, values in stats[SIGNALS_KEY].iteritems():
             l = [signal]
