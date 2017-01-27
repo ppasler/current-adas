@@ -8,7 +8,9 @@ Created on 02.07.2016
 :organization: Reutlingen University
 '''
 from datetime import datetime
-import multiprocessing
+from multiprocessing import Process
+from threading import Thread
+from Queue import Queue
 import sys
 from statistic.signal_statistic_constants import *  # @UnusedWildImport
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -38,7 +40,8 @@ class SignalStatisticUtil(object):
     class to show some statistical values for a channel
     '''
 
-    def __init__(self, filePath, signals=None, save=True, plot=True, logScale=False, name=""):
+    def __init__(self, queue, filePath, signals=None, save=True, plot=True, logScale=False, name=""):
+        self.queue = queue
         self.filePath = filePath
         self._initStatsDict()
         self.eegData = FileUtil().getDto(filePath)
@@ -77,7 +80,7 @@ class SignalStatisticUtil(object):
         self.plotter = []
         for clazz in PLOTTER:
             plotter = clazz(self.name, self.eegData, self.signals, self.filePath, self.save, self.plot, logScale)
-            thread = multiprocessing.Process(target=plotter.doPlot)
+            thread = Process(target=plotter.doPlot)
             self.plotter.append(thread)
 
     def main(self):
@@ -86,6 +89,8 @@ class SignalStatisticUtil(object):
         self.collect_stats()
         self.printStats()
         [plot.join() for plot in self.plotter]
+
+        self.queue.put(self.stats)
 
     def doPlot(self):
         for thread in self.plotter:
@@ -102,7 +107,7 @@ class SignalStatisticUtil(object):
     def plotFFT(self):
         for freq in FREQ_RANGE:
             plotter = FrequencyPlotter(str(freq) + ": " + self.name, self.eegData, self.signals, self.filePath, self.fftData, freq, self.save, self.plot)
-            thread = multiprocessing.Process(target=plotter.doPlot)
+            thread = Process(target=plotter.doPlot)
             self.plotter.append(thread)
             thread.start()
 
@@ -188,9 +193,6 @@ class SignalStatisticUtil(object):
         if typ == DIFF_TYPE:
             return nanmean(values)
 
-    def setStats(self, stats):
-        self.stats = stats
-
     def printStats(self):
         content = self.ssPrint.getSignalStatsString(self.stats)
         print content
@@ -213,22 +215,20 @@ class SignalStatisticCollector(object):
         self.merge = {}
         self.ssPrint = SignalStatisticPrinter("merge")
         self.dataLen = 0
-        self.threads = []
         self.statsUtils = []
     
     def main(self):
+        queue = Queue()
+        threads = []
         for fileName in self.fileNames:
-            s = SignalStatisticUtil(fileName, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale, name=self.name)
+            s = SignalStatisticUtil(queue, fileName, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale, name=self.name)
             self.dataLen += s.eegData.len
-            self.statsUtils.append(s)
-            s.main()
-            #thread = multiprocessing.Process(target=s.main)
-            #self.threads.append(thread)
-            #thread.start()
+            thread = Thread(target=s.main)
+            threads.append(thread)
+            thread.start()
 
-        #[t.join() for t in self.threads]
-        for s in self.statsUtils:
-            self.stats.append(s.stats)
+        [thread.join() for thread in threads]
+        self.stats = list(queue.queue)
 
         if len(self.stats) > 1:
             self._addCollections()
@@ -302,7 +302,7 @@ def tests():
 
 def runTest():
     fileNames = tests()
-    s = SignalStatisticCollector(fileNames=fileNames, plot=True, save=False, name="xxx")
+    s = SignalStatisticCollector(fileNames=fileNames, plot=False, save=False, name="xxx")
     s.main()
 
 def single():
