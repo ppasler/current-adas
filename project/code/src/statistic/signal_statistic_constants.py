@@ -29,6 +29,8 @@ DIFF_TYPE = "diff"
 METHOD = "method"
 TYPE = "type"
 
+FREQ_RANGE = range(1, 15)
+
 def initFields():
     return OrderedDict({
         "max": _initField(MAX_TYPE), 

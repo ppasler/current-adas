@@ -10,33 +10,35 @@ Created on 02.07.2016
 from datetime import datetime
 import multiprocessing
 import sys
+from statistic.signal_statistic_constants import *  # @UnusedWildImport
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from numpy import nanmax, nanmin, nansum, nanmean, array
 
+from collector.data_collector import EEGDataCollector
 from config.config import ConfigProvider
 from processor.eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
-from statistic.signal_statistic_constants import *  # @UnusedWildImport
-from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter,\
+from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter, \
     FrequencyPlotter
 from util.eeg_util import EEGUtil
+from util.fft_util import FFTUtil
 from util.file_util import FileUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
-from util.fft_util import FFTUtil
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-PLOTTER = [RawSignalPlotter]
+PLOTTER = []
 
 class SignalStatisticUtil(object):
     '''
     class to show some statistical values for a channel
     '''
 
-    def __init__(self, filePath, signals=None, save=True, plot=True, logScale=False):
+    def __init__(self, filePath, signals=None, save=True, plot=True, logScale=False, name=""):
         self.filePath = filePath
         self._initStatsDict()
         self.eegData = FileUtil().getDto(filePath)
@@ -47,11 +49,15 @@ class SignalStatisticUtil(object):
         self.fft = FFTUtil()
         self._initFields()
         self.save = save
-        self._initPlotter(filePath, plot, logScale)
+        self.plot = plot
+        self.name = name + " " + str(filePath)
+        self._initPlotter(logScale)
         self.ssPrint = SignalStatisticPrinter(filePath)
         self.preProcessor = SignalPreProcessor()
         self.processor = SignalProcessor()
-        self.windowSize = self._calcWindowSize()
+
+        windowSeconds = ConfigProvider().getCollectorConfig().get("windowSeconds")
+        self.windowSize = EEGDataCollector.calcWindowSize(windowSeconds, self.eegData.samplingRate)
 
     def _initStatsDict(self):
         self.stats = OrderedDict()
@@ -67,16 +73,12 @@ class SignalStatisticUtil(object):
             signals = ConfigProvider().getEmotivConfig().get("eegFields")
         self.signals = signals
 
-    def _initPlotter(self, person, plot, logScale):
+    def _initPlotter(self, logScale):
         self.plotter = []
         for clazz in PLOTTER:
-            plotter = clazz(person, self.eegData, self.signals, self.filePath, self.save, plot, logScale)
+            plotter = clazz(self.name, self.eegData, self.signals, self.filePath, self.save, self.plot, logScale)
             thread = multiprocessing.Process(target=plotter.doPlot)
             self.plotter.append(thread)
-
-    def _calcWindowSize(self):
-        windowSize = ConfigProvider().getCollectorConfig().get("windowSize")
-        return int(round(self.eegData.samplingRate * windowSize))
 
     def main(self):
         self.doPlot()
@@ -91,12 +93,15 @@ class SignalStatisticUtil(object):
 
     def collect_stats(self):
         self.collectGeneralStats()
-        self.x = {}
+        self.fftData = {}
         for signal in self.signals:
             self.stats[SIGNALS_KEY][signal] = {}
             self.collectRawStats(signal)
-        for freq in range(1, 15):
-            plotter = FrequencyPlotter(freq, self.eegData, self.signals, self.filePath, self.x, freq)
+        self.plotFFT()
+
+    def plotFFT(self):
+        for freq in FREQ_RANGE:
+            plotter = FrequencyPlotter(str(freq) + ": " + self.name, self.eegData, self.signals, self.filePath, self.fftData, freq, self.save, self.plot)
             thread = multiprocessing.Process(target=plotter.doPlot)
             self.plotter.append(thread)
             thread.start()
@@ -145,11 +150,11 @@ class SignalStatisticUtil(object):
             ffts.append(self._getFreqValues(window))
         ffts = array(ffts).transpose()
         fftDict = {}
-        for i, fft in enumerate(ffts):
+        for i, fft in zip(FREQ_RANGE, ffts):
             fftDict[str(i)] = fft
             merged = nanmean(fft)
             self._addSignalStatValue(signal, category, str(i), merged)
-        self.x[signal] = fftDict
+        self.fftData[signal] = fftDict
 
     def getWindows(self, raw):
         windows = []
@@ -164,7 +169,7 @@ class SignalStatisticUtil(object):
 
     def _getFreqValues(self, raw):
         fft = self.fft.fft(raw)
-        return [fft[freq] for freq in range(1, 15)]
+        return [fft[freq] for freq in FREQ_RANGE]
 
     def _addSignalStatValue(self, signal, category, name, value):
         self.stats[SIGNALS_KEY][signal][category][name] = value
@@ -190,31 +195,39 @@ class SignalStatisticUtil(object):
         content = self.ssPrint.getSignalStatsString(self.stats)
         print content
         if self.save:
-            filePath = getNewFileName(self.filePath, "txt", "_stats")
+            filePath = getNewFileName(str(self.filePath), "txt", "_stats")
             self.ssPrint.saveStats(filePath, content)
 
 
 class SignalStatisticCollector(object):
     
-    def __init__(self, experimentDir, fileNames=None, signals=None, save=False, plot=False, logScale=False):
-        self.experimentDir = experimentDir
+    def __init__(self, fileNames=None, signals=None, save=False, plot=False, logScale=False, name=""):
         self.signals = signals
         self.save = save
         self.plot = plot
         self.logScale = logScale
-        self.experimentDir = experimentDir
+        self.name = name
 
         self.fileNames = fileNames
         self.stats = []
         self.merge = {}
         self.ssPrint = SignalStatisticPrinter("merge")
         self.dataLen = 0
+        self.threads = []
+        self.statsUtils = []
     
     def main(self):
         for fileName in self.fileNames:
-            s = SignalStatisticUtil(fileName, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale)
+            s = SignalStatisticUtil(fileName, signals=self.signals, save=self.save, plot=self.plot, logScale=self.logScale, name=self.name)
             self.dataLen += s.eegData.len
+            self.statsUtils.append(s)
             s.main()
+            #thread = multiprocessing.Process(target=s.main)
+            #self.threads.append(thread)
+            #thread.start()
+
+        #[t.join() for t in self.threads]
+        for s in self.statsUtils:
             self.stats.append(s.stats)
 
         if len(self.stats) > 1:
@@ -284,9 +297,12 @@ class SignalStatisticCollector(object):
 def test():
     return [buildPath("test", "test.csv")]
 
+def tests():
+    return [buildPath("test", "test.csv"), buildPath("test", "test.csv"), buildPath("test", "test.csv")]
+
 def runTest():
-    fileNames = test()
-    s = SignalStatisticCollector(experimentDir, fileNames=fileNames, plot=True, save=False)
+    fileNames = tests()
+    s = SignalStatisticCollector(fileNames=fileNames, plot=True, save=False, name="xxx")
     s.main()
 
 def single():
@@ -294,7 +310,7 @@ def single():
 
 def runMNE():
     fileNames = singleMNE()
-    s = SignalStatisticCollector(experimentDir, fileNames=fileNames, plot=True, save=False)
+    s = SignalStatisticCollector(fileNames=fileNames, plot=False, save=True)
     s.main()
 
 def singleMNE():
@@ -305,11 +321,11 @@ def doAll(fileName):
     probands = ConfigProvider().getExperimentConfig().get("probands")
     return probands, fileName
 
-def runWithSplits(fileName):
+def runWithSplits(fileName="EOG.raw.fif"):
     awakes, drowsys = getAllWithSplit(fileName)
-    s = SignalStatisticCollector(experimentDir, fileNames=awakes, plot=False, save=False)
+    s = SignalStatisticCollector(fileNames=awakes, plot=False, save=True, name="awake")
     s.main()
-    x = SignalStatisticCollector(experimentDir, fileNames=drowsys, plot=False, save=False)
+    x = SignalStatisticCollector(fileNames=drowsys, plot=False, save=True, name="drowsy")
     x.main()
 
 def getAllWithSplit(fileName):
@@ -325,12 +341,12 @@ def getSplit(proband, fileName):
     fu = FileUtil()
     filePath = "%s%s/%s" % (experimentDir, proband, fileName)
     dto = fu.getDto(filePath)
-    s1, s2, s3, s4 = getStartStopPercent(dto)
+    s1, s2, s3, s4 = _getStartStopPercent(dto)
     awake = fu.getPartialDto(dto, s1, s2)
     drowsy = fu.getPartialDto(dto, s3, s4)
     return [awake, drowsy]
 
-def getStartStopPercent(dto, s1=5, s2=25, s3=75, s4=95):
+def _getStartStopPercent(dto, s1=5, s2=25, s3=75, s4=95):
     length = len(dto) / 100
     return s1*length, s2*length, s3*length, s4*length
 
@@ -340,6 +356,5 @@ def buildPath(proband, fileName):
 experimentDir = ConfigProvider().getExperimentConfig().get("filePath")
 
 if __name__ == "__main__":
-    runMNE()
-    #runWithSplits("EOG.raw.fif")
-
+    runTest()
+    #runWithSplits()

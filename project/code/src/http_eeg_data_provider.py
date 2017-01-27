@@ -14,7 +14,7 @@ import threading
 import time
 import xmlrpclib
 
-from emotiv_connector import EmotivConnector
+from source.emotiv_connector import EmotivConnector
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))

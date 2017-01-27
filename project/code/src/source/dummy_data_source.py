@@ -12,6 +12,7 @@ import os
 import time
 
 from util.file_util import FileUtil
+from collector.data_collector import EEGDataCollector
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,7 +26,7 @@ class EEGTablePacket(object):
         self.gyro_y = data["Y"]["value"]
         self.old_model = True
 
-class EEGTableDataSource(object):
+class DummyDataSource(object):
     
     def __init__(self, filePath=None, infinite=True):
         '''
@@ -81,7 +82,7 @@ class EEGTableDataSource(object):
     def stop(self):
         pass
 
-class EEGTablePacketSource(EEGTableDataSource):
+class DummyPacketSource(DummyDataSource):
     '''
     Util for EPOC dummy data 
     
@@ -106,7 +107,7 @@ class EEGTablePacketSource(EEGTableDataSource):
         '''
         Reads data from ./../../example/example_4096.csv and builds the data structure
         '''
-        EEGTableDataSource.__init__(self, filePath, infinite)
+        DummyDataSource.__init__(self, filePath, infinite)
 
     def _buildDataStructure(self):
         data = []
@@ -143,7 +144,7 @@ class EEGTablePacketSource(EEGTableDataSource):
     def close(self):
         pass
 
-class EEGTableWindowSource(EEGTableDataSource):
+class DummyWindowSource(DummyDataSource):
     '''
     Util for EPOC dummy data 
     
@@ -167,22 +168,26 @@ class EEGTableWindowSource(EEGTableDataSource):
     | ``}``
     '''
 
-    def __init__(self, filePath=None, infinite=True, windowSize=None, windowCount=None):
+    def __init__(self, filePath=None, infinite=True, windowSeconds=None, windowCount=None):
         '''
         Reads data from ./../../example/example_4096.csv and builds the data structure
         '''
-        EEGTableDataSource.__init__(self, filePath, infinite)
-        self.windowSize = windowSize
+        DummyDataSource.__init__(self, filePath, infinite)
+        self.windowCount = windowCount
+        self.windowSeconds = windowSeconds
+
 
     #TODO winsize of more than 2
     def _buildDataStructure(self): # pragma: no cover
-        if self.windowSize is None:
+        if self.windowSeconds is None:
             self.windowSize = self.len
         else:
-            self.windowSize = int(round(self.windowSize * self.samplingRate))
+            self.windowSize = EEGDataCollector.calcWindowSize(self.windowSeconds, self.samplingRate)
+
+        windowRatio = EEGDataCollector.calcWindowRatio(self.windowSize, self.windowCount)
 
         data = []
-        for start in range(0, len(self.rawData), self.windowSize / 2):
+        for start in range(0, len(self.rawData), windowRatio):
             end = start + self.windowSize
             if end <= len(self.rawData):
                 data.append(self._buildWindow(start, end))

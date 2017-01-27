@@ -13,7 +13,7 @@ from base_test import *  # @UnusedWildImport
 from Queue import Queue
 
 from collector.data_collector import DummyDataCollector
-from util.eeg_data_source import EEGTableWindowSource
+from source.dummy_data_source import DummyWindowSource
 from test.posdbos_test_factory import PoSDBoSTestFactory
 
 
@@ -42,7 +42,7 @@ class TestDataProcessor(BaseTest):
         self.collectedQueue.put(data)
 
     def _fillQueue(self):
-        datasource = EEGTableWindowSource(self.getData1024CSV(), False, 1, 2)
+        datasource = DummyWindowSource(self.getData1024CSV(), False, 1, 2)
         datasource.convert()
         dc = DummyDataCollector(datasource, self.collectedQueue, self.fields)
         dc.collectData()

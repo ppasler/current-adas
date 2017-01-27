@@ -239,7 +239,7 @@ class TableDto(object):
         return (min(data) <= time <= max(data))
 
     def __repr__(self):
-        return "TableDto from '%s' (shape %s)" % (self.filePath, self.data.shape)
+        return self.filePath
 
 
     def getEEGHeader(self):

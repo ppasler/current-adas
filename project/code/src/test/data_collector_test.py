@@ -8,13 +8,13 @@ Created on 02.07.2016
 :organization: Reutlingen University
 '''
 
+from base_test import *  # @UnusedWildImport
+
 from Queue import Queue
 import threading
 from time import sleep
 
-from base_test import *  # @UnusedWildImport
-from test.posdbos_test_factory import PoSDBoSTestFactory
-
+from test.posdbos_test_factory import PoSDBoSTestFactory, EEGDataCollector
 
 WINDOW_SECONDS = 1
 SAMPLING_RATE = 4
@@ -45,7 +45,7 @@ class DataCollectorTest(BaseTest):
 
     def test_windowsFilled(self):
         initWindow = self.getInitWindow()
-        windowSize = self.collector._calcWindowSize(WINDOW_SECONDS, SAMPLING_RATE)
+        windowSize = EEGDataCollector.calcWindowSize(WINDOW_SECONDS, SAMPLING_RATE)
 
         win1 = self.collector.windows[0]
         win2 = self.collector.windows[1]
@@ -90,14 +90,14 @@ class DataCollectorTest(BaseTest):
         self.assertTrue(set(filteredData.keys()).issubset(set(fields)))
         self.assertTrue(set(filteredData.keys()).issuperset(set(fields)))
 
-    def test__calcWindowSize(self):
-        self.assertEqual(self.collector._calcWindowSize(1, 64), 64)
-        self.assertEqual(self.collector._calcWindowSize(2, 32), 64)
+    def test_calcWindowSize(self):
+        self.assertEqual(EEGDataCollector.calcWindowSize(1, 64), 64)
+        self.assertEqual(EEGDataCollector.calcWindowSize(2, 32), 64)
 
     def test__calcWindowRatio(self):
-        self.assertEqual(self.collector._calcWindowRatio(128, 2), 64)
-        self.assertEqual(self.collector._calcWindowRatio(4, 4), 1)
-        self.assertEqual(self.collector._calcWindowRatio(64, 4), 16)
+        self.assertEqual(EEGDataCollector.calcWindowRatio(128, 2), 64)
+        self.assertEqual(EEGDataCollector.calcWindowRatio(4, 4), 1)
+        self.assertEqual(EEGDataCollector.calcWindowRatio(64, 4), 16)
 
     def test__buildSignalWindows_windowCount(self):
         col = self.collector

@@ -61,12 +61,14 @@ class AbstractSignalPlotter(object):
     def showPlot(self):
         if self.plot:
             plt.show()
+        else:
+            plt.show()
+            plt.close()
 
     def savePlot(self):
         if self.save:
-            filePath = getNewFileName(self.filePath, PNG_EXTENSION, "_" + self.name)
+            filePath = getNewFileName(str(self.filePath), PNG_EXTENSION, "_" + self.name)
             plt.savefig(filePath, bbox_inches='tight')
-
 
 class DistributionSignalPlotter(AbstractSignalPlotter):
 
@@ -221,7 +223,7 @@ class ProcessedSignalPlotter(RawSignalPlotter):
 
 class FrequencyPlotter(RawSignalPlotter):
     def __init__(self, person, eegData, signals, filePath, stats, index, save=True, plot=True, logScale=False):
-        RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processed")
+        RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name=str(index)+"Hz")
         self.stats = stats
         self.index = str(index)
 

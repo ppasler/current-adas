@@ -16,7 +16,7 @@ from collector.data_collector import EEGDataCollector
 from config.config import ConfigProvider
 from extractor.feature_extractor import FeatureExtractor
 from posdbos_factory import PoSDBoSFactory
-from util.eeg_data_source import EEGTablePacketSource
+from source.dummy_data_source import DummyPacketSource
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +47,6 @@ class PoSDBoSTestFactory(PoSDBoSFactory):
     def createTestDataCollector(collectedQueue, fields, windowSize, samplingRate):
         collectorConfig = ConfigProvider().getCollectorConfig()
         windowCount = collectorConfig.get("windowCount") 
-        datasource = EEGTablePacketSource()
+        datasource = DummyPacketSource()
         datasource.convert()
         return EEGDataCollector(datasource, collectedQueue, fields, windowSize, windowCount, samplingRate)

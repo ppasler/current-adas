@@ -71,15 +71,17 @@ class EEGDataCollector(DataCollector):
         DataCollector.__init__(self, datasource, collectedQueue, fields)
         self._buildSignalWindows(windowSeconds, windowCount, sampleRate)
 
-    def _calcWindowSize(self, windowSeconds, samplingRate):
-        return windowSeconds * samplingRate
+    @staticmethod
+    def calcWindowSize(windowSeconds, samplingRate):
+        return int(round(windowSeconds * samplingRate))
 
-    def _calcWindowRatio(self, windowSize, windowCount):
-        return int(windowSize / windowCount) 
+    @staticmethod
+    def calcWindowRatio(windowSize, windowCount):
+        return int(round(windowSize / windowCount))
 
     def _buildSignalWindows(self, windowSeconds, windowCount, samplingRate):
-        self.windowSize = self._calcWindowSize(windowSeconds, samplingRate)
-        self.windowRatio = self._calcWindowRatio(self.windowSize, windowCount) 
+        self.windowSize = self.calcWindowSize(windowSeconds, samplingRate)
+        self.windowRatio = self.calcWindowRatio(self.windowSize, windowCount) 
         self.windows = []
         for i in range(windowCount):
             window = RectangularSignalWindow(self.collectedQueue, self.windowSize, self.fields)

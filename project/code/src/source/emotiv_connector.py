@@ -4,7 +4,7 @@ import time
 import emokit
 from emokit.emotiv import Emotiv
 
-from util.eeg_data_source import EEGTablePacketSource
+from source.dummy_data_source import DummyPacketSource
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -27,7 +27,7 @@ class EmotivConnector(object):
 
     def _loadDummyData(self):
         filePath = scriptPath + "/../../captured_data/janis/parts/2016-07-12-11-15_EEG_4096.csv"
-        self.emotiv = EEGTablePacketSource(filePath)
+        self.emotiv = DummyPacketSource(filePath)
         self.emotiv.convert()
 
     def dequeue(self):

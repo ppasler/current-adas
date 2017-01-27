@@ -7,7 +7,8 @@ Created on 02.08.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY
+from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY,\
+    FREQ_RANGE
 from terminaltables import AsciiTable
 
 DIVIDER = "\n******************************\n\n"
@@ -33,7 +34,7 @@ class SignalStatisticPrinter(object):
         return table.table
 
     def _getSignalStatString(self, stats):
-        header = [SIGNALS_KEY] + STAT_FIELDS.keys() + [str(f)+"Hz" for f in range(1, 15)]
+        header = [SIGNALS_KEY] + STAT_FIELDS.keys() + [str(f)+"Hz" for f in FREQ_RANGE]
         table = [header[:]]
         for signal, values in stats[SIGNALS_KEY].iteritems():
             l = [signal]
@@ -44,7 +45,7 @@ class SignalStatisticPrinter(object):
 
     def _roundIfFloat(self, value):
         if isinstance(value, float):
-            return ('%.2f' % value).rstrip('0').rstrip('.')#"%.2f" % value
+            return ('%.2f' % value)#"%.2f" % value
         return str(value)
 
     def _printSignalStat(self, category, signal, values):

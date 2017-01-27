@@ -13,14 +13,14 @@ import os
 from classificator.neural_network import NeuralNetwork
 from collector.data_collector import DummyDataCollector, EEGDataCollector
 from config.config import ConfigProvider
-from emotiv_connector import EmotivConnector
+from source.emotiv_connector import EmotivConnector
 from extractor.feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
 from posdbos import PoSDBoS
 from processor.data_processor import DataProcessor
 from processor.eeg_processor import EEGProcessor
 from processor.gyro_processor import GyroProcessor
-from util.eeg_data_source import EEGTableWindowSource
+from source.dummy_data_source import DummyWindowSource
 from util.file_util import FileUtil
 
 
@@ -95,9 +95,9 @@ class PoSDBoSFactory(object):
     def createDemoDataCollector(demoFile, collectedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
         fields = collectorConfig.get("fields")
-        windowSize = collectorConfig.get("windowSize")
+        windowSize = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount") 
-        datasource = EEGTableWindowSource(demoFile, False, windowSize, windowCount)
+        datasource = DummyWindowSource(demoFile, False, windowSize, windowCount)
         datasource.convert()
         return DummyDataCollector(datasource, collectedQueue, fields)
 
@@ -105,7 +105,7 @@ class PoSDBoSFactory(object):
     def createEmotivDataCollector(collectedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
         fields = collectorConfig.get("fields")
-        windowSize = collectorConfig.get("windowSize")
+        windowSize = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount") 
         return EEGDataCollector(EmotivConnector(), collectedQueue, fields, windowSize, windowCount)
 

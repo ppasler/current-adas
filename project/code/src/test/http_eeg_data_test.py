@@ -13,7 +13,7 @@ import threading
 from base_test import *  # @UnusedWildImport
 from http_eeg_data_provider import HttpEEGDataProvider
 from http_eeg_data_receiver import HttpEEGDataReceiver
-from util.eeg_data_source import EEGTablePacketSource
+from source.dummy_data_source import DummyPacketSource
 
 
 HOST = "localhost"
@@ -23,7 +23,7 @@ class TestHttpEEGData(BaseTest):
 
 
     def setUp(self):
-        source = EEGTablePacketSource()
+        source = DummyPacketSource()
         source.convert()
 
         self.provider = HttpEEGDataProvider(HOST, PORT, source)

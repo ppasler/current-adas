@@ -9,13 +9,13 @@ Created on 20.01.2017
 '''
 
 from base_test import *  # @UnusedWildImport
-from util.eeg_data_source import EEGTablePacketSource, EEGTableWindowSource, EEGTableDataSource
+from source.dummy_data_source import DummyPacketSource, DummyWindowSource, DummyDataSource
 
 
-class TestEEGTableDataSource(BaseTest):
+class TestDummyDataSource(BaseTest):
 
     def setUp(self):
-        self.source = EEGTableDataSource()
+        self.source = DummyDataSource()
         self.source.convert()
 
     def test_defaults(self):
@@ -30,10 +30,10 @@ class TestEEGTableDataSource(BaseTest):
         self.source._hasQuality()
         self.assertFalse(self.source.hasQuality)
 
-class TestEEGTablePacketSource(BaseTest):
+class TestDummyPacketSource(BaseTest):
 
     def setUp(self):
-        self.source = EEGTablePacketSource(self.getData32CSV(), False)
+        self.source = DummyPacketSource(self.getData32CSV(), False)
         self.source.convert()
 
     def test_convert_sunshine(self):
@@ -48,10 +48,10 @@ class TestEEGTablePacketSource(BaseTest):
         self.assertTrue("X" in data.sensors.keys())
         self.assertTrue("quality" in data.sensors["X"].keys())
 
-class TestEEGTableWindowSource(BaseTest):
+class TestDummyWindowSource(BaseTest):
 
     def setUp(self):
-        self.source = EEGTableWindowSource(self.getData1024CSV(), False, 1, 1)
+        self.source = DummyWindowSource(self.getData1024CSV(), False, 1, 2)
         self.source.convert()
 
     def test_convert_sunshine(self):
@@ -66,6 +66,28 @@ class TestEEGTableWindowSource(BaseTest):
         self.assertEquals(len(data), 16)
         self.assertTrue("X" in data.keys())
         self.assertTrue("quality" in data["X"].keys())
+
+    def test__buildDataStructure_normal(self):
+        data = self.source._buildDataStructure()
+        windowSize = self.source.windowSize
+
+        self.assertEqual(len(data), 15)
+        self.assertEqual(len(data[0]["AF3"]["value"]), windowSize)
+
+    def _getWindows(self, windowSeconds, windowCount, samplingRate):
+        self.source.windowSeconds = windowSeconds
+        self.source.windowCount = windowCount
+        self.source.samplingRate = samplingRate
+
+        data = self.source._buildDataStructure()
+        windowSize = self.source.windowSize
+        return data, windowSize
+
+    def test__buildDataStructure(self):
+        data, windowSize = self._getWindows(1, 4, 4)
+
+        self.assertEqual(len(data), 1021)
+        self.assertEqual(len(data[0]["AF3"]["value"]), windowSize)
 
 if __name__ == '__main__':
     unittest.main()
