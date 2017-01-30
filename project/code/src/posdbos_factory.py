@@ -13,14 +13,15 @@ import os
 from classificator.neural_network import NeuralNetwork
 from collector.data_collector import DummyDataCollector, EEGDataCollector
 from config.config import ConfigProvider
-from source.emotiv_connector import EmotivConnector
 from extractor.feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
 from posdbos import PoSDBoS
 from processor.data_processor import DataProcessor
+from processor.mne_processor import MNEProcessor
 from processor.eeg_processor import EEGProcessor
 from processor.gyro_processor import GyroProcessor
 from source.dummy_data_source import DummyWindowSource
+from source.emotiv_connector import EmotivConnector
 from util.file_util import FileUtil
 
 
@@ -88,7 +89,7 @@ class PoSDBoSFactory(object):
     @staticmethod
     def createFeatureExtractor(demoFile, collectedQueue, processedQueue, extractedQueue):
         collector = PoSDBoSFactory.createDemoDataCollector(demoFile, collectedQueue)
-        processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
+        processor = PoSDBoSFactory.createMNEDataProcessor(collectedQueue, processedQueue)
         return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
 
     @staticmethod
@@ -112,3 +113,7 @@ class PoSDBoSFactory(object):
     @staticmethod
     def createDataProcessor(collectedQueue, processedQueue):
         return DataProcessor(collectedQueue, processedQueue, EEGProcessor(), GyroProcessor())
+
+    @staticmethod
+    def createMNEDataProcessor(collectedQueue, processedQueue):
+        return DataProcessor(collectedQueue, processedQueue, MNEProcessor(), GyroProcessor())

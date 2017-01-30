@@ -16,6 +16,8 @@ from config.config import ConfigProvider
 from util.file_util import FileUtil
 
 import warnings
+from mne.minimum_norm.time_frequency import compute_source_psd
+from mne.time_frequency.psd import psd_welch
 warnings.filterwarnings(action='ignore')
 
 DEFAULT_SAMPLE_LENGTH = 1
@@ -59,13 +61,15 @@ class MNEUtil():
 
     def createMNEEpochsObject(self, eegData, clazz):
         raw = self.createMNEObjectFromEEGDto(eegData)
-        events = self._createEventsArray(raw, clazz)
+        return self.createMNEEpochsObjectFromRaw(raw, clazz)
+
+    def createMNEEpochsObjectFromRaw(self, raw, clazz, duration=1):
+        events = self._createEventsArray(raw, clazz, False)
         return mne.Epochs(raw, events=events, tmin=0.0, tmax=0.99, add_eeg_ref=True)
 
-    def _createEventsArray(self, raw, clazz, overlapping=True):
-        duration = 1
+    def _createEventsArray(self, raw, clazz, overlapping=True, duration=1):
         if overlapping:
-            duration=0.5
+            duration = 0.5
         return mne.make_fixed_length_events(raw, clazz, duration=duration)
 
     def addECGChannel(self, eegRaw, ecgRaw):
@@ -121,7 +125,7 @@ class MNEUtil():
         return self.filterData(mneObj, lowFreq, highFreq)
 
     def filterData(self, mneObj, lowFreq, highFreq):
-        return mneObj.filter(lowFreq, highFreq, filter_length="auto", l_trans_bandwidth="auto", 
+        return mneObj.filter(lowFreq, highFreq, filter_length="3.99s", l_trans_bandwidth="auto", 
                              h_trans_bandwidth="auto", phase='zero', fir_window="hamming")
 
     def getEEGCannels(self, mneObj):
@@ -136,6 +140,9 @@ class MNEUtil():
     def dropChannels(self, mneObj, channels):
         return mneObj.copy().drop_channels(channels)
 
+    def calcPSD(self, raw, fmin, fmax, picks=None):
+        return psd_welch(raw, fmin, fmax, picks=picks)
+
     def ICA(self, mneObj, icCount=None, random_state=None):
         picks = self.createPicks(mneObj)
         reject = dict(eeg=300)
@@ -144,14 +151,13 @@ class MNEUtil():
             icCount = len(picks)
         ica = ICA(n_components=icCount, method="fastica", random_state=random_state)
         ica.fit(mneObj, picks=picks, reject=reject)
-        # ica.plot_components()
+
         return ica
 
     def labelArtefact(self, templateICA, templateIC, icas, label):
         template = (0, templateIC)
         icas = [templateICA] + icas
-        print icas
-        return corrmap(icas, template=template, threshold=0.85, label=label, show=False, ch_type='eeg', verbose=True)
+        return corrmap(icas, template=template, threshold=0.6, label=label, plot=False, show=False, ch_type='eeg', verbose=True)
 
     def plotCorrmaps(self, icas):
         n_components = icas[0].n_components_

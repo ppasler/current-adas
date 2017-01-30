@@ -37,16 +37,15 @@ class PoSDBoSTestFactory(PoSDBoSFactory):
     def createTestFeatureExtractor(collectedQueue, processedQueue, extractedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
         fields = collectorConfig.get("fields")
+        windowSeconds = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount")
         samplingRate = 128
-        collector = PoSDBoSTestFactory.createTestDataCollector(collectedQueue, fields, windowCount, samplingRate)
+        collector = PoSDBoSTestFactory.createTestDataCollector(collectedQueue, fields, windowSeconds, samplingRate, windowCount)
         processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
         return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
 
     @staticmethod
-    def createTestDataCollector(collectedQueue, fields, windowSize, samplingRate):
-        collectorConfig = ConfigProvider().getCollectorConfig()
-        windowCount = collectorConfig.get("windowCount") 
+    def createTestDataCollector(collectedQueue, fields, windowSeconds, samplingRate, windowCount):
         datasource = DummyPacketSource()
         datasource.convert()
-        return EEGDataCollector(datasource, collectedQueue, fields, windowSize, windowCount, samplingRate)
+        return EEGDataCollector(datasource, collectedQueue, fields, windowSeconds, windowCount, samplingRate)

@@ -14,17 +14,19 @@ from Queue import Queue
 import threading
 from time import sleep
 
-from test.posdbos_test_factory import PoSDBoSTestFactory, EEGDataCollector
+from test.posdbos_test_factory import PoSDBoSTestFactory
+from collector.data_collector import EEGDataCollector
 
 WINDOW_SECONDS = 1
 SAMPLING_RATE = 4
+WINDOW_COUNT = 2
 FIELDS = ["F3", "F4", "X", "Y"]
 
 class DataCollectorTest(BaseTest):
 
     def setUp(self):
         self.collectedQueue = Queue()
-        self.collector = PoSDBoSTestFactory.createTestDataCollector(self.collectedQueue, FIELDS, WINDOW_SECONDS, SAMPLING_RATE)
+        self.collector = PoSDBoSTestFactory.createTestDataCollector(self.collectedQueue, FIELDS, WINDOW_SECONDS, SAMPLING_RATE, WINDOW_COUNT)
 
     def _fillValues(self, count):
         data = self.collector.datasource.data

@@ -8,14 +8,14 @@ Created on 02.08.2016
 :organization: Reutlingen University
 '''
 
-from processor.eeg_processor import SignalProcessor, SignalPreProcessor
+from processor.mne_processor import SignalProcessor, SignalPreProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from statistic.signal_statistic_constants import TITLE, getNewFileName
 from util.eeg_util import EEGUtil
 from util.quality_util import QualityUtil
-
+from time import sleep
 
 SCREEN_SIZE = (24, 12)
 FILE_SIZE = (96, 48)
@@ -29,6 +29,7 @@ class AbstractSignalPlotter(object):
     
     def __init__(self, name, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         self.title = TITLE % (name + " plot", person)
+        self.person = person
         self.eegData = eegData
         self.signals = signals
         self.logScale = logScale
@@ -62,13 +63,15 @@ class AbstractSignalPlotter(object):
         if self.plot:
             plt.show()
         else:
-            plt.show()
-            plt.close()
+            plt.cla()   # Clear axis
+            plt.clf()   # Clear figure
+            plt.close() # Close a figure window
 
     def savePlot(self):
         if self.save:
-            filePath = getNewFileName(str(self.filePath), PNG_EXTENSION, "_" + self.name)
+            filePath = getNewFileName(str(self.filePath) , PNG_EXTENSION, "_" + self.person)
             plt.savefig(filePath, bbox_inches='tight')
+
 
 class DistributionSignalPlotter(AbstractSignalPlotter):
 
@@ -212,13 +215,13 @@ class ProcessedSignalPlotter(RawSignalPlotter):
     def __init__(self, person, eegData, signals, filePath, save=True, plot=True, logScale=False):
         RawSignalPlotter.__init__(self, person, eegData, signals, filePath, save, plot, logScale, name="processed")
         self.pre = SignalPreProcessor()
-        self.chain = SignalProcessor()
+        #self.chain = SignalProcessor()
 
     def _getData(self, signal):
         raw = self.eegData.getColumn(signal)
         qual = self.eegData.getQuality(signal)
-        proc = self.pre.process(raw)
-        proc, _ = self.chain.process(proc, qual)
+        proc, _ = self.pre.process(raw)
+        #proc, _ = self.chain.process(proc, qual)
         return proc
 
 class FrequencyPlotter(RawSignalPlotter):

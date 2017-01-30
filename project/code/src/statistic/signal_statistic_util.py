@@ -29,11 +29,9 @@ from util.file_util import FileUtil
 from util.quality_util import QualityUtil
 from util.signal_util import SignalUtil
 
-
-
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-PLOTTER = []
+PLOTTER = [RawSignalPlotter]
 
 class SignalStatisticUtil(object):
     '''
@@ -53,7 +51,7 @@ class SignalStatisticUtil(object):
         self._initFields()
         self.save = save
         self.plot = plot
-        self.name = name + " " + str(filePath)
+        self.name = name
         self._initPlotter(logScale)
         self.ssPrint = SignalStatisticPrinter(filePath)
         self.preProcessor = SignalPreProcessor()
@@ -88,6 +86,7 @@ class SignalStatisticUtil(object):
 
         self.collect_stats()
         self.printStats()
+        #self.plotFFT()
         [plot.join() for plot in self.plotter]
 
         self.queue.put(self.stats)
@@ -102,11 +101,10 @@ class SignalStatisticUtil(object):
         for signal in self.signals:
             self.stats[SIGNALS_KEY][signal] = {}
             self.collectRawStats(signal)
-        self.plotFFT()
 
     def plotFFT(self):
         for freq in FREQ_RANGE:
-            plotter = FrequencyPlotter(str(freq) + ": " + self.name, self.eegData, self.signals, self.filePath, self.fftData, freq, self.save, self.plot)
+            plotter = FrequencyPlotter(str(freq)+"_"+self.name, self.eegData, self.signals, self.filePath, self.fftData, freq, self.save, self.plot)
             thread = Process(target=plotter.doPlot)
             self.plotter.append(thread)
             thread.start()
@@ -197,7 +195,7 @@ class SignalStatisticUtil(object):
         content = self.ssPrint.getSignalStatsString(self.stats)
         print content
         if self.save:
-            filePath = getNewFileName(str(self.filePath), "txt", "_stats")
+            filePath = getNewFileName(str(self.filePath), "txt", "_" + self.name)
             self.ssPrint.saveStats(filePath, content)
 
 
@@ -291,18 +289,25 @@ class SignalStatisticCollector(object):
         stats = {SIGNALS_KEY: self.merge, GENERAL_KEY: general}
         content = self.ssPrint.getSignalStatsString(stats)
         print content
-        filePath = experimentDir + "merge.txt"
+        filePath = experimentDir + "merge_" + self.name + ".txt"
         self.ssPrint.saveStats(filePath, content) 
+
+    def plotFFT(self):
+        for freq in FREQ_RANGE:
+            plotter = FrequencyPlotter(str(freq)+"_"+self.name, self.eegData, self.signals, self.filePath, self.fftData, freq, self.save, self.plot)
+            thread = Process(target=plotter.doPlot)
+            self.plotter.append(thread)
+            thread.start()
 
 def test():
     return [buildPath("test", "test.csv")]
 
 def tests():
-    return [buildPath("test", "test.csv"), buildPath("test", "test.csv"), buildPath("test", "test.csv")]
+    return [buildPath("test", "test.csv"), buildPath("test", "blink.csv")]
 
 def runTest():
     fileNames = tests()
-    s = SignalStatisticCollector(fileNames=fileNames, plot=False, save=False, name="xxx")
+    s = SignalStatisticCollector(fileNames=fileNames, plot=False, save=True, name="xxx")
     s.main()
 
 def single():
@@ -317,9 +322,11 @@ def singleMNE():
     return [buildPath("1", "EOG.raw.fif")]
 
 
-def doAll(fileName):
+def runAll(fileName):
     probands = ConfigProvider().getExperimentConfig().get("probands")
-    return probands, fileName
+    fileNames = [buildPath(proband, fileName) for proband in probands]
+    s = SignalStatisticCollector(fileNames=fileNames, plot=False, save=True, name="raw")
+    s.main()
 
 def runWithSplits(fileName="EOG.raw.fif"):
     awakes, drowsys = getAllWithSplit(fileName)
@@ -356,5 +363,6 @@ def buildPath(proband, fileName):
 experimentDir = ConfigProvider().getExperimentConfig().get("filePath")
 
 if __name__ == "__main__":
-    runTest()
-    #runWithSplits()
+    #runTest()
+    runWithSplits()
+    #runAll("EOG.raw.fif")

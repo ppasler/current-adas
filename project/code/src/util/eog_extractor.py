@@ -14,7 +14,7 @@ from numpy import mean
 
 from util.mne_util import MNEUtil
 from util.file_util import FileUtil
-
+from mne.viz.utils import plt_show
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_ICA_PATH = scriptPath + "/../../data/"
@@ -32,12 +32,15 @@ class EOGExtractor(object):
     def __init__(self):
         self.mneUtil = MNEUtil()
         self.fileUtil = FileUtil()
-        self.eogChans = [0, 2, 10]
-        self.templateRaw = self.fileUtil.load(TEMPLATE_ICA_PATH + "blink.raw.fif")
+        self.eogChans = [0, 1, 2, 9, 10]
         self.templateICA = self.fileUtil.loadICA(TEMPLATE_ICA_PATH + "blink_.ica.fif")
-        print "load ICA ", "template", self.templateICA.get_components().shape
+        #self._plot()#print "load ICA ", "template", self.templateICA.get_components().shape
 
-        #plotICA(self.templateRaw, self.templateICA)
+    def _plot(self):
+        self.templateRaw = self.fileUtil.load(TEMPLATE_ICA_PATH + "blink_.raw.fif")
+        self.templateICA.plot_components(show=False)
+        self.templateICA.plot_sources(self.templateRaw, show=False)
+        plt_show()
 
     def labelEOGChannel(self, icas):
         for eogChan in self.eogChans:
@@ -65,6 +68,7 @@ class EOGExtractor(object):
 
     def _getEOGIndex(self, ica, eogInds):
         if eogInds is None:
+            print "has EOG channel %s" % str(ica.labels_)
             eogInds = ica.labels_[BLINK_LABEL]
         return eogInds
 
@@ -79,6 +83,3 @@ class EOGExtractor(object):
     def removeEOGChannel(self, raw, ica, eogInd = None):
         eogInd = self._getEOGIndex(ica, eogInd)
         return ica.apply(raw, exclude=eogInd)
-
-if __name__ == '__main__':
-    extractor = EOGExtractor()

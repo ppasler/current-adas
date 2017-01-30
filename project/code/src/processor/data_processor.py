@@ -35,9 +35,13 @@ class DataProcessor(object):
         while self.runProcess:
             try:
                 data = self.collectedQueue.get(timeout=1)
-                procData, procInvalid = self.process(data)
-                if not procInvalid:
-                    self.processedQueue.put(procData)
+                try:
+                    procData, procInvalid = self.process(data)
+                    if not procInvalid:
+                        self.processedQueue.put(procData)
+                except Exception as e:
+                    print e.message
+                    pass
             except Empty:
                 self.close()
 
@@ -52,7 +56,7 @@ class DataProcessor(object):
         return eegProc, (eegInvalid or gyroInvalid)
 
     def reuniteData(self, eegData, gyroData):
-        eegData.update(gyroData)
+        pass#eegData.update(gyroData)
 
     def splitData(self, data):
         '''split eeg and gyro data

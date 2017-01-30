@@ -10,6 +10,7 @@ Created on 30.05.2016
 import os
 import threading
 
+from time import sleep
 from config.config import ConfigProvider
 from posdbos_factory import PoSDBoSFactory
 
@@ -25,11 +26,11 @@ def runProcAndSave(proband, filename):
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = experiments["filePath"]
     #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
-    filePath = "%s/%s/" % (experimentDir, proband)
+    filePath = "%s%s/" % (experimentDir, proband)
 
     p = PoSDBoSFactory.getForSave(filePath + filename)
     print "START"
-    pt = threading.Thread(target=p.runAndSave, args=(filePath + "test.csv",))
+    pt = threading.Thread(target=p.runAndSave, args=(filePath + "proc.csv",))
     pt.start()
 
     pt.join()
@@ -54,5 +55,5 @@ def testFolder():
     probands = ["test"]
 
 if __name__ == '__main__': # pragma: no cover
-    testFolder()
-    runProcAndSave("1", "EOG.raw.fif")
+    runProcAndSave("2", "EOG.raw.fif")
+    #runProcAndSave("Test", "blink.csv")

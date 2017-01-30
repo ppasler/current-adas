@@ -12,6 +12,7 @@ import os
 import threading
 from time import time, sleep
 from config.config import ConfigProvider
+from mne.viz.utils import plt_show
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -29,6 +30,8 @@ class PoSDBoS(object):
     def start(self):
         self.fet = threading.Thread(target=self.fe.start)
         self.fet.start()
+        # TODO wait for loading
+        sleep(25)
 
     def run(self):
         self.start()
@@ -41,7 +44,7 @@ class PoSDBoS(object):
         while self.running and dmt.is_alive():
             try:
                 #awake = 0, drowsy = 1
-                data = self.extractedQueue.get(timeout=1)
+                data = self.extractedQueue.get(timeout=5)
                 features.append(data)
                 clazz = self.nn.activate(data, True)
                 c.append([clazz, clazz])
@@ -89,22 +92,27 @@ class PoSDBoS(object):
         features = []
         total = 0
         start = time()
+        cleanExit = True
         while self.running:
             try:
                 #awake = 0, drowsy = 1
-                data = self.extractedQueue.get(timeout=1)
+                data = self.extractedQueue.get(timeout=5)
                 features.append(data)
                 total += 1
             except Empty:
                 print "Needed %.2fs for %d windows" % (time() - start, total) 
                 self.stop()
             except KeyboardInterrupt:
+                cleanExit = False
                 self.close()
             except Exception as e:
+                cleanExit = False
                 print e.message
                 self.close()
 
-        self.writeFeature(features, filePath)
+        if cleanExit:
+            print "wrote it %s" % filePath
+            self.writeFeature(features, filePath)
         self.close()
         self.fet.join()
         print "done"
@@ -112,9 +120,9 @@ class PoSDBoS(object):
     def writeFeature(self, data, filePath):
         #filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
 
-        header = []
-        start = 4
-        end = start + len(data[0])/6
-        for field in ConfigProvider().getCollectorConfig().get("fields"):
-            header.extend([str(x) + "Hz" + field for x in range(start, end)])
-        self.fileUtil.saveCSV(filePath, data, header)
+        #header = []
+        #start = 4
+        #end = start + len(data[0])
+        #for field in ConfigProvider().getCollectorConfig().get("fields"):
+        #    header.extend([str(x) + "Hz" + field for x in range(start, end)])
+        self.fileUtil.saveCSV(filePath, data, [])

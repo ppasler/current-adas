@@ -85,5 +85,4 @@ def plotOld():
     fp.doPlot()
 
 if __name__ == '__main__': # pragma: no cover
-    #plot("1", "test.csv")
-    plotOld()
+    plot("2", "proc.csv")

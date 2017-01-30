@@ -14,7 +14,7 @@ warnings.filterwarnings(action='ignore')
 
 from numpy import count_nonzero, nanmax, nanmin, isnan, nanmean, \
     nanstd, nanvar, NaN
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, resample, decimate
 
 
 class SignalUtil(object):
@@ -165,3 +165,6 @@ class SignalUtil(object):
         b, a = self.butterBandpass(lowcut, highcut, samplingRate, order)
         y = lfilter(b, a, data)
         return y
+
+    def decimate(self, data, factor):
+        return decimate(data, factor)

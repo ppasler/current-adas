@@ -33,8 +33,8 @@ def runWithProband(proband):
 def main():
     app = QtGui.QApplication(sys.argv)
 
-    #videoUrls, dataUrls = runWithProband(1)
-    videoUrls, dataUrls = runTest(["blink.mp4"], "blink.csv")
+    videoUrls, dataUrls = runWithProband(1)
+    #videoUrls, dataUrls = runTest(["blink.mp4"], "blink.csv")
 
     vis = DataVisualizer(None, videoUrls, dataUrls)
     vis.show()

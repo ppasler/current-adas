@@ -17,6 +17,8 @@ from config.config import ConfigProvider
 from util.eog_extractor import EOGExtractor
 from util.file_util import FileUtil
 from util.mne_util import MNEUtil
+from processor.mne_processor import MNEProcessor, SignalPreProcessor,\
+    FreqProcessor
 
 
 warnings.filterwarnings(action='ignore')
@@ -27,7 +29,7 @@ fileUtil = FileUtil()
 #eogExtractor = EOGExtractor()
 procConfig = ConfigProvider().getProcessingConfig()
 FILE_PATH = "E:/thesis/experiment/%s/"
-sFreq = procConfig.get("samplingRate")
+sFreq = procConfig.get("resamplingRate")
 icCount = procConfig.get("icCount")
 probands = ConfigProvider().getExperimentConfig().get("probands")
 
@@ -172,8 +174,29 @@ def testFolder():
     global FILE_PATH
     FILE_PATH = "../test/%s/"
 
+def tryThis():
+    fpath = (FILE_PATH % "test") + "blink.csv"
+    raw = fileUtil.getDto(fpath)
+    mneRaw = mneUtil.createMNEObject(raw.getEEGData(), raw.getEEGHeader(), "", raw.getSamplingRate())
+
+    mneUtil.filterData(mneRaw, 0.5, 30)
+    mneRaw.resample(sFreq, npad='auto', n_jobs=2, verbose=True)
+
+
+    ica = mneUtil.ICA(mneRaw)
+    ica.plot_components(show=False)
+    ica.plot_sources(mneRaw, show=False)
+    mneUtil.plotRaw(mneRaw, show=False)
+    plt_show()
+    fileUtil.save(mneRaw, fpath + ".fif")
+    fileUtil.saveICA(ica, fpath)
+    
 
 if __name__ == '__main__':
-    testFolder()
-    saveRaw("test_data")
-    plt_show()
+    fpath = (FILE_PATH % "test") + "blink.csv"
+    dto = fileUtil.getDto(fpath)
+    size = len(dto)
+    dto2 = fileUtil.getPartialDto(dto, 0, 9989)
+    mneRaw = mneUtil.createMNEObjectFromEEGDto(dto2)
+    si = FreqProcessor()
+    print si.process(mneRaw)
