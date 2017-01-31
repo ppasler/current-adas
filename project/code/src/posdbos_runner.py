@@ -10,7 +10,6 @@ Created on 30.05.2016
 import os
 import threading
 
-from time import sleep
 from config.config import ConfigProvider
 from posdbos_factory import PoSDBoSFactory
 
@@ -39,8 +38,16 @@ def runProcAndSave(proband, filename):
 def runDemo():
     experiments = ConfigProvider().getExperimentConfig()
     experimentDir = experiments["filePath"]
-    #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
-    filePath = "%s/test/%s" % (experimentDir, "drowsy_full.csv")
+    # 584
+    #filePath = "%s/test/%s" % (experimentDir, "drowsy_full.csv")            # 361
+    #filePath = "%s/test/%s" % (experimentDir, "raw.drowsy_full.raw.fif")    # 480
+    #filePath = "%s/test/%s" % (experimentDir, "filter.drowsy_full.raw.fif") # 538
+    #filePath = "%s/test/%s" % (experimentDir, "drowsy_full.raw.fif")        # 532
+
+    #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")             # 218
+    #filePath = "%s/test/%s" % (experimentDir, "raw.awake_full.raw.fif")     # 226
+    #filePath = "%s/test/%s" % (experimentDir, "filter.awake_full.raw.fif")  # 326
+    filePath = "%s/test/%s" % (experimentDir, "awake_full.raw.fif")          # 301
 
     p = PoSDBoSFactory.getForDemo("knn_1", filePath)
     print "START"
@@ -55,5 +62,6 @@ def testFolder():
     probands = ["test"]
 
 if __name__ == '__main__': # pragma: no cover
-    runProcAndSave("2", "EOG.raw.fif")
-    #runProcAndSave("Test", "blink.csv")
+    #runProcAndSave("2", "EOG.raw.fif")
+    runProcAndSave("test", "awake_full.raw.fif")
+    #runDemo()

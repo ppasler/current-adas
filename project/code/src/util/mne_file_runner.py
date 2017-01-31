@@ -33,11 +33,11 @@ sFreq = procConfig.get("resamplingRate")
 icCount = procConfig.get("icCount")
 probands = ConfigProvider().getExperimentConfig().get("probands")
 
-def saveRaw(proband):
+def saveRaw(proband, filename):
     filepath = FILE_PATH % str(proband)
 
     start = time.time()
-    eegFileName = filepath + "EEG.csv"
+    eegFileName = filepath + filename
     eegData = fileUtil.getDto(eegFileName)
     eegRaw = mneUtil.createMNEObjectFromEEGDto(eegData)
     dur = time.time() - start
@@ -190,13 +190,29 @@ def tryThis():
     plt_show()
     fileUtil.save(mneRaw, fpath + ".fif")
     fileUtil.saveICA(ica, fpath)
-    
+
+def orThis():
+    extractor = EOGExtractor()
+    pat = (FILE_PATH % "test")
+    files = ["drowsy_full.csv", "awake_full.csv"]
+    raws, icas = [], []
+    for name in files:
+        fpath = pat + name
+        dto = fileUtil.getDto(fpath)
+        raw = mneUtil.createMNEObject(dto.getEEGData(), dto.getEEGHeader(), dto.filePath, 128)
+        mneUtil.bandpassFilterData(raw)
+        raw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
+        raws.append(raw)
+        _, ica = createICA("", raw)
+        icas.append(ica)
+
+    extractor.labelEOGChannel(icas)
+
+    for raw, ica, name in zip(raws, icas, files):
+        raw = extractor.removeEOGChannel(raw, ica)
+        raw.info["description"] = name
+        fileUtil.save(raw, pat + name)
+
 
 if __name__ == '__main__':
-    fpath = (FILE_PATH % "test") + "blink.csv"
-    dto = fileUtil.getDto(fpath)
-    size = len(dto)
-    dto2 = fileUtil.getPartialDto(dto, 0, 9989)
-    mneRaw = mneUtil.createMNEObjectFromEEGDto(dto2)
-    si = FreqProcessor()
-    print si.process(mneRaw)
+    orThis()

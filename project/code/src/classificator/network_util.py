@@ -13,6 +13,7 @@ import time
 
 from pybrain.datasets.supervised import SupervisedDataSet
 from util.file_util import FileUtil
+from util.csv_util import CSVUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -79,7 +80,7 @@ class NetworkDataUtil(object):
 
     def __init__(self, files=[]):
         self.files = files
-        self.fileUtil = FileUtil()
+        self.fileUtil = CSVUtil()
 
     def get(self, separate=True):
         values0, values1 = self.readFiles(self.files)
@@ -92,7 +93,7 @@ class NetworkDataUtil(object):
         return self.nInputs
 
     def readFiles(self, files):
-        return self.fileUtil.getDto(files[0]), self.fileUtil.getDto(files[1])
+        return self.fileUtil.readData(files[0]), self.fileUtil.readData(files[1])
 
     def buildFullTestSet(self, values0, values1):
         values0 = self._addClass(values0, 0.)

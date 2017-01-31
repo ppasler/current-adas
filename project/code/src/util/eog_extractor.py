@@ -32,7 +32,7 @@ class EOGExtractor(object):
     def __init__(self):
         self.mneUtil = MNEUtil()
         self.fileUtil = FileUtil()
-        self.eogChans = [0, 1, 2, 9, 10]
+        self.eogChans = [2]
         self.templateICA = self.fileUtil.loadICA(TEMPLATE_ICA_PATH + "blink_.ica.fif")
         #self._plot()#print "load ICA ", "template", self.templateICA.get_components().shape
 

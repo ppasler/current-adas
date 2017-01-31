@@ -89,7 +89,7 @@ class PoSDBoSFactory(object):
     @staticmethod
     def createFeatureExtractor(demoFile, collectedQueue, processedQueue, extractedQueue):
         collector = PoSDBoSFactory.createDemoDataCollector(demoFile, collectedQueue)
-        processor = PoSDBoSFactory.createMNEDataProcessor(collectedQueue, processedQueue)
+        processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
         return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
 
     @staticmethod

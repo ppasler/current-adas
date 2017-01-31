@@ -50,7 +50,6 @@ class HttpEEGDataHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return data
 
     def setSource(self, source):
-        print "hello"
         self.source = source
 
     def do_GET(self):

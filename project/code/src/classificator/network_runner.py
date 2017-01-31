@@ -12,6 +12,7 @@ import os
 import time
 
 from classificator.network_util import NetworkDataUtil, NetworkUtil
+from config.config import ConfigProvider
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +31,8 @@ def testSeveral(start, end, name, convergence):
     print "Done"
 
 def testSingle(h, name, convergence):
-    files = [scriptPath + "/../../data/awake_full_.csv", scriptPath + "/../../data/drowsy_full_.csv"]
+    experimentDir = ConfigProvider().getExperimentConfig().get("filePath") + "test/"
+    files = [experimentDir + "class.awake_full.csv", experimentDir + "class.drowsy_full.csv"]
     ndu = NetworkDataUtil(files)
     train, test = ndu.get()
 
@@ -39,23 +41,30 @@ def testSingle(h, name, convergence):
     nu.test()
     filename = name + "_" + str(h)
     nu.save(filename)
+
+    data = ndu.get(False)
+    results1, _ = nu.activate(data)
     f = open(os.path.dirname(os.path.abspath(__file__)) + "/../../data/" + filename +  ".nns", 'w')
 
     results, resArr = nu.activate(test)
     f.write("convergence: " + str(convergence) + "\n\n")
     f.write(nu.__str__() + "\n\n")
     f.write("  awk drsy res(%)\n")
+    f.write(str(results1))
+    f.write("  awk drsy res(%)\n")
     f.write(str(results))
     f.write("\n\nres;clazz;target\n")
     for line in resArr:
         f.write("%.2f;%.2f;%.2f\n" % tuple(line))
     f.close()
+    
+    ndu.get(False)
 
 def loadSingle(fileName):
     files = [scriptPath + "/../../data/awake_full.csv", scriptPath + "/../../data/drowsy_full.csv"]
     ndu = NetworkDataUtil(files)
     data = ndu.get(False)
-    
+
     nu = NetworkUtil(new=False, fileName=fileName)
     results, resArr = nu.activate(data)
     f = open(os.path.dirname(os.path.abspath(__file__)) + "/../../data/" + fileName +  "_.nns", 'w')

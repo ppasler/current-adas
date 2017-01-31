@@ -47,11 +47,11 @@ class PoSDBoS(object):
                 data = self.extractedQueue.get(timeout=5)
                 features.append(data)
                 clazz = self.nn.activate(data, True)
-                c.append([clazz, clazz])
+                c.append(clazz)
                 self.setState(clazz)
                 total += 1
             except Empty:
-                print "Needed %.2fs for %d windows" % (time() - start, total) 
+                print "Needed %.2fs for %d windows; drowsy: %d" % (time() - start, total, sum(c)) 
                 self.stop()
             except KeyboardInterrupt:
                 self.close()
@@ -120,9 +120,9 @@ class PoSDBoS(object):
     def writeFeature(self, data, filePath):
         #filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
 
-        #header = []
-        #start = 4
-        #end = start + len(data[0])
-        #for field in ConfigProvider().getCollectorConfig().get("fields"):
-        #    header.extend([str(x) + "Hz" + field for x in range(start, end)])
-        self.fileUtil.saveCSV(filePath, data, [])
+        header = []
+        start = 4
+        end = start + len(data[0])/6
+        for field in ConfigProvider().getCollectorConfig().get("fields"):
+            header.extend([str(x) + "Hz" + field for x in range(start, end)])
+        self.fileUtil.saveCSV(filePath, data, header)

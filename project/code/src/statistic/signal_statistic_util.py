@@ -363,6 +363,6 @@ def buildPath(proband, fileName):
 experimentDir = ConfigProvider().getExperimentConfig().get("filePath")
 
 if __name__ == "__main__":
-    #runTest()
-    runWithSplits()
+    runTest()
+    #runWithSplits()
     #runAll("EOG.raw.fif")

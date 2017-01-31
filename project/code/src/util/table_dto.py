@@ -93,7 +93,7 @@ class TableDto(object):
             duration = self.getDuration()
             return self.len / duration
         except:
-            return 0.0
+            return ConfigProvider().getEmotivConfig().get("samplingRate")
 
     def getHeader(self):  # pragma: no cover
         return self.header

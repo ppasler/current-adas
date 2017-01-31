@@ -42,7 +42,7 @@ class FeatureExtractor(object):
         while self.extract:
             try:
                 procData = self.processedQueue.get(timeout=1)
-                self.extractFeatures(procData)
+                self._extractFeatures(procData)
             except Empty:
                 pass
 
