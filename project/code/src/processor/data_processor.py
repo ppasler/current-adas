@@ -42,7 +42,6 @@ class DataProcessor(object):
                         self.extractedQueue.put(extData)
                 except Exception as e:
                     print e.message
-                    pass
             except Empty:
                 self.close()
 

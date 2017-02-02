@@ -12,8 +12,6 @@ import os
 import threading
 from time import time, sleep
 from config.config import ConfigProvider
-from mne.viz.utils import plt_show
-
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -29,15 +27,15 @@ class PoSDBoS(object):
         if hasattr(self, "dm"):
             self.dm.close()
 
+    def join(self):
+        self.dct.join()
+        self.dpt.join()
+
     def start(self):
         self.dct = threading.Thread(target=self.dc.collectData)
         self.dct.start()
         self.dpt = threading.Thread(target=self.dp.processData)
         self.dpt.start()
-
-    def join(self):
-        self.dct.join()
-        self.dpt.join()
 
     def run(self):
         self.start()

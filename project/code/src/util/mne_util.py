@@ -16,7 +16,6 @@ from config.config import ConfigProvider
 from util.file_util import FileUtil
 
 import warnings
-from mne.minimum_norm.time_frequency import compute_source_psd
 from mne.time_frequency.psd import psd_welch
 warnings.filterwarnings(action='ignore')
 
