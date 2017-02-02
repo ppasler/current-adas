@@ -24,14 +24,20 @@ class PoSDBoS(object):
 
     def close(self):
         self.running = False
-        self.fe.close()
-        self.dm.close()
+        self.dc.close()
+        self.dp.close()
+        if hasattr(self, "dm"):
+            self.dm.close()
 
     def start(self):
-        self.fet = threading.Thread(target=self.fe.start)
-        self.fet.start()
-        # TODO wait for loading
-        sleep(25)
+        self.dct = threading.Thread(target=self.dc.collectData)
+        self.dct.start()
+        self.dpt = threading.Thread(target=self.dp.processData)
+        self.dpt.start()
+
+    def join(self):
+        self.dct.join()
+        self.dpt.join()
 
     def run(self):
         self.start()
@@ -67,7 +73,7 @@ class PoSDBoS(object):
                 self.close()
         #self.writeFeature(c)
         self.close()
-        self.fet.join()
+        self.join()
         dmt.join()
         print "done"
 
@@ -114,7 +120,8 @@ class PoSDBoS(object):
             print "wrote it %s" % filePath
             self.writeFeature(features, filePath)
         self.close()
-        self.fet.join()
+        self.join()
+
         print "done"
 
     def writeFeature(self, data, filePath):

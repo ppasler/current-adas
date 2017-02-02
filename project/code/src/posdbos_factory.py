@@ -13,7 +13,6 @@ import os
 from classificator.neural_network import NeuralNetwork
 from collector.data_collector import DummyDataCollector, EEGDataCollector
 from config.config import ConfigProvider
-from extractor.feature_extractor import FeatureExtractor
 from output.drowsiness_monitor import DrowsinessMonitor
 from posdbos import PoSDBoS
 from processor.data_processor import DataProcessor
@@ -34,8 +33,10 @@ class PoSDBoSFactory(object):
         self = PoSDBoSFactory
 
         posdbos= self._get()
+        posdbos.dm = DrowsinessMonitor()
         posdbos.nn = self.loadNeuralNetwork(networkFile)
-        posdbos.fe = self.createFeatureExtractor(demoFile, posdbos.collectedQueue, posdbos.processedQueue, posdbos.extractedQueue)
+        posdbos.dc = PoSDBoSFactory.createDemoDataCollector(demoFile, posdbos.collectedQueue)
+        posdbos.dp = PoSDBoSFactory.createDataProcessor(posdbos.collectedQueue, posdbos.extractedQueue)
 
         return posdbos
 
@@ -43,8 +44,9 @@ class PoSDBoSFactory(object):
     def getForSave(filePath):
         self = PoSDBoSFactory
 
-        posdbos= self._get()
-        posdbos.fe = self.createFeatureExtractor(filePath, posdbos.collectedQueue, posdbos.processedQueue, posdbos.extractedQueue)
+        posdbos = self._get()
+        posdbos.dc = self.createDemoDataCollector(filePath, posdbos.collectedQueue)
+        posdbos.dp = self.createDataProcessor(posdbos.collectedQueue, posdbos.extractedQueue)
 
         return posdbos
 
@@ -54,10 +56,8 @@ class PoSDBoSFactory(object):
 
         posdbos= self._initPoSDBoS(True)
         posdbos.collectedQueue = Queue()
-        posdbos.processedQueue = Queue()
         posdbos.extractedQueue = Queue()
 
-        posdbos.dm = DrowsinessMonitor()
         posdbos.fileUtil = FileUtil()
         return posdbos
 
@@ -87,12 +87,6 @@ class PoSDBoSFactory(object):
         return NeuralNetwork().load(networkFile)
 
     @staticmethod
-    def createFeatureExtractor(demoFile, collectedQueue, processedQueue, extractedQueue):
-        collector = PoSDBoSFactory.createDemoDataCollector(demoFile, collectedQueue)
-        processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
-        return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
-
-    @staticmethod
     def createDemoDataCollector(demoFile, collectedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
         fields = collectorConfig.get("fields")
@@ -111,9 +105,9 @@ class PoSDBoSFactory(object):
         return EEGDataCollector(EmotivConnector(), collectedQueue, fields, windowSize, windowCount)
 
     @staticmethod
-    def createDataProcessor(collectedQueue, processedQueue):
-        return DataProcessor(collectedQueue, processedQueue, EEGProcessor(), GyroProcessor())
+    def createDataProcessor(collectedQueue, extractedQueue):
+        return DataProcessor(collectedQueue, extractedQueue, EEGProcessor(), GyroProcessor())
 
     @staticmethod
-    def createMNEDataProcessor(collectedQueue, processedQueue):
-        return DataProcessor(collectedQueue, processedQueue, MNEProcessor(), GyroProcessor())
+    def createMNEDataProcessor(collectedQueue, extractedQueue):
+        return DataProcessor(collectedQueue, extractedQueue, MNEProcessor(), GyroProcessor())

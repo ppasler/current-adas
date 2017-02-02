@@ -55,6 +55,7 @@ class MNEUtilTest(BaseTest):
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)
 
+    @unittest.skip("work in progress")
     def test_createMNEEpochsObject(self):
         epochs = self.mne.createMNEEpochsObject(self.eegData, 1)
         self.assertEqual(len(epochs.get_data()), 15)

@@ -63,5 +63,5 @@ def testFolder():
 
 if __name__ == '__main__': # pragma: no cover
     #runProcAndSave("2", "EOG.raw.fif")
-    runProcAndSave("test", "awake_full.raw.fif")
-    #runDemo()
+    #runProcAndSave("test", "awake_full.raw.fif")
+    runDemo()

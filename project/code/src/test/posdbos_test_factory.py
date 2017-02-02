@@ -10,11 +10,11 @@ Created on 30.05.2016
 import os
 from os.path import join, dirname
 import sys
+from output.drowsiness_monitor import DrowsinessMonitor
 sys.path.append(join(dirname(__file__), '..'))
 
 from collector.data_collector import EEGDataCollector
 from config.config import ConfigProvider
-from extractor.feature_extractor import FeatureExtractor
 from posdbos_factory import PoSDBoSFactory
 from source.dummy_data_source import DummyPacketSource
 
@@ -29,20 +29,20 @@ class PoSDBoSTestFactory(PoSDBoSFactory):
 
         posdbos= self._get()
         posdbos.nn = self.createNeuralNetwork()
-        posdbos.fe = self.createTestFeatureExtractor(posdbos.collectedQueue, posdbos.processedQueue, posdbos.extractedQueue)
+        posdbos.dm = DrowsinessMonitor()
 
-        return posdbos
-
-    @staticmethod
-    def createTestFeatureExtractor(collectedQueue, processedQueue, extractedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
         fields = collectorConfig.get("fields")
         windowSeconds = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount")
         samplingRate = 128
-        collector = PoSDBoSTestFactory.createTestDataCollector(collectedQueue, fields, windowSeconds, samplingRate, windowCount)
-        processor = PoSDBoSFactory.createDataProcessor(collectedQueue, processedQueue)
-        return FeatureExtractor(collector, processor, collectedQueue, processedQueue, extractedQueue)
+        posdbos.dc = self.createTestDataCollector(posdbos.collectedQueue, fields, windowSeconds, samplingRate, windowCount)
+        posdbos.dp = self.createDataProcessor(posdbos.collectedQueue, posdbos.extractedQueue)
+        return posdbos
+
+    @staticmethod
+    def createTestProcessor(collectedQueue, extractedQueue):
+        return PoSDBoSFactory.createDataProcessor(collectedQueue, extractedQueue)
 
     @staticmethod
     def createTestDataCollector(collectedQueue, fields, windowSeconds, samplingRate, windowCount):

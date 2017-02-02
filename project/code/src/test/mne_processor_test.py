@@ -17,6 +17,7 @@ from util.mne_util import MNEUtil
 from mne.viz.utils import plt_show
 from test.posdbos_test_factory import PoSDBoSTestFactory
 
+@unittest.skip("work in progress")
 class TestMNEProcessor(BaseTest):
 
     def setUp(self):
@@ -27,7 +28,7 @@ class TestMNEProcessor(BaseTest):
 
     def test_all(self):
         window = self.queue.get()
-        print window["AF3"]["value"]
+        #print window["AF3"]["value"]
         preProc, _ = self.processor.process(window)
 
     #def test_preProc(self):

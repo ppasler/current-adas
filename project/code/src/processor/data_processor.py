@@ -8,13 +8,13 @@ Created on 13.06.2016
 :organization: Reutlingen University
 '''
 from Queue import Empty
-
+from numpy import array
 from config.config import ConfigProvider
 
 
 class DataProcessor(object):
 
-    def __init__(self, collectedQueue, processedQueue, eegProcessor, gyroProcessor):
+    def __init__(self, collectedQueue, extractedQueue, eegProcessor, gyroProcessor):
         config = ConfigProvider()
         self.eegFields = config.getEmotivConfig()["eegFields"]
         self.gyroFields = config.getEmotivConfig()["gyroFields"]
@@ -25,7 +25,7 @@ class DataProcessor(object):
         self.gyroProcessor = gyroProcessor
 
         self.collectedQueue = collectedQueue
-        self.processedQueue = processedQueue
+        self.extractedQueue = extractedQueue
         self.runProcess = True
 
     def close(self):
@@ -38,12 +38,23 @@ class DataProcessor(object):
                 try:
                     procData, procInvalid = self.process(data)
                     if not procInvalid:
-                        self.processedQueue.put(procData)
+                        extData = self._extractFeatures(procData)
+                        self.extractedQueue.put(extData)
                 except Exception as e:
                     print e.message
                     pass
             except Empty:
                 self.close()
+
+    def extractFeatures(self, data):
+        return data.flatten()
+
+    def _extractFeatures(self, data):
+        features = []
+        for _, sigData in data.iteritems():
+            theta = sigData["theta"]
+            features.extend(theta)
+        return array(features)
 
     def process(self, data):
         #TODO make me fast and nice
