@@ -8,7 +8,10 @@ Created on 02.08.2016
 :organization: Reutlingen University
 '''
 from collections import OrderedDict
-import os
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+from config.config import ConfigProvider
 
 
 TITLE = "%s for EEG of proband #%s"
@@ -71,3 +74,5 @@ def getNewFileName(filePath, fileExtension, suffix=None):
     if suffix:
         fileName += suffix
     return "%s.%s" % (fileName, fileExtension)
+
+experimentDir = ConfigProvider().getExperimentConfig().get("filePath")

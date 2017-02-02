@@ -8,14 +8,13 @@ Created on 02.08.2016
 :organization: Reutlingen University
 '''
 
-from processor.mne_processor import SignalProcessor, SignalPreProcessor
+from posdbos.processor.mne_processor import SignalProcessor, SignalPreProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from signal_statistic_constants import TITLE, getNewFileName
-from util.eeg_util import EEGUtil
-from util.quality_util import QualityUtil
-from time import sleep
+from posdbos.util.eeg_util import EEGUtil
+from posdbos.util.quality_util import QualityUtil
 
 SCREEN_SIZE = (24, 12)
 FILE_SIZE = (96, 48)
@@ -219,7 +218,7 @@ class ProcessedSignalPlotter(RawSignalPlotter):
 
     def _getData(self, signal):
         raw = self.eegData.getColumn(signal)
-        qual = self.eegData.getQuality(signal)
+        _ = self.eegData.getQuality(signal)
         proc, _ = self.pre.process(raw)
         #proc, _ = self.chain.process(proc, qual)
         return proc

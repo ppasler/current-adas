@@ -4,15 +4,13 @@ import sys, os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from util.eeg_util import EEGUtil
-from util.fft_util import FFTUtil
-from util.file_util import FileUtil
-from util.signal_util import SignalUtil
+from posdbos.util.eeg_util import EEGUtil
+from posdbos.util.fft_util import FFTUtil
+from posdbos.util.file_util import FileUtil
+from posdbos.util.signal_util import SignalUtil
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-
 
 class EEGSignalPlotter(object):
 

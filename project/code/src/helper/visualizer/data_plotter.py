@@ -15,7 +15,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 
 import matplotlib.pyplot as plt
-from util.file_util import FileUtil
+from posdbos.util.file_util import FileUtil
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 

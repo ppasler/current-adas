@@ -8,7 +8,8 @@ Created on 21.01.2017
 :organization: Reutlingen University
 '''
 
-import sys
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from PyQt4 import QtGui
 
