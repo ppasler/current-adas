@@ -7,7 +7,7 @@ Created on 02.08.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from statistic.signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY,\
+from signal_statistic_constants import TITLE, GENERAL_KEY, SIGNALS_KEY, STAT_FIELDS, RAW_KEY,\
     FREQ_RANGE
 from terminaltables import AsciiTable
 

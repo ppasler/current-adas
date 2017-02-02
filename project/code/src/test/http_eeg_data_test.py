@@ -36,7 +36,7 @@ class TestHttpEEGData(BaseTest):
 
         header = self.receiver.getHeader()
 
-        fetchNum = 3
+        fetchNum = 1
         data = []
         for _ in range(fetchNum):
             data.append(self.receiver.getData())

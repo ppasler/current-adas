@@ -12,7 +12,7 @@ from processor.mne_processor import SignalProcessor, SignalPreProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-from statistic.signal_statistic_constants import TITLE, getNewFileName
+from signal_statistic_constants import TITLE, getNewFileName
 from util.eeg_util import EEGUtil
 from util.quality_util import QualityUtil
 from time import sleep

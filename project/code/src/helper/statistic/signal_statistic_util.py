@@ -11,9 +11,9 @@ from datetime import datetime
 from multiprocessing import Process
 from threading import Thread
 from Queue import Queue
-import sys
-from statistic.signal_statistic_constants import *  # @UnusedWildImport
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+import sys, os
+from signal_statistic_constants import *  # @UnusedWildImport
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from numpy import nanmax, nanmin, nansum, nanmean, array
 
@@ -21,7 +21,7 @@ from collector.data_collector import EEGDataCollector
 from config.config import ConfigProvider
 from processor.eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
-from statistic.signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter, \
+from signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter, \
     FrequencyPlotter
 from util.eeg_util import EEGUtil
 from util.fft_util import FFTUtil
