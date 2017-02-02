@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 
 '''
-Created on 02.07.2016
+Created on 02.02.2017
 
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
 from signal_statistic_constants import *  # @UnusedWildImport
 from signal_statistic_util import SignalStatisticCollector
-import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from posdbos.util.file_util import FileUtil

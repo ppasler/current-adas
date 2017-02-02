@@ -11,8 +11,8 @@ Created on 20.01.2017
 import threading
 
 from base_test import *  # @UnusedWildImport
-from posdbos.network.http_eeg_data_provider import HttpEEGDataProvider
-from posdbos.network.http_eeg_data_receiver import HttpEEGDataReceiver
+from posdbos.network.http_data_provider import HttpEEGDataProvider
+from posdbos.network.http_data_receiver import HttpEEGDataReceiver
 from posdbos.source.dummy_data_source import DummyPacketSource
 
 

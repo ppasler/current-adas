@@ -10,11 +10,8 @@ Created on 09.05.2016
 import BaseHTTPServer
 import json
 import os
-import threading
 import time
 import xmlrpclib
-
-from posdbos.source.emotiv_connector import EmotivConnector
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -108,28 +105,3 @@ class HttpEEGDataProvider(object):
             
         print time.asctime(), "Server Stops - %s:%s" % self.server_address
         self.httpd.server_close();
-
-
-
-if __name__ == "__main__":
-    output_path = scriptPath + "/../data/"
-    emotiv = EmotivConnector(display_output=False, output_path=output_path)
-    server = HttpEEGDataProvider()
-    try:
-        print "starting server and emotiv"
-        t = threading.Thread(target=server.run)
-        t.start()
-
-        time.sleep(1)
-
-        print "closing server and emotiv"
-        emotiv.close()
-        server.stop()
-    except (KeyboardInterrupt, SystemExit) as e:
-        print e.getMessage()
-        emotiv.close()
-        server.stop()
-    finally:
-        print "exit now..."
-        t.join()
-        print "...really"
