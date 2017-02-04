@@ -108,7 +108,7 @@ class DummyDataCollector(DataCollector):
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
-        logging.info("%s: starting data collection" % self.__class__.__name__)
+        logging.info("starting data collection")
         while self.collect:
             if self.datasource.hasMore:
                 data = self._getData()
@@ -116,7 +116,7 @@ class DummyDataCollector(DataCollector):
                 self.collectedQueue.put(filteredData)
             else:
                 self.collect = False
-        logging.info("%s: closing data collection" % self.__class__.__name__)
+        logging.info("closing data collection")
         self.datasource.close()
 
     def _getData(self):

@@ -9,8 +9,8 @@ Created on 30.05.2016
 '''
 import logging
 logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(levelname)-8s %(message)s',
-                datefmt='%Y-%b-%d %H:%M:%S')
+                format='%(asctime)s.%(msecs)03d %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d %(message)s',
+                datefmt='%H:%M:%S')
 import os
 import threading
 from config.config import ConfigProvider
@@ -19,7 +19,6 @@ from posdbos.factory import PoSDBoSFactory
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 probands = ConfigProvider().getExperimentConfig().get("probands")
-
 
 
 def runProcAndSaveAll(filename):
@@ -33,12 +32,12 @@ def runProcAndSave(proband, filename):
     filePath = "%s%s/" % (experimentDir, proband)
 
     p = PoSDBoSFactory.getForSave(filePath + filename)
-    logging.info("START: runAndSafe")
+    logging.info("STARTING")
     pt = threading.Thread(target=p.runAndSave, args=(filePath + "proc.csv",))
     pt.start()
 
     pt.join()
-    logging.info("END: runAndSafe")
+    logging.info("ENDING")
 
 def runDemo():
     experiments = ConfigProvider().getExperimentConfig()
@@ -55,12 +54,12 @@ def runDemo():
     filePath = "%s/test/%s" % (experimentDir, "awake_full.raw.fif")          # 301
 
     p = PoSDBoSFactory.getForDemo("knn_1", filePath)
-    logging.info("START: runDemo")
+    logging.info("STARTING")
     pt = threading.Thread(target=p.run)
     pt.start()
 
     pt.join()
-    logging.info("END: runDemo")
+    logging.info("ENDING")
 
 def testFolder():
     global probands

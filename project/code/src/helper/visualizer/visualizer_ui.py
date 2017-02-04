@@ -10,16 +10,11 @@ Created on 07.12.2016
 
 from PyQt4 import QtCore, QtGui
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
-
 class Ui_MainWindow(object):
 
     def setupUi(self, mainWindow, wrapper):
         self.mainWindow = mainWindow
-        self.mainWindow.setObjectName(_fromUtf8("mainWindow"))
+        self.mainWindow.setObjectName("mainWindow")
         self.mainWindow.showMaximized()
         #self.mainWindow.resize(823, 602)
 
@@ -45,13 +40,13 @@ class Ui_MainWindow(object):
 
     def _initStatusBar(self):
         self.statusbar = QtGui.QStatusBar(self.mainWindow)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        self.statusbar.setObjectName("statusbar")
         self.mainWindow.setStatusBar(self.statusbar)
 
     def _initMenuBar(self):
         self.menubar = QtGui.QMenuBar(self.mainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 823, 21))
-        self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.menubar.setObjectName("menubar")
         self.mainWindow.setMenuBar(self.menubar)
 
     def retranslateUi(self):

@@ -32,6 +32,7 @@ class DataProcessor(object):
         self.runProcess = False
 
     def processData(self):
+        logging.info("starting data processing")
         while self.runProcess:
             try:
                 data = self.collectedQueue.get(timeout=1)
@@ -43,8 +44,9 @@ class DataProcessor(object):
                 except Exception as e:
                     logging.error(e.message)
             except Empty:
-                logging.warn("CollectedQueue empty")
+                logging.warn("collectedQueue empty")
                 self.close()
+        logging.info("ending data processing")
 
     def extractFeatures(self, data):
         return data.flatten()

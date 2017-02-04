@@ -33,6 +33,7 @@ class Video():
             videoImage = QtGui.QPixmap.fromImage(videoImage)
             return videoImage
         except:
+            logging.warn("no frame")
             return None
 
 class VideoPlayer(QtGui.QWidget):

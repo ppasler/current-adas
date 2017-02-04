@@ -63,7 +63,7 @@ class DummyDataSource(object):
         self.len = len(self.rawData)
         if self.len > 0:
             self.hasMore = True
-        logging.info("Using %d dummy datasets" % self.len)
+        logging.info("%s: Using %d dummy datasets" % (self.__class__.__name__, self.len))
 
     def dequeue(self):
         pass
@@ -177,8 +177,6 @@ class DummyWindowSource(DummyDataSource):
         self.windowCount = windowCount
         self.windowSeconds = windowSeconds
 
-
-    #TODO winsize of more than 2
     def _buildDataStructure(self): # pragma: no cover
         if self.windowSeconds is None:
             self.windowSize = self.len

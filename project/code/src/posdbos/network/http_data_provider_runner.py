@@ -37,9 +37,7 @@ def test():
         logging.error(e.getMessage())
         server.stop()
     finally:
-        logging.info("exit now...")
         t.join()
-        logging.info("...really")
 
 def run():
     output_path = scriptPath + "/../../data/"
@@ -60,10 +58,7 @@ def run():
         emotiv.close()
         server.stop()
     finally:
-        logging.info("exit now...")
         t.join()
-        logging.info("...really")
-
 
 if __name__ == "__main__":
     test()

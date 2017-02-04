@@ -104,6 +104,6 @@ class HttpEEGDataProvider(object):
                 logging.error(e.message)
                 self.stop()
                 raise
-            
+
         logging.info("Server stops - %s:%s" % self.server_address)
         self.httpd.server_close();

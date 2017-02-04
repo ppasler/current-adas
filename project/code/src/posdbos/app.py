@@ -27,12 +27,15 @@ class PoSDBoS(object):
         self.dp.close()
         if hasattr(self, "dm"):
             self.dm.close()
+        logging.info("closing app")
+
 
     def join(self):
         self.dct.join()
         self.dpt.join()
 
     def start(self):
+        logging.info("starting app")
         self.dct = threading.Thread(target=self.dc.collectData)
         self.dct.start()
         self.dpt = threading.Thread(target=self.dp.processData)
@@ -63,7 +66,6 @@ class PoSDBoS(object):
             except Exception as e:
                 logging.error(e.message)
                 self.close()
-
 
         while dmt.is_alive():
             try:

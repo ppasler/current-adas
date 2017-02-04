@@ -14,8 +14,12 @@ class ConfigProvider(object):
         '''Loading default config'''
         self.defaultConfig = ConfigParser.SafeConfigParser()
         self.defaultConfig.optionxform = str
-        logging.debug("%s: reading configfile <%s>" % (self.__class__.__name__, DEFCONFIG))
+        logging.debug("reading configfile <%s>" % (DEFCONFIG,))
         self.defaultConfig.read(DEFCONFIG)
+    
+    def getEmotivConfig(self):
+        '''get config for ProcessingChain '''
+        return self.getConfig("emotiv")
 
     def getCollectorConfig(self):
         '''get config for DataCollector '''
@@ -24,10 +28,6 @@ class ConfigProvider(object):
     def getProcessingConfig(self):
         '''get config for ProcessingChain '''
         return self.getConfig("processing")
-    
-    def getEmotivConfig(self):
-        '''get config for ProcessingChain '''
-        return self.getConfig("emotiv")
 
     def getNNInitConfig(self):
         '''get config for Neural Network Initialization '''
