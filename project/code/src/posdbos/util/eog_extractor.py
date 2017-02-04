@@ -9,7 +9,7 @@ Created on 05.01.2017
 '''
 
 import os
-
+import logging
 from numpy import mean
 
 from posdbos.util.mne_util import MNEUtil
@@ -34,7 +34,7 @@ class EOGExtractor(object):
         self.fileUtil = FileUtil()
         self.eogChans = [2]
         self.templateICA = self.fileUtil.loadICA(TEMPLATE_ICA_PATH + "blink_.ica.fif")
-        #self._plot()#print "load ICA ", "template", self.templateICA.get_components().shape
+        #self._plot()#logging.info("load ICA ", "template", self.templateICA.get_components().shape)
 
     def _plot(self):
         self.templateRaw = self.fileUtil.load(TEMPLATE_ICA_PATH + "blink_.raw.fif")
@@ -68,7 +68,7 @@ class EOGExtractor(object):
 
     def _getEOGIndex(self, ica, eogInds):
         if eogInds is None:
-            print "has EOG channel %s" % str(ica.labels_)
+            logging.info("has EOG channel %s" % str(ica.labels_))
             eogInds = ica.labels_[BLINK_LABEL]
         return eogInds
 

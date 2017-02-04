@@ -1,6 +1,6 @@
 import os
 import time
-
+import logging
 import emokit
 from emokit.emotiv import Emotiv
 
@@ -37,7 +37,7 @@ class EmotivConnector(object):
         try:
             self.emotiv.stop()
         except Exception as e:
-            print "Error while shutting down", e
+            logging.error(e.message)
 
     def close(self):
         self.stop()
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     output_path = scriptPath + "/../data/"
 
     headset = EmotivConnector(display_output=False, write=True, verbose=True, output_path=output_path)
-    print("Serial Number: %s" % headset.emotiv.serial_number)
+    logging.info("Serial Number: %s" % headset.emotiv.serial_number)
 
     while headset.emotiv.running:
         try:

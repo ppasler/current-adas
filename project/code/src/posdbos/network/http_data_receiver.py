@@ -42,16 +42,3 @@ class HttpEEGDataReceiver(object):
     def dequeue(self):
         data = self.getData()
         return EEGTablePacket(data)
-
-if __name__ == "__main__":
-    
-    hostname, port = ("localhost", 9000)
-    client = HttpEEGDataReceiver(hostname, port, True)
-    
-    print client.getHeader()
-    time.sleep(3)
-    
-    print client.getData()
-    time.sleep(3)
-    
-    print client.getData()

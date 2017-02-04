@@ -19,7 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from posdbos.classificator.neural_network import NeuralNetwork
 from config.config import ConfigProvider
 import numpy as np
-
+import logging
 
 N_OUTPUT = 1
 
@@ -41,16 +41,16 @@ class NetworkUtil(object):
 
     def train(self, trainData, convergence=False):
         start = time.time()
-        print "start Training at " + str(datetime.fromtimestamp(start))
+        logging.info("start Training at " + str(datetime.fromtimestamp(start)))
         if convergence:
             self.nn.trainConvergence(trainData, **self.config)
         else:
             self.nn.train(trainData, **self.config)
-        print "Training Done in %.2fs" % (time.time() - start)
+        logging.info("Training Done in %.2fs" % (time.time() - start))
     
     def test(self, testData=None):
         self.nn.test(testData)
-        print "Testing Done"
+        logging.info("Testing Done")
 
     def activate(self, testData):
         total = (len(testData) / 2) / 100.0

@@ -42,12 +42,3 @@ class DateConverter(object):
     def _toTimestamp(self, date):
         timestamp = date - self.epoch
         return timestamp.total_seconds()
-
-if __name__ == "__main__":
-    d = DateConverter('%d/%m/%Y %H:%M:%S.%f', 1)
-    #1480942739.41
-    print d.convertDate("05/12/2016 13:58:59.407")
-
-    d.setPattern("%Y-%m-%d %H:%M:%S.%f")
-    print d.convertDate("2016-12-19 08:18:38.415000")
-    

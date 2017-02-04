@@ -10,6 +10,7 @@ Created on 10.05.2016
 
 import os
 import time
+import logging
 
 from posdbos.util.file_util import FileUtil
 from posdbos.collector.data_collector import EEGDataCollector
@@ -62,7 +63,7 @@ class DummyDataSource(object):
         self.len = len(self.rawData)
         if self.len > 0:
             self.hasMore = True
-        print "Using %d dummy datasets" % self.len
+        logging.info("Using %d dummy datasets" % self.len)
 
     def dequeue(self):
         pass

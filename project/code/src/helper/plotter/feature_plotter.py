@@ -9,8 +9,9 @@ import os
 from config.config import ConfigProvider
 import matplotlib.pyplot as plt
 import numpy as np
-from statistic.signal_statistic_plotter import AbstractSignalPlotter
-from util.file_util import FileUtil
+import logging
+from helper.statistic.signal_statistic_plotter import AbstractSignalPlotter
+from posdbos.util.file_util import FileUtil
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -44,7 +45,7 @@ class FeaturePlotter(AbstractSignalPlotter):
 
         self.savePlot()
         self.showPlot()
-        print "plotting done"
+        logging.info("plotting done")
 
     def _initPlot(self):
         signalCount = self._calcSignalCount()
@@ -58,7 +59,7 @@ class FeaturePlotter(AbstractSignalPlotter):
 
         axis.plot(data)
         mean = np.nanmean(data)
-        print header, mean
+        logging.info(header, mean)
         axis.plot([mean]*len(data))
 
 

@@ -23,24 +23,15 @@ class CSVUtilTest(BaseTest):
 
     def test_readData(self):
         file_path = self.getData32CSV()
-        if isfile(file_path):
-            self.reader.readData(file_path)
-        else:
-            print "'%s' not found" % file_path
+        self.reader.readData(file_path)
 
     def test_readHeader(self):
         file_path = self.getData32CSV()
-        if isfile(file_path):
-            self.reader.readHeader(file_path)
-        else:
-            print "'%s' not found" % file_path
+        self.reader.readHeader(file_path)
 
     def testreadEEGFile(self):
         file_path = self.getData32CSV()
-        if isfile(file_path):
-            self.reader.readEEGFile(file_path)
-        else:
-            print "'%s' not found" % file_path
+        self.reader.readEEGFile(file_path)
 
     def test_writeFile(self):
         filePath = self.PATH + "test.csv"

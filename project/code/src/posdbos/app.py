@@ -9,6 +9,7 @@ Created on 30.05.2016
 '''
 from Queue import Empty
 import os
+import logging
 import threading
 from time import time, sleep
 from config.config import ConfigProvider
@@ -55,12 +56,12 @@ class PoSDBoS(object):
                 self.setState(clazz)
                 total += 1
             except Empty:
-                print "Needed %.2fs for %d windows; drowsy: %d" % (time() - start, total, sum(c)) 
+                logging.info("Needed %.2fs for %d windows; drowsy: %d" % (time() - start, total, sum(c)))
                 self.stop()
             except KeyboardInterrupt:
                 self.close()
             except Exception as e:
-                print e.message
+                logging.error(e.message)
                 self.close()
 
 
@@ -73,7 +74,7 @@ class PoSDBoS(object):
         self.close()
         self.join()
         dmt.join()
-        print "done"
+        logging.info("Done")
 
     def setState(self, clazz):
         self.classified[clazz] += 1
@@ -104,23 +105,23 @@ class PoSDBoS(object):
                 features.append(data)
                 total += 1
             except Empty:
-                print "Needed %.2fs for %d windows" % (time() - start, total) 
+                logging.info("Needed %.2fs for %d windows; drowsy: %d" % (time() - start, total, sum(c)))
                 self.stop()
             except KeyboardInterrupt:
                 cleanExit = False
                 self.close()
             except Exception as e:
                 cleanExit = False
-                print e.message
+                logging.error(e.message)
                 self.close()
 
         if cleanExit:
-            print "wrote it %s" % filePath
+            logging.info("wrote it %s" % filePath)
             self.writeFeature(features, filePath)
         self.close()
         self.join()
 
-        print "done"
+        logging.info("done")
 
     def writeFeature(self, data, filePath):
         #filePath = scriptPath + "/../data/" + "drowsy_full_.csv"

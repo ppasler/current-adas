@@ -12,6 +12,7 @@ import json
 import os
 import time
 import xmlrpclib
+import logging
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -95,13 +96,14 @@ class HttpEEGDataProvider(object):
 
     def run(self):
         '''Serve EPOC data until forever'''
-        print time.asctime(), "Server Starts - %s:%s" % self.server_address
+        logging.info("Server starts - %s:%s" % self.server_address)
         while self.run_server:
             try:
                 self.httpd.handle_request()
-            except (KeyboardInterrupt, SystemExit):
+            except (KeyboardInterrupt, SystemExit) as e:
+                logging.error(e.message)
                 self.stop()
                 raise
             
-        print time.asctime(), "Server Stops - %s:%s" % self.server_address
+        logging.info("Server stops - %s:%s" % self.server_address)
         self.httpd.server_close();

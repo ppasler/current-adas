@@ -190,17 +190,3 @@ class CSVUtil(object):
             structData.append(quality)
 
         self.writeFile(filePath, transpose(structData), header)
-
-if __name__ == "__main__": # pragma: no cover
-    e = CSVUtil()
-    
-    scriptPath = os.path.dirname(os.path.abspath(__file__))
-    eeg_data = e.readEEGFile("../../example/example_1024_new.csv", ",")
-    eeg_data2 = e.readEEGFile("../../example/example_1024.csv", ";")
-    ecg_data = e.readECGFile("../../example/example_4096_ecg.csv", ",")
-    print eeg_data.getData()[:,0]
-    print eeg_data2.getData()[:,0]
-    print ecg_data.getData()[:,0]
-#    print ecg_data.getECGData()
-#    print ecg_data.header
-    

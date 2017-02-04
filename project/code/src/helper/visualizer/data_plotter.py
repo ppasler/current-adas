@@ -9,7 +9,7 @@ Created on 08.12.2016
 '''
 
 import os
-
+import logging
 from PyQt4 import QtGui
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
@@ -47,7 +47,7 @@ class DataWidget(QtGui.QWidget):
         self.numChannels = len(self.eegData)
         self.samplingRate = dto.getSamplingRate()
         self.length = len(self.eegData[0])
-        print "plotter\t#%d\t%.2fHz" % (self.length, self.samplingRate)
+        logging.info("plotter\t#%d\t%.2fHz" % (self.length, self.samplingRate))
 
     def _initPlot(self):
         self.figure = plt.figure()
@@ -83,7 +83,7 @@ class DataWidget(QtGui.QWidget):
     
             self.canvas.draw()
         else:
-            print "no data found for index range [%d:%d]" % (start, end)
+            logging.warn("no data found for index range [%d:%d]" % (start, end))
 
     def _isInDataRange(self, start, end):
         return end < self.length

@@ -14,7 +14,7 @@ class ConfigProvider(object):
         '''Loading default config'''
         self.defaultConfig = ConfigParser.SafeConfigParser()
         self.defaultConfig.optionxform = str
-        logging.info("%s: reading configfile <%s>" % (self.__class__.__name__, DEFCONFIG))
+        logging.debug("%s: reading configfile <%s>" % (self.__class__.__name__, DEFCONFIG))
         self.defaultConfig.read(DEFCONFIG)
 
     def getCollectorConfig(self):

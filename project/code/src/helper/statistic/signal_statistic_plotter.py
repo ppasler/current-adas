@@ -92,7 +92,6 @@ class DistributionSignalPlotter(AbstractSignalPlotter):
 
         self.savePlot()
         self.showPlot()
-        print "plotting done"
 
     def _initPlot(self):
         signalCount = self._calcSignalCount()
@@ -139,7 +138,6 @@ class RawSignalPlotter(AbstractSignalPlotter):
 
         self.savePlot()
         self.showPlot()
-        print "plotting done"
 
     def _initPlot(self):
         signalCount = self._calcSignalCount()
@@ -243,7 +241,6 @@ class FrequencyPlotter(RawSignalPlotter):
 
         self.savePlot()
         self.showPlot()
-        print "plotting done"
 
     def _plotSignal(self, signal, axis):
         raw = self._getData(signal)

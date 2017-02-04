@@ -10,8 +10,9 @@ Created on 23.01.2017
 import multiprocessing
 import os
 import time
+import logging
 
-from classificator.network_util import NetworkDataUtil, NetworkUtil
+from posdbos.classificator.network_util import NetworkDataUtil, NetworkUtil
 from config.config import ConfigProvider
 
 
@@ -28,7 +29,7 @@ def testSeveral(start, end, name, convergence):
     for thread in threads:
         thread.join()
 
-    print "Done"
+    logging.info("done")
 
 def testSingle(h, name, convergence):
     experimentDir = ConfigProvider().getExperimentConfig().get("filePath") + "test/"

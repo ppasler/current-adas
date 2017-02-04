@@ -9,11 +9,14 @@ Created on 02.07.2016
 '''
 from os.path import join, dirname, abspath
 import sys
+import logging
+logging.getLogger().setLevel(logging.INFO)
 sys.path.append(join(dirname(__file__), '..'))
 
 from os import remove
 import unittest
 import numpy as np
+
 
 class BaseTest(unittest.TestCase):
 
@@ -58,4 +61,4 @@ class BaseTest(unittest.TestCase):
         try:
             remove(filePath)
         except OSError as e:
-            print e.message
+            logging.error(e.message)

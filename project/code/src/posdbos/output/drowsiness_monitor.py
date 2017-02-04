@@ -11,7 +11,7 @@ from time import sleep
 
 import pygame
 from config.config import ConfigProvider
-
+import logging
 
 resolution = (1600, 900)
 
@@ -87,7 +87,7 @@ class DrowsinessMonitor(object):
             except KeyboardInterrupt:
                 self.close()
             except Exception as e:
-                print e.message
+                logging.error(e.message)
                 self.close()
 
     def close(self):

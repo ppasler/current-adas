@@ -1,10 +1,11 @@
 import os, glob, csv
 import sys
 import time
+import logging
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from util.date_converter import DateConverter
+from posdbos.util.date_converter import DateConverter
 
 def getCSVFiles():
     return glob.glob("*.csv")
@@ -29,7 +30,7 @@ def processCSVFile(filePath):
         #http://stackoverflow.com/questions/19309834/how-write-csv-file-without-new-line-character-in-last-line
         fout.seek(-2, os.SEEK_END) # <---- 2 : len('\r\n')
         fout.truncate()
-        print "took %.2fs for %s" % ((time.time() - start), filePath) 
+        logging.info("took %.2fs for %s" % ((time.time() - start), filePath))
 
 def processDir(filePath):
     os.chdir(filePath)
@@ -46,6 +47,6 @@ def doit():
         processDir(filePath)
 
 if __name__ == "__main__":
-    print "start..."
+    logging.info("start...")
     doit()
-    print "...finished"
+    logging.info("...finished")

@@ -104,14 +104,6 @@ class MNEUtil():
     def markBadChannels(self, raw, channels):
         raw.info['bads'] = channels
 
-    def interpolateNonExtstingChannel(self, raw, channel):
-        print raw.info['bads']
-        data = raw._data
-        chanData = mean(data, axis=0)
-
-        print chanData.shape, raw._data.shape
-
-
     def interpolateBadChannels(self, raw):
         return raw.interpolate_bads()
 
@@ -165,7 +157,6 @@ class MNEUtil():
                 template = (i, j)
                 fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
                                                  show=False, ch_type='eeg', verbose=True)
-                print i, j, fig_template, fig_detected
 
     def plotPSDTopo(self, mneObj):
         layout = mne.channels.read_layout('EEG1005')

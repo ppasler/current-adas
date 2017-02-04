@@ -9,7 +9,7 @@ Created on 30.05.2016
 '''
 import os
 import threading
-
+import logging
 from config.config import ConfigProvider
 from posdbos.factory import PoSDBoSFactory
 
@@ -28,12 +28,12 @@ def runProcAndSave(proband, filename):
     filePath = "%s%s/" % (experimentDir, proband)
 
     p = PoSDBoSFactory.getForSave(filePath + filename)
-    print "START"
+    logging.info("START")
     pt = threading.Thread(target=p.runAndSave, args=(filePath + "proc.csv",))
     pt.start()
 
     pt.join()
-    print "END"
+    logging.info("END")
 
 def runDemo():
     experiments = ConfigProvider().getExperimentConfig()
@@ -50,18 +50,19 @@ def runDemo():
     filePath = "%s/test/%s" % (experimentDir, "awake_full.raw.fif")          # 301
 
     p = PoSDBoSFactory.getForDemo("knn_1", filePath)
-    print "START"
+    logging.info("START")
     pt = threading.Thread(target=p.run)
     pt.start()
 
     pt.join()
-    print "END"
+    logging.info("END")
 
 def testFolder():
     global probands
     probands = ["test"]
 
 if __name__ == '__main__': # pragma: no cover
+    logging.getLogger().setLevel(logging.DEBUG)
     #runProcAndSave("2", "EOG.raw.fif")
     #runProcAndSave("test", "awake_full.raw.fif")
     runDemo()

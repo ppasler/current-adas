@@ -7,6 +7,7 @@ Created on 02.02.2017
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
+import logging
 from signal_statistic_constants import *  # @UnusedWildImport
 from signal_statistic_util import SignalStatisticCollector
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
@@ -77,6 +78,7 @@ def buildPath(proband, fileName):
     return "%s%s/%s" % (experimentDir, proband, fileName)
 
 if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.DEBUG)
     runTest()
     #runWithSplits()
     #runAll("EOG.raw.fif")

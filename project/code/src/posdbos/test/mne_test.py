@@ -77,7 +77,7 @@ class MNEUtilTest(BaseTest):
     @unittest.skip("todo")
     def test_ICA(self):
         raw = self.mne.createMNEObjectFromEEGDto(self.eegData)
-        print self.mne.ICA(raw)
+        logging.info(self.mne.ICA(raw))
 
 if __name__ == '__main__':
     unittest.main()

@@ -28,13 +28,11 @@ class TestMNEProcessor(BaseTest):
 
     def test_all(self):
         window = self.queue.get()
-        #print window["AF3"]["value"]
         preProc, _ = self.processor.process(window)
 
     #def test_preProc(self):
     #    window = self.queue.get()
     #    preProc = self.processor.preProcessor.process(window)
-    #    print preProc
 
 if __name__ == "__main__":
     unittest.main()

@@ -9,7 +9,7 @@ Created on 30.05.2016
 '''
 
 from signal_window import RectangularSignalWindow
-
+import logging
 
 class DataCollector(object):
     '''
@@ -90,12 +90,12 @@ class EEGDataCollector(DataCollector):
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
-        print("%s: starting data collection" % self.__class__.__name__)
+        logging.info("%s: starting data collection" % self.__class__.__name__)
         while self.collect:
             data = self._getData()
             filteredData = self._filter(data)
             self._addData(filteredData)
-        print("%s: closing data collection" % self.__class__.__name__)
+        logging.info("%s: closing data collection" % self.__class__.__name__)
         self.datasource.close()
 
     def _getData(self):
@@ -108,7 +108,7 @@ class DummyDataCollector(DataCollector):
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
-        print("%s: starting data collection" % self.__class__.__name__)
+        logging.info("%s: starting data collection" % self.__class__.__name__)
         while self.collect:
             if self.datasource.hasMore:
                 data = self._getData()
@@ -116,7 +116,7 @@ class DummyDataCollector(DataCollector):
                 self.collectedQueue.put(filteredData)
             else:
                 self.collect = False
-        print("%s: closing data collection" % self.__class__.__name__)
+        logging.info("%s: closing data collection" % self.__class__.__name__)
         self.datasource.close()
 
     def _getData(self):

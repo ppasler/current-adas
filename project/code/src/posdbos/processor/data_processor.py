@@ -10,7 +10,7 @@ Created on 13.06.2016
 from Queue import Empty
 from numpy import array
 from config.config import ConfigProvider
-
+import logging
 
 class DataProcessor(object):
 
@@ -41,8 +41,9 @@ class DataProcessor(object):
                         extData = self._extractFeatures(procData)
                         self.extractedQueue.put(extData)
                 except Exception as e:
-                    print e.message
+                    logging.error(e.message)
             except Empty:
+                logging.warn("CollectedQueue empty")
                 self.close()
 
     def extractFeatures(self, data):

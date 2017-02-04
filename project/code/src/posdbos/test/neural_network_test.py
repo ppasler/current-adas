@@ -121,7 +121,7 @@ class TestNetworkDataUtil(unittest.TestCase):
         classTwo = np.array([[4., 5, 6], [4, 6, 5], [5, 4, 6], [5, 6, 4], [6, 4, 5], [6, 5, 4]])
         
         n = NetworkDataUtil()
-        #print n.buildTestSet(classOne, classTwo)
+        #logging.info(n.buildTestSet(classOne, classTwo))
 
 if __name__ == "__main__":
     unittest.main()

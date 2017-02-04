@@ -10,6 +10,7 @@ Created on 08.12.2016
 
 from PyQt4 import QtGui
 import cv2
+import logging
 
 class Video():
     def __init__(self, videoId, capture):
@@ -43,7 +44,7 @@ class VideoPlayer(QtGui.QWidget):
         self.frameCount = self.capture.get(cv2.CAP_PROP_FRAME_COUNT)
         self.fps = self.capture.get(cv2.CAP_PROP_FPS)
 
-        print "player%d\t#%d\t%.2ffps\t%ds" % (self.playerId, self.frameCount, self.fps, self.frameCount / self.fps)
+        logging.info("player%d\t#%d\t%.2ffps\t%ds" % (self.playerId, self.frameCount, self.fps, self.frameCount / self.fps))
 
         self.video = Video("video" + str(self.playerId), self.capture)
         self.videoFrame = QtGui.QLabel(self)
@@ -62,7 +63,7 @@ class VideoPlayer(QtGui.QWidget):
             self.videoFrame.setPixmap(videoImage)
             self.videoFrame.setScaledContents(True)
         except TypeError:
-            print "No frame for player %s" % self.playerId
+            logging.error("No frame for player %s" % self.playerId)
 
     def _calcCurFrame(self, curFrame):
         return int(curFrame * (self.fps / self.maxFps))

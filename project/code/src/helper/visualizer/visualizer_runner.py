@@ -10,7 +10,7 @@ Created on 21.01.2017
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-
+import logging
 from PyQt4 import QtGui
 
 from visualizer import DataVisualizer
@@ -42,4 +42,5 @@ def main():
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.DEBUG)
     main()
