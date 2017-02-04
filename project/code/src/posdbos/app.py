@@ -105,7 +105,7 @@ class PoSDBoS(object):
                 features.append(data)
                 total += 1
             except Empty:
-                logging.info("Needed %.2fs for %d windows; drowsy: %d" % (time() - start, total, sum(c)))
+                logging.info("Needed %.2fs for %d windows" % (time() - start, total))
                 self.stop()
             except KeyboardInterrupt:
                 cleanExit = False
