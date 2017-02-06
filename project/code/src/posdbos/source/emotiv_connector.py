@@ -1,6 +1,7 @@
 import os
 import time
 import logging
+import gevent
 import emokit
 from emokit.emotiv import Emotiv
 
@@ -13,8 +14,12 @@ emokit.emotiv.DEVICE_POLL_INTERVAL = 0.001
 
 class EmotivConnector(object):
 
-    def __init__(self, display_output=False, write=True, verbose=False, output_path="."):
-        self._initEmotiv(display_output, write, verbose, output_path)
+    def __init__(self, display_output=False, write=True, verbose=False, output_path=".", oldScript=False):
+        self.oldScript = oldScript
+        if self.oldScript:
+            self._initOldEmotiv(display_output, write)
+        else:
+            self._initEmotiv(display_output, write, verbose, output_path)
 
     def _initEmotiv(self, display_output, write, verbose, output_path):
         self.emotiv = Emotiv(display_output=display_output, write=write, verbose=verbose, output_path=output_path)
@@ -24,6 +29,17 @@ class EmotivConnector(object):
 
     def _isEmotivConnected(self):
         return self.emotiv.running
+
+    def _initOldEmotiv(self, display_output, write_to_file):
+        self.emotiv = Emotiv(display_output, write_to_file)
+        gevent.spawn(self.emotiv.setup)
+        gevent.sleep(0)
+        if not self._isOldEmotivConnected():
+            self.emotiv.close()
+            self._loadDummyData()
+
+    def _isOldEmotivConnected(self):
+        return self.emotiv.serial_number
 
     def _loadDummyData(self):
         filePath = scriptPath + "/../../captured_data/janis/parts/2016-07-12-11-15_EEG_4096.csv"
@@ -35,7 +51,10 @@ class EmotivConnector(object):
 
     def stop(self):
         try:
-            self.emotiv.stop()
+            if self.oldScript:
+                self.emotiv.close()
+            else:
+                self.emotiv.stop()
         except Exception as e:
             logging.error(e.message)
 
