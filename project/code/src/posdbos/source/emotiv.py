@@ -3,10 +3,13 @@
 
 '''
 Re-added on 06.02.2017
-Modified from: https://github.com/openyou/emokit/blob/13512c5e078d0ff321709a31f19377fc9b7e18a1/python/emokit/emotiv.py
 
 :author: Paul Pasler
 :organization: Reutlingen University
+
+Modified version of: https://github.com/openyou/emokit/blob/13512c5e078d0ff321709a31f19377fc9b7e18a1/python/emokit/emotiv.py
+
+Use this script, as long as the current `master` of the emokit API is unstable.
 '''
 
 import os
@@ -17,7 +20,7 @@ system_platform = platform.system()
 if system_platform == "Windows":
     import pywinusb.hid as hid
 else:
-    import hidapi
+    import hidapi #@UnresolvedImport
     hidapi.hid_init()
 
 import gevent
