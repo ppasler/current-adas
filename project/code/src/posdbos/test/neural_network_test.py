@@ -52,7 +52,7 @@ class TestNeuralNetwork(BaseTest):
         values = [((0, 0), (0,)), ((0, 1), (0,)), ((1, 0), (0,)), ((1, 1), (1,))]*2
         return self._createData(2, 1, values)
 
-    @unittest.skip("may fail with delta 0.2")
+    @unittest.skip("takes too long, may fail with delta 0.2")
     def test_xor(self):
         ds = self.createXORData()
 
@@ -65,13 +65,12 @@ class TestNeuralNetwork(BaseTest):
         ds = self.createANDData()
         self.nn.train(ds, **self.config)
 
-        #TODO may fail with delta 0.2
         for inpt, target in ds:
             self.assertEqual(self.nn._clazz(self.nn.activate(inpt)), target)
 
     def test_saveAndLoad(self):
         ds = self.createORData()
-        self.nn.train(ds)
+        self.nn.train(ds, maxEpochs=1, learningrate=0.9, momentum=1.0)
         self.nn.save(name)
 
         nn2 = NeuralNetwork()
@@ -103,6 +102,7 @@ class TestNetworkUtil(unittest.TestCase):
         ndu = NetworkDataUtil()
         return ndu.createXORData()
 
+    @unittest.skip("takes too long")
     def test_XOR(self):
         ds = self._buildXORData()
         self.nu.train(ds)
@@ -120,9 +120,13 @@ class TestNetworkDataUtil(unittest.TestCase):
     def test_buildTestSet(self):
         classOne = np.array([[1., 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])
         classTwo = np.array([[4., 5, 6], [4, 6, 5], [5, 4, 6], [5, 6, 4], [6, 4, 5], [6, 5, 4]])
-        
+        totalLen = len(classOne) + len(classTwo)
+
         n = NetworkDataUtil()
-        #logging.info(n.buildTestSet(classOne, classTwo))
+        train, valid = n.buildTestSet(classOne, classTwo)
+
+        self.assertEqual(len(train) + len(valid), totalLen)
+        self.assertEqual(len(train), len(valid)*2)
 
 if __name__ == "__main__":
     unittest.main()
