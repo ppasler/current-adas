@@ -84,16 +84,20 @@ class NeuralNetwork(object):
             return 1
         return int(clazz)
 
-    def save(self, name):
+    def _createFilename(self, name, defaultPath=True):
+        if defaultPath:
+            return self.path + name + FILE_EXTENSION 
+        return name + FILE_EXTENSION
+
+    def save(self, name, defaultPath=True):
         '''saves the neural network
         
         :param string name: filename for the to be saved network
         '''
-        f = open(self.path + name + FILE_EXTENSION, 'w')
-        pickle.dump(self.net, f)
-        f.close()
+        with open(self._createFilename(name, defaultPath), 'w') as f:
+            pickle.dump(self.net, f)
 
-    def load(self, name):
+    def load(self, name, defaultPath=True):
         '''loades the neural network
         
         :param string name: filename for the to be loaded network
@@ -101,10 +105,9 @@ class NeuralNetwork(object):
         :return: instance of a saved neural network
         :rtype: NeuralNetwork
         '''
-        f = open(self.path + name + FILE_EXTENSION, 'r')
-        self.net = pickle.load(f)
-        f.close()
-        return self
+        with open(self._createFilename(name, defaultPath), 'r') as f:
+            self.net = pickle.load(f)
+            return self
 
     def __repr__(self):
         return "%s\n%s" % (self.__class__.__name__, str(self.net))

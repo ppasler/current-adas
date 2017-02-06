@@ -15,20 +15,20 @@ sys.path.append(join(dirname(__file__), '..'))
 
 from posdbos.collector.data_collector import EEGDataCollector
 from config.config import ConfigProvider
-from posdbos.factory import PoSDBoSFactory
+from posdbos.factory import Factory
 from posdbos.source.dummy_data_source import DummyPacketSource
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-class TestFactory(PoSDBoSFactory):
+class TestFactory(Factory):
 
     @staticmethod
     def getForTesting():
         self = TestFactory
 
         app = self._get()
-        app.nn = self.createNeuralNetwork()
+        app.nn = self.loadNeuralNetwork(scriptPath + "/test_data/test", False)
         app.dm = DrowsinessMonitor()
 
         collectorConfig = ConfigProvider().getCollectorConfig()
@@ -36,16 +36,17 @@ class TestFactory(PoSDBoSFactory):
         windowSeconds = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount")
         samplingRate = 128
-        app.dc = self.createTestDataCollector(app.collectedQueue, fields, windowSeconds, samplingRate, windowCount)
+        filePath = scriptPath + "/test_data/example_1024.csv"
+        app.dc = self.createTestDataCollector(app.collectedQueue, fields, windowSeconds, samplingRate, windowCount, filePath)
         app.dp = self.createDataProcessor(app.collectedQueue, app.extractedQueue)
         return app
 
     @staticmethod
     def createTestProcessor(collectedQueue, extractedQueue):
-        return PoSDBoSFactory.createDataProcessor(collectedQueue, extractedQueue)
+        return TestFactory.createDataProcessor(collectedQueue, extractedQueue)
 
     @staticmethod
-    def createTestDataCollector(collectedQueue, fields, windowSeconds, samplingRate, windowCount):
-        datasource = DummyPacketSource()
+    def createTestDataCollector(collectedQueue, fields, windowSeconds, samplingRate, windowCount, filePath=None):
+        datasource = DummyPacketSource(filePath=filePath)
         datasource.convert()
         return EEGDataCollector(datasource, collectedQueue, fields, windowSeconds, windowCount, samplingRate)

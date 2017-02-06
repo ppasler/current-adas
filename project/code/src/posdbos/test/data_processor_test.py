@@ -16,7 +16,7 @@ from numpy import NaN
 
 from posdbos.collector.data_collector import DummyDataCollector
 from posdbos.source.dummy_data_source import DummyWindowSource
-from posdbos.test.posdbos_test_factory import TestFactory
+from posdbos.test.test_factory import TestFactory
 from config.config import ConfigProvider
 from posdbos.processor.eeg_processor import SignalProcessor
 from posdbos.util.quality_util import QualityUtil

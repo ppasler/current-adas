@@ -14,7 +14,7 @@ from Queue import Queue
 import threading
 from time import sleep
 
-from posdbos_test_factory import TestFactory
+from posdbos.test.test_factory import TestFactory
 from posdbos.collector.data_collector import EEGDataCollector
 from posdbos.collector.window_dto import WindowDto
 
@@ -41,29 +41,29 @@ class DataCollectorTest(BaseTest):
     def _fillWindowFull(self):
         self._fillValues(WINDOW_SECONDS)
 
-    def getInitWindow(self):
+    def getEmptyDto(self):
         return WindowDto(WINDOW_SIZE, FIELDS)
 
     def test_windowsFilled(self):
-        initWindow = self.getInitWindow()
+        emptyDto = self.getEmptyDto()
         windowSize = EEGDataCollector.calcWindowSize(WINDOW_SECONDS, SAMPLING_RATE)
 
         win1 = self.collector.windows[0]
         win2 = self.collector.windows[1]
 
         self.assertEquals(win1.index, 0)
-        self.assertEquals(win1.window, initWindow)
+        self.assertEquals(win1.dto, emptyDto)
         self.assertEquals(win2.index, windowSize / 2)
-        self.assertEquals(win2.window, initWindow)
+        self.assertEquals(win2.dto, emptyDto)
 
         self._fillValues(windowSize / 2)
         self.assertEquals(win1.index, windowSize / 2)
-        self.assertEquals(win1.window.window["X"], {'quality': [0, 0], 'value': [24.0, 24.0]})
-        self.assertEquals(win2.window, initWindow)
+        self.assertEquals(win1.dto.getData()["X"], {'quality': [0, 0], 'value': [24.0, 24.0]})
+        self.assertEquals(win2.dto, emptyDto)
         self.assertEquals(win2.index, 0) 
 
         self._fillValues(windowSize / 2)
-        self.assertEquals(win1.window, initWindow) 
+        self.assertEquals(win1.dto, emptyDto) 
         self.assertEquals(win2.index, 2) 
 
     def test_addData(self):

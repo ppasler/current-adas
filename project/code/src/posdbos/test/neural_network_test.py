@@ -73,17 +73,17 @@ class TestNeuralNetwork(BaseTest):
         ds = self.createORData()
         self.nn.train(ds)
         self.nn.save(name)
-        
+
         nn2 = NeuralNetwork()
         nn2.load(name)
-        
+
         self.assertNotEqual(self.nn, nn2)
-        
+
         assert_array_equal(self.nn.net.params, nn2.net.params)
         for inpt, _ in ds:
             self.assertEqual(self.nn.activate(inpt), nn2.activate(inpt))
 
-        self.removeFile(name)
+        self.removeFile(self.nn._createFilename(name))
 
     def test_test(self):
         ds = self.createORData()
@@ -116,6 +116,7 @@ class TestNetworkDataUtil(unittest.TestCase):
     def setUp(self):
         self.n = NetworkDataUtil()
 
+    # TODO complete this
     def test_buildTestSet(self):
         classOne = np.array([[1., 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])
         classTwo = np.array([[4., 5, 6], [4, 6, 5], [5, 4, 6], [5, 6, 4], [6, 4, 5], [6, 5, 4]])

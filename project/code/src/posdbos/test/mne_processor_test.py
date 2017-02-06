@@ -15,7 +15,7 @@ from Queue import Queue
 from posdbos.processor.mne_processor import MNEProcessor
 from posdbos.util.mne_util import MNEUtil
 from mne.viz.utils import plt_show
-from posdbos.test.posdbos_test_factory import TestFactory
+from posdbos.test.test_factory import TestFactory
 
 @unittest.skip("work in progress")
 class TestMNEProcessor(BaseTest):

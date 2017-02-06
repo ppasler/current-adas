@@ -9,7 +9,9 @@ Created on 20.01.2017
 '''
 
 from base_test import *  # @UnusedWildImport
-from posdbos_test_factory import TestFactory
+from time import sleep
+import threading
+from posdbos.test.test_factory import TestFactory
 
 
 class AppTest(BaseTest):
@@ -17,8 +19,13 @@ class AppTest(BaseTest):
     def setUp(self):
         self.app = TestFactory.getForTesting()
 
+    # TODO sths wrong here
     def test_run(self):
-        self.app.run()
+        pt = threading.Thread(target=self.app.run)
+        pt.start()
+        sleep(2)
+        self.app.close()
+        pt.join()
 
 
 if __name__ == '__main__':

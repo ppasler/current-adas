@@ -18,13 +18,16 @@ class WindowDto(object):
         self._initWindow()
 
     def _initWindow(self):
-        self.window = {}
+        self.data = {}
         for key in self.header:
-            self.window[key] = {"value": [], "quality": []}
+            self.data[key] = {"value": [], "quality": []}
+
+    def getData(self):
+        return self.data
 
     def addData(self, data):
         for key, date in data.iteritems():
-            field = self.window[key]
+            field = self.data[key]
             field["value"].append(date["value"])
             field["quality"].append(date["quality"])
 
@@ -35,7 +38,7 @@ class WindowDto(object):
             return False
         if self.header != other.header:
             return False
-        return array_equal(self.window, other.window)
+        return array_equal(self.data, other.data)
 
 class XWindowDto(object):
 

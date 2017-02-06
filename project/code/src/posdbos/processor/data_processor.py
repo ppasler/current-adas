@@ -42,6 +42,7 @@ class DataProcessor(object):
                         extData = self._extractFeatures(procData)
                         self.extractedQueue.put(extData)
                 except Exception as e:
+                    print e
                     logging.error(e.message)
             except Empty:
                 logging.warn("collectedQueue empty")

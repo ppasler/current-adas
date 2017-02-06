@@ -21,7 +21,7 @@ class SignalWindow(object):
         self._createDto()
 
     def _createDto(self):
-        self.window = WindowDto(self.windowSize, self.fields)
+        self.dto = WindowDto(self.windowSize, self.fields)
 
     def _resetWindow(self):
         self.index = 0
@@ -44,11 +44,11 @@ class SignalWindow(object):
         :param dict data: 
         '''
         #TODO potential bottleneck
-        self.window.addData(data)
+        self.dto.addData(data)
         self.index += 1
         
         if self.isFull():
-            data = self._doWindowFunction(self.window.window)
+            data = self._doWindowFunction(self.dto.getData())
             self.collectedQueue.put(data)
             self._resetWindow()
 

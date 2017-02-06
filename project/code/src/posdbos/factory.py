@@ -26,23 +26,23 @@ from util.file_util import FileUtil
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
-class PoSDBoSFactory(object):
+class Factory(object):
 
     @staticmethod
     def getForDemo(networkFile, demoFile):
-        self = PoSDBoSFactory
+        self = Factory
 
         posdbos= self._get()
         posdbos.dm = DrowsinessMonitor()
         posdbos.nn = self.loadNeuralNetwork(networkFile)
-        posdbos.dc = PoSDBoSFactory.createDemoDataCollector(demoFile, posdbos.collectedQueue)
-        posdbos.dp = PoSDBoSFactory.createDataProcessor(posdbos.collectedQueue, posdbos.extractedQueue)
+        posdbos.dc = Factory.createDemoDataCollector(demoFile, posdbos.collectedQueue)
+        posdbos.dp = Factory.createDataProcessor(posdbos.collectedQueue, posdbos.extractedQueue)
 
         return posdbos
 
     @staticmethod
     def getForSave(filePath):
-        self = PoSDBoSFactory
+        self = Factory
 
         posdbos = self._get()
         posdbos.dc = self.createDemoDataCollector(filePath, posdbos.collectedQueue)
@@ -52,7 +52,7 @@ class PoSDBoSFactory(object):
 
     @staticmethod
     def _get():
-        self = PoSDBoSFactory
+        self = Factory
 
         posdbos= self._initPoSDBoS(True)
         posdbos.collectedQueue = Queue()
@@ -83,8 +83,8 @@ class PoSDBoSFactory(object):
         return NeuralNetwork().createNew(**nnCreate)
 
     @staticmethod
-    def loadNeuralNetwork(networkFile):
-        return NeuralNetwork().load(networkFile)
+    def loadNeuralNetwork(networkFile, defaultPath=True):
+        return NeuralNetwork().load(networkFile, defaultPath)
 
     @staticmethod
     def createDemoDataCollector(demoFile, collectedQueue):

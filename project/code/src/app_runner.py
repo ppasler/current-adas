@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
 import os
 import threading
 from config.config import ConfigProvider
-from posdbos.factory import PoSDBoSFactory
+from posdbos.factory import Factory
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -31,7 +31,7 @@ def runProcAndSave(proband, filename):
     #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
     filePath = "%s%s/" % (experimentDir, proband)
 
-    p = PoSDBoSFactory.getForSave(filePath + filename)
+    p = Factory.getForSave(filePath + filename)
     logging.info("STARTING")
     pt = threading.Thread(target=p.runAndSave, args=(filePath + "proc.csv",))
     pt.start()
@@ -53,7 +53,7 @@ def runDemo():
     #filePath = "%s/test/%s" % (experimentDir, "filter.awake_full.raw.fif")  # 326
     filePath = "%s/test/%s" % (experimentDir, "awake_full.raw.fif")          # 301
 
-    p = PoSDBoSFactory.getForDemo("knn_1", filePath)
+    p = Factory.getForDemo("knn_1", filePath)
     logging.info("STARTING")
     pt = threading.Thread(target=p.run)
     pt.start()

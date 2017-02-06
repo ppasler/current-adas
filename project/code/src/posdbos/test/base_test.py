@@ -7,10 +7,12 @@ Created on 02.07.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
+import logging
+logging.basicConfig(level=logging.INFO,
+                format='%(asctime)s.%(msecs)03d %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d %(message)s',
+                datefmt='%H:%M:%S')
 from os.path import join, dirname, abspath
 import sys
-import logging
-logging.getLogger().setLevel(logging.INFO)
 sys.path.append(join(dirname(__file__), '..'))
 
 from os import remove
@@ -61,4 +63,4 @@ class BaseTest(unittest.TestCase):
         try:
             remove(filePath)
         except OSError as e:
-            logging.error(e.message)
+            logging.error(e.strerror)
