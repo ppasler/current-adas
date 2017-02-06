@@ -8,7 +8,7 @@ Created on 11.04.2016
 :organization: Reutlingen University
 '''
 
-from copy import deepcopy
+from posdbos.collector.window_dto import WindowDto
 
 class SignalWindow(object):
 
@@ -16,17 +16,16 @@ class SignalWindow(object):
         self.collectedQueue = collectedQueue
         self.windowSize = windowSize
         self.fields = fields
-        self.window = {}
         self.index = 0
+
+        self._createDto()
+
+    def _createDto(self):
+        self.window = WindowDto(self.windowSize, self.fields)
 
     def _resetWindow(self):
         self.index = 0
-        self.window = deepcopy(self.initWindow)
-
-    def _initWindow(self, fields):
-        self.initWindow = {}
-        for key in fields:
-            self.initWindow[key] = {"value": [], "quality": []}
+        self._createDto()
 
     def addData(self, data):
         '''
@@ -45,22 +44,19 @@ class SignalWindow(object):
         :param dict data: 
         '''
         #TODO potential bottleneck
-        self._addDataToWindow(data)
+        self.window.addData(data)
         self.index += 1
         
         if self.isFull():
-            data = self.window.copy()
-            self._resetWindow()
+            data = self._doWindowFunction(self.window.window)
             self.collectedQueue.put(data)
-
-    def _addDataToWindow(self, data):   
-        for key, date in data.iteritems():
-            field = self.window[key]
-            field["value"].append(date["value"])
-            field["quality"].append(date["quality"])
+            self._resetWindow()
 
     def isFull(self):
         return self.index >= self.windowSize
+
+    def _doWindowFunction(self, data):
+        pass
 
     def __repr__(self):  # pragma: no cover
         return "%s: { windowSize = %d, numValue = %d }" % (self.__class__.__name__, self.windowSize, self.index)
@@ -72,8 +68,6 @@ class RectangularSignalWindow(SignalWindow):
     
     def __init__(self, collectedQueue, windowSize, fields):
         super(RectangularSignalWindow, self).__init__(collectedQueue, windowSize, fields)
-        self._initWindow(fields)
-        self._resetWindow()
 
     def _doWindowFunction(self, data):
         '''Simple collector rectangular function '''

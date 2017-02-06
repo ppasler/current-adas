@@ -13,10 +13,11 @@ from base_test import * # @UnusedWildImport
 from Queue import Queue
 
 from posdbos.collector.signal_window import RectangularSignalWindow
+from posdbos.collector.window_dto import WindowDto
 
 
 WINDOW_SECONDS = 4
-INIT_WINDOW = {"X": {'quality': [], 'value': []}}
+INIT_WINDOW = WindowDto(WINDOW_SECONDS, ["X"])
 
 def _fillValues(window, count, start=0):
     for i in range(start, count):
@@ -33,10 +34,10 @@ class TestRectanglarSignalWindow(BaseTest):
 
     def test_windowsFilled(self):
         self.assertEquals(self.window.window, INIT_WINDOW)
-        
+
         _fillValues(self.window, WINDOW_SECONDS / 2)
-        self.assertEquals(self.window.window, {"X": {'quality': [0, 1], 'value': [0, 1]}}) 
-        
+        #self.assertEquals(self.window.window, {"X": {'quality': [0, 1], 'value': [0, 1]}}) 
+
         _fillValues(self.window, WINDOW_SECONDS, WINDOW_SECONDS / 2)
         self.assertEquals(self.window.window, INIT_WINDOW) 
         self.assertEquals(self.collectedQueue.qsize(), 1)

@@ -16,11 +16,13 @@ from time import sleep
 
 from posdbos_test_factory import TestFactory
 from posdbos.collector.data_collector import EEGDataCollector
+from posdbos.collector.window_dto import WindowDto
 
 WINDOW_SECONDS = 1
 SAMPLING_RATE = 4
 WINDOW_COUNT = 2
 FIELDS = ["F3", "F4", "X", "Y"]
+WINDOW_SIZE = EEGDataCollector.calcWindowSize(WINDOW_SECONDS, SAMPLING_RATE)
 
 class DataCollectorTest(BaseTest):
 
@@ -40,10 +42,7 @@ class DataCollectorTest(BaseTest):
         self._fillValues(WINDOW_SECONDS)
 
     def getInitWindow(self):
-        d = {}
-        for key in FIELDS:
-            d[key] = {"value": [], "quality": []} 
-        return d
+        return WindowDto(WINDOW_SIZE, FIELDS)
 
     def test_windowsFilled(self):
         initWindow = self.getInitWindow()
@@ -59,7 +58,7 @@ class DataCollectorTest(BaseTest):
 
         self._fillValues(windowSize / 2)
         self.assertEquals(win1.index, windowSize / 2)
-        self.assertEquals(win1.window["X"], {'quality': [0, 0], 'value': [24.0, 24.0]})
+        self.assertEquals(win1.window.window["X"], {'quality': [0, 0], 'value': [24.0, 24.0]})
         self.assertEquals(win2.window, initWindow)
         self.assertEquals(win2.index, 0) 
 
