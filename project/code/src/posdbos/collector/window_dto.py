@@ -49,6 +49,9 @@ class WindowDto(object):
         dto.data = deepcopy(self.data)
         return dto
 
+    def __iter__(self):
+        return self.data.keys().__iter__()
+
     def __len__(self):
         return len(self.data)
 
@@ -59,13 +62,19 @@ class WindowDto(object):
         return key in self.data
 
     def __eq__(self, other):
-        if (self is None) or (other is None):
+        if other is None:
             return False 
         if type(self) != type(other):
             return False
         if self.header != other.header:
             return False
         return array_equal(self.data, other.data)
+
+    def shape(self):
+        return (len(self), len(self.header))
+
+    def __repr__(self):
+        return "%s %s: %s" % (self.__class__.__name__, (self.shape()), str(self.header))
 
 class XWindowDto(object):
 

@@ -35,9 +35,9 @@ class DataProcessor(object):
         logging.info("starting data processing")
         while self.runProcess:
             try:
-                data = self.collectedQueue.get(timeout=1)
+                dto = self.collectedQueue.get(timeout=1)
                 try:
-                    procData, procInvalid = self.process(data)
+                    procData, procInvalid = self.process(dto)
                     if not procInvalid:
                         extData = self._extractFeatures(procData)
                         self.extractedQueue.put(extData)
@@ -58,12 +58,12 @@ class DataProcessor(object):
             features.extend(theta)
         return array(features)
 
-    def process(self, data):
+    def process(self, dto):
         #TODO make me fast and nice
-        eegRaw, gyroRaw = self.splitData(data)
+        eegDto, gyroDto = self.splitData(dto)
 
-        eegProc, eegInvalid = self.eegProcessor.process(eegRaw)
-        gyroProc, gyroInvalid = self.gyroProcessor.process(gyroRaw)
+        eegProc, eegInvalid = self.eegProcessor.process(eegDto)
+        gyroProc, gyroInvalid = self.gyroProcessor.process(gyroDto)
 
         self.reuniteData(eegProc, gyroProc)
         return eegProc, (eegInvalid or gyroInvalid)
@@ -80,9 +80,9 @@ class DataProcessor(object):
             eegData: eeg values as dict
             gyroData: gyro values as dict
         '''
-        eegData = self._getSplit(dto, self.eegFields)
-        gyroData = self._getSplit(dto, self.gyroFields)
-        return eegData, gyroData
+        eegDto = self._getSplit(dto, self.eegFields)
+        gyroDto = self._getSplit(dto, self.gyroFields)
+        return eegDto, gyroDto
 
     def _getSplit(self, dto, fields):
         cpDto = dto.copy()
