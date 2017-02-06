@@ -16,10 +16,10 @@ from config.config import ConfigProvider
 from output.drowsiness_monitor import DrowsinessMonitor
 from posdbos.app import PoSDBoS
 from processor.data_processor import DataProcessor
-from processor.mne_processor import MNEProcessor
 from processor.eeg_processor import EEGProcessor
 from processor.gyro_processor import GyroProcessor
-from source.dummy_data_source import DummyWindowSource
+from processor.mne_processor import MNEProcessor
+from source.dummy_data_source import DummyWindowSource, DummyPacketSource
 from source.emotiv_connector import EmotivConnector
 from util.file_util import FileUtil
 
@@ -35,7 +35,7 @@ class Factory(object):
         posdbos= self._get()
         posdbos.dm = DrowsinessMonitor()
         posdbos.nn = self.loadNeuralNetwork(networkFile)
-        posdbos.dc = Factory.createDemoDataCollector(demoFile, posdbos.collectedQueue)
+        posdbos.dc = Factory.createDemoEEGDataCollector(demoFile, posdbos.collectedQueue)
         posdbos.dp = Factory.createDataProcessor(posdbos.collectedQueue, posdbos.extractedQueue)
 
         return posdbos
@@ -90,11 +90,31 @@ class Factory(object):
     def createDemoDataCollector(demoFile, collectedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
         fields = collectorConfig.get("fields")
-        windowSize = collectorConfig.get("windowSeconds")
+        windowSeconds = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount") 
+        datasource = Factory.createDummyWindowSource(demoFile, windowSeconds, windowCount)
+        return DummyDataCollector(datasource, collectedQueue, fields)
+
+    @staticmethod
+    def createDemoEEGDataCollector(demoFile, collectedQueue):
+        collectorConfig = ConfigProvider().getCollectorConfig()
+        fields = collectorConfig.get("fields")
+        windowSeconds = collectorConfig.get("windowSeconds")
+        windowCount = collectorConfig.get("windowCount") 
+        datasource = Factory.createDummyPacketSource(demoFile)
+        return EEGDataCollector(datasource, collectedQueue, fields, windowSeconds, windowCount, 128)
+
+    @staticmethod
+    def createDummyWindowSource(demoFile, windowSize, windowCount):
         datasource = DummyWindowSource(demoFile, False, windowSize, windowCount)
         datasource.convert()
-        return DummyDataCollector(datasource, collectedQueue, fields)
+        return datasource
+
+    @staticmethod
+    def createDummyPacketSource(demoFile):
+        datasource = DummyPacketSource(demoFile, False)
+        datasource.convert()
+        return datasource
 
     @staticmethod
     def createEmotivDataCollector(collectedQueue):

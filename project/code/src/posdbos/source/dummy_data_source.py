@@ -22,11 +22,12 @@ scriptPath = os.path.dirname(os.path.abspath(__file__))
 class EEGTablePacket(object):
     '''Object for EEG data :see: EmotivPacket
     '''
-    
+    # TODO fix me
     def __init__(self, data):
         self.sensors = data
-        self.gyro_x = data["X"]["value"]
-        self.gyro_y = data["Y"]["value"]
+        if "X" in data:
+            self.gyro_x = data["X"]["value"]
+            self.gyro_y = data["Y"]["value"]
         self.old_model = True
 
 class DummyDataSource(object):

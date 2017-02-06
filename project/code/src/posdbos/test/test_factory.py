@@ -16,7 +16,6 @@ sys.path.append(join(dirname(__file__), '..'))
 from posdbos.collector.data_collector import EEGDataCollector
 from config.config import ConfigProvider
 from posdbos.factory import Factory
-from posdbos.source.dummy_data_source import DummyPacketSource
 
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +46,5 @@ class TestFactory(Factory):
 
     @staticmethod
     def createTestDataCollector(collectedQueue, fields, windowSeconds, samplingRate, windowCount, filePath=None):
-        datasource = DummyPacketSource(filePath=filePath)
-        datasource.convert()
+        datasource = TestFactory.createDummyPacketSource(filePath)
         return EEGDataCollector(datasource, collectedQueue, fields, windowSeconds, windowCount, samplingRate)
