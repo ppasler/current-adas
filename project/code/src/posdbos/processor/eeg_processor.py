@@ -23,8 +23,9 @@ class EEGProcessor(object):
         self.signalProcessor = SignalProcessor()
         self.fftProcessor = FFTProcessor()
 
-    def process(self, eegData):
+    def process(self, dto):
         invalidCount = 0
+        eegData = dto.getData()
         for _, signal in eegData.iteritems():
             raw = np.array(signal["value"])
             quality = np.array(signal["quality"])

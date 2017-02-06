@@ -64,7 +64,7 @@ class PoSDBoS(object):
             except KeyboardInterrupt:
                 self.close()
             except Exception as e:
-                logging.error(e.message)
+                logging.exception(e.message)
                 self.close()
 
         while dmt.is_alive():
@@ -114,7 +114,7 @@ class PoSDBoS(object):
                 self.close()
             except Exception as e:
                 cleanExit = False
-                logging.error(e.message)
+                logging.exception(e.message)
                 self.close()
 
         if cleanExit:

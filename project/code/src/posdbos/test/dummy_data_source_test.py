@@ -64,7 +64,7 @@ class TestDummyWindowSource(BaseTest):
         data = self.source.dequeue() 
 
         self.assertEquals(len(data), 16)
-        self.assertTrue("X" in data.keys())
+        self.assertTrue("X" in data)
         self.assertTrue("quality" in data["X"].keys())
 
     def test__buildDataStructure_normal(self):

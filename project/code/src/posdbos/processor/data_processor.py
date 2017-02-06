@@ -42,8 +42,7 @@ class DataProcessor(object):
                         extData = self._extractFeatures(procData)
                         self.extractedQueue.put(extData)
                 except Exception as e:
-                    print e
-                    logging.error(e.message)
+                    logging.exception(e.message)
             except Empty:
                 logging.warn("collectedQueue empty")
                 self.close()
@@ -72,7 +71,7 @@ class DataProcessor(object):
     def reuniteData(self, eegData, gyroData):
         pass#eegData.update(gyroData)
 
-    def splitData(self, data):
+    def splitData(self, dto):
         '''split eeg and gyro data
         
         :param data: all values as dict
@@ -81,9 +80,11 @@ class DataProcessor(object):
             eegData: eeg values as dict
             gyroData: gyro values as dict
         '''
-        eegData = self.filterDictByKey(data, self.eegFields)
-        gyroData = self.filterDictByKey(data, self.gyroFields)
+        eegData = self._getSplit(dto, self.eegFields)
+        gyroData = self._getSplit(dto, self.gyroFields)
         return eegData, gyroData
 
-    def filterDictByKey(self, data, keys):
-        return {key: data[key] for key in keys if key in data}
+    def _getSplit(self, dto, fields):
+        cpDto = dto.copy()
+        cpDto.filter(fields)
+        return cpDto

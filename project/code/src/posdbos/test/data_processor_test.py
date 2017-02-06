@@ -20,6 +20,7 @@ from posdbos.test.test_factory import TestFactory
 from config.config import ConfigProvider
 from posdbos.processor.eeg_processor import SignalProcessor
 from posdbos.util.quality_util import QualityUtil
+from posdbos.collector.window_dto import WindowDto
 
 
 WINDOW_SECONDS = 4
@@ -52,6 +53,11 @@ class TestDataProcessor(BaseTest):
         dc = DummyDataCollector(datasource, self.collectedQueue, self.fields)
         dc.collectData()
 
+    def _createDto(self):
+        dto = WindowDto(2, TEST_DATA.keys())
+        dto.setData(TEST_DATA)
+        return dto
+
     def test_run(self):
         self._fillQueue()
 
@@ -64,14 +70,17 @@ class TestDataProcessor(BaseTest):
         self.assertEqual(self.processedQueue.qsize(), inpSize)
 
     def test_process(self):
-        self.processor.process(TEST_DATA)
+        dto = self._createDto()
+        self.processor.process(dto)
 
     def test_splitData(self):
-        eegData, gyroData = self.processor.splitData(TEST_DATA)
-        intersect = set(eegData) & set(gyroData)
-        self.assertTrue(len(intersect) == 0)
+        dto = self._createDto()
+
+        eegData, gyroData = self.processor.splitData(dto)
         self.assertTrue("F3" in eegData)
         self.assertTrue("X" in gyroData)
+        intersect = set(eegData.getHeader()) & set(gyroData.getHeader())
+        self.assertEqual(len(intersect), 0)
 
 class TestSignalProcessor(BaseTest):
 

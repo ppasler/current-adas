@@ -14,6 +14,7 @@ import logging
 
 from posdbos.util.file_util import FileUtil
 from posdbos.collector.data_collector import EEGDataCollector
+from posdbos.collector.window_dto import WindowDto
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -202,7 +203,9 @@ class DummyWindowSource(DummyDataSource):
             else:
                 quality = 0
             window[field] = {"value": value, "quality": quality}
-        return window
+        dto = WindowDto(self.windowSize, self.fields)
+        dto.data = window
+        return dto
 
     def dequeue(self):
         '''get the current dummy data collector

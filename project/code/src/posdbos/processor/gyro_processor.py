@@ -12,5 +12,5 @@ class GyroProcessor(object):
     def __init__(self):
         pass
 
-    def process(self, gyroData):
-        return gyroData, False
+    def process(self, dto):
+        return dto.getData(), False

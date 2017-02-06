@@ -48,7 +48,7 @@ class SignalWindow(object):
         self.index += 1
         
         if self.isFull():
-            data = self._doWindowFunction(self.dto.getData())
+            data = self._doWindowFunction(self.dto)
             self.collectedQueue.put(data)
             self._resetWindow()
 

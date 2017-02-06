@@ -35,13 +35,8 @@ class DataCollector(object):
     def _getData(self):
         pass
 
-    def _filter(self, data):
-        '''filter dict and take only wanted fields from data
-        :param data: whole raw data
-        
-        :return: filtered data set
-        '''
-        return {key: data[key] for key in self.fields if key in data}
+    def _filter(self, dto):
+        pass
 
     def _addData(self, data):
         for window in self.windows:
@@ -98,6 +93,15 @@ class EEGDataCollector(DataCollector):
         logging.info("%s: closing data collection" % self.__class__.__name__)
         self.datasource.close()
 
+    def _filter(self, data):
+        '''filter dict and take only wanted fields from data
+        :param data: whole raw data
+        
+        :return: filtered data set
+        '''
+        return {key: data[key] for key in self.fields if key in data}
+
+
     def _getData(self):
         return self.datasource.dequeue().sensors
 
@@ -118,6 +122,15 @@ class DummyDataCollector(DataCollector):
                 self.collect = False
         logging.info("closing data collection")
         self.datasource.close()
+
+    def _filter(self, dto):
+        '''filter dict and take only wanted fields from data
+        :param data: whole raw data
+
+        :return: filtered data set
+        '''
+        dto.filter(self.fields)
+        return dto
 
     def _getData(self):
         return self.datasource.dequeue()

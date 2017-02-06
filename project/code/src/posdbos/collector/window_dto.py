@@ -9,6 +9,8 @@ Created on 05.02.2017
 '''
 
 from numpy import empty, NaN, isnan, array_equal
+from copy import deepcopy
+
 
 class WindowDto(object):
 
@@ -22,6 +24,13 @@ class WindowDto(object):
         for key in self.header:
             self.data[key] = {"value": [], "quality": []}
 
+    def getHeader(self):
+        return self.header
+
+    def setData(self, data):
+        self.data = data
+        self.header = data.keys()
+
     def getData(self):
         return self.data
 
@@ -30,6 +39,24 @@ class WindowDto(object):
             field = self.data[key]
             field["value"].append(date["value"])
             field["quality"].append(date["quality"])
+
+    def filter(self, fields):
+        self.setData({key: self.data[key] for key in fields if key in self.data})
+
+    def copy(self):
+        header = self.header[:]
+        dto = WindowDto(self.windowSize, header)
+        dto.data = deepcopy(self.data)
+        return dto
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def __contains__(self, key):
+        return key in self.data
 
     def __eq__(self, other):
         if (self is None) or (other is None):
