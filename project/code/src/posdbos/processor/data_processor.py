@@ -51,10 +51,10 @@ class DataProcessor(object):
     def extractFeatures(self, data):
         return data.flatten()
 
-    def _extractFeatures(self, data):
+    def _extractFeatures(self, dto):
         features = []
-        for _, sigData in data.iteritems():
-            theta = sigData["theta"]
+        for key in dto:
+            theta = dto.getField(key, "theta")
             features.extend(theta)
         return array(features)
 

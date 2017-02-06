@@ -11,6 +11,7 @@ Created on 10.05.2016
 import os
 import time
 import logging
+from numpy import array
 
 from posdbos.util.file_util import FileUtil
 from posdbos.collector.data_collector import EEGDataCollector
@@ -201,7 +202,7 @@ class DummyWindowSource(DummyDataSource):
             if self.hasQuality:
                 quality = self.rawData[start:end, self.header.index("Q" + field)]
             else:
-                quality = 0
+                quality = array([0]*(end-start))
             window[field] = {"value": value, "quality": quality}
         dto = WindowDto(self.windowSize, self.fields)
         dto.data = window

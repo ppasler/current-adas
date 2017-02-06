@@ -12,7 +12,6 @@ from posdbos.util.signal_util import SignalUtil
 from config.config import ConfigProvider
 from posdbos.util.eeg_util import EEGUtil
 from posdbos.util.fft_util import FFTUtil
-import numpy as np
 
 class EEGProcessor(object):
     def __init__(self):
@@ -25,21 +24,19 @@ class EEGProcessor(object):
 
     def process(self, dto):
         invalidCount = 0
-        eegData = dto.getData()
-        for _, signal in eegData.iteritems():
-            raw = np.array(signal["value"])
-            quality = np.array(signal["quality"])
+        for key in dto:
+            raw, quality = dto.getChannel(key)
 
             proc = self.preProcessor.process(raw)
             proc, _ = self.signalProcessor.process(proc, quality)
 
             chan, fInvalid = self.fftProcessor.process(proc)
-            signal["theta"] = chan["theta"]
+            dto.addNewField(key, "theta", chan["theta"])
             invalidCount += sum([fInvalid])
         if invalidCount > 0:
             self.totalInvalid += 1
         self.totalCount += 1
-        return eegData, (invalidCount > 0)
+        return dto, (invalidCount > 0)
 
 class SignalPreProcessor(object):
     def __init__(self):

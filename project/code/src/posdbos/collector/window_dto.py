@@ -8,7 +8,7 @@ Created on 05.02.2017
 :organization: Reutlingen University
 '''
 
-from numpy import empty, NaN, isnan, array_equal
+from numpy import empty, NaN, isnan, array_equal, array
 from copy import deepcopy
 
 
@@ -33,6 +33,21 @@ class WindowDto(object):
 
     def getData(self):
         return self.data
+
+    def getChannel(self, key):
+        return self.getValue(key), self.getQuality(key)
+
+    def getField(self, key, field):
+        return array(self.data[key][field])
+
+    def getValue(self, key):
+        return self.getField(key, "value")
+
+    def getQuality(self, key):
+        return self.getField(key, "quality")
+
+    def addNewField(self, key, field, value):
+        self.data[key][field] = value
 
     def addData(self, data):
         for key, date in data.iteritems():

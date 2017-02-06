@@ -10,9 +10,8 @@ Created on 20.01.2017
 
 from base_test import *  # @UnusedWildImport
 
-from numpy.testing.utils import assert_array_equal
-from posdbos.util.table_dto import TableDto
 from posdbos.collector.window_dto import WindowDto
+from numpy.testing.utils import assert_array_equal
 
 
 class TestWindowDto(BaseTest):
@@ -24,7 +23,7 @@ class TestWindowDto(BaseTest):
 
     def _fillDto(self, start=0, count=2):
         for i in range(start, count):
-            self.dto.addData({"X": {"value" : i, "quality": i**2}, "AF3": {"value" : i*2, "quality": i**3}})
+            self.dto.addData({"X": {"value" : i, "quality": i*2}, "AF3": {"value" : i*3, "quality": i*4}})
 
     def test_init(self):
         self._fillDto(count=self.winSize)
@@ -66,6 +65,15 @@ class TestWindowDto(BaseTest):
         self.assertEqual(cp, self.dto)
         self.assertNotEquals(id(cp), id(self.dto))
 
+    def test_getField(self):
+        self._fillDto(count=self.winSize)
+
+        assert_array_equal(self.dto.getValue("X"), range(self.winSize))
+        assert_array_equal(self.dto.getQuality("X"), np.array(range(self.winSize))*2)
+
+        testVal = np.array([17])*self.winSize
+        self.dto.addNewField("X", "test", testVal)
+        assert_array_equal(self.dto.getField("X", "test"), testVal)
 
 if __name__ == '__main__':
     unittest.main()
