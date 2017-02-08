@@ -21,6 +21,7 @@ class EEGSignalPlotter(object):
         for label in labels:
             self.plotFFTSignal(eeg_data, label, fileName)
 
+        plt.ion()
         plt.show()
 
 
@@ -112,8 +113,11 @@ def plotCloseOpen():
     fileName = "close-open.csv"
     plot(fileName, channels)
 
+def plotMovement(fileName):
+    channels = ["X", "Y"]
+    plot(fileName, channels)
+
 if __name__ == "__main__":
     channels = ["FC5", "FC6", "F8", "F7", "AF4", "AF3", "F4"]
-    plot("3/EEG.csv", channels)
-
-
+    
+    plotMovement("1/EEG.csv")

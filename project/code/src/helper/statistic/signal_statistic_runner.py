@@ -7,7 +7,6 @@ Created on 02.02.2017
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-import logging
 from signal_statistic_constants import *  # @UnusedWildImport
 from signal_statistic_util import SignalStatisticCollector
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
@@ -47,9 +46,9 @@ def runAll(fileName):
 
 def runWithSplits(fileName="EOG.raw.fif"):
     awakes, drowsys = getAllWithSplit(fileName)
-    s = SignalStatisticCollector(fileNames=awakes, plot=False, save=True, name="awake")
+    s = SignalStatisticCollector(fileNames=awakes, plot=False, save=True, name="awake", signals=["X", "Y"])
     s.main()
-    x = SignalStatisticCollector(fileNames=drowsys, plot=False, save=True, name="drowsy")
+    x = SignalStatisticCollector(fileNames=drowsys, plot=False, save=True, name="drowsy", signals=["X", "Y"])
     x.main()
 
 def getAllWithSplit(fileName):
@@ -78,7 +77,7 @@ def buildPath(proband, fileName):
     return "%s%s/%s" % (experimentDir, proband, fileName)
 
 if __name__ == "__main__":
-    logging.getLogger().setLevel(logging.DEBUG)
-    runTest()
+    runWithSplits("EEG.csv")
+    #runTest()
     #runWithSplits()
     #runAll("EOG.raw.fif")

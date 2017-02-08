@@ -19,8 +19,7 @@ from numpy import nanmax, nanmin, nansum, nanmean, array
 from posdbos.collector.data_collector import EEGDataCollector
 from posdbos.processor.eeg_processor import SignalPreProcessor, SignalProcessor
 from signal_statistic_printer import SignalStatisticPrinter
-from signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter, \
-    FrequencyPlotter
+from signal_statistic_plotter import RawSignalPlotter, DeltaSignalPlotter, ThetaSignalPlotter, AlphaSignalPlotter, ProcessedSignalPlotter, DistributionSignalPlotter, FrequencyPlotter # @UnusedImport
 from posdbos.util.eeg_util import EEGUtil
 from posdbos.util.fft_util import FFTUtil
 from posdbos.util.file_util import FileUtil
@@ -40,6 +39,7 @@ class SignalStatisticUtil(object):
         self.queue = queue
         self.filePath = filePath
         self._initStatsDict()
+        self.config = ConfigProvider()
         self.eegData = FileUtil().getDto(filePath)
         self._initSignals(signals)
         self.su = SignalUtil()
@@ -55,7 +55,7 @@ class SignalStatisticUtil(object):
         self.preProcessor = SignalPreProcessor()
         self.processor = SignalProcessor()
 
-        windowSeconds = ConfigProvider().getCollectorConfig().get("windowSeconds")
+        windowSeconds = self.config.getCollectorConfig().get("windowSeconds")
         self.windowSize = EEGDataCollector.calcWindowSize(windowSeconds, self.eegData.samplingRate)
 
     def _initStatsDict(self):
@@ -69,7 +69,8 @@ class SignalStatisticUtil(object):
 
     def _initSignals(self, signals):
         if not signals:
-            signals = ConfigProvider().getEmotivConfig().get("eegFields")
+            emoConfig = self.config.getEmotivConfig()
+            signals = emoConfig.get("eegFields") +  emoConfig.get("gyroFields")
         self.signals = signals
 
     def _initPlotter(self, logScale):
