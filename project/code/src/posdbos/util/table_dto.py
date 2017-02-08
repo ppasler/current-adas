@@ -47,6 +47,7 @@ class TableDto(object):
 
     def _setDataTypes(self):  # pragma: no cover
         self.hasEEGData = self._containsEEGData()
+        self.hasGyroData = self._containsGyroData()
         self.hasEEGQuality = self._containsEEGQuality()
         self.hasECGData = self._containsECGData()
 
@@ -57,6 +58,7 @@ class TableDto(object):
             timeData = arange(TIME_START, stop, 1./samplingRate)
             self.addRow(TIMESTAMP_STRING, timeData[0:len(self)])
 
+    # TODO is this right? shape (x,) instead of (x,1)
     def addRow(self, name, row):
         self.header.insert(0, name)
 
@@ -65,9 +67,11 @@ class TableDto(object):
         data[:,1:] = self.data
         self.data = data
 
-
     def _containsEEGData(self):
         return len(self.getEEGHeader()) > 0
+
+    def _containsGyroData(self):
+        return len(self.getGyroHeader()) > 0
 
     def _containsEEGQuality(self):
         return len(self.getQualityHeader()) > 0
@@ -255,6 +259,12 @@ class TableDto(object):
     def getGyroHeader(self):
         gyroFields = ConfigProvider().getEmotivConfig().get("gyroFields")
         return [head for head in self.header if head in gyroFields]
+
+    def getGyroData(self):
+        if self.hasGyroData:
+            gyroFields = self.getGyroHeader()
+            return self.getColumns(gyroFields)
+        return None
 
     def getQualityHeader(self):
         return ["Q"+head for head in self.getEEGHeader() if "Q"+head in self.header]

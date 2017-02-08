@@ -9,7 +9,6 @@ Created on 20.01.2017
 '''
 
 from base_test import *  # @UnusedWildImport
-from time import sleep
 from helper.plotter.eeg_signal_plotter import EEGSignalPlotter
 from helper.plotter.feature_plotter import FeaturePlotter
 from helper.statistic.signal_statistic_util import SignalStatisticCollector
@@ -47,16 +46,16 @@ class StatisticTest(BaseTest):
 
 class VisualizerTest(BaseTest):
 
+    @unittest.skip("TODO how to close")
     def test_visualizer(self):
         app = QtGui.QApplication(sys.argv)
-    
+
         videoUrls, dataUrls = ["test_data/test.mp4", "test_data/test.mp4"], ["test_data/example_1024.csv"]
-        #videoUrls, dataUrls = runTest(["blink.mp4"], "blink.csv")
-    
+
         vis = DataVisualizer(None, videoUrls, dataUrls)
-        # TODO how to close
-        #vis.show()
-        #sys.exit(app.exec_())
+
+        vis.show()
+        sys.exit(app.exec_())
 
 if __name__ == '__main__':
     unittest.main()

@@ -9,7 +9,6 @@ Created on 02.07.2016
 '''
 import logging
 from posdbos.util.file_util import FileUtil
-from helper.plotter.eeg_signal_plotter import readEEGFile
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s.%(msecs)03d %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d %(message)s',
                 datefmt='%H:%M:%S')

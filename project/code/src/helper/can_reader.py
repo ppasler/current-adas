@@ -20,7 +20,7 @@ df = pd.read_csv(experimentPath+filepath, sep=";", dtype=dtype, parse_dates=["Ti
 
 group = df.groupby(["Signalname"])
 
-signalnames = ["P_Steering_Angle", "P_Engine_Speed", "P_Engine_Acceleration"]
+signalnames = ["P_Steering_Angle", "P_Engine_Speed"]
 signals = [group.get_group(signalname) for signalname in signalnames]
 
 def plot():
@@ -32,5 +32,10 @@ def printDifference():
     for signal, name in zip(signals, signalnames):
         l = len(signal)
         perc = int(l * 0.25)
-        print "%s: begin: %f \t end: %f" %(name, signal[0:perc].mean(), signal[l-perc:l].mean())
+        awake = signal[0:perc]
+        drowsy = signal[l-perc:l]
+        print "%s: mean\t %f \t %f" %(name, awake.mean(), drowsy.mean())
+        print "%s: var \t %f \t %f" %(name, awake.var(), drowsy.var())
+        print "%s: std \t %f \t %f" %(name, awake.std(), drowsy.std())
+        print "%s: std \t %f \t %f" %(name, signal[0:perc], signal[l-perc:l].energy())
 printDifference()

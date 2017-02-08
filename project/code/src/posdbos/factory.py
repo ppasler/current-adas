@@ -35,7 +35,7 @@ class Factory(object):
         posdbos= self._get()
         posdbos.dm = DrowsinessMonitor()
         posdbos.nn = self.loadNeuralNetwork(networkFile)
-        posdbos.dc = Factory.createDemoEEGDataCollector(demoFile, posdbos.collectedQueue)
+        posdbos.dc = Factory.createDemoDataCollector(demoFile, posdbos.collectedQueue)
         posdbos.dp = Factory.createDataProcessor(posdbos.collectedQueue, posdbos.extractedQueue)
 
         return posdbos

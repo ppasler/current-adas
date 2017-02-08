@@ -57,7 +57,7 @@ class TestFileUtil(BaseTest):
     def test_convertMNEToTableDto(self):
         dto2 = self.util.convertMNEToTableDto(self.mneObj)
 
-        self.assertListEqual([TIMESTAMP_STRING] + self.dto.getEEGHeader(), dto2.getHeader())
+        self.assertListEqual([TIMESTAMP_STRING] + self.dto.getEEGHeader() + self.dto.getGyroHeader(), dto2.getHeader())
         assert_array_equal(self.dto.getEEGData(), dto2.getEEGData())
         self.assertEqual(self.dto.filePath, dto2.filePath)
         self.assertTrue(dto2.hasEEGData)

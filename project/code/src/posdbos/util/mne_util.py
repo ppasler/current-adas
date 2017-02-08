@@ -9,7 +9,7 @@ Created on 19.09.2016
 '''
 import mne
 from mne.preprocessing.ica import ICA, corrmap
-from numpy import mean
+from numpy import concatenate
 from scipy import signal
 
 from config.config import ConfigProvider
@@ -32,11 +32,25 @@ class MNEUtil():
         return self.createMNEObjectFromEEGDto(eegData)
 
     def createMNEObjectFromEEGDto(self, eegDto):
-        return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.filePath, eegDto.getSamplingRate())
+        return self.createMNEObject(eegDto.getEEGData(), eegDto.getEEGHeader(), eegDto.getGyroData(), eegDto.getGyroHeader(), eegDto.filePath, eegDto.getSamplingRate())
 
-    def createMNEObject(self, data, header, filePath, samplingRate):
-        info = self._createEEGInfo(header, filePath, samplingRate)
+    def createMNEObject(self, eegData, eegHeader, gyroData, gyroHeader, filePath, samplingRate):
+        info = self._createEEGInfo(eegHeader, gyroHeader, filePath, samplingRate)
+        data = self._mergeData(eegData, gyroData)
         return mne.io.RawArray(data, info)
+
+    def _mergeData(self, eegData, gyroData):
+        if gyroData is None:
+            return eegData
+        return concatenate((eegData, gyroData), axis=0)
+
+    def _createEEGInfo(self, eegChannelNames, gyroChannelNames, filename, samplingRate):
+        channelTypes = ["eeg"] * len(eegChannelNames) + ['misc'] * len(gyroChannelNames)
+        channelNames = eegChannelNames + gyroChannelNames
+        montage = mne.channels.read_montage("standard_1020")
+        info = mne.create_info(channelNames, samplingRate, channelTypes, montage)
+        info["description"] =  filename
+        return info
 
     def createMNEObjectFromECGDto(self, ecgDto, resampleFac=None):
         info = self._createECGInfo(ecgDto.getECGHeader(), ecgDto.filePath, ecgDto.getSamplingRate())
@@ -49,13 +63,6 @@ class MNEUtil():
         channelTypes = ["ecg"]
         info = mne.create_info([channelName], samplingRate, channelTypes)
         info["description"] = filename
-        return info
-
-    def _createEEGInfo(self, channelNames, filename, samplingRate):
-        channelTypes = ["eeg"] * len(channelNames)
-        montage = mne.channels.read_montage("standard_1020")
-        info = mne.create_info(channelNames, samplingRate, channelTypes, montage)
-        info["description"] =  filename
         return info
 
     def createMNEEpochsObject(self, eegData, clazz):
@@ -155,7 +162,7 @@ class MNEUtil():
         for i in range(len(icas)):
             for j in range(n_components):
                 template = (i, j)
-                fig_template, fig_detected = corrmap(icas, template=template, label="blinks",
+                _, _ = corrmap(icas, template=template, label="blinks",
                                                  show=False, ch_type='eeg', verbose=True)
 
     def plotPSDTopo(self, mneObj):

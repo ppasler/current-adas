@@ -31,14 +31,27 @@ class MNEUtilTest(BaseTest):
         header = ["F3", "F4", "AF3", "AF4"]
         data = np.random.rand(4,512)
         filePath = "test"
-        return self.mne.createMNEObject(data, header, filePath, 128)
+        return self.mne.createMNEObject(data, header, None, [], filePath, 128)
 
+    def test__mergeData(self):
+        eegData = np.array([
+            [1, 1, 1, 1],
+            [2, 2, 2, 2],
+            [3, 3, 3, 3],
+            [4, 4, 4, 4]
+        ])
+        gyroData = np.array([
+            [5, 5, 5, 5],
+            [6, 6, 6, 6]
+        ])
+        mergedData = self.mne._mergeData(eegData, gyroData)
+        self.assertEquals(mergedData.shape, (6, 4))
 
     def test_createMNEObjectFromDto_creation(self):
         self.mne.createMNEObjectFromEEGDto(self.eegData)
 
     def test_createMNEObject_creation(self):
-        self.mne.createMNEObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), self.eegData.filePath, self.eegData.getSamplingRate())
+        self.mne.createMNEObject(self.eegData.getEEGData(), self.eegData.getEEGHeader(), self.eegData.getGyroData(), self.eegData.getGyroHeader(), self.eegData.filePath, self.eegData.getSamplingRate())
 
     def test_createMNEObjectFromDto_getChannels(self):
         channels = ["AF3", "F3"]
@@ -47,10 +60,12 @@ class MNEUtilTest(BaseTest):
         self.assertEqual(chanObj.info["nchan"], len(channels))
 
     def test__createInfo_creation(self):
-        channels = self.config.get("eegFields")
+        eegChannels = self.config.get("eegFields")
+        gyroChannels = self.config.get("gyroFields")
+        channels = eegChannels + gyroChannels
         samplingRate = self.config.get("samplingRate")
 
-        info = self.mne._createEEGInfo(channels, "testFile", 128)
+        info = self.mne._createEEGInfo(eegChannels, gyroChannels, "testFile", 128)
         self.assertEquals(info["sfreq"], samplingRate)
         self.assertEquals(info["nchan"], len(channels))
         self.assertItemsEqual(info["ch_names"], channels)
