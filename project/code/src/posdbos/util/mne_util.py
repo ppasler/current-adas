@@ -44,12 +44,12 @@ class MNEUtil():
             return eegData
         return concatenate((eegData, gyroData), axis=0)
 
-    def _createEEGInfo(self, eegChannelNames, gyroChannelNames, filename, samplingRate):
+    def _createEEGInfo(self, eegChannelNames, gyroChannelNames, filePath, samplingRate):
         channelTypes = ["eeg"] * len(eegChannelNames) + ['misc'] * len(gyroChannelNames)
         channelNames = eegChannelNames + gyroChannelNames
         montage = mne.channels.read_montage("standard_1020")
         info = mne.create_info(channelNames, samplingRate, channelTypes, montage)
-        info["description"] =  filename
+        info["description"] =  filePath
         return info
 
     def createMNEObjectFromECGDto(self, ecgDto, resampleFac=None):
@@ -59,10 +59,10 @@ class MNEUtil():
             ecgData = signal.resample(ecgData, resampleFac)
         return mne.io.RawArray(ecgData, info)
 
-    def _createECGInfo(self, channelName, filename, samplingRate):
+    def _createECGInfo(self, channelName, filePath, samplingRate):
         channelTypes = ["ecg"]
         info = mne.create_info([channelName], samplingRate, channelTypes)
-        info["description"] = filename
+        info["description"] = filePath
         return info
 
     def createMNEEpochsObject(self, eegData, clazz):

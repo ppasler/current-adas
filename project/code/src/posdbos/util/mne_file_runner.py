@@ -33,10 +33,10 @@ icCount = procConfig.get("icCount")
 probands = ConfigProvider().getExperimentConfig().get("probands")
 
 def saveRaw(proband, filename):
-    filepath = FILE_PATH % str(proband)
+    filePath = FILE_PATH % str(proband)
 
     start = time.time()
-    eegFileName = filepath + filename
+    eegFileName = filePath + filename
     eegData = fileUtil.getDto(eegFileName)
     eegRaw = mneUtil.createMNEObjectFromEEGDto(eegData)
     dur = time.time() - start
@@ -57,7 +57,7 @@ def saveRaw(proband, filename):
 
     try:
         start = time.time()
-        ecgFileName = filepath + "ECG.csv"
+        ecgFileName = filePath + "ECG.csv"
         ecgData = fileUtil.getECGDto(ecgFileName)
         ecgRaw = mneUtil.createMNEObjectFromECGDto(ecgData)
 
@@ -73,7 +73,7 @@ def saveRaw(proband, filename):
         print e
 
     start = time.time()
-    fileUtil.save(eegRaw, filepath + "EEG_")
+    fileUtil.save(eegRaw, filePath + "EEG_")
     dur = time.time() - start
     print "saved file: %.2f" % dur
 

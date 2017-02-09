@@ -8,23 +8,20 @@ Created on 30.05.2016
 :organization: Reutlingen University
 '''
 from Queue import Queue
-import os
 
-from classificator.neural_network import NeuralNetwork
-from collector.data_collector import DummyDataCollector, EEGDataCollector
 from config.config import ConfigProvider
+from posdbos.classificator.neural_network import NeuralNetwork
+from posdbos.collector.data_collector import DummyDataCollector, EEGDataCollector
 from output.drowsiness_monitor import DrowsinessMonitor
 from posdbos.app import PoSDBoS
-from processor.data_processor import DataProcessor
-from processor.eeg_processor import EEGProcessor
-from processor.gyro_processor import GyroProcessor
-from processor.mne_processor import MNEProcessor
-from source.dummy_data_source import DummyWindowSource, DummyPacketSource
-from source.emotiv_connector import EmotivConnector
-from util.file_util import FileUtil
+from posdbos.processor.data_processor import DataProcessor
+from posdbos.processor.eeg_processor import EEGProcessor
+from posdbos.processor.gyro_processor import GyroProcessor
+from posdbos.processor.mne_processor import MNEProcessor
+from posdbos.source.dummy_data_source import DummyWindowSource, DummyPacketSource
+from posdbos.source.emotiv_connector import EmotivConnector
+from posdbos.util.file_util import FileUtil
 
-
-scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 class Factory(object):
 

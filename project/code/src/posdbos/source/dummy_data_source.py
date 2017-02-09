@@ -20,8 +20,7 @@ from posdbos.collector.window_dto import WindowDto
 scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 class EEGTablePacket(object):
-    '''Object for EEG data :see: EmotivPacket
-    '''
+    '''Object for EEG data :see: EmotivPacket'''
     # TODO fix me
     def __init__(self, data):
         self.sensors = data
@@ -36,7 +35,7 @@ class DummyDataSource(object):
         '''
         Reads data from filePath or ./../../data/dummy_4096.csv and builds the data structure
         '''
-        self.filepath = self.setFilePath(filePath)
+        self.filePath = self.setFilePath(filePath)
         self.infinite = infinite
         self.fileUtil = FileUtil()
         self.hasMore = False
@@ -53,7 +52,7 @@ class DummyDataSource(object):
             return filePath
 
     def convert(self):
-        for filePath in self.filepath:
+        for filePath in self.filePath:
             dto = self.fileUtil.getDto(filePath)
             self._readHeader(dto)
             self._readRawData(dto)

@@ -11,15 +11,13 @@ import logging
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s.%(msecs)03d %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d %(message)s',
                 datefmt='%H:%M:%S')
-import os
+
 import threading
 from config.config import ConfigProvider
 from posdbos.factory import Factory
 
 
-scriptPath = os.path.dirname(os.path.abspath(__file__))
 probands = ConfigProvider().getExperimentConfig().get("probands")
-
 
 def runProcAndSaveAll(filename):
     for proband in probands:

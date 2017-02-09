@@ -9,13 +9,10 @@ Created on 09.05.2016
 '''
 import BaseHTTPServer
 import json
-import os
 import time
 import xmlrpclib
 import logging
 
-
-scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 emotiv = None
 

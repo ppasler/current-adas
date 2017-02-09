@@ -9,12 +9,11 @@ from pylab import arange
 
 import matplotlib.pyplot as plt
 import numpy as np
-from util.file_util import FileUtil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-from util.eeg_util import EEGUtil
-from util.signal_util import SignalUtil
+from posdbos.util.file_util import FileUtil
+from posdbos.util.eeg_util import EEGUtil
+from posdbos.util.signal_util import SignalUtil
 
 
 class BandPassExample(object):
@@ -28,10 +27,9 @@ class BandPassExample(object):
         x += a * np.cos(2 * np.pi * f0 * t + .11)
         x += 0.03 * np.cos(2 * np.pi * 2000 * t)
         return x
-    
+
     def getEEGSignal(self):
-        scriptPath = os.path.dirname(os.path.abspath(__file__))
-        return FileUtil().getDto(scriptPath + "/data/example_1024.csv")
+        return FileUtil().getDto("data/example_1024.csv")
     
     def plotBBF(self, fs, lowcut, highcut):
         # Plot the frequency response for a few different orders.

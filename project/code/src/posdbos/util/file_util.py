@@ -54,24 +54,24 @@ class FileUtil(object):
     def saveCSV(self, filePath, data, header):
         CSVUtil().writeFile(filePath, data, header)
 
-    def save(self, mneObj, filepath=None):
-        filepath = self.getMNEFileName(mneObj, filepath)
-        mneObj.save(filepath, overwrite=True)
-        return filepath
+    def save(self, mneObj, filePath=None):
+        filePath = self.getMNEFileName(mneObj, filePath)
+        mneObj.save(filePath, overwrite=True)
+        return filePath
 
-    def load(self, filepath):
+    def load(self, filePath):
         '''A file with extension .raw.fif'''
-        raw = read_raw_fif(filepath, add_eeg_ref=False, preload=True)
+        raw = read_raw_fif(filePath, add_eeg_ref=False, preload=True)
         return raw
 
-    def saveICA(self, ica, filepath):
-        filepath = self.addExtension(ICA_EXTENSION, filepath)
-        ica.save(filepath)
-        return filepath
+    def saveICA(self, ica, filePath):
+        filePath = self.addExtension(ICA_EXTENSION, filePath)
+        ica.save(filePath)
+        return filePath
 
-    def loadICA(self, filepath):
+    def loadICA(self, filePath):
         '''A file with extension .ica.fif'''
-        return read_ica(filepath)
+        return read_ica(filePath)
 
     def getMNEFileName(self, mneObj, filePath):
         if filePath is None:

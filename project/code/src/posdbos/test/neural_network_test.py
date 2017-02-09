@@ -82,7 +82,7 @@ class TestNeuralNetwork(BaseTest):
         for inpt, _ in ds:
             self.assertEqual(self.nn.activate(inpt), nn2.activate(inpt))
 
-        self.removeFile(self.nn._createFilename(name))
+        self.removeFile(self.nn._createFilePath(name))
 
     def test_test(self):
         ds = self.createORData()

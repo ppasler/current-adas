@@ -13,10 +13,10 @@ def dateparse(time_in_secs):
     return datetime.datetime.fromtimestamp(float(time_in_secs))
 
 experimentPath = "E:/thesis/experiment/"
-filepath = "3/CAN.csv"
+filePath = "3/CAN.csv"
 
 dtype= {"Time": float, "Signalname": str, "Value":float}
-df = pd.read_csv(experimentPath+filepath, sep=";", dtype=dtype, parse_dates=["Time"], date_parser=dateparse)
+df = pd.read_csv(experimentPath+filePath, sep=";", dtype=dtype, parse_dates=["Time"], date_parser=dateparse)
 
 group = df.groupby(["Signalname"])
 

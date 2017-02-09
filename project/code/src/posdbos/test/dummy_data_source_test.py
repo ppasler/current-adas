@@ -19,7 +19,7 @@ class TestDummyDataSource(BaseTest):
         self.source.convert()
 
     def test_defaults(self):
-        self.assertNotEqual(self.source.filepath, None)
+        self.assertNotEqual(self.source.filePath, None)
         self.assertTrue(self.source.infinite)
 
     def test_hasQuality(self):

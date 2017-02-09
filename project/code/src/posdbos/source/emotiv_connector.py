@@ -42,7 +42,7 @@ class EmotivConnector(object):
         return self.emotiv.serial_number
 
     def _loadDummyData(self):
-        filePath = scriptPath + "/../../captured_data/janis/parts/2016-07-12-11-15_EEG_4096.csv"
+        filePath = scriptPath + "/../../../data/dummy_4096.csv"
         self.emotiv = DummyPacketSource(filePath)
         self.emotiv.convert()
 

@@ -8,13 +8,11 @@ Created on 30.05.2016
 :organization: Reutlingen University
 '''
 from Queue import Empty
-import os
 import logging
 import threading
 from time import time, sleep
 from config.config import ConfigProvider
 
-scriptPath = os.path.dirname(os.path.abspath(__file__))
 
 class PoSDBoS(object):
 
@@ -126,8 +124,6 @@ class PoSDBoS(object):
         logging.info("done")
 
     def writeFeature(self, data, filePath):
-        #filePath = scriptPath + "/../data/" + "drowsy_full_.csv"
-
         header = []
         start = 4
         end = start + len(data[0])/6

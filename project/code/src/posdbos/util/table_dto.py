@@ -23,7 +23,7 @@ class TableDto(object):
 
     def __init__(self, header=None, data=None, filePath="", samplingRate=None):
         '''
-        table data with header, data and the filepath
+        table data with header, data and the filePath
         
         :param header:
         :param data:
