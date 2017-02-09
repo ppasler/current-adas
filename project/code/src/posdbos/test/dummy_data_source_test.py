@@ -42,6 +42,16 @@ class TestDummyPacketSource(BaseTest):
             self.source.dequeue()
         self.assertFalse(self.source.hasMore)
 
+    def test_convert_several(self):
+        for i in range(1, 3):
+            source = DummyPacketSource([self.getData32CSV()]*i, False)
+            source.convert()
+
+            self.assertEqual(len(source.data), 32*i)
+            for _ in range(0, len(source.data)):
+                source.dequeue()
+            self.assertFalse(source.hasMore)
+
     def test_dequeue(self):
         data = self.source.dequeue() 
         self.assertEquals(len(data.sensors), 17)
@@ -68,18 +78,32 @@ class TestDummyWindowSource(BaseTest):
         self.assertTrue("quality" in data["X"].keys())
 
     def test__buildDataStructure_normal(self):
-        data = self.source._buildDataStructure()
+        self.source.data = []
+        self.source._buildDataStructure()
+        data = self.source.data
         windowSize = self.source.windowSize
 
         self.assertEqual(len(data), 15)
         self.assertEqual(len(data[0]["AF3"]["value"]), windowSize)
 
+    def test__buildDataStructure_several(self):
+        for i in range(1, 3):
+            source = DummyWindowSource([self.getData1024CSV()]*i, False, 1, 2)
+            source.convert()
+            data = source.data
+            windowSize = source.windowSize
+    
+            self.assertEqual(len(data), 15*i)
+            self.assertEqual(len(data[0]["AF3"]["value"]), windowSize)
+
     def _getWindows(self, windowSeconds, windowCount, samplingRate):
+        self.source.data = []
         self.source.windowSeconds = windowSeconds
         self.source.windowCount = windowCount
         self.source.samplingRate = samplingRate
 
-        data = self.source._buildDataStructure()
+        self.source._buildDataStructure()
+        data = self.source.data
         windowSize = self.source.windowSize
         return data, windowSize
 

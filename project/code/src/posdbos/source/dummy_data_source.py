@@ -36,22 +36,29 @@ class DummyDataSource(object):
         '''
         Reads data from filePath or ./../../data/dummy_4096.csv and builds the data structure
         '''
-        self.fileUtil = FileUtil()
-        self.filepath = filePath
+        self.filepath = self.setFilePath(filePath)
         self.infinite = infinite
+        self.fileUtil = FileUtil()
         self.hasMore = False
-        if filePath == None:
-            self.filepath = scriptPath + "/../../../data/dummy_4096.csv"
-        self.data = None
+        self.data = []
+        self.len = 0
         self.index = 0
 
-    def convert(self):
-        dto = self.fileUtil.getDto(self.filepath)
-        self._readHeader(dto)
-        self._readRawData(dto)
-        self.samplingRate = dto.getSamplingRate()
+    def setFilePath(self, filePath):
+        if filePath == None:
+            return [scriptPath + "/../../../data/dummy_4096.csv"]
+        elif type(filePath) != list:
+            return [filePath]
+        else:
+            return filePath
 
-        self.data = self._buildDataStructure()
+    def convert(self):
+        for filePath in self.filepath:
+            dto = self.fileUtil.getDto(filePath)
+            self._readHeader(dto)
+            self._readRawData(dto)
+            self.samplingRate = dto.getSamplingRate()
+            self._buildDataStructure()
 
     def _readHeader(self, dto):
         self.header = dto.getHeader()
@@ -63,7 +70,7 @@ class DummyDataSource(object):
 
     def _readRawData(self, dto):
         self.rawData = dto.getData()
-        self.len = len(self.rawData)
+        self.len += len(self.rawData)
         if self.len > 0:
             self.hasMore = True
         logging.info("%s: Using %d dummy datasets" % (self.__class__.__name__, self.len))
@@ -114,12 +121,8 @@ class DummyPacketSource(DummyDataSource):
         DummyDataSource.__init__(self, filePath, infinite)
 
     def _buildDataStructure(self):
-        data = []
-
         for raw in self.rawData:
-            data.append(self._buildRow(raw))
-
-        return data
+            self.data.append(self._buildRow(raw))
 
     def _buildRow(self, row):
         ret = {}
@@ -188,13 +191,10 @@ class DummyWindowSource(DummyDataSource):
 
         windowRatio = EEGDataCollector.calcWindowRatio(self.windowSize, self.windowCount)
 
-        data = []
         for start in range(0, len(self.rawData), windowRatio):
             end = start + self.windowSize
             if end <= len(self.rawData):
-                data.append(self._buildWindow(start, end))
-
-        return data
+                self.data.append(self._buildWindow(start, end))
 
     def _buildWindow(self, start, end):
         window = {}
