@@ -41,14 +41,14 @@ def singleMNE():
 def runAll(fileName):
     probands = ConfigProvider().getExperimentConfig().get("probands")
     fileNames = [buildPath(proband, fileName) for proband in probands]
-    s = SignalStatisticCollector(fileNames=fileNames, plot=False, save=True, name="raw")
+    s = SignalStatisticCollector(fileNames=fileNames, plot=False, save=False, name="raw", signals=["X", "Y"])
     s.main()
 
 def runWithSplits(fileName="EOG.raw.fif"):
     awakes, drowsys = getAllWithSplit(fileName)
-    s = SignalStatisticCollector(fileNames=awakes, plot=False, save=True, name="awake", signals=["X", "Y"])
+    s = SignalStatisticCollector(fileNames=awakes, plot=False, save=True, name="awake")
     s.main()
-    x = SignalStatisticCollector(fileNames=drowsys, plot=False, save=True, name="drowsy", signals=["X", "Y"])
+    x = SignalStatisticCollector(fileNames=drowsys, plot=False, save=True, name="drowsy")
     x.main()
 
 def getAllWithSplit(fileName):
@@ -77,7 +77,7 @@ def buildPath(proband, fileName):
     return "%s%s/%s" % (experimentDir, proband, fileName)
 
 if __name__ == "__main__":
-    runWithSplits("EEG.csv")
+    #runWithSplits("EEG.csv")
     #runTest()
     #runWithSplits()
-    #runAll("EOG.raw.fif")
+    runAll("EEG.csv")

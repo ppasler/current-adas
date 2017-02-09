@@ -33,9 +33,21 @@ class TestTableDto(BaseTest):
 
     def test_addRow(self):
         row = np.array([17]*9)
-        self.dto.addRow("test", row)
+        self.dto.addColumn("test", row)
         merged = self.dto.getData()
         self.assertEquals(merged.shape, (9, 7))
+
+
+    def test_setColumn(self):
+        col = self.dto.getColumn("X")
+        col = [17] * len(col)
+        self.dto.setColumn("X", col)
+        assert_array_equal(self.dto.getColumn("X"), col)
+
+    def test_normGyroData(self):
+        self.dto.normGyroData()
+        assert_array_equal(self.dto.getColumn("X"), [-20]*len(self.dto))
+        assert_array_equal(self.dto.getColumn("Y"), [-20]*len(self.dto))
 
     def test_getSamplingRate(self):
         # 9 values within 2 seconds = sampling rate 4.5

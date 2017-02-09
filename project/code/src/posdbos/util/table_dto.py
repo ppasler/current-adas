@@ -24,7 +24,21 @@ class TableDto(object):
     def __init__(self, header=None, data=None, filePath="", samplingRate=None):
         '''
         table data with header, data and the filePath
-        
+
+        self.header = ["Timestamp", "X", "Y", "AF3", "F3", "ECG"]
+        self.data = np.array([
+             column
+        row [1456820379.00, 1, 2, 3, 9, 0],
+            [1456820379.25, 1, 2, 4, 9, 1],
+            [1456820379.50, 1, 2, 5, 9, 0],
+            [1456820379.75, 1, 2, 6, 9, 1],
+            [1456820380.00, 1, 2, 7, 9, 0],
+            [1456820380.25, 1, 2, 8, 9, 1],
+            [1456820380.50, 1, 2, 9, 9, 0],
+            [1456820380.75, 1, 2, 10, 9, 1],
+            [1456820381.00, 1, 2, 11, 9, 0]
+        ])
+
         :param header:
         :param data:
         :param filePath:
@@ -56,14 +70,14 @@ class TableDto(object):
         if samplingRate is not None:
             stop = TIME_START + (len(self) / samplingRate)
             timeData = arange(TIME_START, stop, 1./samplingRate)
-            self.addRow(TIMESTAMP_STRING, timeData[0:len(self)])
+            self.addColumn(TIMESTAMP_STRING, timeData[0:len(self)])
 
     # TODO is this right? shape (x,) instead of (x,1)
-    def addRow(self, name, row):
+    def addColumn(self, name, column):
         self.header.insert(0, name)
 
         data = zeros((len(self), len(self.header)))
-        data[:,0] = row
+        data[:,0] = column
         data[:,1:] = self.data
         self.data = data
 
@@ -152,6 +166,21 @@ class TableDto(object):
 
         index = self.header.index(columnName)
         return self.data[:, index][offset:limit]
+
+    def setColumn(self, columnName, column):
+        '''
+        get dataset from a certain column, either from offset to limit or till length
+        if only column_name is specified, it returns the whole column
+        if offset and length are both defined, length will be ignored
+        
+        :param     string column_name:   the name of the column
+        :param     array  column:        the new value of column
+        '''
+        if columnName not in self.header:
+            return
+
+        index = self.header.index(columnName)
+        self.data[:, index] = column
 
     def getColumns(self, columnNames):
         data = []
@@ -265,6 +294,14 @@ class TableDto(object):
             gyroFields = self.getGyroHeader()
             return self.getColumns(gyroFields)
         return None
+
+    def normGyroData(self):
+        config = ConfigProvider().getProcessingConfig()
+
+        x = self.getColumn("X") - config.get("xGround")
+        y = self.getColumn("Y") - config.get("yGround")
+        self.setColumn("X", x)
+        self.setColumn("Y", y)
 
     def getQualityHeader(self):
         return ["Q"+head for head in self.getEEGHeader() if "Q"+head in self.header]
