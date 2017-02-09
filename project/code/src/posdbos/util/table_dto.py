@@ -298,10 +298,9 @@ class TableDto(object):
     def normGyroData(self):
         config = ConfigProvider().getProcessingConfig()
 
-        x = self.getColumn("X") - config.get("xGround")
-        y = self.getColumn("Y") - config.get("yGround")
-        self.setColumn("X", x)
-        self.setColumn("Y", y)
+        for gyroField in self.getGyroHeader():
+            gyroCol = self.getColumn(gyroField) - config.get(gyroField.lower() + "Ground")
+            self.setColumn(gyroField, gyroCol)
 
     def getQualityHeader(self):
         return ["Q"+head for head in self.getEEGHeader() if "Q"+head in self.header]
