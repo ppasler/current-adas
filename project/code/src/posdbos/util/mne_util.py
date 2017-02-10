@@ -7,21 +7,23 @@ Created on 19.09.2016
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
+import warnings
+
 import mne
 from mne.preprocessing.ica import ICA, corrmap
-from numpy import concatenate
+from mne.time_frequency.psd import psd_welch
+from numpy import concatenate, argmax
 from scipy import signal
 
 from config.config import ConfigProvider
 from posdbos.util.file_util import FileUtil
 
-import warnings
-from mne.time_frequency.psd import psd_welch
+
 warnings.filterwarnings(action='ignore')
 
 DEFAULT_SAMPLE_LENGTH = 1
 
-class MNEUtil():
+class MNEUtil(object):
 
     def __init__(self):
         self.config = ConfigProvider()
@@ -92,6 +94,11 @@ class MNEUtil():
 
         return eegRaw.add_channels([otherRaw], force_update_info=True)
 
+    def addICASources(self, raw, ica):
+        icaRaw = ica.get_sources(raw)
+        raw.add_channels([icaRaw])
+        return raw
+
     def adjustSampleRate(self, eegRaw, otherRaw):
         eegSFreq = eegRaw.info['sfreq']
         otherSFreq = otherRaw.info['sfreq']
@@ -123,7 +130,7 @@ class MNEUtil():
         return self.filterData(mneObj, lowFreq, highFreq)
 
     def filterData(self, mneObj, lowFreq, highFreq):
-        return mneObj.filter(lowFreq, highFreq, filter_length="3.99s", l_trans_bandwidth="auto", 
+        return mneObj.filter(lowFreq, highFreq, filter_length="auto", l_trans_bandwidth="auto", 
                              h_trans_bandwidth="auto", phase='zero', fir_window="hamming")
 
     def getEEGCannels(self, mneObj):
@@ -155,7 +162,29 @@ class MNEUtil():
     def labelArtefact(self, templateICA, templateIC, icas, label):
         template = (0, templateIC)
         icas = [templateICA] + icas
-        return corrmap(icas, template=template, threshold=0.6, label=label, plot=False, show=False, ch_type='eeg', verbose=True)
+        return corrmap(icas, template=template, threshold=0.85, label=label, plot=False, show=False, ch_type='eeg', verbose=True)
+
+    def findCrossCorrelation(self, raw, ica=None):
+        import matplotlib.pyplot as plt
+
+        ch_names = raw.info["ch_names"]
+        ch_idx = [ch_names.index(id) for id in ch_names if id.startswith("ICA")]
+        cor_list = []
+        data = raw._data
+        xChannel = data[ch_names.index("X")]
+        for idx in ch_idx:
+            chan = data[idx]
+            cor = signal.correlate(xChannel, chan)
+            plt.plot(cor, label=str(idx))
+        plt.legend()
+        MNEPlotter().plotRaw(raw)
+        plt.show()
+
+
+class MNEPlotter(object):
+
+    def __init__(self):
+        pass
 
     def plotCorrmaps(self, icas):
         n_components = icas[0].n_components_
@@ -174,12 +203,15 @@ class MNEUtil():
         mneObj.plot_sensors(kind='3d', ch_type='eeg', show_names=True)
 
     def plotRaw(self, mneObj, title=None, show=False):
-        scalings = dict(eeg=300, eog=10, ecg=100)
-        color = dict(eeg="k", eog="b", ecg="r")
+        scalings = dict(eeg=300, eog=10, ecg=100, misc=10)
+        color = dict(eeg="k", eog="b", ecg="r", misc="g")
         if title is None:
             title = mneObj.info["description"]
         n_channels = len(mneObj.ch_names)
         return mneObj.plot(show=show, scalings=scalings, color=color, title=title, duration=60.0, n_channels=n_channels)
 
-if __name__ == '__main__':
-    util = MNEUtil()
+    def plotICA(self, raw, ica):
+        picks=None
+        ica.plot_components(inst=raw, colorbar=True, show=False, picks=picks)
+        ica.plot_sources(raw, show=False, picks=picks)
+        ica.plot_properties(raw, picks=0, psd_args={'fmax': 35.})

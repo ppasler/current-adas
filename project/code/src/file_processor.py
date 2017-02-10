@@ -16,14 +16,16 @@ from mne.viz.utils import plt_show
 from config.config import ConfigProvider
 from posdbos.util.eog_extractor import EOGExtractor
 from posdbos.util.file_util import FileUtil
-from posdbos.util.mne_util import MNEUtil
+from posdbos.util.mne_util import MNEUtil, MNEPlotter
 from posdbos.processor.mne_processor import MNEProcessor, SignalPreProcessor, FreqProcessor
+from numpy import count_nonzero, mean
 
 
 warnings.filterwarnings(action='ignore')
 
 
 mneUtil = MNEUtil()
+mnePlotter = MNEPlotter()
 fileUtil = FileUtil()
 #eogExtractor = EOGExtractor()
 procConfig = ConfigProvider().getProcessingConfig()
@@ -32,29 +34,19 @@ sFreq = procConfig.get("resamplingRate")
 icCount = procConfig.get("icCount")
 probands = ConfigProvider().getExperimentConfig().get("probands")
 
-def saveRaw(proband, filename):
-    filePath = FILE_PATH % str(proband)
-
+def _filter(raw):
     start = time.time()
-    eegFileName = filePath + filename
-    eegData = fileUtil.getDto(eegFileName)
-    eegRaw = mneUtil.createMNEObjectFromEEGDto(eegData)
+    mneUtil.bandpassFilterData(raw)
     dur = time.time() - start
-    print "read EEG and create MNE object: %.2f" % dur
+    print "filter EEG: %.2f" % dur
 
-    #start = time.time()
-    #mneUtil.bandpassFilterData(eegRaw)
-    #dur = time.time() - start
-    #print "filter EEG: %.2f" % dur
+def _resample(raw):
+    start = time.time()
+    raw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
+    dur = time.time() - start
+    print "resampled EEG: %.2f" % dur
 
-    #start = time.time()
-    #eegRaw.resample(sFreq, npad='auto', n_jobs=8, verbose=True)
-    #dur = time.time() - start
-    #print "resampled EEG: %.2f" % dur
-
-    #mneUtil.markBadChannels(eegRaw, ["AF3"])
-    #eegRaw = mneUtil.interpolateBadChannels(eegRaw)
-
+def _addECGChannel(filePath, raw):
     try:
         start = time.time()
         ecgFileName = filePath + "ECG.csv"
@@ -65,22 +57,37 @@ def saveRaw(proband, filename):
         print "read ECG: %.2f" % dur
         start = time.time()
     
-        mneUtil.addECGChannel(eegRaw, ecgRaw)
+        mneUtil.addECGChannel(raw, ecgRaw)
 
         dur = time.time() - start
         print "merged channels: %.2f" % dur
     except Exception as e:
         print e
 
+def processRaw(proband, fileName, outName="EEG_"):
+    filePath = FILE_PATH % str(proband)
+
     start = time.time()
-    fileUtil.save(eegRaw, filePath + "EEG_")
+    eegFileName = filePath + fileName
+    eegData = fileUtil.getDto(eegFileName)
+    eegRaw = mneUtil.createMNEObjectFromEEGDto(eegData)
+    dur = time.time() - start
+    print "read EEG and create MNE object: %.2f" % dur
+
+    _filter(eegRaw)
+    _resample(eegRaw)
+
+    _addECGChannel(filePath, eegRaw)
+
+    start = time.time()
+    fileUtil.save(eegRaw, filePath + outName)
     dur = time.time() - start
     print "saved file: %.2f" % dur
 
-def saveRawAll():
+def processRawAll(fileName="EEG.csv", outName="EEG"):
     start = time.time()
     for proband in probands:
-        saveRaw(proband)
+        processRaw(proband, fileName, outName)
     dur = time.time() - start
     print "\n\nTOTAL: %.2f" % dur
 
@@ -92,24 +99,33 @@ def loadRaw(proband, name = "EEG"):
     print "read EEG: %.2f" % dur
     start = time.time()
 
-    #mneUtil.plotRaw(fifraw, title="Raw data " + proband)
+    #mnePlotter.plotRaw(fifraw, title="Raw data " + proband)
     return fifraw
 
+def loadRawAll(fileName):
+    start = time.time()
+    raws = []
+    for proband in probands:
+        raws.append(loadRaw(proband, fileName))
+    dur = time.time() - start
+    print "\n\nTOTAL: %.2f" % dur
+    return raws
 
 def testLoadRaw():
     loadRaw("Test")
 
-def plotICA(raw, ica):
-    picks=None
-    ica.plot_components(inst=raw, colorbar=True, show=False, picks=picks)
-    ica.plot_sources(raw, show=False, picks=picks)
-    #ica.plot_properties(raw, picks=0, psd_args={'fmax': 35.})
+def plotRaw(raw, title="RAW"):
+    mnePlotter.plotRaw(raw, title, show=False)
 
-def createICAList():
+def plotICA(raw, ica):
+    mnePlotter.plotICA(raw, ica)
+
+def createICAAll(fileName):
     icas_from_other_data = list()
     raw_from_other_data = list()
     for proband in probands:
-        raw, ica = createICA(proband)
+        raw = loadRaw(proband, fileName)
+        raw, ica = createICA(proband, raw)
         raw_from_other_data.append(raw)
         icas_from_other_data.append(ica)
     return raw_from_other_data, icas_from_other_data
@@ -128,7 +144,7 @@ def saveICA(proband, ica, name="EEG"):
     filePath = (FILE_PATH % str(proband)) + name + ".ica.fif"
     fileUtil.saveICA(ica, filePath)
 
-def loadICAList():
+def loadICAAll():
     icas_from_other_data = list()
     raw_from_other_data = list()
     for proband in probands:
@@ -150,18 +166,17 @@ def excludeAndPlotRaw(raw, ica, exclude, title=""):
     raw.plot(show=False, scalings=dict(eeg=300), title=title + " raw")
     raw1.plot(show=False, scalings=dict(eeg=300), title=title + " eog")
 
-def getAndAddEOGChannel(raws, icas):
+def getAndAddEOGChannel(raws, icas, outName="EOG"):
     extractor = EOGExtractor()
     extractor.labelEOGChannel(icas)
     for raw, ica, proband in zip(raws, icas, probands):
         eogRaw = extractor.getEOGChannel(raw, ica)
         raw = extractor.removeEOGChannel(raw, ica)
         mneUtil.addEOGChannel(raw, eogRaw)
+        #plotICA(raw, ica)
         raw.info["description"] = proband
-        mneUtil.plotRaw(raw)
-
-        #filePath = (FILE_PATH % proband) + "EOG"
-        #fileUtil.save(raw, filePath)
+        filePath = (FILE_PATH % proband) + outName
+        fileUtil.save(raw, filePath)
 
 def addBlink():
     global probands
@@ -190,6 +205,22 @@ def tryThis():
     fileUtil.save(mneRaw, fpath + ".fif")
     fileUtil.saveICA(ica, fpath)
 
+def saveRaw(raw, proband, fileName):
+    filePath = (FILE_PATH % proband) + fileName
+    fileUtil.save(raw, filePath)
+
+def addICAChannels(fileName, outName):
+    for proband in probands:
+        raw = loadRaw(proband, fileName)
+        raw, ica = createICA(proband, raw)
+        rawIca = addICAChannel(raw, ica)
+        saveRaw(rawIca, proband, outName)
+
+def addICAChannel(raw, ica):
+    rawIca = mneUtil.addICASources(raw, ica)
+    mnePlotter.plotRaw(rawIca)
+    return rawIca
+
 def orThis():
     extractor = EOGExtractor()
     pat = (FILE_PATH % "test")
@@ -212,5 +243,86 @@ def orThis():
         raw.info["description"] = name
         fileUtil.save(raw, pat + name)
 
+def csvToRaw():
+    start = time.time()
+    for proband in probands:
+        filePath = FILE_PATH % str(proband)
+    
+        start = time.time()
+        eegFileName = filePath + "EEG.csv"
+        dto = fileUtil.getDto(eegFileName)
+        raw = mneUtil.createMNEObjectFromEEGDto(dto)
+        dur = time.time() - start
+        print "read EEG and create MNE object: %.2f" % dur
+
+        _filter(raw)
+        _resample(raw)
+
+        _addECGChannel(filePath, raw)
+    
+        start = time.time()
+        fileUtil.save(raw, filePath + "EEGGyro")
+        dur = time.time() - start
+        print "saved file: %.2f" % dur
+    dur = time.time() - start
+    print "\n\nTOTAL: %.2f" % dur
+
+def rawWithEOGAndICA():
+    start = time.time()
+    raws, icas = [], []
+    for proband in probands:
+        start2 = time.time()
+        raw = loadRaw(proband, "EEGGyro")
+
+        raw, ica = createICA(proband, raw)
+        saveICA(proband, ica, "EEGGyro")
+        raws.append(raw)
+        icas.append(ica)
+
+        dur = time.time() - start2
+        print "ica created: %.2f" % dur
+
+    start2 = time.time()
+    getAndAddEOGChannel(raws, icas, outName="EEGEOG")
+    dur = time.time() - start2
+    print "eog added: %.2f" % dur
+
+    start2 = time.time()
+    rawIcas = []
+    for raw, ica in zip(raws, icas):
+        rawIcas.append(addICAChannel(raw, ica))
+    dur = time.time() - start2
+    print "ica added: %.2f" % dur
+
+    start2 = time.time()
+    for proband, rawIca in zip(probands, rawIcas):
+        saveRaw(rawIca, proband, "EEGICA")
+    dur = time.time() - start2
+    print "saved: %.2f" % dur
+
+    dur = time.time() - start
+    print "\n\nTOTAL: %.2f" % dur
+
+def rawWithNormedGyro():
+    config = ConfigProvider().getProcessingConfig()
+    xGround, yGround = config.get("xGround"), config.get("yGround")
+    for proband in probands:
+        raw = loadRaw(proband, "EEGGyro")
+        normGyroChannel(raw, xGround, yGround)
+        saveRaw(raw, proband, "EEGNormGyro")
+
+def normGyroChannel(raw, xGround, yGround):
+    ch_names = raw.info["ch_names"]
+    data = raw._data
+    xChannel = data[ch_names.index("X")]
+    xChannel -= xGround
+    yChannel = data[ch_names.index("Y")]
+    yChannel -= yGround
+
 if __name__ == '__main__':
-    orThis()
+    raw = loadRaw("2", "EEGNormGyro")
+    ch_names = raw.info["ch_names"]
+    print mean(raw._data[ch_names.index("X")])
+
+    mnePlotter.plotRaw(raw)
+    plt_show()

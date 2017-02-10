@@ -14,7 +14,7 @@ warnings.filterwarnings(action='ignore')
 
 from numpy import count_nonzero, nanmax, nanmin, isnan, nanmean, \
     nanstd, nanvar, NaN
-from scipy.signal import butter, lfilter, resample, decimate
+from scipy.signal import butter, lfilter, decimate
 
 
 class SignalUtil(object):

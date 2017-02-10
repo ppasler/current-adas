@@ -17,7 +17,7 @@ from posdbos.util.file_util import FileUtil
 from mne.viz.utils import plt_show
 
 scriptPath = os.path.dirname(os.path.abspath(__file__))
-TEMPLATE_ICA_PATH = scriptPath + "/../../data/"
+TEMPLATE_ICA_PATH = scriptPath + "/../../../data/"
 
 BLINK_LABEL = "blinks"
 
