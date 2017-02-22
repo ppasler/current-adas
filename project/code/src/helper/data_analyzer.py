@@ -38,6 +38,9 @@ class Analyzer(object):
         ret.columns = columns
         return ret
 
+    def mergeRows(self, dfs):
+        return pd.concat(dfs, axis=0, ignore_index=True)
+
     def printDifference(self, df, column, name):
         awake, drowsy = self.splitStates(df, column)
         merge = self.mergeColumns(awake, drowsy)
@@ -72,7 +75,7 @@ class CANAnalyzer(Analyzer):
 class GyroAnalyzer(Analyzer):
 
     def readGyro(self, filePath):
-        return self.readCSV(filePath, ";", None, ["Timestamp"], parseSeconds)
+        return self.readCSV(filePath, ",", None, ["Timestamp"], parseSeconds)
 
     def dropOtherColumns(self, df, keeps):
         drops = [i for i in range(0,len(df.columns)) if i not in keeps]
@@ -89,10 +92,11 @@ class GyroAnalyzer(Analyzer):
         return df
 
 experimentPath = "E:/thesis/experiment/"
+ga = GyroAnalyzer()
+ca = CANAnalyzer()
 
 def analyseCAN():
     filePath = experimentPath + "3/CAN.csv"
-    ca = CANAnalyzer()
     df = ca.readCAN(filePath)
     group = ca.groupCAN(df)
 
@@ -100,15 +104,26 @@ def analyseCAN():
     signals = ca.getSignals(group, signalnames)
     ca.printDifferences(signals, signalnames)
 
-def analyseGyro():
-    filePath = experimentPath + "1/EEG.csv"
-    ga = GyroAnalyzer()
-    df = ga.readGyro(filePath)
-    keeps = [1, 14]
-    df = ga.dropOtherColumns(df, keeps)
-    df = ga.normalizeGyro(df)
+def analyseGyroList():
+    probands = ConfigProvider().getExperimentConfig().get("probands")
+    dfs = []
+    for proband in probands:
+        dfs.append(analyseGyro(proband))
+    df = ga.mergeRows(dfs)
+    print len(df)
     ga.printDifference(df, ["X", "Y"], "Gyro")
 
-analyseGyro()
+def analyseGyro(proband):
+    filePath = experimentPath + proband + "/EEG.csv"
+    df = ga.readGyro(filePath)
+    keeps = [1, 13]
+    df = ga.dropOtherColumns(df, keeps)
+    df = ga.normalizeGyro(df)
+    return df
+
+analyseGyroList()
+#df = analyseGyro("c")
+#ga.printDifference(df, ["X", "Y"], "Gyro")
+
 #analyseCAN()
 plt.show()
