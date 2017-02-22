@@ -117,6 +117,9 @@ def testLoadRaw():
 def plotRaw(raw, title="RAW"):
     mnePlotter.plotRaw(raw, title, show=False)
 
+def plotRawSignals(raw, title="RAW"):
+    mnePlotter.plotRaw(raw, title, show=False)
+
 def plotICA(raw, ica):
     mnePlotter.plotICA(raw, ica)
 
@@ -243,13 +246,13 @@ def orThis():
         raw.info["description"] = name
         fileUtil.save(raw, pat + name)
 
-def csvToRaw():
+def csvToRaw(fileName="EEG.csv", outName="EEGGyro"):
     start = time.time()
     for proband in probands:
         filePath = FILE_PATH % str(proband)
     
         start = time.time()
-        eegFileName = filePath + "EEG.csv"
+        eegFileName = filePath + fileName
         dto = fileUtil.getDto(eegFileName)
         raw = mneUtil.createMNEObjectFromEEGDto(dto)
         dur = time.time() - start
@@ -261,21 +264,21 @@ def csvToRaw():
         _addECGChannel(filePath, raw)
     
         start = time.time()
-        fileUtil.save(raw, filePath + "EEGGyro")
+        fileUtil.save(raw, filePath + outName)
         dur = time.time() - start
         print "saved file: %.2f" % dur
     dur = time.time() - start
     print "\n\nTOTAL: %.2f" % dur
 
-def rawWithEOGAndICA():
+def rawWithEOGAndICA(fileName="EEGGyro", eogName="EEGEOG"):
     start = time.time()
     raws, icas = [], []
     for proband in probands:
         start2 = time.time()
-        raw = loadRaw(proband, "EEGGyro")
+        raw = loadRaw(proband, fileName)
 
         raw, ica = createICA(proband, raw)
-        saveICA(proband, ica, "EEGGyro")
+        saveICA(proband, ica, fileName)
         raws.append(raw)
         icas.append(ica)
 
@@ -283,7 +286,7 @@ def rawWithEOGAndICA():
         print "ica created: %.2f" % dur
 
     start2 = time.time()
-    getAndAddEOGChannel(raws, icas, outName="EEGEOG")
+    getAndAddEOGChannel(raws, icas, outName=eogName)
     dur = time.time() - start2
     print "eog added: %.2f" % dur
 
@@ -303,13 +306,16 @@ def rawWithEOGAndICA():
     dur = time.time() - start
     print "\n\nTOTAL: %.2f" % dur
 
-def rawWithNormedGyro():
+def rawWithNormedGyroAll(fileName="EEGICA", outName="EEGNormGyro"):
     config = ConfigProvider().getProcessingConfig()
     xGround, yGround = config.get("xGround"), config.get("yGround")
     for proband in probands:
-        raw = loadRaw(proband, "EEGGyro")
-        normGyroChannel(raw, xGround, yGround)
-        saveRaw(raw, proband, "EEGNormGyro")
+        rawWithNormedGyro(proband, xGround, yGround, fileName, outName)
+
+def rawWithNormedGyro(proband, xGround, yGround, fileName="EEGGyro", outName="EEGNormGyro"):
+    raw = loadRaw(proband, fileName)
+    normGyroChannel(raw, xGround, yGround)
+    saveRaw(raw, proband, outName)
 
 def normGyroChannel(raw, xGround, yGround):
     ch_names = raw.info["ch_names"]
@@ -319,10 +325,17 @@ def normGyroChannel(raw, xGround, yGround):
     yChannel = data[ch_names.index("Y")]
     yChannel -= yGround
 
-if __name__ == '__main__':
-    raw = loadRaw("2", "EEGNormGyro")
-    ch_names = raw.info["ch_names"]
-    print mean(raw._data[ch_names.index("X")])
+def runTestData():
+    global probands
+    probands = ["mp"]
+    files = ["awake_full", "drowsy_full"]
+    for f in files:
+        csvToRaw(f + ".csv", f)
+        rawWithEOGAndICA(f, f + "_eog")
+        rawWithNormedGyroAll(f + "_eog", f + "_norm")
 
-    mnePlotter.plotRaw(raw)
+if __name__ == '__main__':
+    #runTestData()
+    raw = loadRaw("mp", "awake_full_norm")
+    plotRaw(raw)
     plt_show()

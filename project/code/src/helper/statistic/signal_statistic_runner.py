@@ -80,4 +80,4 @@ if __name__ == "__main__":
     #runWithSplits("EEG.csv")
     #runTest()
     #runWithSplits()
-    runAll("EEG.csv")
+    runAll("EEGNormGyro.raw.fif")

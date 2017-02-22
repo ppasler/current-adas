@@ -58,6 +58,7 @@ class DummyDataSource(object):
             self._readRawData(dto)
             self.samplingRate = dto.getSamplingRate()
             self._buildDataStructure()
+        logging.info("%s: Using %d dummy datasets" % (self.__class__.__name__, self.len))
 
     def _readHeader(self, dto):
         self.header = dto.getHeader()
@@ -72,7 +73,6 @@ class DummyDataSource(object):
         self.len += len(self.rawData)
         if self.len > 0:
             self.hasMore = True
-        logging.info("%s: Using %d dummy datasets" % (self.__class__.__name__, self.len))
 
     def dequeue(self):
         pass
