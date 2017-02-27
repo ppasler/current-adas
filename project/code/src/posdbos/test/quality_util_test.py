@@ -44,11 +44,13 @@ class TestQualityUtil(BaseTest):
 
     def test_isInvalidData(self):
         maxNaNValues = self.util.maxNaNValues
+        windowSeconds = self.util.windowSeconds
         for length in range(maxNaNValues+1):
             testList = self._getNaNList(length)
             self.assertFalse(self.util.isInvalidData(testList))
 
-        for length in range(maxNaNValues+1, maxNaNValues + 4):
+        base = (maxNaNValues * windowSeconds) + windowSeconds
+        for length in range(base + 1, base + 4):
             testList = self._getNaNList(length)
             self.assertTrue(self.util.isInvalidData(testList))
 

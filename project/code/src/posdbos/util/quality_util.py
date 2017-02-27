@@ -28,6 +28,7 @@ class QualityUtil(object):
         self.minQuality = self.config.get("minQual")
         self.maxSeqLength = self.config.get("maxSeqLength")
         self.maxNaNValues = self.config.get("maxNaNValues")
+        self.windowSeconds = ConfigProvider().getCollectorConfig().get("windowSeconds")
 
     def _copyArray(self, data):
         return copy(data[:])
@@ -161,7 +162,11 @@ class QualityUtil(object):
         :return: invalid
         :rtype: boolean
         '''
-        return self.maxNaNValues < count_nonzero(isnan(data))
+        nonZero = count_nonzero(isnan(data))
+        #if nonZero > self.maxNaNValues:
+        #    print nonZero
+        nonZero = round(nonZero / self.windowSeconds)
+        return self.maxNaNValues < nonZero
 
     def replaceZeroSequences(self, data):
         '''replaces zero sequences, which is an unwanted artefact, with DEFAULT_REPLACE_VALUE 

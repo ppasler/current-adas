@@ -12,7 +12,6 @@ from posdbos.util.signal_util import SignalUtil
 from config.config import ConfigProvider
 from posdbos.util.eeg_util import EEGUtil
 from posdbos.util.fft_util import FFTUtil
-from numpy import NaN
 
 class EEGProcessor(object):
     def __init__(self):
@@ -24,24 +23,20 @@ class EEGProcessor(object):
         self.fftProcessor = FFTProcessor()
 
     def process(self, dto):
+        invalidCount = 0
         for key in dto:
             raw, quality = dto.getChannel(key)
 
-            proc, invalid = self.preProcessor.process(raw)
+            proc = self.preProcessor.process(raw)
+            proc, _ = self.signalProcessor.process(proc, quality)
 
-            proc, invalid = self.signalProcessor.process(proc, quality)
-            if invalid:
-                self.totalInvalid += 1
-                return None, True
-
-            chan, invalid = self.fftProcessor.process(proc)
-            if invalid:
-                self.totalInvalid += 1
-                print "fft"
-                return None, True
-
+            chan, fInvalid = self.fftProcessor.process(proc)
             dto.addNewField(key, "theta", chan["theta"])
-        return dto, False
+            invalidCount += sum([fInvalid])
+        if invalidCount > 0:
+            self.totalInvalid += 1
+        self.totalCount += 1
+        return dto, (invalidCount > 0)
 
 class SignalPreProcessor(object):
     def __init__(self):
@@ -52,7 +47,7 @@ class SignalPreProcessor(object):
         self.sigUtil = SignalUtil()
 
     def process(self, raw):
-        return raw, False
+        return self.sigUtil.butterBandpassFilter(raw, self.lowerFreq, self.upperFreq, self.samplingRate)
 
 class SignalProcessor(object):
     def __init__(self, verbose=False):
@@ -61,29 +56,17 @@ class SignalProcessor(object):
         self.lowerBound = config.get("lowerBound")
         self.upperBound = config.get("upperBound")
         self.normalize = config.get("normalize")
-        self.mean = config.get("mean")
         self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
         self.qualUtil = QualityUtil()
         self.sigUtil = SignalUtil()
         self.verbose = verbose
 
     def process(self, raw, quality):
-        # remove outliners
-        proc = self.qualUtil.replaceOutliners(raw, NaN)
+        proc = self.qualUtil.replaceOutliners(raw, 0)
+        proc = self.sigUtil.normalize(proc, self.normalize)
 
-        # too much outliners?
-        if self.qualUtil.isInvalidData(proc):
-            return None, True
-
-        # center signal (mean = 0)
-        #proc = self.sigUtil.center(proc, self.mean)
-
-        # normalize date between -1 and 1
-        #proc = self.sigUtil.normalize(proc)
-
-        # replace Nans with zero (for fft)
-        proc = self.qualUtil.replaceNans(proc)
-        return proc, False
+        invalid = self.qualUtil.isInvalidData(proc)
+        return proc, invalid
 
 class FFTProcessor(object):
     def __init__(self, verbose=False):
@@ -96,4 +79,5 @@ class FFTProcessor(object):
     def process(self, proc):
         fft = self.fftUtil.fft(proc)
         chan = self.eegUtil.getChannels(fft)
-        return chan, False
+        invalid = self.qualUtil.isInvalidData(fft)
+        return chan, invalid

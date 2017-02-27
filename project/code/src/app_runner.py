@@ -12,19 +12,19 @@ logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s.%(msecs)03d %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d %(message)s',
                 datefmt='%H:%M:%S')
 from posdbos.util.file_util import FileUtil
-from helper.statistic.signal_statistic_constants import experimentDir
 
 import threading
 from config.config import ConfigProvider
 from posdbos.factory import Factory
 
+exConfig = ConfigProvider().getExperimentConfig()
+probands = exConfig.get("probands")
+experimentDir = exConfig.get("filePath")
 
-probands = ConfigProvider().getExperimentConfig().get("probands")
 fileUtil = FileUtil()
 
+
 def getFilePaths(fileName):
-    experiments = ConfigProvider().getExperimentConfig()
-    experimentDir = experiments["filePath"]
     filePaths = []
     for proband in probands:
         filePath = "%s%s/" % (experimentDir, proband)
@@ -49,8 +49,8 @@ def _getStartStopPercent(dto, s1=10, s2=20, s3=85, s4=95):
 def runAndSaveSplits(fileName):
     filePaths = getFilePaths(fileName)
     awakes, drowsies = splitDtos(filePaths)
-    runAndSave(awakes, experimentDir + "awakes_proc_10_g_4.csv")
-    runAndSave(drowsies, experimentDir + "drowsies_proc_10_g_4.csv")
+    runAndSave(awakes, experimentDir + "test/awakes_proc_new8.csv")
+    runAndSave(drowsies, experimentDir + "test/drowsies_proc_new8.csv")
 
 def runDemoSplits(fileName):
     filePaths = getFilePaths(fileName)
@@ -61,16 +61,14 @@ def runDemoSplits(fileName):
 def runMPData():
     awake = "%s/mp/%s" % (experimentDir, "awake_full_norm.raw.fif")
     drowsy = "%s/mp/%s" % (experimentDir, "drowsy_full_norm.raw.fif")
-    runAndSave(awake, experimentDir + "mp/awakes_full_norm_proc_4.csv")
-    runAndSave(drowsy, experimentDir + "mp/drowsies_full_norm_proc_4.csv")
+    runAndSave(awake, experimentDir + "test/awakes_proc_new2.csv")
+    runAndSave(drowsy, experimentDir + "test/drowsies_proc_new2.csv")
 
 def runProcAndSaveAll(filename):
     for proband in probands:
         runProcAndSave(proband, filename)
 
 def runProcAndSave(proband, filename):
-    experiments = ConfigProvider().getExperimentConfig()
-    experimentDir = experiments["filePath"]
     #filePath = "%s/test/%s" % (experimentDir, "awake_full.csv")
     filePath = "%s%s/" % (experimentDir, proband)
     runAndSave(filePath + filename, filePath + "proc.csv")
@@ -85,8 +83,6 @@ def runAndSave(filePath, outPath):
     logging.info("ENDING")
 
 def runDemo(filePath):
-    experiments = ConfigProvider().getExperimentConfig()
-    experimentDir = experiments["filePath"]
     # 584
     #filePath = "%s/mp/%s" % (experimentDir, "drowsy_full.csv")            # 361
     #filePath = "%s/mp/%s" % (experimentDir, "drowsy_full_norm.raw.fif")   # 426 of 545 / "full_norm_4_3" 508
@@ -96,7 +92,7 @@ def runDemo(filePath):
 
     #filePath = "%s/1/%s" % (experimentDir, "EEGNormGyro.raw.fif")         # 532 / 503
 
-    nn = "full_norm_4_3"#"knn_1"
+    nn = "2017-02-27-16-05_0"#"knn_1"
     p = Factory.getForDemo(nn, filePath)
     logging.info("STARTING")
     pt = threading.Thread(target=p.run)
@@ -112,6 +108,7 @@ def testFolder():
 if __name__ == '__main__': # pragma: no cover
     #runProcAndSave("2", "EOG.raw.fif")
     #runProcAndSave("test", "awake_full.raw.fif")
-    runDemoSplits("EEGNormGyro.raw.fif")
-
+    #runDemoSplits("EEGNormed.raw.fif")
+    #runAndSaveSplits("EEGNormed.raw.fif")
+    #runMPData()
     #runDemo()

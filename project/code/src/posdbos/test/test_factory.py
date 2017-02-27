@@ -31,7 +31,7 @@ class TestFactory(Factory):
         app.dm = DrowsinessMonitor()
 
         collectorConfig = ConfigProvider().getCollectorConfig()
-        fields = collectorConfig.get("fields")
+        fields = collectorConfig.get("eegFields") + collectorConfig.get("gyroFields")
         windowSeconds = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount")
         samplingRate = 128

@@ -51,8 +51,11 @@ class FileUtil(object):
     def isCSVFile(self, filePath):
         return filePath.endswith(CSV_EXTENSION)
 
-    def saveCSV(self, filePath, data, header):
-        CSVUtil().writeFile(filePath, data, header)
+    def saveCSV(self, filePath, data, header, delimiter=";"):
+        CSVUtil().writeFile(filePath, data, header, ",")
+
+    def saveDto(self, filePath, dto):
+        self.saveCSV(filePath, dto.data, dto.header, ",")
 
     def save(self, mneObj, filePath=None):
         filePath = self.getMNEFileName(mneObj, filePath)

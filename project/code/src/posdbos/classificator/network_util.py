@@ -53,17 +53,20 @@ class NetworkUtil(object):
         logging.info("Testing Done")
 
     def activate(self, testData):
-        total = (len(testData) / 2) / 100.0
-        matrix = np.array([[0, 0, 0], [0, 0, 0]])
+        matrix = np.array([[0., 0., 0.], [0., 0., 0.]])
         resArr = []
         for inpt, target in testData:
             res = self.nn.activate(inpt)
             clazz = self.nn._clazz(res)
             resArr.append([res, clazz, target])
             matrix[int(target[0])][clazz] += 1
-        matrix[0, 2] = matrix[0, 0] / total
-        matrix[1, 2] = matrix[1, 1] / total 
+        matrix = self.getPercentage(matrix)
         return matrix, np.array(resArr)
+
+    def getPercentage(self, matrix):
+        matrix[0, 2] = (matrix[0, 0] / (matrix[0, 0] + matrix[0, 1])) * 100
+        matrix[1, 2] = (matrix[1, 1] / (matrix[1, 0] + matrix[1, 1])) * 100
+        return matrix 
 
     def save(self, name):
         self.nn.save(name)
@@ -81,8 +84,15 @@ class NetworkDataUtil(object):
         self.files = files
         self.fileUtil = CSVUtil()
 
-    def get(self, separate=True):
+    def makeSameLength(self, values0, values1):
+        length = min(len(values0), len(values1)) - 1
+        return values0[:length], values1[:length]
+
+    def get(self, separate=True, makeSameLength=True):
         values0, values1 = self.readFiles(self.files)
+        if makeSameLength and (len(values0) != len(values1)):
+            values0, values1 = self.makeSameLength(values0, values1)
+
         if separate:
             return self.buildTestSet(values0, values1)
         else:
@@ -92,7 +102,7 @@ class NetworkDataUtil(object):
         return self.nInputs
 
     def readFiles(self, files):
-        return self.fileUtil.readData(files[0]), self.fileUtil.readData(files[1])
+        return self.fileUtil.readData(files[0], ","), self.fileUtil.readData(files[1], ",")
 
     def buildFullTestSet(self, values0, values1):
         values0 = self._addClass(values0, 0.)

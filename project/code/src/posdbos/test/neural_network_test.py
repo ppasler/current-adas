@@ -102,6 +102,11 @@ class TestNetworkUtil(unittest.TestCase):
         ndu = NetworkDataUtil()
         return ndu.createXORData()
 
+    def test_getPercentage(self):
+        matrix = np.array([[50, 50, 0.], [150, 50, 0.]])
+        result = self.nu.getPercentage(matrix)
+        assert_array_equal(result, np.array([[50, 50, 0.5],[150, 50, 0.25]]))
+
     @unittest.skip("takes too long")
     def test_XOR(self):
         ds = self._buildXORData()
@@ -116,14 +121,12 @@ class TestNetworkDataUtil(unittest.TestCase):
     def setUp(self):
         self.n = NetworkDataUtil()
 
-    # TODO complete this
     def test_buildTestSet(self):
         classOne = np.array([[1., 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])
         classTwo = np.array([[4., 5, 6], [4, 6, 5], [5, 4, 6], [5, 6, 4], [6, 4, 5], [6, 5, 4]])
         totalLen = len(classOne) + len(classTwo)
 
-        n = NetworkDataUtil()
-        train, valid = n.buildTestSet(classOne, classTwo)
+        train, valid = self.n.buildTestSet(classOne, classTwo)
 
         self.assertEqual(len(train) + len(valid), totalLen)
         self.assertEqual(len(train), len(valid)*2)

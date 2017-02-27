@@ -96,7 +96,7 @@ class SignalProcessor(object):
 class FreqProcessor(object):
     def __init__(self, verbose=False):
         config = ConfigProvider().getProcessingConfig()
-        self.eegFields = config.get("fields")
+        self.eegFields = config.get("eegFields")
         self.fmin = config.get("fmin")
         self.fmax = config.get("fmax")
         self.mneUtil = MNEUtil()

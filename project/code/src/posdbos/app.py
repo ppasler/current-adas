@@ -127,6 +127,6 @@ class PoSDBoS(object):
         header = []
         start = 4
         end = start + len(data[0])/6
-        for field in ConfigProvider().getCollectorConfig().get("fields"):
+        for field in ConfigProvider().getCollectorConfig().get("eegFields"):
             header.extend([str(x) + "Hz" + field for x in range(start, end)])
         self.fileUtil.saveCSV(filePath, data, header)

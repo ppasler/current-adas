@@ -40,6 +40,20 @@ class SignalUtil(object):
 
         return data / extreme
 
+    def center(self, data, mean=None):
+        '''centers data to the mean
+        Ignores NaN values
+
+        :param numpy.array data: list of values
+        
+        :return: centered data
+        :rtype: numpy.array
+        '''
+        if mean is None:
+            mean = self.mean(data)
+
+        return data / mean
+
     def maximum(self, data):
         '''calculates the signal max 
         Ignores NaN values

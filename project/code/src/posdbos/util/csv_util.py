@@ -65,7 +65,7 @@ class CSVUtil(object):
             return "Q" + match.group(1)
         return channel
 
-    def readData(self, filePath):
+    def readData(self, filePath, delimiter=None):
         '''
         reads all rows of the table (except the first on) to create a 2D array of eeg values
         by default the delimiter for the csv table is ";"
@@ -83,7 +83,9 @@ class CSVUtil(object):
         :return: data columns
         :rtype: array
         '''
-        data = genfromtxt(filePath, delimiter=self.delimiter, dtype=str, skip_header=1)
+        if delimiter is None:
+            delimiter = self.delimiter
+        data = genfromtxt(filePath, delimiter=delimiter, dtype=str, skip_header=1)
 
         return data
 

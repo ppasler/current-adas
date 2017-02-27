@@ -86,7 +86,7 @@ class Factory(object):
     @staticmethod
     def createDemoDataCollector(demoFile, collectedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
-        fields = collectorConfig.get("fields")
+        fields = fields = collectorConfig.get("eegFields") + collectorConfig.get("gyroFields")
         windowSeconds = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount") 
         datasource = Factory.createDummyWindowSource(demoFile, windowSeconds, windowCount)
@@ -95,7 +95,7 @@ class Factory(object):
     @staticmethod
     def createDemoEEGDataCollector(demoFile, collectedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
-        fields = collectorConfig.get("fields")
+        fields = collectorConfig.get("eegFields") + collectorConfig.get("gyroFields")
         windowSeconds = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount") 
         datasource = Factory.createDummyPacketSource(demoFile)
@@ -116,7 +116,7 @@ class Factory(object):
     @staticmethod
     def createEmotivDataCollector(collectedQueue):
         collectorConfig = ConfigProvider().getCollectorConfig()
-        fields = collectorConfig.get("fields")
+        fields = collectorConfig.get("eegFields") + collectorConfig.get("gyroFields")
         windowSize = collectorConfig.get("windowSeconds")
         windowCount = collectorConfig.get("windowCount") 
         return EEGDataCollector(EmotivConnector(), collectedQueue, fields, windowSize, windowCount)

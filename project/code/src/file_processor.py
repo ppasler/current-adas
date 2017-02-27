@@ -33,6 +33,7 @@ FILE_PATH = "E:/thesis/experiment/%s/"
 sFreq = procConfig.get("resamplingRate")
 icCount = procConfig.get("icCount")
 probands = ConfigProvider().getExperimentConfig().get("probands")
+eegFields = ConfigProvider().getEmotivConfig().get("eegFields")
 
 def _filter(raw):
     start = time.time()
@@ -325,6 +326,20 @@ def normGyroChannel(raw, xGround, yGround):
     yChannel = data[ch_names.index("Y")]
     yChannel -= yGround
 
+def rawWithNormedEEG(proband, eegMean, fileName="EEGNormGyro", outName="EEGNormed"):
+    raw = loadRaw(proband, fileName)
+    normEEGChannel(raw, eegMean)
+    saveRaw(raw, proband, outName)
+
+def normEEGChannel(raw, eegMean):
+    ch_names = raw.info["ch_names"]
+    data = raw._data
+    for field in eegFields:
+        channel = data[ch_names.index(field)]
+        channel -= eegMean
+        print mean(channel)
+
+
 def runTestData():
     global probands
     probands = ["mp"]
@@ -334,8 +349,15 @@ def runTestData():
         rawWithEOGAndICA(f, f + "_eog")
         rawWithNormedGyroAll(f + "_eog", f + "_norm")
 
+def rawToCSV(proband, name):
+    filePath = (FILE_PATH % str(proband)) + name
+    dto = fileUtil.getDtoFromFif(filePath + ".raw.fif")
+    fileUtil.saveDto(filePath + ".csv", dto)
+
 if __name__ == '__main__':
     #runTestData()
-    raw = loadRaw("mp", "awake_full_norm")
-    plotRaw(raw)
+    for proband in probands:
+        rawToCSV(proband, "EEGNormed")
+    #raw = loadRaw("1", "EEGNormed")
+    #plotRaw(raw)
     plt_show()
