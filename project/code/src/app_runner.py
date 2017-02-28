@@ -58,6 +58,14 @@ def runDemoSplits(fileName):
     runDemo(awakes)
     runDemo(drowsies)
 
+def runDemoSplitsSeparate(fileName):
+    filePaths = getFilePaths(fileName)
+    for filePath in filePaths:
+        print filePath
+        awakes, drowsies = splitDtos([filePath])
+        runDemo(awakes)
+        runDemo(drowsies)
+
 def runMPData():
     awake = "%s/mp/%s" % (experimentDir, "awake_full_norm.raw.fif")
     drowsy = "%s/mp/%s" % (experimentDir, "drowsy_full_norm.raw.fif")
@@ -108,7 +116,8 @@ def testFolder():
 if __name__ == '__main__': # pragma: no cover
     #runProcAndSave("2", "EOG.raw.fif")
     #runProcAndSave("test", "awake_full.raw.fif")
-    runDemoSplits("EEGNormed.raw.fif")
+    #runDemoSplits("EEGNormed.raw.fif")
+    runDemoSplitsSeparate("EEGNormed.raw.fif")
     #runAndSaveSplits("EEGNormed.raw.fif")
     #runMPData()
     #runDemo()
