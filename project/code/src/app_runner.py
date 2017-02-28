@@ -108,7 +108,7 @@ def testFolder():
 if __name__ == '__main__': # pragma: no cover
     #runProcAndSave("2", "EOG.raw.fif")
     #runProcAndSave("test", "awake_full.raw.fif")
-    #runDemoSplits("EEGNormed.raw.fif")
+    runDemoSplits("EEGNormed.raw.fif")
     #runAndSaveSplits("EEGNormed.raw.fif")
     #runMPData()
     #runDemo()

@@ -27,7 +27,6 @@ class PoSDBoS(object):
             self.dm.close()
         logging.info("closing app")
 
-
     def join(self):
         self.dct.join()
         self.dpt.join()
@@ -46,18 +45,18 @@ class PoSDBoS(object):
         features = []
         total = 0
         start = time()
-        c = []
+        classes = []
         while self.running and dmt.is_alive():
             try:
                 #awake = 0, drowsy = 1
                 data = self.extractedQueue.get(timeout=5)
                 features.append(data)
                 clazz = self.nn.activate(data, True)
-                c.append(clazz)
+                classes.append(clazz)
                 self.setState(clazz)
                 total += 1
             except Empty:
-                logging.info("Needed %.2fs for %d windows; drowsy: %d" % (time() - start, total, sum(c)))
+                logging.info("Needed %.2fs for %d windows; awake: %d; drowsy: %d" % (time() - start, total, total-sum(classes), sum(classes)))
                 self.stop()
             except KeyboardInterrupt:
                 self.close()
@@ -78,19 +77,7 @@ class PoSDBoS(object):
 
     def setState(self, clazz):
         self.classified[clazz] += 1
-        if self.curClass == clazz:
-            self.classCount += 1
-        else:
-            self.curClass = clazz
-            self.classCount = 0
-
-        info = "class %d row (%s)" % (clazz, str(self.classCount))
-        if clazz == 1 and self.classCount >= self.drowsyMinCount:
-            self.dm.setState(clazz, info)
-            self.found += 1
-        elif clazz == 0 and self.classCount >= self.awakeMinCount:
-            self.dm.setState(clazz, info)
-
+        self.dm.setState(clazz)
 
     def runAndSave(self, filePath):
         self.start()
