@@ -25,14 +25,14 @@ class PoSDBoS(object):
         self.dp.close()
         if hasattr(self, "dm"):
             self.dm.close()
-        logging.info("closing app")
+        logging.debug("closing app")
 
     def join(self):
         self.dct.join()
         self.dpt.join()
 
     def start(self):
-        logging.info("starting app")
+        logging.debug("starting app")
         self.dct = threading.Thread(target=self.dc.collectData)
         self.dct.start()
         self.dpt = threading.Thread(target=self.dp.processData)
@@ -73,7 +73,7 @@ class PoSDBoS(object):
         self.close()
         self.join()
         dmt.join()
-        logging.info("Done")
+        logging.debug("Done")
 
     def setState(self, clazz):
         self.classified[clazz] += 1
@@ -108,7 +108,7 @@ class PoSDBoS(object):
         self.close()
         self.join()
 
-        logging.info("done")
+        logging.debug("done")
 
     def writeFeature(self, data, filePath):
         header = []

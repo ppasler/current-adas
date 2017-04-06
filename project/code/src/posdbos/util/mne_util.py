@@ -12,7 +12,7 @@ import warnings
 import mne
 from mne.preprocessing.ica import ICA, corrmap
 from mne.time_frequency.psd import psd_welch
-from numpy import concatenate, argmax
+from numpy import concatenate
 from scipy import signal
 
 from config.config import ConfigProvider

@@ -90,6 +90,7 @@ class NetworkDataUtil(object):
 
     def get(self, separate=True, makeSameLength=True):
         values0, values1 = self.readFiles(self.files)
+        # TODO after shuffeling
         if makeSameLength and (len(values0) != len(values1)):
             values0, values1 = self.makeSameLength(values0, values1)
 

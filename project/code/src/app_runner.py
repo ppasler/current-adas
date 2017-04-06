@@ -42,15 +42,15 @@ def splitDtos(filePaths):
         drowsies.append(drowsy)
     return awakes, drowsies
 
-def _getStartStopPercent(dto, s1=10, s2=20, s3=85, s4=95):
+def _getStartStopPercent(dto, s1=5, s2=20, s3=80, s4=95):
     length = len(dto) / 100
     return s1*length, s2*length, s3*length, s4*length
 
 def runAndSaveSplits(fileName):
     filePaths = getFilePaths(fileName)
     awakes, drowsies = splitDtos(filePaths)
-    runAndSave(awakes, experimentDir + "test/awakes_proc_new8.csv")
-    runAndSave(drowsies, experimentDir + "test/drowsies_proc_new8.csv")
+    runAndSave(awakes, experimentDir + "test/awakes_proc_new14.csv")
+    runAndSave(drowsies, experimentDir + "test/drowsies_proc_new14.csv")
 
 def runDemoSplits(fileName):
     filePaths = getFilePaths(fileName)
@@ -83,12 +83,12 @@ def runProcAndSave(proband, filename):
 
 def runAndSave(filePath, outPath):
     p = Factory.getForSave(filePath)
-    logging.info("STARTING")
+    logging.debug("STARTING")
     pt = threading.Thread(target=p.runAndSave, args=(outPath,))
     pt.start()
 
     pt.join()
-    logging.info("ENDING")
+    logging.debug("ENDING")
 
 def runDemo(filePath):
     # 584
@@ -100,24 +100,29 @@ def runDemo(filePath):
 
     #filePath = "%s/1/%s" % (experimentDir, "EEGNormGyro.raw.fif")         # 532 / 503
 
-    nn = "2017-02-27-16-05_0"#"knn_1"
+    nn = "2017-03-07-19-16_2"#"knn_1"
     p = Factory.getForDemo(nn, filePath)
-    logging.info("STARTING")
+    logging.debug("STARTING")
     pt = threading.Thread(target=p.run)
     pt.start()
 
     pt.join()
-    logging.info("ENDING")
+    logging.debug("ENDING")
 
 def testFolder():
     global probands
     probands = ["test"]
 
+def badProbands():
+    global probands
+    probands = exConfig.get("badProbands")
+
 if __name__ == '__main__': # pragma: no cover
+    #badProbands()
     #runProcAndSave("2", "EOG.raw.fif")
     #runProcAndSave("test", "awake_full.raw.fif")
-    #runDemoSplits("EEGNormed.raw.fif")
-    runDemoSplitsSeparate("EEGNormed.raw.fif")
+    runDemoSplits("EEGNormed.raw.fif")
+    #runDemoSplitsSeparate("EEGNormed.raw.fif")
     #runAndSaveSplits("EEGNormed.raw.fif")
     #runMPData()
     #runDemo()

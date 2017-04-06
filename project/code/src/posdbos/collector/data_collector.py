@@ -85,12 +85,12 @@ class EEGDataCollector(DataCollector):
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
-        logging.info("%s: starting data collection" % self.__class__.__name__)
+        logging.debug("%s: starting data collection" % self.__class__.__name__)
         while self.collect:
             data = self._getData()
             filteredData = self._filter(data)
             self._addData(filteredData)
-        logging.info("%s: closing data collection" % self.__class__.__name__)
+        logging.debug("%s: closing data collection" % self.__class__.__name__)
         self.datasource.close()
 
     def _filter(self, data):
@@ -112,7 +112,7 @@ class DummyDataCollector(DataCollector):
 
     def collectData(self):
         '''collect data and only take sensor data (ignoring timestamp, gyro_x, gyro_y properties)'''
-        logging.info("starting data collection")
+        logging.debug("starting data collection")
         while self.collect:
             if self.datasource.hasMore:
                 data = self._getData()
@@ -120,7 +120,7 @@ class DummyDataCollector(DataCollector):
                 self.collectedQueue.put(filteredData)
             else:
                 self.collect = False
-        logging.info("closing data collection")
+        logging.debug("closing data collection")
         self.datasource.close()
 
     def _filter(self, dto):

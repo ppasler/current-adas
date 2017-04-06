@@ -86,6 +86,6 @@ def plotOld():
     fp.doPlot()
 
 if __name__ == '__main__': # pragma: no cover
-    plot("test", "drowsies_proc_new4.csv")
+    plot("1", "EEG.csv")
     #plot("test", "awakes_proc_new4.csv")
 

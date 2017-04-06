@@ -119,5 +119,4 @@ def plotMovement(fileName):
 
 if __name__ == "__main__":
     channels = ["FC5", "FC6", "F8", "F7", "AF4", "AF3", "F4"]
-    
-    plotMovement("1/EEG.csv")
+    plot("1/EEG.csv", channels)

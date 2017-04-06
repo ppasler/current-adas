@@ -16,9 +16,6 @@ from numpy import NaN
 
 class EEGProcessor(object):
     def __init__(self):
-        self.totalInvalid = 0
-        self.totalCount = 0
-
         self.preProcessor = SignalPreProcessor()
         self.signalProcessor = SignalProcessor()
         self.fftProcessor = FFTProcessor()
@@ -31,13 +28,10 @@ class EEGProcessor(object):
 
             proc, invalid = self.signalProcessor.process(proc, quality)
             if invalid:
-                self.totalInvalid += 1
                 return None, True
 
             chan, invalid = self.fftProcessor.process(proc)
             if invalid:
-                self.totalInvalid += 1
-                print "fft"
                 return None, True
 
             dto.addNewField(key, "theta", chan["theta"])
@@ -63,6 +57,7 @@ class SignalProcessor(object):
         self.normalize = config.get("normalize")
         self.mean = config.get("mean")
         self.samplingRate = ConfigProvider().getEmotivConfig().get("samplingRate")
+        self.windowSeconds = ConfigProvider().getCollectorConfig().get("windowSeconds")
         self.qualUtil = QualityUtil()
         self.sigUtil = SignalUtil()
         self.verbose = verbose
@@ -72,7 +67,7 @@ class SignalProcessor(object):
         proc = self.qualUtil.replaceOutliners(raw, NaN)
 
         # too much outliners?
-        if self.qualUtil.isInvalidData(proc):
+        if self.qualUtil.isInvalidData(proc, len(raw)/self.windowSeconds):
             return None, True
 
         # center signal (mean = 0)

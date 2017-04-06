@@ -21,5 +21,5 @@ class GyroProcessor(object):
     def process(self, dto):
         xEnergy = self.su.energy(dto.getValue("X"))/self.windowSeconds
         yEnergy = self.su.energy(dto.getValue("Y"))/self.windowSeconds
-        invalid = (xEnergy > self.xMax) or (yEnergy > self.yMax) 
+        invalid = (xEnergy > self.xMax) or (yEnergy > self.yMax)
         return dto.getData(), invalid

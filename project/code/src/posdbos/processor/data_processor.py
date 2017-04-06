@@ -28,25 +28,33 @@ class DataProcessor(object):
         self.extractedQueue = extractedQueue
         self.runProcess = True
 
+        self.totalCount = 0
+        self.totalInvalid = 0
+        self.gyroInvalid = 0
+        self.eegInvalid = 0
+
     def close(self):
         self.runProcess = False
 
     def processData(self):
-        logging.info("starting data processing")
+        logging.debug("starting data processing")
         while self.runProcess:
             try:
                 dto = self.collectedQueue.get(timeout=1)
+                self.totalCount +=1
                 try:
                     procData, procInvalid = self.process(dto)
                     if not procInvalid:
                         extData = self._extractFeatures(procData)
                         self.extractedQueue.put(extData)
+                    else:
+                        self.totalInvalid += 1
                 except Exception as e:
                     logging.exception(e.message)
             except Empty:
                 logging.warn("collectedQueue empty")
                 self.close()
-        logging.info("ending data processing")
+        logging.info("ending data processing of %d windows\n invalid gyro: %d; eeg: %d; total %d" % (self.totalCount, self.gyroInvalid, self.eegInvalid, self.totalInvalid))
 
     def extractFeatures(self, data):
         return data.flatten()
@@ -62,8 +70,13 @@ class DataProcessor(object):
         #TODO make me fast and nice
         eegDto, gyroDto = self.splitData(dto)
 
-        eegProc, eegInvalid = self.eegProcessor.process(eegDto)
         gyroProc, gyroInvalid = self.gyroProcessor.process(gyroDto)
+        if gyroInvalid:
+            self.gyroInvalid += 1
+
+        eegProc, eegInvalid = self.eegProcessor.process(eegDto)
+        if eegInvalid:
+            self.eegInvalid += 1
 
         self.reuniteData(eegProc, gyroProc)
         return eegProc, (eegInvalid or gyroInvalid)

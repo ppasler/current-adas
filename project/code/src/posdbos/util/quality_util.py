@@ -154,7 +154,7 @@ class QualityUtil(object):
         '''
         return count_nonzero(isnan(data))
 
-    def isInvalidData(self, data):
+    def isInvalidData(self, data, samplingRate=128.):
         '''considers a data set invalid, if there are more NaNs than maxNaNValues in the set
 
         :param numpy.array data: list of values
@@ -165,8 +165,8 @@ class QualityUtil(object):
         nonZero = count_nonzero(isnan(data))
         #if nonZero > self.maxNaNValues:
         #    print nonZero
-        nonZero = round(nonZero / self.windowSeconds)
-        return self.maxNaNValues < nonZero
+        nonZeroPerc = nonZero / (samplingRate * self.windowSeconds)
+        return self.maxNaNValues < nonZeroPerc
 
     def replaceZeroSequences(self, data):
         '''replaces zero sequences, which is an unwanted artefact, with DEFAULT_REPLACE_VALUE 

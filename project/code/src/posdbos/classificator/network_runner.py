@@ -32,7 +32,7 @@ def trainSeveral(start, end, name, convergence):
 
 def trainSingle(h, name, convergence):
     experimentDir = ConfigProvider().getExperimentConfig().get("filePath")
-    files = [experimentDir + "test/awakes_proc_new8.csv", experimentDir + "test/drowsies_proc_new8.csv"]
+    files = [experimentDir + "test/awakes_proc_new14.csv", experimentDir + "test/drowsies_proc_new14.csv"]
     #files = [experimentDir + "mp/awakes_full_norm_proc_4.csv", experimentDir + "mp/drowsies_full_norm_proc_4.csv"]
     ndu = NetworkDataUtil(files)
     train, test = ndu.get()
@@ -80,7 +80,7 @@ if __name__ == "__main__": # pragma: no cover
     name = time.strftime("%Y-%m-%d-%H-%M", time.gmtime())
     start = time.time()
     print "start %f" % start
-    trainSeveral(0, 4, name, False)
+    trainSeveral(0, 8, name, False)
     end = time.time()
     print "end %f (%fs)" % (end, end-start)
     #loadSingle("2017-02-26-11-17_0")

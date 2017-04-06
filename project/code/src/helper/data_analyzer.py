@@ -38,7 +38,7 @@ def parseMilliseconds(timestamp):
 def parseSeconds(timestamp):
     return datetime.datetime.fromtimestamp(float(timestamp))
 
-def getStartStopPercent(df, s1=10, s2=20, s3=85, s4=95):
+def getStartStopPercent(df, s1=5, s2=20, s3=80, s4=95):
     length = int(len(df) / 100)
     return s1*length, s2*length, s3*length, s4*length
 
@@ -90,7 +90,7 @@ class Analyzer(object):
     def showDifference(self, merge, name):
         self.boxplot(merge, name)
         #self.plot(merge, name)
-        self.printStats(merge, name)
+        #self.printStats(merge, name)
 
     def plot(self, df, name=""):
         global lined, fig

@@ -356,8 +356,8 @@ def rawToCSV(proband, name):
 
 if __name__ == '__main__':
     #runTestData()
-    for proband in probands:
-        rawToCSV(proband, "EEGNormed")
-    #raw = loadRaw("1", "EEGNormed")
-    #plotRaw(raw)
+    #for proband in probands:
+    #    rawToCSV(proband, "EEGNormed")
+    raw = loadRaw("1", "EEG")
+    plotRaw(raw)
     plt_show()

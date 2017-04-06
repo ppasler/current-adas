@@ -104,6 +104,7 @@ class DrowsinessMonitor(object):
             except Exception as e:
                 logging.error(e.message)
                 self.close()
+        logging.info(self.states)
 
     def close(self):
         self.running = False

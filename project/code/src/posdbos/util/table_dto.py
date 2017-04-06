@@ -7,7 +7,7 @@ Created on 03.01.2017
 :author: Paul Pasler
 :organization: Reutlingen University
 '''
-from numpy import array, arange, zeros
+from numpy import array, arange, zeros, delete
 
 from config.config import ConfigProvider
 
